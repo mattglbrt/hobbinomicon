@@ -1,0 +1,108 @@
+---
+//  Assets
+import { Image } from "astro:assets";
+// Layout
+import BaseLayout from "./BaseLayout.astro";
+// Fundation
+import Text from "@/components/fundations/elements/Text.astro";
+import Link from "@/components/fundations/components/Link.astro";
+import Wrapper from "@/components/fundations/containers/Wrapper.astro";
+// Components
+import SubscribeCta from "@/components/blog/SubscribeCta.astro";
+import Insights from "@/components/blog/Insights.astro";
+// Frontmatter
+const { frontmatter } = Astro.props;
+// Retrieve all posts from the "posts" collection, which returns an unsorted array of post objects
+import { getCollection } from "astro:content";
+const allPostsUnsorted = await getCollection("posts");
+// Sort the posts in descending order by publication date (newest to oldest)
+const allPosts = allPostsUnsorted.sort(
+  (a, b) => new Date(b.data.pubDate) - new Date(a.data.pubDate)
+);
+---
+
+<BaseLayout>
+  <section>
+    <Wrapper variant="heroNarrow">
+      <Text
+        tag="h1"
+        variant="textXL"
+        class="text-base-900 font-medium 2xl:text-5xl tracking-tight"
+      >
+        {frontmatter.title}
+      </Text>
+      <div
+        class="flex gap-4 flex-col md:flex-row mt-4 items-center justify-between"
+      >
+        <div class="flex items-center gap-x-3">
+          <Image
+            width="500"
+            height="500"
+            src={frontmatter.avatar.url}
+            alt={frontmatter.avatar.url}
+            class="object-cover size-10 rounded-full"
+          />
+          <div class="flex flex-col text-base-500">
+            <time datetime={frontmatter.pubDate.toString().slice(0, 10)}>
+              <Text tag="span" variant="textXS" class="font-medium"
+                >Written on {frontmatter.pubDate.toString().slice(0, 10)}
+              </Text>
+            </time>
+            <Text tag="span" variant="textXS" class="font-medium">
+              by {frontmatter.author}
+            </Text>
+          </div>
+        </div>
+        <div class="flex flex-wrap items-center gap-1">
+          {
+            frontmatter.tags.map((tag) => (
+              <>
+                <Link
+                  title={tag}
+                  size="sm"
+                  variant="muted"
+                  aria-label={tag}
+                  href={`/blog/tags/${tag}`}
+                  class="text-accent-500  font-medium text-xs hover:text-base-900     "
+                >
+                  {tag}
+                </Link>
+              </>
+            ))
+          }
+        </div>
+      </div>
+      <Image
+        width="500"
+        height="500"
+        src={frontmatter.image.url}
+        alt={frontmatter.image.url}
+        class="object-cover aspect-16/9 mt-8 w-full"
+      />
+      <div class="text-center">
+        <Text
+          tag="p"
+          variant="textBase"
+          class="mt-4 text-base-500 text-balance"
+        >
+          {frontmatter.description}
+        </Text>
+      </div>
+    </Wrapper>
+  </section>
+  <section>
+    <Wrapper variant="narrow">
+      <div class="prose-styles"><slot /></div>
+    </Wrapper>
+  </section>
+  <SubscribeCta />
+  <section>
+    <Wrapper variant="standard" class="py-12">
+      <div
+        class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4 mt-8 group"
+      >
+        {allPosts.slice(0, 4).map((post) => <Insights post={post} />)}
+      </div>
+    </Wrapper>
+  </section>
+</BaseLayout>

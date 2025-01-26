@@ -1,0 +1,293 @@
+---
+// Assets
+import { Image } from "astro:assets";
+import Logo from "@/images/logo.svg";
+// Fundations
+import Text from "@/components/fundations/elements/Text.astro";
+import Link from "../fundations/components/Link.astro";
+import Wrapper from "@/components/fundations/containers/Wrapper.astro";
+// Components
+// Quick access links
+const links = [
+  { href: "https://discord.com/invite/e5hpQZv7gD", text: "Join the Community" },
+];
+
+// Define navigation data
+const navigation = [
+  {
+    title: "Navigation",
+    items: [
+      {
+        href: "/games/home",
+        text: "Games",
+      },
+      {
+        href: "/blog/home",
+        text: "News",
+      },
+      {
+        href: "/blog/tags/Guide",
+        text: "Guides",
+      },
+      {
+        href: "/blog/tags/Podcast",
+        text: "Podcast",
+      },
+      {
+        href: "/about",
+        text: "About",
+      },
+      {
+        href: "/store/home",
+        text: "Support Us",
+      },
+    ],
+  },
+];
+const system = [
+  {
+    title: "Navigation",
+    items: [
+      {
+        href: "https://discord.com/invite/e5hpQZv7gD",
+        text: "Discord",
+      },
+      {
+        href: "https://www.youtube.com/@thehobbinomicon",
+        text: "YouTube",
+      },
+    ],
+  },
+];
+const isIndexPage = Astro.url.pathname === "/";
+---
+
+<section>
+  <Wrapper variant="standard">
+    <div
+      class="grid grid-cols-2 md:grid-cols-3 items-center w-full gap-3 pt-2 lg:pt-8"
+    >
+      <div class="flex items-center gap-2 lg:gap-4">
+        <!-- Small not sowing on Index page, it already has a big logo -->
+        {
+          !isIndexPage && (
+            <a href="/" class="shrink-0">
+              <Image
+                width="100"
+                height="100"
+                src={Logo}
+                alt="#_"
+                class="object-cover w-24  lg:w-28 "
+              />
+            </a>
+          )
+        }
+        {
+          links.map((link) => (
+            <Text
+              tag="a"
+              href={link.href}
+              class="text-base-900 text-xs lg:text-base hover:text-accent-500 font-medium"
+            >
+              {link.text}
+            </Text>
+          ))
+        }
+      </div>
+      <div class="hidden md:block mx-auto justify-center w-full">
+        <div class="relative">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+            <svg
+              class="text-base-400 size-5"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"></path>
+            </svg>
+          </span>
+          <input
+            type="text"
+            class="w-full py-2 pl-10 pr-4 block h-9 px-4 text-sm text-base-700 duration-300 bg-base-100 border border-transparent rounded-full appearance-none ring1 ring-base-200 placeholder-base-400 focus:border-base-300 focus:bg-transparent focus:outline-none focus:ring-base-500 focus:ring-offset-2 focus:ring-2 sm:text-sm"
+            placeholder="Search"
+            aria-label="Search"
+          />
+        </div>
+      </div>
+      <button
+        type="button"
+        class="size-9 inline-flex items-center justify-center group ml-auto"
+        @click="rightDrawerOpen = true"
+      >
+        <div class="p-1.5 group-focus-visible:bg-base-50">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="fill-base-400 size-6 shrink-0 transition duration-300 ease-in-out"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+            <path
+              :class="{'opacity-0': rightDrawerOpen}"
+              d="M4 8l18 0"
+              class="opacity-0"></path>
+            <path d="M4 16l18 0"></path></svg
+          >
+        </div>
+      </button>
+    </div>
+  </Wrapper>
+</section>
+<div
+  x-show="rightDrawerOpen"
+  x-ref="dialog"
+  aria-modal="true"
+  style="display: none"
+  x-description="off canvas menu for mobile and desktop"
+  class="fixed inset-0 z-40 flex justify-end h-full p-2 lg:p-3"
+>
+  <!-- Overlay -->
+  <div
+    x-show="rightDrawerOpen"
+    x-transition:enter="transition-opacity ease-linear duration-300"
+    x-transition:enter-start="opacity-0"
+    x-transition:enter-end="opacity-100"
+    x-transition:leave="transition-opacity ease-linear duration-300"
+    x-transition:leave-start="opacity-100"
+    x-transition:leave-end="opacity-0"
+    class="fixed inset-0 bg-base-600/50"
+    @click="rightDrawerOpen = false"
+    aria-hidden="true"
+  >
+  </div>
+  <!-- Menu (Right Side) -->
+  <div
+    x-show="rightDrawerOpen"
+    x-transition:enter="transition ease-in-out duration-300 transform"
+    x-transition:enter-start="translate-x-full"
+    x-transition:enter-end="translate-x-0"
+    x-transition:leave="transition ease-in-out duration-300 transform"
+    x-transition:leave-start="translate-x-0"
+    x-transition:leave-end="translate-x-full"
+    class="relative flex flex-col w-full lg:max-w-[26rem] bg-white shadow-lg h-full overflow-hidden rounded-xl"
+  >
+    <!-- Close Button -->
+    <div
+      x-show="rightDrawerOpen"
+      x-transition:enter="ease-in-out duration-300"
+      x-transition:enter-start="opacity-0"
+      x-transition:enter-end="opacity-100"
+      x-transition:leave="ease-in-out duration-300"
+      x-transition:leave-start="opacity-100"
+      x-transition:leave-end="opacity-0"
+      class="absolute top-0 right-0 p-2 px-6 py-3"
+    >
+      <button
+        type="button"
+        class="text-base-500 hover:text-base-900 focus:outline-none"
+        @click="rightDrawerOpen = false"
+      >
+        <span class="sr-only">Close sidebar</span>
+        <svg
+          class="size-4"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+    <!-- Menu Content -->
+    <div class="flex-1 overflow-y-auto">
+      <div class="flex items-center flex-shrink-0 p-2 py-3 px-6">
+        <Text
+          tag="p"
+          variant="textSM"
+          class="uppercase text-base-900 font-semibold"
+        >
+          Menu
+        </Text>
+      </div>
+      <nav role="navigation">
+        <div
+          class="flex flex-col gap-6 lg:gap-12 border-t border-base-200 p-2 py-3 px-6"
+        >
+          {
+            navigation.map((section) => (
+              <ul role="navigation" class="flex flex-col gap-1">
+                {section.items.map((item) => (
+                  <li>
+                    <Text
+                      tag="a"
+                      variant="textXL"
+                      href={item.href}
+                      class="text-base-900 font-semibold  hover:text-accent-500"
+                    >
+                      {item.text}
+                    </Text>
+                  </li>
+                ))}
+              </ul>
+            ))
+          }
+        </div>
+        <div
+          class="flex flex-col gap-6 lg:gap-12 border-t border-base-200 p-2 py-3 px-6 mt-12"
+        >
+          {
+            system.map((section) => (
+              <ul role="navigation" class="flex flex-col gap-1">
+                {section.items.map((item) => (
+                  <li>
+                    <Text
+                      tag="a"
+                      variant="textSM"
+                      variant="link"
+                      href={item.href}
+                      class=" text-base-500 hover:text-accent-500"
+                    >
+                      {item.text}
+                    </Text>
+                  </li>
+                ))}
+              </ul>
+            ))
+          }
+        </div>
+      </nav>
+    </div>
+    <!-- Footer -->
+    <div class="flex-shrink-0 px-6 py-3 border-t border-base-200">
+      <div class="flex items-center gap-2">
+        <Link
+          size="sm"
+          variant="muted"
+          class="w-auto justify-center"
+          href="/forms/signin">Sign in</Link
+        >
+        <Link
+          size="sm"
+          variant="accent"
+          class="w-auto justify-center"
+          href="/forms/signup">Sign up</Link
+        >
+      </div>
+    </div>
+  </div>
+</div>

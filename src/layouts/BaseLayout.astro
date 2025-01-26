@@ -1,0 +1,31 @@
+---
+
+// Import global styles
+import "@/styles/global.css";
+// Components
+import BaseHead from "@/components/BaseHead.astro";
+import Footer from "@/components/global/Footer.astro";
+import Navigation from "@/components/navigation/Navigation.astro";
+---
+
+<html
+  lang="en"
+  class="scroll-smooth selection:bg-accent-50 selection:text-accent-500"
+>
+  <head>
+    <BaseHead />
+  </head>
+  <body
+    x-data="{ rightDrawerOpen: false }"
+    @keydown.window.escape="rightDrawerOpen = false"
+    class="bg-white flex flex-col lg:min-h-svh"
+  >
+    <Navigation />
+    <main class="grow ">
+      <slot />
+    </main>
+    
+    <Footer />
+    
+  </body>
+</html>

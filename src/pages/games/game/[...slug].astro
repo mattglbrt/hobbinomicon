@@ -1,0 +1,23 @@
+---
+// Layout
+import GamesLayout from "@/layouts/GamesLayout.astro";
+// Get  all posts from the "games"  collection, which returns an unsorted array of post objects
+import { getCollection } from "astro:content";
+export async function getStaticPaths() {
+  const games = await getCollection("games");
+  const paths = games.map((page) => {
+    return {
+      params: { slug: page.slug },
+      props: { page },
+      trailingSlash: false,
+    };
+  });
+  return paths;
+}
+const { page } = Astro.props;
+const { Content } = await page.render();
+---
+
+<GamesLayout frontmatter={page.data}>
+  <Content />
+</GamesLayout>

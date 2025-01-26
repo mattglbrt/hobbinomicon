@@ -1,0 +1,55 @@
+---
+// Fundation
+import Text from "@/components/fundations/elements/Text.astro";
+---
+
+<div class="flex flex-col h-full justify-between bg-base-50 border-base-200">
+  <div class="p-8">
+    <Text
+      tag="p"
+      variant="textXL"
+      class="text-base-900 font-semibold hover:text-accent-500 tracking-tight"
+    >
+      For super teams - <br /> working the next - <br /> big thing
+    </Text>
+  </div>
+  <div class="p-8 border-t border-base-200 flex flex-col gap-12 mt-50">
+    <div class="flex items-center gap-2 justify-between">
+      <Text tag="p" variant="textBase" class="text-base-600 w-1/2">
+        Get limited access to everything.
+      </Text>
+      <span>
+        <span class="text-lg tracking-tighter">
+          <span x-show="duration === 'monthly'">
+            <span x-show="duration === 'monthly'">/m</span>
+          </span><span x-show="duration === 'annual'" style="display: none">
+            /a</span
+          >
+        </span>
+        <span
+          class="text-4xl tracking-tighter font-semibold"
+          data-monthly="$1229"
+          data-annual="$1000"
+          x-text="$el.dataset[duration]"></span>
+      </span>
+    </div>
+    <button
+      class="size-15 bg-accent-500 flex items-center justify-center text-white rounded-full hover:rotate-45 duration-300 cursor-pointer"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="icon icon-tabler icons-tabler-outline icon-tabler-plus"
+        ><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path
+          d="M12 5l0 14"></path><path d="M5 12l14 0"></path></svg
+      >
+    </button>
+  </div>
+</div>

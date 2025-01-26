@@ -1,0 +1,60 @@
+---
+// Layout
+import BaseLayout from "@/layouts/BaseLayout.astro";
+// Fundation
+import Insights from "@/components/blog/Insights.astro";
+
+import Text from "@/components/fundations/elements/Text.astro";
+import Wrapper from "@/components/fundations/containers/Wrapper.astro";
+// Content collection Components
+import EntriesOne from "@/components/blog/EntriesOne.astro";
+// Get all posts from the "posts" collection
+import { getCollection } from "astro:content";
+export async function getStaticPaths() {
+  const allPosts = await getCollection("posts");
+  const uniqueTags = [
+    ...new Set(allPosts.map((post) => post.data.tags).flat()),
+  ];
+  return uniqueTags.map((tag) => {
+    const filteredPosts = allPosts.filter((post) =>
+      post.data.tags.includes(tag)
+    );
+    return {
+      params: { tag },
+      props: { posts: filteredPosts },
+    };
+  });
+}
+const { tag } = Astro.params;
+const { posts } = Astro.props;
+
+---
+
+<BaseLayout pageTitle={tag}>
+  <section>
+    <Wrapper variant="hero">
+      <Text tag="h1" variant="displaySM" class="text-base-900 2xl:text-5xl">
+        All of our articles tagged with {tag}
+      </Text>
+      <Text
+        tag="p"
+        variant="textBase"
+        class="mt-4 text-base-500 text-balance 2xl:text-xl"
+      >
+       Thanks for reading the Hobbinomicon
+      </Text>
+    </Wrapper>
+  </section>
+  <section>
+    <Wrapper variant="standard">
+      <div
+        class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 mt-8 group"
+      >
+        {posts.slice(0, 3).map((post) => <Insights post={post} />)}
+      </div>
+      <div class="flex flex-col group mt-12">
+        {posts.map((post) => <EntriesOne post={post} />)}
+      </div>
+    </Wrapper>
+  </section>
+</BaseLayout>

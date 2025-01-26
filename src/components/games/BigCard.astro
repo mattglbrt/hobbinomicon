@@ -1,0 +1,39 @@
+---
+// Assets
+import { Image } from "astro:assets";
+// Fndation
+import Text from "@/components/fundations/elements/Text.astro";
+// Components
+import BookmarksModal from "./BookmarksModal.astro";
+// import data from games content collections
+const { title, url, thumbnail, live } = {
+  url: "/games/game/" + Astro.props.post.slug,
+  live: Astro.props.post.data.live,
+  title: Astro.props.post.data.title,
+  thumbnail: Astro.props.post.data.thumbnail.url,
+};
+---
+<div
+  class="group-hover:opacity-30 hover:opacity-100 peer hover:peer-hover:opacity-30 duration-300 group"
+>
+  <div class="overflow-hidden relative">
+    <Image
+      width="500"
+      height="500"
+      src={thumbnail}
+      alt={Astro.props.post.data.thumbnail.alt}
+      class="object-cover aspect-16/10 w-full"
+    />
+    <a href={url} title={title}>
+      <span class="absolute inset-0"></span>
+    </a>
+  </div>
+  <div class="pt-2">
+    <div class="flex items-center lg:justify-between">
+      <Text tag="h3" variant="textBase" class="font-medium text-base-900"
+        >{title}
+      </Text>
+      
+    </div>
+  </div>
+</div>

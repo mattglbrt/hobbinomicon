@@ -1,0 +1,260 @@
+---
+// Fundation
+import Text from "@/components/fundations/elements/Text.astro";
+import Wrapper from "@/components/fundations/containers/Wrapper.astro";
+// Widget components
+import SubmitModal from "../games/SubmitModal.astro";
+import BookmarksModal from "../games/BookmarksModal.astro";
+import SubscribeModal from "../forms/SubscribeModal.astro";
+import DeleteAccountModal from "../games/dashboard/DeleteAccountModal.astro";
+import EditCollectionModal from "../games/dashboard/EditCollectionModal.astro";
+import CreateCollectionModal from "../games/dashboard/CreateCollectionModal.astro";
+import RemoveCollectionModal from "../games/dashboard/RemoveCollectionModal.astro";
+// Array with links to all pages
+const pages = [
+  {
+    title: "Overview",
+    categories: [
+      {
+        title: "Pages",
+        links: [
+          { href: "/", text: "Home" },
+          { href: "/about", text: "About" },
+          { href: "/404", text: "404" },
+        ],
+      },
+      {
+        title: "Dashboard",
+        links: [
+          { href: "/dashboard/settings", text: "Settings" },
+          { href: "/dashboard/collections", text: "Collections" },
+          { href: "/dashboard/collection-details", text: "Collection Details" },
+          { href: "/dashboard/submissions", text: "Submissions" },
+          { href: "/dashboard/profile", text: "Profile" },
+        ],
+      },
+      {
+        title: "Advertise",
+        links: [
+          { href: "/pricing", text: "Membership" },
+          { href: "/advertise", text: "Advertise" },
+        ],
+      },
+      {
+        title: "Forms",
+        links: [
+          { href: "/forms/signin", text: "Sing in" },
+          { href: "/forms/signup", text: "Sing up" },
+          { href: "/forms/reset", text: "Reset" },
+        ],
+      },
+      {
+        title: "System",
+        links: [
+          { href: "/system/links", text: "Links" },
+          { href: "/system/buttons", text: "Buttons" },
+          { href: "/system/colors", text: "Colors" },
+          { href: "/system/typography", text: "Typography" },
+          {
+            href: "https://lexingtonthemes.com/legal/license",
+            text: "License",
+          },
+          {
+            href: "https://lexingtonthemes.com/legal/support/",
+            text: "Support",
+          },
+          {
+            href: "https://lexingtonthemes.com/documentation/",
+            text: "Documentation",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    title: "Content collections",
+    categories: [
+      {
+        title: "Directory",
+        links: [
+          { href: "/games/home", text: "All games" },
+          { href: "/games/game/12", text: "game details" },
+          { href: "/games/tags", text: "Tag index" },
+          { href: "/games/tags/design", text: "Tag category" },
+          { href: "/games/submit", text: "Submit" },
+        ],
+      },
+      {
+        title: "Blog",
+        links: [
+          { href: "/blog/home", text: "Blog home" },
+          { href: "/blog/posts/1", text: "Blog post" },
+          { href: "/blog/tags", text: "Tag index" },
+          { href: "/blog/tags/Design", text: "Tag category" },
+          { href: "/rss.xml", text: "RSS" },
+        ],
+      },
+      {
+        title: "Store",
+        links: [
+          { href: "/store/home", text: "Store Home" },
+          { href: "/store/1", text: "Store details" },
+        ],
+      },
+      {
+        title: "Utility pages",
+        links: [
+          { href: "/infopages/terms", text: "Terms" },
+          { href: "/infopages/privacy", text: "Privacy" },
+        ],
+      },
+    ],
+  },
+];
+---
+
+<section>
+  <Wrapper variant="hero">
+    <div class="grid grid-col-1 lg:grid-cols-2 gap-12">
+      {
+        pages.map((section) => (
+          <div class="border-t border-base-200 pt-2 ">
+            <div>
+              <Text
+                tag="h2"
+                variant="textXS"
+                class="font-medium uppercase text-base-500"
+              >
+                {section.title}
+              </Text>
+              <div class="mt-12  grid grid-cols-2 md:grid-cols-2 gap-8 gap-y-4">
+                {section.categories.map((category) => (
+                  <div class="flex flex-col gap-2 ">
+                    <Text
+                      tag="p"
+                      variant="textBase"
+                      class="text-base-900 font-medium"
+                    >
+                      {category.title}
+                    </Text>
+                    <ul role="list">
+                      {category.links.map((link) => (
+                        <li>
+                          <Text
+                            tag="a"
+                            variant="textBase"
+                            href={link.href}
+                            class="text-base-500 hover:text-accent-500"
+                          >
+                            {link.text}
+                          </Text>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        ))
+      }
+      <div class="border-t border-base-200 pt-2 col-span-full">
+        <Text
+          tag="h2"
+          variant="textXS"
+          class="font-medium uppercase text-base-500"
+        >
+          Widgets
+        </Text>
+        <div class="mt-12">
+          <Text tag="p" variant="textBase" class="text-base-900 font-medium">
+            Modals
+          </Text>
+          <div class="flex flex-wrap gap-4 mt-4">
+            <div x-data="{ open: false }">
+              <button
+                class="text-base text-base-500 hover:text-accent-500"
+                x-on:click="open = true"
+              >
+                Submit
+              </button>
+              <SubmitModal />
+            </div>
+            <div x-data="{ open: false }">
+              <button
+                class="text-base text-base-500 hover:text-accent-500"
+                x-on:click="open = true"
+              >
+                Bookmarks
+              </button>
+              <BookmarksModal />
+            </div>
+            <div x-data="{ open: false }">
+              <button
+                class="text-base text-base-500 hover:text-accent-500"
+                x-on:click="open = true"
+              >
+                New Collection
+              </button>
+              <CreateCollectionModal />
+            </div>
+             <div x-data="{ open: false }">
+              <button
+                class="text-base text-base-500 hover:text-accent-500"
+                x-on:click="open = true"
+              >
+                Edit Collection
+              </button>
+              <EditCollectionModal />
+            </div>
+            <div x-data="{ open: false }">
+              <button
+                class="text-base text-base-500 hover:text-accent-500"
+                x-on:click="open = true"
+              >
+                Remove collection
+              </button>
+              <RemoveCollectionModal />
+            </div>
+            <div x-data="{ open: false }">
+              <button
+                class="text-base text-base-500 hover:text-accent-500"
+                x-on:click="open = true"
+              >
+                Subscribe
+              </button>
+              <SubscribeModal />
+            </div>
+            <div x-data="{ open: false }">
+              <button
+                class="text-base text-base-500 hover:text-accent-500"
+                x-on:click="open = true"
+              >
+                Delete account
+              </button>
+              <DeleteAccountModal />
+            </div>
+            <div x-data="{ open: false }">
+              <button
+                class="text-base text-base-500 hover:text-accent-500"
+                x-on:click="open = true"
+              >
+                Edit account
+              </button>
+              <EditCollectionModal />
+            </div>
+            <div x-data="{ open: false }">
+              <button
+                class="text-base text-base-500 hover:text-accent-500"
+                x-on:click="open = true"
+              >
+                Create account
+              </button>
+              <CreateCollectionModal />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </Wrapper>
+</section>

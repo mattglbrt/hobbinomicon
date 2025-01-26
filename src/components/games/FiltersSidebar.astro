@@ -1,0 +1,292 @@
+---
+// Fundation
+import Text from "@/components/fundations/elements/Text.astro";
+import Button from "@/components/fundations/components/Button.astro";
+const filters = [
+  {
+    category: "Categories",
+    options: [
+      "Design games",
+      "Development games",
+      "SEO games",
+      "Analytics games",
+      "Project Management",
+      "Marketing games",
+      "CRM Software",
+      "E-commerce Platforms",
+      "Collaboration games",
+    ],
+  },
+  {
+    category: "Pricing",
+    options: [
+      "Free",
+      "Paid",
+      "Freemium",
+      "Subscription-based",
+      "One-time Payment",
+      "Enterprise Licensing",
+    ],
+  },
+  {
+    category: "Platform",
+    options: [
+      "Web",
+      "Desktop",
+      "Mobile",
+      "Cloud-based",
+      "Self-hosted",
+      "Cross-platform",
+    ],
+  },
+  {
+    category: "Features",
+    options: [
+      "Customizable",
+      "Integration-ready",
+      "Automation",
+      "Real-time Analytics",
+      "Drag-and-Drop Builder",
+      "Multilingual Support",
+      "AI-powered",
+      "Offline Access",
+    ],
+  },
+  {
+    category: "User Rating",
+    options: [
+      "5 Stars",
+      "4 Stars & Above",
+      "3 Stars & Above",
+      "Highly Recommended",
+      "Top-rated",
+    ],
+  },
+  {
+    category: "Industries",
+    options: [
+      "Design",
+      "Development",
+      "Marketing",
+      "Education",
+      "Healthcare",
+      "Finance",
+      "E-commerce",
+      "Real Estate",
+      "Hospitality",
+    ],
+  },
+  {
+    category: "Integration",
+    options: [
+      "Google Suite",
+      "Microsoft 365",
+      "Slack",
+      "Zapier",
+      "HubSpot",
+      "Salesforce",
+      "Stripe",
+      "Shopify",
+    ],
+  },
+];
+---
+
+<Button
+  size="xs"
+  variant="default"
+  type="button"
+  @click="leftDrawerOpen = true"
+>
+  Filters
+</Button>
+<div
+  x-show="leftDrawerOpen"
+  class="fixed inset-0 z-40 flex justify-start h-full p-2 lg:p-3"
+  x-description="Off-canvas menu for mobile, show/hide based on off-canvas menu state."
+  x-ref="dialog"
+  aria-modal="true"
+  style="display: none"
+>
+  <!-- Overlay -->
+  <div
+    x-show="leftDrawerOpen"
+    x-transition:enter="transition-opacity ease-linear duration-300"
+    x-transition:enter-start="opacity-0"
+    x-transition:enter-end="opacity-100"
+    x-transition:leave="transition-opacity ease-linear duration-300"
+    x-transition:leave-start="opacity-100"
+    x-transition:leave-end="opacity-0"
+    class="fixed inset-0 bg-base-600/50"
+    @click="leftDrawerOpen = false"
+    aria-hidden="true"
+  >
+  </div>
+  <!-- Menu (Left Side) -->
+  <div
+    x-show="leftDrawerOpen"
+    x-transition:enter="transition ease-in-out duration-300 transform"
+    x-transition:enter-start="-translate-x-full"
+    x-transition:enter-end="translate-x-0"
+    x-transition:leave="transition ease-in-out duration-300 transform"
+    x-transition:leave-start="translate-x-0"
+    x-transition:leave-end="-translate-x-full"
+    class="relative flex flex-col w-full lg:max-w-[26rem] bg-white shadow-lg h-full overflow-hidden rounded-xl"
+  >
+    <!-- Close Button -->
+    <div
+      x-show="leftDrawerOpen"
+      x-transition:enter="ease-in-out duration-300"
+      x-transition:enter-start="opacity-0"
+      x-transition:enter-end="opacity-100"
+      x-transition:leave="ease-in-out duration-300"
+      x-transition:leave-start="opacity-100"
+      x-transition:leave-end="opacity-0"
+      class="absolute top-0 right-0 p-2 px-6 pl-2.5 py-3"
+    >
+      <button
+        type="button"
+        class="text-base-500 hover:text-base-900 focus:outline-none"
+        @click="leftDrawerOpen = false"
+      >
+        <span class="sr-only">Close sidebar</span>
+        <svg
+          class="size-4"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+    <!-- Menu Content -->
+    <div
+      class="flex flex-col overflow-y-auto h-full justify-between scrollbar-hide"
+    >
+      <div>
+        <div class="flex items-center flex-shrink-0 p-2 py-3 px-6 ">
+          <Text
+            tag="p"
+            variant="textSM"
+            class="uppercase text-base-900 font-semibold"
+          >
+            Filters
+          </Text>
+        </div>
+        <div
+          class="flex items-center flex-shrink-0 p-2 py-3 px-6  border-t border-base-200"
+        >
+          <a href="/pricing" >
+           <div class="flex items-center justify-between">
+              <Text
+                tag="p"
+                variant="textSM"
+                class="uppercase text-base-900 font-semibold"
+              >
+                Subscribe
+              </Text>
+              <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-narrow-right"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M5 12l14 0" />
+                <path d="M15 16l4 -4" />
+                <path d="M15 8l4 4" />
+            </svg>
+           </div>
+            <Text
+              tag="p"
+              variant="textSM"
+              class=" text-base-500"
+            >
+              Unlock the full range of filters and enhance your experience by
+              choosing to become a valued supporter.
+            </Text>
+          </a>
+        </div>
+        <div
+          class="border-t border-base-200 gap-2  flex flex-col p-2 py-3 px-6 "
+        >
+          {
+            filters.map((filter) => (
+              <details class="group ">
+                <summary class="text-base-900 cursor-pointer font-semibold text-base flex items-center justify-between w-full select-none hover:text-accent-500">
+                  {filter.category}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="icon icon-tabler icons-tabler-outline icon-tabler-plus size-4 duration-300 ease-out transform group-open:-rotate-45"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M12 5l0 14" />
+                    <path d="M5 12l14 0" />
+                  </svg>
+                </summary>
+                <fieldset>
+                  <legend class="sr-only">{filter.category}</legend>
+                  <div class="flex flex-col space-y-2 mt-2">
+                    {filter.options.map((option) => (
+                      <label class="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          name={filter.category.toLowerCase()}
+                          value={option}
+                          class="text-accent-500 border-base-200 rounded-full focus:ring-accent-500 focus:border-accent-500"
+                        />
+                        <Text
+                          tag="span"
+                          variant="textSM"
+                          class="text-sm text-base-600"
+                        >
+                          {option}
+                        </Text>
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
+              </details>
+            ))
+          }
+        </div>
+      </div>
+      <!-- Footer -->
+      <div class="flex-shrink-0 px-6 py-3 border-t border-base-200">
+        <div class="flex items-center gap-2 justify-end">
+          <Button
+            size="sm"
+            variant="muted"
+            class="w-auto justify-center"
+            href="/forms/signin">clear</Button
+          >
+          <Button
+            size="sm"
+            variant="accent"
+            class="w-auto justify-center"
+            href="/forms/signup">Apply filters</Button
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

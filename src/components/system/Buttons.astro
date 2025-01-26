@@ -1,0 +1,82 @@
+---
+import Text from "@/components/fundations/elements/Text.astro";
+import Wrapper from "../fundations/containers/Wrapper.astro";
+import Button from "../fundations/components/Button.astro";
+---
+
+<section>
+  <Wrapper variant="hero">
+    <Text
+      tag="h1"
+      variant="displaySM"
+      class="text-base-900 font-medium 2xl:text-5xl"
+      >Buttons
+    </Text>
+    <Text
+      tag="p"
+      variant="textBase"
+      class="mt-4 text-base-500 text-balance 2xl:text-xl"
+    >
+      All variants
+    </Text>
+  </Wrapper>
+</section>
+<section>
+  <Wrapper variant="standard">
+    <div
+      class="flex flex-col divide-y divide-base-200 text-base-900 font-medium"
+    >
+      <div class="py-4 flex flex-wrap items-center gap-4">
+        <Button size="xs" variant="default">Default XS</Button>
+        <Button size="sm" variant="default">Default SM</Button>
+        <Button size="base" variant="default">Default Base</Button>
+        <Button size="md" variant="default">Default MD</Button>
+        <Button size="lg" variant="default">Default LG</Button>
+        <Button size="xl" variant="default">Default XL</Button>
+      </div>
+      <div class="py-4 flex flex-wrap items-center gap-4">
+        <Button size="xs" variant="accent">Accent XS</Button>
+        <Button size="sm" variant="accent">Accent SM</Button>
+        <Button size="base" variant="accent">Accent Base</Button>
+        <Button size="md" variant="accent">Accent MD</Button>
+        <Button size="lg" variant="accent">Accent LG</Button>
+        <Button size="xl" variant="accent">Accent XL</Button>
+      </div>
+      <div class="py-4 flex flex-wrap items-center gap-4">
+        <Button size="xs" variant="muted">Muted XS</Button>
+        <Button size="sm" variant="muted">Muted SM</Button>
+        <Button size="base" variant="muted">Muted Base</Button>
+        <Button size="md" variant="muted">Muted MD</Button>
+        <Button size="lg" variant="muted">Muted LG</Button>
+        <Button size="xl" variant="muted">Muted XL</Button>
+      </div>
+      <div class="py-4 flex flex-col  gap-12">
+        <Text
+          tag="p"
+          variant="textBase"
+          class="mt-4 text-base-500 text-balance 2xl:text-xl"
+        >
+          Alternative
+        </Text>
+        <button
+          class="size-15 bg-accent-500 flex items-center justify-center text-white rounded-full hover:rotate-45 duration-300 cursor-pointer"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="icon icon-tabler icons-tabler-outline icon-tabler-plus"
+            ><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path
+              d="M12 5l0 14"></path><path d="M5 12l14 0"></path></svg
+          >
+        </button>
+      </div>
+    </div>
+  </Wrapper>
+</section>

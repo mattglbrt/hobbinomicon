@@ -1,0 +1,169 @@
+---
+// Assets
+import { Image } from "astro:assets";
+// Layout
+import BaseLayout from "./BaseLayout.astro";
+// Fundation
+import Text from "@/components/fundations/elements/Text.astro";
+import Link from "@/components/fundations/components/Link.astro";
+import Wrapper from "@/components/fundations/containers/Wrapper.astro";
+// Components
+import BookmarksModal from "@/components/games/BookmarksModal.astro";
+import SmallCards from "@/components/games/SmallCards.astro";
+// Retrieve all posts from the "posts" collection
+import { getCollection } from "astro:content";
+const allgames = await getCollection("games");
+// Frontmatter
+const { frontmatter } = Astro.props;
+---
+
+<BaseLayout>
+  <section>
+    <Wrapper variant="hero">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        <div class="lg:col-span-2">
+          <Image
+            width="2000"
+            height="2000"
+            src={frontmatter.thumbnail.url}
+            alt={frontmatter.thumbnail.url}
+            class="object-cover aspect-16/10 w-full"
+          />
+        </div>
+        <div class="flex flex-col h-full justify-between">
+          <div>
+            <Image
+              width="1000"
+              height="1000"
+              src={frontmatter.logo.url}
+              alt={frontmatter.logo.url}
+              class="size-8"
+            />
+            <Text
+              tag="h1"
+              variant="displaySM"
+              class="text-base-900 mt-12 font-medium 2xl:text-5xl tracking-tight"
+            >
+              {frontmatter.title}
+            </Text>
+            <Text
+              tag="p"
+              variant="textBase"
+              class="mt-4 text-base-500 text-balance"
+            >
+              {frontmatter.tagline}
+            </Text>
+            <Text
+              tag="p"
+              variant="textBase"
+              class="text-base-900 mt-12 font-medium uppercase">Details</Text
+            >
+            <dl class="relative flex flex-col gap-4 mt-4 w-full">
+              {
+                frontmatter.details.map((details) => (
+                  <div class="flex items-center lg:justify-between">
+                    <dt class="flex-1">
+                      <Text
+                        tag="p"
+                        variant="textSM"
+                        class="text-base-900 font-medium flex justify-between"
+                      >
+                        <span>{details.label}</span>
+                        <span class="flex-1 mx-2 border-dotted border-b border-base-300" />
+                      </Text>
+                    </dt>
+                    <dd class="mt-1 text-base-500">
+                      <Text tag="p" variant="textSM" class="text-base-500">
+                        {details.value}
+                      </Text>
+                    </dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </div>
+
+          <div class="flex items-center mt-8 justify-between">
+            <Link
+              size="xs"
+              variant="ghost"
+              href={frontmatter.live}
+              title={frontmatter.title}
+              class="justify-center flex items-center gap-1 w-auto"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="icon icon-tabler icons-tabler-outline icon-tabler-link size-4"
+                ><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path
+                  d="M9 15l6 -6"></path><path
+                  d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464"
+                ></path><path
+                  d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463"
+                ></path></svg
+              >
+              Visit {frontmatter.title}
+            </Link>
+           
+          </div>
+        </div>
+      </div>
+    </Wrapper>
+  </section>
+  <section>
+    <Wrapper variant="standard">
+      <div class="max-w-2xl">
+        <Text tag="p" variant="textBase" class="text-base-500 text-balance">
+          {frontmatter.description}
+        </Text>
+        <div class="prose-styles">
+          <slot />
+        </div>
+      </div>
+    </Wrapper>
+  </section>
+  <section>
+    <Wrapper variant="standard" class="pt-6 pb-24">
+      <div
+        class="flex flex-col gap-4 lg:flex-row lg:justify-between border-t border-base-200 pt-2"
+      >
+        <Text
+          tag="h2"
+          variant="textXS"
+          class="font-medium uppercase text-base-500">Latest entries</Text
+        >
+        <Text
+          tag="a"
+          href="/games/home"
+          aria-label="Your label"
+          class="text-base-500 text-xs uppercase hover:text-accent-500 flex items-center gap-1 transition-all duration-200"
+        >
+          See all games
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-narrow-right"
+            ><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path
+              d="M5 12l14 0"></path><path d="M15 16l4 -4"></path><path
+              d="M15 8l4 4"></path></svg
+          >
+        </Text>
+      </div>
+      <div class="grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-4 mt-4">
+        {allgames.slice(8, 12).map((post) => <SmallCards post={post} />)}
+      </div>
+    </Wrapper>
+  </section>
+</BaseLayout>

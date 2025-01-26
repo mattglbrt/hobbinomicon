@@ -1,0 +1,75 @@
+---
+// Assets
+import { Image } from "astro:assets";
+import Logo from "@/images/logoWhite.svg";
+// Fundation
+import Text from "../fundations/elements/Text.astro";
+import Wrapper from "../fundations/containers/Wrapper.astro";
+const legalLinks = [
+  { href: "/infopages/terms", text: "Terms & policies" },
+  { href: "/infopages/privacy", text: "Privacy policy" },
+  { href: "/infopages/disclaimers", text: "Disclaimers" }, 
+];
+const socialLinks = [
+  { text: "YouTube", href: "https://www.youtube.com/@thehobbinomicon" },
+  { text: "Discord", href: "https://discord.com/invite/e5hpQZv7gD" },
+];
+---
+<footer
+  x-data="{ year: new Date().getFullYear() }"
+  class="bg-black text-white relative flex flex-col w-full justify-between"
+>
+  <Wrapper
+    class="flex flex-col md:flex-row justify-between w-full gap-4 pb-24 pt-8"
+  >
+    <!-- Left Column -->
+    <div class="space-y-2">
+      <ul class="flex flex-wrap gap-4">
+        {
+          legalLinks.map((link) => (
+            <li>
+              <Text
+                tag="a"
+                variant="textSM"
+                href={link.href}
+                class="hover:text-accent-400"
+              >
+                {link.text}
+              </Text>
+            </li>
+          ))
+        }
+      </ul>
+      <Text
+        tag="p"
+        variant="textSM"
+        x-text="'Copyright © 2024 — ' + year + ' Hobbinomicon.'"
+        class="mt-4"
+      />
+    </div>
+    <!-- Right Column -->
+    <div class="space-y-4">
+      <ul class="flex flex-wrap gap-4">
+        {
+          socialLinks.map((link) => (
+            <li>
+              <Text
+                tag="a"
+                variant="textSM"
+                href={link.href}
+                class="hover:text-accent-400"
+              >
+                {link.text}
+              </Text>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="text-right mt-4">
+        <a href="#top" class="text-sm hover:underline inline-flex items-center">
+          Back to top
+        </a>
+      </div>
+    </div>
+  </Wrapper>
+</footer>

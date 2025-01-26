@@ -1,0 +1,106 @@
+---
+// Assets
+import { Image } from "astro:assets";
+import Avatar from "@/images/avatar.jpeg";
+// Fundation
+import Text from "@/components/fundations/elements/Text.astro";
+import Wrapper from "@/components/fundations/containers/Wrapper.astro";
+// Components
+import DeleteAccountModal from "./DeleteAccountModal.astro";
+import EditProfile from "./EditProfile.astro";
+---
+
+<section>
+  <Wrapper variant="heroNarrow">
+    <Text
+      tag="h1"
+      variant="displaySM"
+      class="text-base-900 font-medium 2xl:text-5xl tracking-tight"
+    >
+      Profile
+    </Text>
+    <div class="flex items-center gap-2 mt-4">
+      <div>
+        <Image
+          src={Avatar}
+          alt="#_"
+          width="1000"
+          height="1000"
+          class="inline-block size-9 rounded-full"
+        />
+      </div>
+      <div class="w-full">
+        <div class="flex items-center gap-2 justify-between w-full">
+          <Text tag="p" variant="textBase" class="text-base-900 font-medium">
+            Kalle Nygren
+          </Text>
+          <div x-data="{ open: false }">
+            <button class="flex text-xs items-center" x-on:click="open = true">
+              Edit
+            </button>
+            <EditProfile />
+          </div>
+        </div>
+        <Text
+          tag="p"
+          variant="textXS"
+          class="text-xs text-base-500 font-medium"
+        >
+          Profile created on 2025-01-01
+        </Text>
+      </div>
+    </div>
+  </Wrapper>
+</section>
+<section>
+  <Wrapper variant="narrow" class="py-6">
+    <div class="flex flex-col gap-4">
+      <div class="flex items-baseline lg:justify-between">
+        <Text tag="h3" variant="textBase" class="font-medium text-base-900">
+          Website
+        </Text>
+        <span class="flex-1 mx-2 border-dotted border-b border-base-300"></span>
+
+        <Text tag="a" href="#_" title="#_"> yourwebsite.com </Text>
+      </div>
+      <div class="flex items-baseline lg:justify-between">
+        <Text tag="h3" variant="textBase" class="font-medium text-base-900">
+          X User name
+        </Text>
+        <span class="flex-1 mx-2 border-dotted border-b border-base-300"></span>
+
+        <Text tag="a" href="#_" title="#_"> @yourhandle </Text>
+      </div>
+    </div>
+    <div x-data="{ open: false }" class="mt-8">
+      <div class="border-t border-base-200 pt-2">
+        <Text
+          tag="h2"
+          variant="textXS"
+          class="font-medium uppercase text-base-500">Delete your account</Text
+        >
+      </div>
+      <button
+        class="size-15 bg-red-500 mt-12 flex items-center justify-center text-white rounded-full hover:rotate-45 duration-300 cursor-pointer"
+        x-on:click="open = true"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="icon icon-tabler icons-tabler-outline icon-tabler-x"
+          ><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path
+            d="M18 6l-12 12"></path><path d="M6 6l12 12"></path></svg
+        >
+      </button>
+
+      <DeleteAccountModal />
+    </div>
+  </Wrapper>
+</section>

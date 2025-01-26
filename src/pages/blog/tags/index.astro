@@ -1,0 +1,66 @@
+---
+// Layout
+import BaseLayout from "@/layouts/BaseLayout.astro";
+// Fundation
+import Text from "@/components/fundations/elements/Text.astro";
+import Link from "@/components/fundations/components/Link.astro";
+import Wrapper from "@/components/fundations/containers/Wrapper.astro";
+// Get all posts from the "posts" collection
+import { getCollection } from "astro:content";
+const allPosts = await getCollection("posts");
+// Collect all unique tags
+const tags = [...new Set(allPosts.map((post) => post.data.tags).flat())];
+---
+<BaseLayout>
+  <section>
+    <Wrapper variant="heroNarrow">
+      <Text
+        tag="h1"
+        variant="displaySM"
+        class="text-base-900 font-medium 2xl:text-5xl tracking-tight"
+      >
+      Explore, and discover new trends.
+      </Text>
+      <Text
+        tag="p"
+        variant="textBase"
+        class="mt-4 text-base-500 text-balance 2xl:text-xl"
+      >
+      Here you will find all the tags used in our blog. 
+      </Text>
+      <ul role="list" class="flex flex-col gap-1 mt-12">
+        {
+          tags.map((tag) => (
+            <Link
+              title={tag}
+              variant="link"
+              aria-label={tag}
+              href={`/blog/tags/${tag}`}
+              class=" flex justify-between text-base-500 capitalize hover:text-accent-500"
+            >
+              {tag}
+              <span class="flex-1 mx-2 border-dotted border-b border-base-300" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-narrow-right"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path d="M5 12l14 0" />
+                  <path d="M15 16l4 -4" />
+                  <path d="M15 8l4 4" />
+              </svg>
+            </Link>
+          ))
+        }
+      </ul>
+    </Wrapper>
+  </section>
+</BaseLayout>

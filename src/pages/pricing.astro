@@ -1,0 +1,75 @@
+---
+// Layout
+import BaseLayout from "@/layouts/BaseLayout.astro";
+// Fundation
+import Text from "@/components/fundations/elements/Text.astro";
+import Button from "@/components/fundations/components/Button.astro";
+import Wrapper from "@/components/fundations/containers/Wrapper.astro";
+// Components
+import Spot from "@/components/pricing/Free.astro";
+import Faq from "@/components/infopages/Faq.astro";
+import Sponsor from "@/components/pricing/Pro.astro";
+import Team from "@/components/pricing/Team.astro";
+---
+
+<BaseLayout>
+  <section x-data="{duration: 'monthly'}">
+    <Wrapper variant="hero">
+      <div class="flex flex-col sm:flex-row w-full justify-between">
+        <div>
+          <Text
+            tag="h1"
+            variant="displaySM"
+            class="text-base-900 font-medium 2xl:text-5xl tracking-tight"
+          >
+            Membership
+          </Text>
+        </div>
+
+        <div
+          aria-labelledby="pricing-toggle"
+          class="w-full relative mt-8 ring-1 ring-base-200 ring-offset-2 bg-white overflow-hidden justify-center gap-4 mx-auto lg:mx-0 inline-flex p-1 rounded-full max-w-52 w-ful shadow z-0"
+        >
+          <!-- Sliding background -->
+          <div
+            class="absolute inset-0 bg-base-100 rounded-full transition-transform duration-200 ease-in-out"
+            :class="duration === 'monthly' ? 'w-1/2 translate-x-0' : 'w-1/2 translate-x-full'"
+          >
+          </div>
+          <!-- Monthly Pricing Button -->
+          <Button
+            id="monthly-pricing-button"
+            class="relative flex items-center justify-center w-full px-2 h-6 text-xs font-medium focus:outline-none transition-colors duration-300 z-10 cursor-pointer"
+            :class="duration === 'monthly' ? 'text-accent-600' : 'text-base-500 hover:text-accent-500'"
+            @click="duration = 'monthly'"
+            type="button"
+            :aria-pressed="duration === 'monthly'"
+          >
+            Monthly
+          </Button>
+          <!-- Annual Pricing Button -->
+          <Button
+            id="annual-pricing-button"
+            class="relative flex items-center justify-center w-full px-2 h-6 text-xs font-medium focus:outline-none transition-colors duration-300 z-10 cursor-pointer"
+            :class="duration === 'annual' ? 'text-accent-600' : 'text-base-500 hover:text-accent-500'"
+            @click="duration = 'annual'"
+            type="button"
+            :aria-pressed="duration === 'annual'"
+          >
+            Annual
+          </Button>
+        </div>
+      </div>
+
+      <div
+        class="grid grid-cols-1 gap-2 sm:grid-cols-2 mt-8 lg:grid-cols-3 mx-auto"
+      >
+        <Spot />
+        <Sponsor />
+        <Team />
+      </div>
+    </Wrapper>
+  </section>
+
+  <Faq />
+</BaseLayout>

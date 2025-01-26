@@ -1,0 +1,83 @@
+---
+import Link from "@/components/fundations/components/Link.astro";
+import Text from "@/components/fundations/elements/Text.astro";
+import Wrapper from "@/components/fundations/containers/Wrapper.astro";
+---
+
+<section>
+  <Wrapper variant="hero">
+    <Text
+      tag="h1"
+      variant="displaySM"
+      class="text-base-900 font-medium 2xl:text-5xl"
+      >Links
+    </Text>
+    <Text
+      tag="p"
+      variant="textBase"
+      class="mt-4 text-base-500 text-balance 2xl:text-xl"
+    >
+      All variants
+    </Text>
+  </Wrapper>
+</section>
+<section>
+  <Wrapper variant="standard">
+    <div
+      class="flex flex-col divide-y divide-base-200 text-base-900 font-medium"
+    >
+      <div class="py-4 flex flex-wrap items-center gap-4">
+        <Link href="#_" size="xs" variant="default">Default XS</Link>
+        <Link href="#_" size="sm" variant="default">Default SM</Link>
+        <Link href="#_" size="base" variant="default">Default Base</Link>
+        <Link href="#_" size="md" variant="default">Default MD</Link>
+        <Link href="#_" size="lg" variant="default">Default LG</Link>
+        <Link href="#_" size="xl" variant="default">Default XL</Link>
+      </div>
+      <div class="py-4 flex flex-wrap items-center gap-4">
+        <Link href="#_" size="xs" variant="accent">Accent XS</Link>
+        <Link href="#_" size="sm" variant="accent">Accent SM</Link>
+        <Link href="#_" size="base" variant="accent">Accent Base</Link>
+        <Link href="#_" size="md" variant="accent">Accent MD</Link>
+        <Link href="#_" size="lg" variant="accent">Accent LG</Link>
+        <Link href="#_" size="xl" variant="accent">Accent XL</Link>
+      </div>
+      <div class="py-4 flex flex-wrap items-center gap-4">
+        <Link href="#_" size="xs" variant="muted">Muted XS</Link>
+        <Link href="#_" size="sm" variant="muted">Muted SM</Link>
+        <Link href="#_" size="base" variant="muted">Muted Base</Link>
+        <Link href="#_" size="md" variant="muted">Muted MD</Link>
+        <Link href="#_" size="lg" variant="muted">Muted LG</Link>
+        <Link href="#_" size="xl" variant="muted">Muted XL</Link>
+      </div>
+      <div class="py-4 flex flex-wrap items-center gap-4">
+        <Link href="#_" size="xs" variant="ghost" class="font-medium"
+          >Ghost XS</Link
+        >
+        <Link href="#_" size="sm" variant="ghost" class="font-medium"
+          >Ghost SM</Link
+        >
+        <Link href="#_" size="base" variant="ghost" class="font-medium"
+          >Ghost Base</Link
+        >
+        <Link href="#_" size="md" variant="ghost" class="font-medium"
+          >Ghost MD</Link
+        >
+        <Link href="#_" size="lg" variant="ghost" class="font-medium"
+          >Ghost LG</Link
+        >
+        <Link href="#_" size="xl" variant="ghost" class="font-medium"
+          >Ghost XL</Link
+        >
+      </div>
+      <div class="py-4 flex flex-wrap items-center gap-4">
+        <Link
+          href="#_"
+          variant="link"
+          class="font-medium text-base-500 hover:text-accent-500"
+          >Unstyled XS</Link
+        >
+      </div>
+    </div>
+  </Wrapper>
+</section>

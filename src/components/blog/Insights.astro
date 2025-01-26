@@ -1,0 +1,40 @@
+---
+// Assets
+import { Image } from "astro:assets";
+// Fndation
+import Text from "../fundations/elements/Text.astro";
+import Link from "../fundations/components/Link.astro";
+const { title, url, description, pubDate, image } = {
+  url: "/blog/posts/" + Astro.props.post.slug,
+  title: Astro.props.post.data.title,
+  image: Astro.props.post.data.image.url,
+  description: Astro.props.post.data.description,
+  pubDate: Astro.props.post.data.pubDate.toString().slice(0, 10),
+};
+---
+
+<Link
+  href={url}
+  title={title}
+  variant="link"
+  class="group-hover:opacity-30 hover:opacity-100 peer hover:peer-hover:opacity-30 duration-300"
+>
+  <Image
+    width="500"
+    height="500"
+    src={image}
+    alt={title}
+    class="object-cover aspect-[16/9]  w-full"
+  />
+  <div class="px-4">
+    <Text tag="p" variant="textXS" class="mt-4 text-base-400"
+      ><time datetime="2020-03-16"> {pubDate}</time></Text
+    >
+    <Text tag="h3" variant="textBase" class="font-medium text-base-900"
+      >{title}</Text
+    >
+    <Text tag="p" variant="textSM" class="text-base-500 mt-2 line-clamp-2"
+      >{description}</Text
+    >
+  </div>
+</Link>

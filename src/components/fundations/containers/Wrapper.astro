@@ -1,0 +1,24 @@
+---
+interface Props {
+  variant?: "hero" | "heroNarrow" | "narrow" | "standard"; // Optional prop for the variant
+  class?: string; // Optional prop for additional classes
+}
+const { variant = "standard", class: extraClass = "" } = Astro.props;
+// Map each variant to its specific classes
+const variantClasses = {
+  // Wrappers for hero sections
+  hero: "mx-auto px-4 lg:px-8 max-w-screen 2xl:max-w-[120rem] 2xl:lg:px-24 pb-8 pt-20  ",
+  heroNarrow: "mx-auto px-4 lg:px-8 max-w-xl  pb-8 pt-20",
+
+  // Wrappers for standard sections
+  standard:
+    "mx-auto px-4 lg:px-8 max-w-screen 2xl:max-w-[120rem] 2xl:lg:px-24   ",
+  narrow: "mx-auto px-4 lg:px-8 max-w-xl",
+};
+// Combine the classes for the specified variant with any extra classes
+const classes = `${variantClasses[variant]} ${extraClass}`.trim();
+---
+
+<div class={classes}>
+  <slot />
+</div>

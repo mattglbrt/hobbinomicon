@@ -1,0 +1,39 @@
+---
+// Assets
+import { Image } from "astro:assets";
+// Fundation
+import Text from "@/components/fundations/elements/Text.astro";
+const { title, tagline, url, logo } = {
+  url: "/games/game/" + Astro.props.post.slug,
+  title: Astro.props.post.data.title,
+  logo: Astro.props.post.data.logo.url,
+  tagline: Astro.props.post.data.tagline,
+};
+---
+
+<a
+  href={url}
+  title={title}
+  class="relative flex items-center gap-x-3 rounded-full bg-base-50 p-4 focus-outline-none"
+>
+  <div
+    class="flex-shrink-0 p-1 size-16 bg-white rounded-full items-center flex justify-center"
+  >
+    <Image
+      class="object-cover size-10"
+      width="100"
+      height="100"
+      src={logo}
+      alt={Astro.props.post.data.logo.alt}
+    />
+  </div>
+  <div class="min-w-0 flex-1">
+    <span class="absolute inset-0" aria-hidden="true"></span>
+    <div>
+      <Text tag="h3" variant="textSM" class="font-medium text-base-900"
+        >{title}</Text
+      >
+      <Text tag="p" variant="textXS" class="text-base-500 mt-1">{tagline}</Text>
+    </div>
+  </div>
+</a>

@@ -1,0 +1,51 @@
+---
+import Text from "@/components/fundations/elements/Text.astro";
+import Button from "../fundations/components/Button.astro";
+import Wrapper from "../fundations/containers/Wrapper.astro";
+// Components
+import SubscribeModal from "../forms/SubscribeModal.astro";
+---
+
+<section>
+  <Wrapper variant="narrow" class="py-24 flex flex-col">
+    <div class="text-center">
+      <Text variant="displaySM"
+      class="text-base-900 font-medium 2xl:text-5xl tracking-tight">
+         Join our newsletter
+      </Text>
+      <Text tag="p"
+      variant="textBase"
+      class="mt-4 text-base-500 text-balance 2xl:text-xl">
+        Stay up to date with our latest news and updates.
+      </Text>
+    </div>
+    <div x-data="{ open: false }" class="mt-8 justify-center flex">
+      <Button
+        x-on:click="open = true"
+        size="sm"
+        variant="default"
+        title="#_"
+        href="/submit"
+        class="justify-center flex items-center gap-1"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="icon icon-tabler icons-tabler-outline icon-tabler-mail size-4"
+          ><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path
+            d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10z"
+          ></path><path d="M3 7l9 6l9 -6"></path></svg
+        >
+        Subscribe
+      </Button>
+      <SubscribeModal />
+    </div>
+  </Wrapper>
+</section>

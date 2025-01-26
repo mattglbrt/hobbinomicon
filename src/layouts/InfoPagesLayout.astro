@@ -1,0 +1,35 @@
+---
+// Layout
+import BaseLayout from "./BaseLayout.astro";
+// Fundation
+import Text from "@/components/fundations/elements/Text.astro";
+import Wrapper from "@/components/fundations/containers/Wrapper.astro";
+// Frontmatter
+const { frontmatter } = Astro.props;
+---
+
+<BaseLayout>
+  <section>
+    <Wrapper variant="heroNarrow">
+      <Text
+        tag="h1"
+        variant="textXL"
+        class="text-base-900 mt-4 lg:text-balance 2xl:text-3xl"
+      >
+        {frontmatter.page}
+      </Text>
+      <Text
+        tag="p"
+        variant="textBase"
+        class="mt-4 text-base-500 text-balance 2xl:text-xl"
+      >
+        Last upadated on {frontmatter.pubDate.toString().slice(0, 10)}
+      </Text>
+    </Wrapper>
+  </section>
+  <section>
+    <Wrapper variant="narrow">
+      <div class="prose-styles"><slot /></div>
+    </Wrapper>
+  </section>
+</BaseLayout>
