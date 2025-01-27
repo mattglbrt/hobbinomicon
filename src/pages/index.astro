@@ -69,7 +69,7 @@ const podcastPosts = allPosts.filter((post) =>
       <div
         class="grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-4 mt-8 group"
       >
-        {allgames.slice(3, 6).map((post) => <BigCard post={post} />)}
+        {allgames.slice(0, 6).map((post) => <BigCard post={post} />)}
         <SponsorCard />
       </div>
     </Wrapper>
