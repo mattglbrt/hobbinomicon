@@ -1,6 +1,6 @@
 ---
 title: Warmachine
-tagline: Free and premium multipage themes and UI Kits
+tagline: Fast pace tactical combat
 description: Warmachine is a fast-paced tabletop miniatures game that plunges players into a world of intense tactical combat and strategic planning. Set in the steampunk-inspired Iron Kingdoms, players command powerful warcasters and their mighty warjacks—mechanized constructs armed with devastating weaponry. Each faction boasts its unique abilities, units, and strategies, offering endless variety and replayability. With its rich lore, detailed miniatures, and competitive gameplay, Warmachine provides an exhilarating experience for both seasoned veterans and newcomers to the miniature wargaming scene. Dive into the battlefield and prove your prowess in this dynamic and engaging game of strategy and warfare.
 live: "https://steamforged.com/collections/warmachine"
 logo:
