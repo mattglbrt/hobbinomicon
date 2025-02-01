@@ -20,7 +20,7 @@ details:
     value: "10-50 Minis"
   - label: "Players"
     value: "2-4, 2 is best"
-tags: ["development","astro","tailwind", "productivity" ]
+tags: ["d6", "4x4 Battlefield", "dieselpunk" ]
 ---
 ## Highlights:
 - d6 Combat & resource management system
