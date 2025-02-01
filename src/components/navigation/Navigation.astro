@@ -5,8 +5,11 @@ import Logo from "@/images/logo.svg";
 // Fundations
 import Text from "@/components/fundations/elements/Text.astro";
 import Link from "../fundations/components/Link.astro";
+import Button from "../fundations/components/Button.astro";
 import Wrapper from "@/components/fundations/containers/Wrapper.astro";
 // Components
+import SubmitModal from "../games/SubmitModal.astro";
+import SubscribeModal from "../forms/SubscribeModal.astro";
 // Quick access links
 const links = [
   { href: "https://discord.com/invite/e5hpQZv7gD", text: "Join the Community" },
@@ -55,6 +58,14 @@ const system = [
       {
         href: "https://www.youtube.com/@thehobbinomicon",
         text: "YouTube",
+      },
+      {
+        href: "#",
+        text: "-",
+      },
+      {
+        href: "/infopages/disclaimers",
+        text: "All trademarks and copyrighted material belong to their respective owners. We are an unofficial fan site. All views are our own and do not represent any other organization or company.",
       },
     ],
   },
@@ -275,18 +286,60 @@ const isIndexPage = Astro.url.pathname === "/";
     <!-- Footer -->
     <div class="flex-shrink-0 px-6 py-3 border-t border-base-200">
       <div class="flex items-center gap-2">
-        <Link
-          size="sm"
-          variant="muted"
-          class="w-auto justify-center"
-          href="/forms/signin">Sign in</Link
-        >
-        <Link
-          size="sm"
-          variant="accent"
-          class="w-auto justify-center"
-          href="/forms/signup">Sign up</Link
-        >
+        <div class="mt-8 flex flex-wrap gap-4 justify-center items-center">
+          <div x-data="{ open: false }">
+            <Button
+              x-on:click="open = true"
+              size="sm"
+              variant="default"
+              title="#_"
+              class="justify-center flex items-center gap-1"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="icon icon-tabler icons-tabler-outline icon-tabler-plus size-4"
+                ><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path
+                  d="M12 5l0 14"></path><path d="M5 12l14 0"></path></svg
+              >
+              Request a game
+            </Button>
+            <SubmitModal />
+          </div>
+          <div x-data="{ open: false }">
+            <Button
+              x-on:click="open = true"
+              size="sm"
+              variant="muted"
+              title="#_"
+              class="justify-center flex items-center gap-1"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="icon icon-tabler icons-tabler-outline icon-tabler-mail size-4"
+                ><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path
+                  d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10z"
+                ></path><path d="M3 7l9 6l9 -6"></path></svg
+              >
+              Subscribe
+            </Button>
+            <SubscribeModal />
+          </div>
       </div>
     </div>
   </div>
