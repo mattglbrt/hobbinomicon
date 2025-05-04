@@ -2,25 +2,55 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
 
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+
+  // Find all unique tags across all posts
+  const tags = new Set();
+  for (const post of posts) {
+    post.data.tags.forEach((tag) => tags.add(tag));
+  }
+
+  return Array.from(tags).map((tag) => ({
+    params: { tag },
+  }));
+}
+
 const { tag } = Astro.params;
-const posts = await getCollection("blog");
-const filtered = posts.filter((p) => p.data.tags.map(t => t.toLowerCase().replace(/\s+/g, '-')).includes(tag));
+const posts = await getCollection('blog');
+const taggedPosts = posts.filter((post) => post.data.tags.includes(tag));
 ---
 
-<BaseLayout title={`${tag.replace('-', ' ')} Posts | Hobbinomicon`}>
-  <main class="max-w-6xl mx-auto p-6">
-    <h1 class="text-4xl font-bold mb-6 capitalize">{tag.replace('-', ' ')}</h1>
+<BaseLayout title={`Posts tagged "${tag}" | Hobbinomicon`}>
+  <section class="py-12">
+    <div class="max-w-7xl mx-auto px-4">
+      
+      <!-- Breadcrumbs -->
+      <nav class="text-sm mb-6 text-gray-500">
+        <a href="/" class="hover:text-red-600">Home</a> &rsaquo; 
+        <a href="/blog" class="hover:text-red-600">Blog</a> &rsaquo;
+        <span class="text-gray-900">{tag}</span>
+      </nav>
 
-    <section class="grid md:grid-cols-3 gap-8">
-      {filtered.map((post) => (
-        <a href={`/blog/${post.data.slug}`} class="block border rounded overflow-hidden hover:shadow-lg">
-          <img src={post.data.featuredImage} alt={post.data.title} class="w-full h-48 object-cover" />
-          <div class="p-4">
-            <h3 class="text-xl font-bold">{post.data.title}</h3>
-            <p class="text-sm text-gray-600 mt-2">{post.data.description}</p>
-          </div>
-        </a>
-      ))}
-    </section>
-  </main>
+      <h1 class="text-3xl md:text-4xl font-bold mb-8">Posts tagged with "{tag}"</h1>
+
+      {taggedPosts.length > 0 ? (
+        <div class="grid md:grid-cols-3 gap-6">
+          {taggedPosts.map((post) => (
+            <div class="border rounded-lg overflow-hidden shadow hover:shadow-lg transition p-4">
+              <a href={`/blog/${post.slug}`} class="block">
+                {post.data.featuredImage && (
+                  <img src={post.data.featuredImage} alt={post.data.title} class="rounded mb-4" />
+                )}
+                <h2 class="text-xl font-semibold">{post.data.title}</h2>
+                <p class="text-gray-500 text-sm mt-2">{new Date(post.data.pubDate).toLocaleDateString()}</p>
+              </a>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p>No posts found for this tag.</p>
+      )}
+    </div>
+  </section>
 </BaseLayout>

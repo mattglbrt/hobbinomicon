@@ -1,6 +1,6 @@
 ---
-import BaseLayout from "../../../../layouts/BaseLayout.astro";
-import { supabase } from "../../../../lib/supabase";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { supabase } from "../../../lib/supabase";
 
 export async function getStaticPaths() {
   const { data: games } = await supabase.from("games").select("slug");
