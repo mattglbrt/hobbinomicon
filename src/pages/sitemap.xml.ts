@@ -1,31 +1,39 @@
-import { supabase } from "../../lib/supabase";
-
-export const prerender = true;
+import { getCollection } from "astro:content";
 
 export async function GET() {
-  const baseUrl = "https://hobbinomicon.com";
+  const blogPosts = await getCollection("blog");
 
-  const { data: games } = await supabase.from("games").select("slug");
-  const { data: posts } = await import("astro:content").then(mod => mod.getCollection("blog"));
+  const pages = [
+    { url: "/", lastmod: new Date().toISOString() },
+    { url: "/games", lastmod: new Date().toISOString() },
+    { url: "/stores", lastmod: new Date().toISOString() },
+    { url: "/blog", lastmod: new Date().toISOString() },
+    { url: "/tags", lastmod: new Date().toISOString() },
+    // Add more static pages if needed
+  ];
 
-  let urls = [
-    "", "games", "stores", "blog", "tags"
-  ].map((page) => `${baseUrl}/${page}`);
+  const posts = blogPosts.map((post) => ({
+    url: `/blog/${post.slug}`,
+    lastmod: post.data.pubDate.toISOString(),
+  }));
 
-  if (games) {
-    urls = urls.concat(games.map((game) => `${baseUrl}/games/${game.slug}`));
-  }
+  const allPages = [...pages, ...posts];
 
-  if (posts) {
-    urls = urls.concat(posts.map((post) => `${baseUrl}/blog/${post.slug}`));
-  }
-
-  const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.map((url) => `<url><loc>${url}</loc></url>`).join("\n")}
+  ${allPages
+    .map(
+      (page) => `
+    <url>
+      <loc>${import.meta.env.SITE}${page.url}</loc>
+      <lastmod>${page.lastmod}</lastmod>
+    </url>
+  `
+    )
+    .join("")}
 </urlset>`;
 
-  return new Response(sitemap, {
+  return new Response(xml, {
     headers: {
       "Content-Type": "application/xml",
     },
