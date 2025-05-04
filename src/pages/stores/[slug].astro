@@ -1,0 +1,101 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { supabase } from "../../lib/supabase";
+
+// Get the slug from URL
+const { slug } = Astro.params;
+
+// Fetch the store data
+const { data: store, error } = await supabase
+  .from('stores')
+  .select(`
+    id,
+    name,
+    description,
+    address,
+    city,
+    state,
+    country,
+    website,
+    email,
+    phone,
+    discord,
+    facebook,
+    instagram,
+    tags
+  `)
+  .eq('slug', slug)
+  .single();
+---
+
+<BaseLayout title={store ? `${store.name} | Hobbinomicon` : "Store Not Found"}>
+  {error && (
+    <div class="text-center mt-20 text-red-600">
+      <h1 class="text-3xl font-bold">Store Not Found</h1>
+      <p class="mt-4">We couldn't find a store with the slug "{slug}".</p>
+    </div>
+  )}
+
+  {store && (
+    <main class="max-w-4xl mx-auto py-16 px-4">
+      <h1 class="text-4xl font-bold text-primary mb-4">{store.name}</h1>
+
+      <div class="space-y-4 text-gray-700">
+
+        {store.description && (
+          <p>{store.description}</p>
+        )}
+
+        <div class="space-y-2 text-sm">
+          {store.address && (
+            <p><strong>Address:</strong> {store.address}</p>
+          )}
+          {(store.city || store.state || store.country) && (
+            <p>
+              <strong>Location:</strong> 
+              {store.city && ` ${store.city},`}
+              {store.state && ` ${store.state},`}
+              {store.country}
+            </p>
+          )}
+          {store.phone && (
+            <p><strong>Phone:</strong> {store.phone}</p>
+          )}
+          {store.email && (
+            <p><strong>Email:</strong> <a href={`mailto:${store.email}`} class="text-blue-600 hover:underline">{store.email}</a></p>
+          )}
+          {store.website && (
+            <p><strong>Website:</strong> <a href={store.website} target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">{store.website}</a></p>
+          )}
+        </div>
+
+        {store.tags && store.tags.length > 0 && (
+          <div class="flex flex-wrap gap-2 mt-4">
+            {store.tags.map(tag => (
+              <span class="text-xs bg-green-100 text-green-700 px-3 py-1 rounded-full">{tag}</span>
+            ))}
+          </div>
+        )}
+
+        <div class="mt-8 flex flex-wrap gap-4">
+          {store.discord && (
+            <a href={store.discord} target="_blank" rel="noopener noreferrer" class="text-white bg-indigo-500 hover:bg-indigo-600 px-4 py-2 rounded">
+              Join Discord
+            </a>
+          )}
+          {store.facebook && (
+            <a href={store.facebook} target="_blank" rel="noopener noreferrer" class="text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">
+              Facebook Page
+            </a>
+          )}
+          {store.instagram && (
+            <a href={store.instagram} target="_blank" rel="noopener noreferrer" class="text-white bg-pink-500 hover:bg-pink-600 px-4 py-2 rounded">
+              Instagram
+            </a>
+          )}
+        </div>
+
+      </div>
+    </main>
+  )}
+</BaseLayout>

@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Optional: You can also add small global tweaks here */
+
+html, body {
+  @apply bg-white text-gray-800 font-sans;
+}
+
+/* Links */
+a {
+  @apply text-blue-600 hover:text-blue-800 transition-colors duration-200;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  @apply font-bold text-gray-900;
+}
+
+/* Buttons (optional base styles) */
+button {
+  @apply px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 transition-colors duration-200;
+}

@@ -1,0 +1,46 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { supabase } from "../../lib/supabase";
+
+// Fetch all stores
+const { data: stores, error } = await supabase
+  .from('stores')
+  .select('id, name, slug, city, state, country, tags')
+  .order('name', { ascending: true });
+---
+
+<BaseLayout title="Store Directory | Hobbinomicon">
+  <section class="py-16 bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4">
+      <h1 class="text-4xl font-bold text-center mb-10">Find a Local Game Store</h1>
+
+      {error && (
+        <p class="text-center text-red-600">Failed to load stores. Please try again later.</p>
+      )}
+
+      {stores && stores.length > 0 ? (
+        <div class="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {stores.map(store => (
+            <a href={`/stores/${store.slug}`} class="block bg-white rounded-lg shadow hover:shadow-lg transition p-6">
+              <h2 class="text-xl font-semibold mb-2">{store.name}</h2>
+              <p class="text-sm text-gray-500 mb-1">
+                {store.city && `${store.city}, `}
+                {store.state && `${store.state}, `}
+                {store.country}
+              </p>
+              {store.tags && store.tags.length > 0 && (
+                <div class="flex flex-wrap gap-2 mt-3">
+                  {store.tags.map(tag => (
+                    <span class="text-xs bg-green-100 text-green-700 px-3 py-1 rounded-full">{tag}</span>
+                  ))}
+                </div>
+              )}
+            </a>
+          ))}
+        </div>
+      ) : (
+        <p class="text-center text-gray-500">No stores found. Add some stores to your database!</p>
+      )}
+    </div>
+  </section>
+</BaseLayout>
