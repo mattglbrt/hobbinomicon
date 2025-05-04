@@ -1,81 +1,63 @@
 ---
-import "../styles/global.css";
-const { title = "Hobbinomicon" } = Astro.props;
+const { title } = Astro.props;
 ---
 
-<!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>{Astro.props.title ?? 'Hobbinomicon'}</title>
-<meta name="description" content="Discover tabletop wargames, RPGs, local stores, and more at Hobbinomicon. Connect with the gaming community and find your next adventure.">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <title>{title ?? 'Hobbinomicon - Discover Tabletop Games & RPGs'}</title>
+    <meta name="description" content="Find new tabletop games, RPGs, and local stores to fuel your next adventure. Hobbinomicon connects gamers with games, places to play, and the community." />
+
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://your-site-domain.com/" />
+    <meta property="og:title" content="Hobbinomicon - Your Tabletop Adventure Awaits" />
+    <meta property="og:description" content="Find tabletop games, RPGs, and local stores to fuel your next adventure." />
+    <meta property="og:image" content="/images/social-share.jpg" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://your-site-domain.com/" />
+    <meta name="twitter:title" content="Hobbinomicon - Your Tabletop Adventure Awaits" />
+    <meta name="twitter:description" content="Find tabletop games, RPGs, and local stores to fuel your next adventure." />
+    <meta name="twitter:image" content="/images/social-share.jpg" />
+
+    <!-- Tailwind base styles -->
+    <link href="/global.css" rel="stylesheet" />
+
+    <!-- Slot for extra head stuff (optional per page) -->
     <slot name="head" />
-
-  <script type="module" src="/src/scripts/autoAuth.js"></script>
-  <script type="module">
-    if (import.meta.env.SSR === false) {
-      const isAdminPage = window.location.pathname.startsWith('/admin');
-      const authToken = localStorage.getItem('admin-authenticated');
-  
-      if (isAdminPage && !authToken) {
-        window.location.href = '/admin/login';
-      }
-    }
-  </script>
   </head>
-  <body class="flex flex-col min-h-screen">
 
-    <!-- Navigation -->
-    <nav class="bg-blue-600">
-      <div class="container mx-auto flex justify-between items-center px-4 py-4">
-        <!-- Logo (white text) -->
-        <a href="/" class="text-2xl font-heading font-bold text-white">Hobbinomicon</a>
+  <body class="min-h-screen flex flex-col">
 
-        <!-- Desktop Menu (white text) -->
-        <div class="hidden md:flex space-x-8">
-          <a href="/" class="text-white hover:underline">Home</a>
-          <a href="/games" class="text-white hover:underline">Games</a>
-          <a href="/stores" class="text-white hover:underline">Stores</a>
-        </div>
+    <header class="bg-primary text-white p-4 flex justify-between items-center">
+      <a href="/" class="text-2xl font-bold">Hobbinomicon</a>
+      <nav class="hidden md:flex space-x-6">
+        <a href="/games" class="hover:underline">Games</a>
+        <a href="/stores" class="hover:underline">Stores</a>
+      </nav>
+    </header>
 
-        <!-- Mobile Menu Button -->
-        <div class="md:hidden">
-          <button id="menu-button" class="focus:outline-none text-white">
-            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
-        </div>
-      </div>
+    <slot />
 
-      <!-- Mobile Menu Dropdown -->
-      <div id="mobile-menu" class="hidden md:hidden bg-blue-700 px-4 py-2 space-y-2">
-        <a href="/" class="block text-white hover:underline">Home</a>
-        <a href="/games" class="block text-white hover:underline">Games</a>
-        <a href="/stores" class="block text-white hover:underline">Stores</a>
-      </div>
-    </nav>
-
-    <!-- Main Content -->
-    <main class="flex-1">
-      <slot />
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-gray-100 text-center text-gray-600 py-6 text-sm">
-      &copy; {new Date().getFullYear()} Hobbinomicon. All rights reserved.
+    <footer class="bg-gray-800 text-white text-center py-6 mt-auto">
+      <p>&copy; {new Date().getFullYear()} Hobbinomicon. All rights reserved.</p>
     </footer>
 
-    <!-- Small JavaScript to toggle the mobile menu -->
-    <script>
-      const menuButton = document.getElementById('menu-button');
-      const mobileMenu = document.getElementById('mobile-menu');
-
-      menuButton.addEventListener('click', () => {
-        mobileMenu.classList.toggle('hidden');
-      });
+    <!-- Tiny Admin Auth Protection -->
+    <script type="module">
+      if (import.meta.env.SSR === false) {
+        const path = window.location.pathname;
+        if (path.startsWith('/admin') && !localStorage.getItem('admin-authenticated')) {
+          window.location.href = '/admin/login';
+        }
+      }
     </script>
 
   </body>
