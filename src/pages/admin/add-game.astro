@@ -1,178 +1,133 @@
 ---
-import { supabase } from "../../lib/supabase";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { useState } from "astro/jsx-runtime";
-
-const [status, setStatus] = useState(null);
-const [slug, setSlug] = useState("");
-const [tags, setTags] = useState([]);
-const [tagInput, setTagInput] = useState("");
-const [coverImageFile, setCoverImageFile] = useState(null);
-
-function slugify(text) {
-  return text
-    .toString()
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9\s-]/g, '') 
-    .replace(/\s+/g, '-') 
-    .replace(/-+/g, '-');
-}
-
-async function handleSubmit(e) {
-  e.preventDefault();
-
-  const formData = new FormData(e.target);
-
-  // 1. Upload cover image if selected
-  let coverImageUrl = null;
-  if (coverImageFile) {
-    const fileExt = coverImageFile.name.split('.').pop();
-    const fileName = `${slug}.${fileExt}`;
-    const filePath = `game-covers/${fileName}`;
-
-    const { data: uploadData, error: uploadError } = await supabase
-      .storage
-      .from('game-covers')
-      .upload(filePath, coverImageFile, { upsert: true });
-
-    if (uploadError) {
-      console.error('Error uploading image:', uploadError);
-    } else {
-      const { publicURL } = supabase
-        .storage
-        .from('game-covers')
-        .getPublicUrl(filePath).data;
-
-      coverImageUrl = publicURL;
-    }
-  }
-
-  // 2. Insert the new game
-  const newGame = {
-    title: formData.get('title'),
-    slug: formData.get('slug'),
-    description: formData.get('description'),
-    publication_year: formData.get('publication_year') ? parseInt(formData.get('publication_year')) : null,
-    min_players: formData.get('min_players') ? parseInt(formData.get('min_players')) : null,
-    max_players: formData.get('max_players') ? parseInt(formData.get('max_players')) : null,
-    play_time: formData.get('play_time'),
-    age_range: formData.get('age_range'),
-    official_website: formData.get('official_website'),
-    rules_url: formData.get('rules_url'),
-    tags: tags,
-    cover_image_url: coverImageUrl,
-  };
-
-  const { data, error } = await supabase
-    .from('games')
-    .insert([newGame]);
-
-  if (error) {
-    console.error('Error adding game:', error);
-    setStatus('error');
-  } else {
-    console.log('Game added:', data);
-    setStatus('success');
-    e.target.reset();
-    setSlug(""); 
-    setTags([]);
-    setTagInput("");
-    setCoverImageFile(null);
-  }
-}
-
-function handleTagInput(e) {
-  if (e.key === 'Enter' && tagInput.trim() !== '') {
-    e.preventDefault();
-    if (!tags.includes(tagInput.trim())) {
-      setTags([...tags, tagInput.trim()]);
-    }
-    setTagInput('');
-  }
-}
-
-function removeTag(tagToRemove) {
-  setTags(tags.filter(tag => tag !== tagToRemove));
-}
+import { supabase } from "../../lib/supabase";
+import "../../styles/global.css";
 ---
 
-<BaseLayout title="Add New Game | Admin">
-  <main class="max-w-2xl mx-auto py-10 px-4">
+<BaseLayout title="Add New Game">
+  <main class="max-w-2xl mx-auto px-4 py-10">
     <h1 class="text-3xl font-bold mb-6 text-center">Add New Game</h1>
 
-    {status === 'success' && (
-      <div class="mb-6 p-4 text-green-700 bg-green-100 rounded">
-        Game added successfully!
-      </div>
-    )}
+    <div id="status-message" class="text-center text-sm mb-6"></div>
 
-    {status === 'error' && (
-      <div class="mb-6 p-4 text-red-700 bg-red-100 rounded">
-        Error adding game. Please check console.
-      </div>
-    )}
-
-    <form onSubmit={handleSubmit} class="space-y-6">
+    <form id="add-game-form" class="space-y-6">
       <input 
         name="title" 
         type="text" 
         placeholder="Title" 
         required 
-        class="w-full border rounded px-3 py-2"
-        onInput={(e) => setSlug(slugify(e.target.value))}
+        class="w-full border rounded px-3 py-2" 
       />
-      <input 
-        name="slug" 
-        type="text" 
-        placeholder="Slug" 
-        required 
-        value={slug}
-        onInput={(e) => setSlug(e.target.value)}
-        class="w-full border rounded px-3 py-2"
-      />
-      <textarea name="description" placeholder="Description" required class="w-full border rounded px-3 py-2"></textarea>
-      <input name="publication_year" type="number" placeholder="Publication Year" class="w-full border rounded px-3 py-2" />
-      <input name="min_players" type="number" placeholder="Min Players" class="w-full border rounded px-3 py-2" />
-      <input name="max_players" type="number" placeholder="Max Players" class="w-full border rounded px-3 py-2" />
-      <input name="play_time" type="text" placeholder="Play Time" class="w-full border rounded px-3 py-2" />
-      <input name="age_range" type="text" placeholder="Age Range" class="w-full border rounded px-3 py-2" />
-      <input name="official_website" type="url" placeholder="Official Website" class="w-full border rounded px-3 py-2" />
-      <input name="rules_url" type="url" placeholder="Rules URL" class="w-full border rounded px-3 py-2" />
 
-      <div>
-        <label class="block mb-2 font-semibold">Tags (press Enter to add):</label>
-        <div class="flex flex-wrap gap-2 mb-2">
-          {tags.map(tag => (
-            <span class="flex items-center bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs">
-              {tag}
-              <button type="button" onClick={() => removeTag(tag)} class="ml-2 font-bold">×</button>
-            </span>
-          ))}
-        </div>
+      <textarea
+        name="description"
+        placeholder="Description"
+        required
+        class="w-full border rounded px-3 py-2"
+      ></textarea>
+
+      <input
+        name="publication_year"
+        type="number"
+        placeholder="Publication Year"
+        class="w-full border rounded px-3 py-2"
+      />
+
+      <div class="flex gap-4">
         <input
-          type="text"
-          placeholder="Type a tag and press Enter"
-          value={tagInput}
-          onInput={(e) => setTagInput(e.target.value)}
-          onKeyDown={handleTagInput}
-          class="w-full border rounded px-3 py-2"
+          name="min_players"
+          type="number"
+          placeholder="Min Players"
+          class="flex-1 border rounded px-3 py-2"
+        />
+        <input
+          name="max_players"
+          type="number"
+          placeholder="Max Players"
+          class="flex-1 border rounded px-3 py-2"
         />
       </div>
 
-      <div>
-        <label class="block mb-2 font-semibold">Cover Image:</label>
-        <input 
-          type="file" 
-          accept="image/*" 
-          onChange={(e) => setCoverImageFile(e.target.files[0])}
-          class="w-full border rounded px-3 py-2"
-        />
-      </div>
+      <input
+        name="play_time"
+        type="text"
+        placeholder="Play Time (e.g., 60-90 mins)"
+        class="w-full border rounded px-3 py-2"
+      />
+
+      <input
+        name="age_range"
+        type="text"
+        placeholder="Age Range (e.g., 14+)"
+        class="w-full border rounded px-3 py-2"
+      />
+
+      <input
+        name="official_website"
+        type="url"
+        placeholder="Official Website"
+        class="w-full border rounded px-3 py-2"
+      />
+
+      <input
+        name="rules_url"
+        type="url"
+        placeholder="Rules URL"
+        class="w-full border rounded px-3 py-2"
+      />
+
+      <input
+        name="tags"
+        type="text"
+        placeholder="Comma separated tags (e.g., Wargame, Fantasy)"
+        class="w-full border rounded px-3 py-2"
+      />
 
       <button type="submit" class="w-full bg-primary text-white font-bold py-2 px-4 rounded hover:bg-primary-dark">
         Add Game
       </button>
     </form>
   </main>
+
+  <script type="module">
+    import { supabase } from "../../lib/supabase";
+
+    const form = document.getElementById('add-game-form');
+    const statusMessage = document.getElementById('status-message');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+
+      const newGame = {
+        title: formData.get('title'),
+        description: formData.get('description'),
+        publication_year: formData.get('publication_year') ? parseInt(formData.get('publication_year')) : null,
+        min_players: formData.get('min_players') ? parseInt(formData.get('min_players')) : null,
+        max_players: formData.get('max_players') ? parseInt(formData.get('max_players')) : null,
+        play_time: formData.get('play_time'),
+        age_range: formData.get('age_range'),
+        official_website: formData.get('official_website'),
+        rules_url: formData.get('rules_url'),
+        tags: formData.get('tags') ? formData.get('tags').split(',').map(tag => tag.trim()) : [],
+      };
+
+      const { error } = await supabase
+        .from('games')
+        .insert([newGame]);
+
+      if (error) {
+        console.error('Error adding game:', error.message);
+        statusMessage.textContent = "❌ Error adding game!";
+        statusMessage.classList.add('text-red-600');
+        statusMessage.classList.remove('text-green-600');
+      } else {
+        statusMessage.textContent = "✅ Game added successfully!";
+        statusMessage.classList.add('text-green-600');
+        statusMessage.classList.remove('text-red-600');
+        form.reset();
+      }
+    });
+  </script>
 </BaseLayout>

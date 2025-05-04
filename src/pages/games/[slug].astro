@@ -3,6 +3,21 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import { supabase } from "../../lib/supabase";
 import "../../styles/global.css";
 
+export async function getStaticPaths() {
+  const { data: games, error } = await supabase
+    .from('games')
+    .select('slug');
+
+  if (error) {
+    console.error('Error fetching game slugs:', error.message);
+    return [];
+  }
+
+  return games.map(game => ({
+    params: { slug: game.slug },
+  }));
+}
+
 const { slug } = Astro.params;
 
 const { data: game, error } = await supabase
@@ -16,59 +31,33 @@ if (error) {
 }
 ---
 
-<BaseLayout title={game?.title || "Game"}>
-  <main class="max-w-5xl mx-auto px-4">
-    {game?.cover_image_url && (
-      <div class="relative w-full h-64 md:h-96 overflow-hidden mb-10">
-        <img 
-          src={game.cover_image_url} 
-          alt={game.title}
-          class="w-full h-full object-cover object-center"
-        />
-        <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
-          <h1 class="text-3xl md:text-5xl font-bold text-white">{game.title}</h1>
+<BaseLayout title={game?.title || 'Game'}>
+  <main class="max-w-4xl mx-auto p-6">
+    {game ? (
+      <>
+        <h1 class="text-4xl font-bold mb-4">{game.title}</h1>
+        <p class="mb-6">{game.description}</p>
+
+        <div class="grid grid-cols-2 gap-6">
+          <div><strong>Players:</strong> {game.min_players}–{game.max_players}</div>
+          <div><strong>Play Time:</strong> {game.play_time}</div>
+          <div><strong>Age:</strong> {game.age_range}</div>
+          <div><strong>Published:</strong> {game.publication_year}</div>
         </div>
-      </div>
-    )}
 
-    {!game?.cover_image_url && (
-      <h1 class="text-4xl font-bold text-center mb-6">{game.title}</h1>
-    )}
+        <div class="mt-6">
+          <a href={game.official_website} target="_blank" class="text-primary hover:underline">Official Website</a><br/>
+          <a href={game.rules_url} target="_blank" class="text-primary hover:underline">Rules</a>
+        </div>
 
-    <section class="space-y-6 mb-10">
-      <p class="text-gray-700 text-lg">{game.description}</p>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-gray-600">
-        {game.publication_year && <div><strong>Publication Year:</strong> {game.publication_year}</div>}
-        {(game.min_players || game.max_players) && (
-          <div>
-            <strong>Players:</strong> {game.min_players || '?'}–{game.max_players || '?'}
+        {game.tags?.length > 0 && (
+          <div class="mt-6">
+            <strong>Tags:</strong> {game.tags.join(', ')}
           </div>
         )}
-        {game.play_time && <div><strong>Play Time:</strong> {game.play_time}</div>}
-        {game.age_range && <div><strong>Age Range:</strong> {game.age_range}</div>}
-      </div>
-
-      {game.tags && game.tags.length > 0 && (
-        <div class="flex flex-wrap gap-2 mt-4">
-          {game.tags.map(tag => (
-            <span class="bg-primary-light text-primary-dark text-xs px-3 py-1 rounded-full">{tag}</span>
-          ))}
-        </div>
-      )}
-
-      <div class="mt-8 space-x-4">
-        {game.official_website && (
-          <a href={game.official_website} target="_blank" rel="noopener" class="inline-block bg-primary text-white px-5 py-2 rounded hover:bg-primary-dark">
-            Official Website
-          </a>
-        )}
-        {game.rules_url && (
-          <a href={game.rules_url} target="_blank" rel="noopener" class="inline-block bg-gray-800 text-white px-5 py-2 rounded hover:bg-gray-900">
-            View Rules
-          </a>
-        )}
-      </div>
-    </section>
+      </>
+    ) : (
+      <p>Game not found.</p>
+    )}
   </main>
 </BaseLayout>

@@ -35,10 +35,10 @@ if (error) {
   <main class="max-w-2xl mx-auto px-4 py-10">
     <h1 class="text-3xl font-bold mb-6 text-center">Edit Game</h1>
 
-    <div id="status-message" class="text-center mb-6 text-sm"></div>
+    <div id="status-message" class="text-center text-sm mb-6"></div>
 
     {game ? (
-      <form id="edit-form" class="space-y-6">
+      <form id="edit-game-form" class="space-y-6">
         <input
           name="title"
           type="text"
@@ -47,9 +47,81 @@ if (error) {
           value={game.title}
           class="w-full border rounded px-3 py-2"
         />
-        <!-- Add more form fields like description, play time, etc here -->
+
+        <textarea
+          name="description"
+          placeholder="Description"
+          required
+          class="w-full border rounded px-3 py-2"
+        >{game.description}</textarea>
+
+        <input
+          name="publication_year"
+          type="number"
+          placeholder="Publication Year"
+          value={game.publication_year ?? ''}
+          class="w-full border rounded px-3 py-2"
+        />
+
+        <div class="flex gap-4">
+          <input
+            name="min_players"
+            type="number"
+            placeholder="Min Players"
+            value={game.min_players ?? ''}
+            class="flex-1 border rounded px-3 py-2"
+          />
+          <input
+            name="max_players"
+            type="number"
+            placeholder="Max Players"
+            value={game.max_players ?? ''}
+            class="flex-1 border rounded px-3 py-2"
+          />
+        </div>
+
+        <input
+          name="play_time"
+          type="text"
+          placeholder="Play Time"
+          value={game.play_time ?? ''}
+          class="w-full border rounded px-3 py-2"
+        />
+
+        <input
+          name="age_range"
+          type="text"
+          placeholder="Age Range"
+          value={game.age_range ?? ''}
+          class="w-full border rounded px-3 py-2"
+        />
+
+        <input
+          name="official_website"
+          type="url"
+          placeholder="Official Website"
+          value={game.official_website ?? ''}
+          class="w-full border rounded px-3 py-2"
+        />
+
+        <input
+          name="rules_url"
+          type="url"
+          placeholder="Rules URL"
+          value={game.rules_url ?? ''}
+          class="w-full border rounded px-3 py-2"
+        />
+
+        <input
+          name="tags"
+          type="text"
+          placeholder="Comma separated tags"
+          value={game.tags?.join(', ') ?? ''}
+          class="w-full border rounded px-3 py-2"
+        />
+
         <button type="submit" class="w-full bg-primary text-white font-bold py-2 px-4 rounded hover:bg-primary-dark">
-          Update Game
+          Save Changes
         </button>
       </form>
     ) : (
@@ -60,36 +132,46 @@ if (error) {
   <script type="module">
     import { supabase } from "../../../lib/supabase";
 
-    const form = document.getElementById('edit-form');
+    const form = document.getElementById('edit-game-form');
     const statusMessage = document.getElementById('status-message');
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
+    if (form) {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-      const formData = new FormData(form);
+        const formData = new FormData(form);
 
-      const updatedGame = {
-        title: formData.get('title'),
-        // Add other fields here as needed
-      };
+        const updatedGame = {
+          title: formData.get('title'),
+          description: formData.get('description'),
+          publication_year: formData.get('publication_year') ? parseInt(formData.get('publication_year')) : null,
+          min_players: formData.get('min_players') ? parseInt(formData.get('min_players')) : null,
+          max_players: formData.get('max_players') ? parseInt(formData.get('max_players')) : null,
+          play_time: formData.get('play_time'),
+          age_range: formData.get('age_range'),
+          official_website: formData.get('official_website'),
+          rules_url: formData.get('rules_url'),
+          tags: formData.get('tags') ? formData.get('tags').split(',').map(tag => tag.trim()) : [],
+        };
 
-      const slug = window.location.pathname.split("/").pop();
+        const slug = window.location.pathname.split("/").pop();
 
-      const { error } = await supabase
-        .from('games')
-        .update(updatedGame)
-        .eq('slug', slug);
+        const { error } = await supabase
+          .from('games')
+          .update(updatedGame)
+          .eq('slug', slug);
 
-      if (error) {
-        console.error('Error updating game:', error);
-        statusMessage.textContent = "❌ Error updating game. Check console.";
-        statusMessage.classList.add('text-red-600');
-        statusMessage.classList.remove('text-green-600');
-      } else {
-        statusMessage.textContent = "✅ Game updated successfully!";
-        statusMessage.classList.add('text-green-600');
-        statusMessage.classList.remove('text-red-600');
-      }
-    });
+        if (error) {
+          console.error('Error updating game:', error);
+          statusMessage.textContent = "❌ Error saving changes.";
+          statusMessage.classList.add('text-red-600');
+          statusMessage.classList.remove('text-green-600');
+        } else {
+          statusMessage.textContent = "✅ Game updated successfully!";
+          statusMessage.classList.add('text-green-600');
+          statusMessage.classList.remove('text-red-600');
+        }
+      });
+    }
   </script>
 </BaseLayout>
