@@ -1,0 +1,36 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import { getEntryBySlug } from "astro:content";
+
+export async function getStaticPaths() {
+  const { entries } = await import.meta.glob("../../content/blog/*.md", { eager: true });
+  return entries.map((entry) => ({
+    params: { slug: entry.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+const post = await getEntryBySlug("blog", slug);
+
+if (!post) {
+  throw new Error(`Post not found: ${slug}`);
+}
+
+const breadcrumbs = [
+  { title: "Home", href: "/" },
+  { title: "Blog", href: "/blog" },
+  { title: post.data.title },
+];
+---
+<BaseLayout>
+  <section class="py-8">
+    <div class="max-w-3xl mx-auto px-4">
+      <Breadcrumbs items={breadcrumbs} />
+      <h1 class="text-4xl font-bold mb-6">{post.data.title}</h1>
+      <article class="prose prose-lg">
+        {post.body}
+      </article>
+    </div>
+  </section>
+</BaseLayout>

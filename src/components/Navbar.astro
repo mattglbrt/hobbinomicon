@@ -1,0 +1,34 @@
+---
+const isDark = Astro.request.url.pathname !== "/" && Astro.request.url.pathname !== "/index.html";
+---
+
+<nav id="site-header" class={`fixed top-0 w-full z-50 transition-transform duration-300 ${isDark ? "bg-white shadow-md" : "bg-transparent"}`}>
+  <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+    <a href="/">
+      <img src={isDark ? "/images/hobbinomicon.svg" : "/images/hobbinomicon-logo-red.svg"} alt="Hobbinomicon Logo" class="h-10" />
+    </a>
+    <ul class="hidden md:flex space-x-8 text-lg font-medium">
+      <li><a href="/games" class="hover:text-red-600 transition">Games</a></li>
+      <li><a href="/stores" class="hover:text-red-600 transition">Stores</a></li>
+      <li><a href="/blog" class="hover:text-red-600 transition">Blog</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- Navbar Hide/Show on Scroll Script -->
+<script type="module" is:inline>
+  let lastScrollTop = 0;
+  const header = document.getElementById('site-header');
+
+  window.addEventListener('scroll', () => {
+    const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+    if (currentScroll > lastScrollTop) {
+      // Scrolling down
+      header.classList.add('translate-y-[-100%]');
+    } else {
+      // Scrolling up
+      header.classList.remove('translate-y-[-100%]');
+    }
+    lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+  });
+</script>

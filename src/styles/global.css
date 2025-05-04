@@ -2,23 +2,42 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Optional: You can also add small global tweaks here */
-
+/* Custom base styles */
 html, body {
-  @apply bg-white text-gray-800 font-sans;
+  @apply bg-white text-gray-800 leading-relaxed font-sans;
 }
 
 /* Links */
 a {
-  @apply text-blue-600 hover:text-blue-800 transition-colors duration-200;
+  @apply text-red-600 hover:underline transition;
 }
 
 /* Headings */
-h1, h2, h3, h4, h5, h6 {
+h1, h2, h3, h4 {
   @apply font-bold text-gray-900;
 }
 
-/* Buttons (optional base styles) */
-button {
-  @apply px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 transition-colors duration-200;
+/* Button (optional future use) */
+.button {
+  @apply inline-block px-6 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition;
+}
+
+/* Card styles */
+.card {
+  @apply rounded-lg shadow-md bg-white overflow-hidden hover:shadow-xl transition-all;
+}
+
+/* Image rounding */
+img {
+  @apply rounded-md;
+}
+
+/* Navbar */
+nav {
+  @apply bg-white bg-opacity-90 backdrop-blur-md;
+}
+
+/* Section default padding */
+section {
+  @apply py-12;
 }

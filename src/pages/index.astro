@@ -1,47 +1,57 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { supabase } from "../lib/supabase";
+import HeroBanner from "../components/HeroBanner.astro";
+import GameCard from "../components/GameCard.astro";
+import BlogPostCard from "../components/BlogPostCard.astro";
+import FeaturedBanner from "../components/FeaturedBanner.astro";
+import CategorySection from "../components/CategorySection.astro";
 
-const { data: games } = await supabase
-  .from('games')
-  .select('id, title, slug, tags, official_website')
-  .order('created_at', { ascending: false })
-  .limit(6);
+import { supabase } from "../lib/supabase";
+import { getCollection } from "astro:content";
+
+const { data: games, error } = await supabase.from("games").select("*");
+
+const posts = await getCollection("blog");
+const newsPosts = posts.filter((post) => post.data.category === "News").slice(0, 6);
+
+// Pick featured game manually for now
+const featuredGame = games?.find(game => game.slug === "warmachine") || games?.[0] || null;
 ---
 
-<BaseLayout title="Home | Hobbinomicon">
-  <!-- Hero Section -->
-  <section class="bg-blue-600 text-white py-20 text-center">
-    <div class="container mx-auto px-4">
-      <h1 class="text-5xl font-bold mb-4">Find Your Next Adventure</h1>
-      <p class="text-lg text-blue-100">Discover tabletop wargames, RPGs, and local stores — all in one place.</p>
+<BaseLayout>
+  <HeroBanner />
+
+  <section class="py-12">
+    <div class="max-w-7xl mx-auto px-4">
+      <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center">Recently Updated Games</h2>
+      <div class="grid md:grid-cols-3 gap-8">
+        {games?.length > 0 ? (
+          games.slice(0, 3).map((game) => (
+            <GameCard game={game} />
+          ))
+        ) : (
+          <p class="text-center text-gray-500">No games found.</p>
+        )}
+      </div>
     </div>
   </section>
 
-  <!-- Featured Games -->
-  <section class="py-16 bg-gray-100">
-    <div class="container mx-auto px-4">
-      <h2 class="text-3xl font-bold mb-8 text-center">Featured Games</h2>
-
-      {games && games.length > 0 ? (
-        <div class="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-          {games.map(game => (
-            <a href={`/games/${game.slug}`} class="block bg-white rounded-lg shadow hover:shadow-lg transition p-6">
-              <h3 class="text-2xl font-semibold mb-2">{game.title}</h3>
-              <div class="flex flex-wrap gap-2 mb-4">
-                {game.tags && game.tags.map(tag => (
-                  <span class="text-xs bg-blue-100 text-blue-700 rounded-full px-3 py-1">{tag}</span>
-                ))}
-              </div>
-              {game.official_website && (
-                <p class="text-sm text-blue-600 underline">Official Website</p>
-              )}
-            </a>
-          ))}
-        </div>
-      ) : (
-        <p class="text-center text-gray-500">No games found. Add some games to your database!</p>
-      )}
+  <section class="py-12 bg-gray-100">
+    <div class="max-w-7xl mx-auto px-4">
+      <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center">Latest News</h2>
+      <div class="grid md:grid-cols-3 gap-8">
+        {newsPosts.map((post) => (
+          <BlogPostCard post={post} />
+        ))}
+      </div>
     </div>
   </section>
+
+  {featuredGame && (
+    <FeaturedBanner game={featuredGame} />
+  )}
+
+  <CategorySection title="Guides" posts={posts.filter((post) => post.data.category === "Guides").slice(0, 6)} />
+  <CategorySection title="Reviews" posts={posts.filter((post) => post.data.category === "Reviews").slice(0, 6)} />
+  <CategorySection title="Hobby Log" posts={posts.filter((post) => post.data.category === "Hobby Log").slice(0, 6)} />
 </BaseLayout>

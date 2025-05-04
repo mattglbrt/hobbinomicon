@@ -1,10 +1,11 @@
-import { defineConfig } from 'astro/config';
+import { defineConfig } from "astro/config";
 import tailwind from "@astrojs/tailwind";
-import { onRequest } from "./src/middleware/auth";
+import sitemap from "@astrojs/sitemap";
 
 export default defineConfig({
-  integrations: [tailwind()],
-  middleware: {
-    onRequest,
-  },
+  site: "https://hobbinomicon.com", // <- Your real or Netlify site URL here!
+  integrations: [
+    tailwind(),
+    sitemap(),
+  ],
 });

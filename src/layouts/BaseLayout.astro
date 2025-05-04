@@ -1,64 +1,63 @@
 ---
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+import "../styles/global.css";
+
 const { title } = Astro.props;
 ---
 
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
+    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title ? `${title} | Hobbinomicon` : "Hobbinomicon"}</title>
+    <meta name="description" content="Discover tabletop wargames, RPGs, miniatures, local stores, guides, and more at Hobbinomicon." />
 
-    <title>{title ?? 'Hobbinomicon - Discover Tabletop Games & RPGs'}</title>
-    <meta name="description" content="Find new tabletop games, RPGs, and local stores to fuel your next adventure. Hobbinomicon connects gamers with games, places to play, and the community." />
-
-    <!-- Favicon -->
-    <link rel="icon" href="/favicon.ico" />
-
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://your-site-domain.com/" />
-    <meta property="og:title" content="Hobbinomicon - Your Tabletop Adventure Awaits" />
-    <meta property="og:description" content="Find tabletop games, RPGs, and local stores to fuel your next adventure." />
+    <!-- Social Sharing Meta -->
+    <meta property="og:title" content={title ? `${title} | Hobbinomicon` : "Hobbinomicon"} />
+    <meta property="og:description" content="Discover tabletop wargames, RPGs, miniatures, local stores, guides, and more at Hobbinomicon." />
     <meta property="og:image" content="/images/social-share.jpg" />
-
-    <!-- Twitter -->
+    <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content="https://your-site-domain.com/" />
-    <meta name="twitter:title" content="Hobbinomicon - Your Tabletop Adventure Awaits" />
-    <meta name="twitter:description" content="Find tabletop games, RPGs, and local stores to fuel your next adventure." />
-    <meta name="twitter:image" content="/images/social-share.jpg" />
 
-    <!-- Tailwind base styles -->
-    <link href="/global.css" rel="stylesheet" />
-
-    <!-- Slot for extra head stuff (optional per page) -->
-    <slot name="head" />
+    <link rel="icon" type="image/svg+xml" href="/images/hobbinomicon.svg" />
   </head>
 
-  <body class="min-h-screen flex flex-col">
+  <body class="relative">
+    <Navbar />
 
-    <header class="bg-primary text-white p-4 flex justify-between items-center">
-      <a href="/" class="text-2xl font-bold">Hobbinomicon</a>
-      <nav class="hidden md:flex space-x-6">
-        <a href="/games" class="hover:underline">Games</a>
-        <a href="/stores" class="hover:underline">Stores</a>
-      </nav>
-    </header>
+    <main class="pt-20">
+      <slot />
+    </main>
 
-    <slot />
+    <Footer />
 
-    <footer class="bg-gray-800 text-white text-center py-6 mt-auto">
-      <p>&copy; {new Date().getFullYear()} Hobbinomicon. All rights reserved.</p>
-    </footer>
+    <script>
+      // Navbar hide/show on scroll
+      let lastScroll = 0;
+      const navbar = document.querySelector('nav');
 
-    <!-- Tiny Admin Auth Protection -->
-    <script type="module">
-      if (import.meta.env.SSR === false) {
-        const path = window.location.pathname;
-        if (path.startsWith('/admin') && !localStorage.getItem('admin-authenticated')) {
-          window.location.href = '/admin/login';
+      window.addEventListener('scroll', () => {
+        const currentScroll = window.pageYOffset;
+        if (currentScroll <= 0) {
+          navbar.classList.remove('nav-up');
+          return;
         }
-      }
+
+        if (currentScroll > lastScroll && !navbar.classList.contains('nav-up')) {
+          navbar.classList.add('nav-up');
+        } else if (currentScroll < lastScroll && navbar.classList.contains('nav-up')) {
+          navbar.classList.remove('nav-up');
+        }
+        lastScroll = currentScroll;
+      });
     </script>
 
+    <style>
+      nav.nav-up {
+        transform: translateY(-100%);
+        transition: transform 0.3s ease-in-out;
+      }
+    </style>
   </body>
 </html>

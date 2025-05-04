@@ -1,58 +1,50 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import { supabase } from "../../lib/supabase";
-import "../../styles/global.css";
+import StoreDetails from "../../components/StoreDetails.astro";
 
 export async function getStaticPaths() {
-  const { data: stores, error } = await supabase
-    .from('stores')
-    .select('slug');
+  const { data: stores, error } = await supabase.from("stores").select("slug");
 
   if (error) {
-    console.error('Error fetching store slugs:', error.message);
+    console.error("Failed to fetch stores:", error);
     return [];
   }
 
-  return stores.map(store => ({
+  return stores.map((store) => ({
     params: { slug: store.slug },
   }));
 }
 
 const { slug } = Astro.params;
-
 const { data: store, error } = await supabase
-  .from('stores')
-  .select('*')
-  .eq('slug', slug)
+  .from("stores")
+  .select("*")
+  .eq("slug", slug)
   .single();
 
 if (error) {
-  console.error('Error fetching store:', error.message);
+  console.error("Failed to fetch store:", error);
 }
+
+const breadcrumbs = [
+  { title: "Home", href: "/" },
+  { title: "Stores", href: "/stores" },
+  { title: store?.name || "Store" },
+];
 ---
-
-<BaseLayout title={store?.name || 'Store'}>
-  <main class="max-w-4xl mx-auto p-6">
-    {store ? (
-      <>
-        <h1 class="text-4xl font-bold mb-4">{store.name}</h1>
-        <p class="mb-6">{store.description}</p>
-
-        <div class="grid grid-cols-2 gap-6">
-          <div><strong>Address:</strong> {store.address}</div>
-          <div><strong>City:</strong> {store.city}</div>
-          <div><strong>State:</strong> {store.state}</div>
-          <div><strong>Zip Code:</strong> {store.zip_code}</div>
-        </div>
-
-        {store.website && (
-          <div class="mt-6">
-            <a href={store.website} target="_blank" class="text-primary hover:underline">Official Website</a>
-          </div>
-        )}
-      </>
-    ) : (
-      <p>Store not found.</p>
-    )}
-  </main>
+<BaseLayout>
+  {store ? (
+    <section class="py-8">
+      <div class="max-w-7xl mx-auto px-4">
+        <Breadcrumbs items={breadcrumbs} />
+        <StoreDetails store={store} />
+      </div>
+    </section>
+  ) : (
+    <div class="text-center py-24">
+      <h2 class="text-2xl font-bold">Store not found.</h2>
+    </div>
+  )}
 </BaseLayout>
