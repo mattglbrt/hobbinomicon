@@ -34,7 +34,12 @@ img {
 
 /* Navbar */
 nav {
-  @apply bg-white bg-opacity-90 backdrop-blur-md;
+  @apply bg-white bg-opacity-90 backdrop-blur-md transition-transform duration-300 ease-in-out transform;
+}
+
+/* Navbar hidden on scroll */
+nav.nav-up {
+  @apply -translate-y-full;
 }
 
 /* Section default padding */
