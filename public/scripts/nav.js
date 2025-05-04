@@ -1,10 +1,16 @@
-<script>
-// Navbar hide/show on scroll
+// Navbar hide/show on scroll with tolerance
 let lastScroll = 0;
 const navbar = document.querySelector('nav');
+const scrollTolerance = 10; // Only react if user scrolls at least 10px
 
 window.addEventListener('scroll', () => {
   const currentScroll = window.pageYOffset;
+
+  if (Math.abs(currentScroll - lastScroll) <= scrollTolerance) {
+    // Ignore tiny scrolls
+    return;
+  }
+
   if (currentScroll <= 0) {
     navbar.classList.remove('nav-up');
     return;
@@ -17,4 +23,3 @@ window.addEventListener('scroll', () => {
   }
   lastScroll = currentScroll;
 });
-</script>
