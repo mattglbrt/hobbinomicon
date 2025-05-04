@@ -6,12 +6,23 @@ const { title = "Hobbinomicon" } = Astro.props;
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title}</title>
+    <title>{Astro.props.title ?? 'Hobbinomicon'}</title>
+<meta name="description" content="Discover tabletop wargames, RPGs, local stores, and more at Hobbinomicon. Connect with the gaming community and find your next adventure.">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
     <slot name="head" />
 
   <script type="module" src="/src/scripts/autoAuth.js"></script>
+  <script type="module">
+    if (import.meta.env.SSR === false) {
+      const isAdminPage = window.location.pathname.startsWith('/admin');
+      const authToken = localStorage.getItem('admin-authenticated');
+  
+      if (isAdminPage && !authToken) {
+        window.location.href = '/admin/login';
+      }
+    }
+  </script>
   </head>
   <body class="flex flex-col min-h-screen">
 

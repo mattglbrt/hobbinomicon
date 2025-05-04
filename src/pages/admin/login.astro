@@ -1,50 +1,51 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import "../../styles/global.css";
+
+const correctPassword = import.meta.env.ADMIN_PASSWORD;
 ---
 
 <BaseLayout title="Admin Login">
-  <main class="max-w-sm mx-auto px-4 py-10">
-    <h1 class="text-3xl font-bold mb-8 text-center">Admin Login</h1>
+  <main class="max-w-md mx-auto px-4 py-10">
+    <h1 class="text-3xl font-bold mb-6 text-center">Admin Login</h1>
+
+    <div id="status-message" class="text-center text-sm mb-6"></div>
 
     <form id="login-form" class="space-y-6">
-      <input 
-        id="password-input"
-        type="password" 
-        placeholder="Enter Admin Password"
-        class="w-full border rounded px-3 py-2"
+      <input
+        type="password"
+        name="password"
+        placeholder="Password"
         required
+        class="w-full border rounded px-3 py-2"
       />
-      <button type="submit" class="w-full bg-primary text-white font-bold py-2 px-4 rounded hover:bg-primary-dark">
-        Login
+
+      <button
+        type="submit"
+        class="w-full bg-primary text-white font-bold py-2 px-4 rounded hover:bg-primary-dark"
+      >
+        Log In
       </button>
-      <div id="error-message" class="text-red-600 text-sm mt-4 hidden text-center"></div>
     </form>
   </main>
 
   <script type="module">
     const form = document.getElementById('login-form');
-    const passwordInput = document.getElementById('password-input');
-    const errorMessage = document.getElementById('error-message');
+    const statusMessage = document.getElementById('status-message');
 
-    form.addEventListener('submit', async (e) => {
+    form.addEventListener('submit', (e) => {
       e.preventDefault();
-      const password = passwordInput.value;
 
-      sessionStorage.setItem("hobbinomiconAdminPassword", password);
+      const formData = new FormData(form);
+      const password = formData.get('password');
 
-      const res = await fetch("/admin/games", {
-        headers: {
-          Authorization: `Bearer ${password}`,
-        },
-      });
-
-      if (res.status === 401) {
-        errorMessage.textContent = "Incorrect password. Try again.";
-        errorMessage.classList.remove('hidden');
-        sessionStorage.removeItem("hobbinomiconAdminPassword");
+      if (password === "{{ correctPassword }}") {
+        localStorage.setItem('admin-authenticated', 'true');
+        window.location.href = '/admin/games';
       } else {
-        window.location.href = "/admin/games";
+        statusMessage.textContent = "❌ Incorrect password. Please try again.";
+        statusMessage.classList.add('text-red-600');
+        statusMessage.classList.remove('text-green-600');
       }
     });
   </script>
