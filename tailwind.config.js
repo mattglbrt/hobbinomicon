@@ -7,19 +7,17 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#2563eb',  // Tailwind blue-600 (for buttons, highlights)
-          light: '#3b82f6',    // lighter blue (hover)
-          dark: '#1e40af',     // darker blue (active)
+          DEFAULT: '#2563eb',  // Tailwind blue-600
+          light: '#3b82f6',
+          dark: '#1e40af',
         },
         secondary: {
-          DEFAULT: '#6b7280',  // Tailwind gray-600 (for text, accents)
+          DEFAULT: '#6b7280',  // Tailwind gray-600
         },
-        body: '#404040',        // <-- ADD THIS LINE
+        body: '#404040',
       },
       fontFamily: {
-        sans: ['Inter', 'ui-sans-serif', 'system-ui'],
-        heading: ['Poppins', 'ui-sans-serif', 'system-ui'],
-        libre: ['"Libre Baskerville"', 'Libre', 'Georgia', 'Times', 'serif'], // <-- ADD THIS LINE TOO
+        sans: ['"Libre Baskerville"', 'serif'], // <-- Make sans = Libre
       },
     },
   },

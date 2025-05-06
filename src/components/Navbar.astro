@@ -2,52 +2,36 @@
 const isDark = Astro.request.url.pathname !== "/" && Astro.request.url.pathname !== "/index.html";
 ---
 
-<nav id="site-header" class={`fixed top-0 w-full z-50 transition-transform duration-300 ${isDark ? "bg-white shadow-md" : "bg-transparent"}`}>
+<nav id="site-header" class={`fixed top-0 w-full z-50 transition-all duration-300 ${isDark ? "bg-white shadow-md" : "bg-transparent"}`}>
   <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
     <a href="/">
       <img src={isDark ? "/images/hobbinomicon.svg" : "/images/hobbinomicon-logo-red.svg"} alt="Hobbinomicon Logo" class="h-10" />
     </a>
 
     <!-- Desktop Menu -->
-    <ul class="hidden md:flex space-x-8 text-lg font-medium">
-      <li><a href="/games" class="hover:text-red-600 transition">Games</a></li>
-      <li><a href="/stores" class="hover:text-red-600 transition">Stores</a></li>
-      <li><a href="/blog" class="hover:text-red-600 transition">Blog</a></li>
+    <ul class="hidden md:flex space-x-8 text-lg font-medium font-sans">
+      <li><a href="/games" class="text-gray-800 hover:text-primary transition">Games</a></li>
+      <li><a href="/stores" class="text-gray-800 hover:text-primary transition">Stores</a></li>
+      <li><a href="/blog" class="text-gray-800 hover:text-primary transition">Blog</a></li>
     </ul>
 
     <!-- Mobile Hamburger Button -->
     <div class="md:hidden">
       <button id="mobile-menu-button" class="text-gray-800 focus:outline-none">
-        <svg class="h-8 w-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
+        <div id="hamburger" class="flex flex-col justify-between w-6 h-5">
+          <span class="block w-full h-0.5 bg-current transition-all duration-300"></span>
+          <span class="block w-full h-0.5 bg-current transition-all duration-300"></span>
+          <span class="block w-full h-0.5 bg-current transition-all duration-300"></span>
+        </div>
       </button>
     </div>
   </div>
 
-  <!-- Mobile Menu (hidden by default) -->
-  <div id="mobile-menu" class="md:hidden hidden px-4 pt-4 pb-6 space-y-4 bg-white shadow">
-    <a href="/games" class="block text-lg font-medium text-gray-800 hover:text-red-600">Games</a>
-    <a href="/stores" class="block text-lg font-medium text-gray-800 hover:text-red-600">Stores</a>
-    <a href="/blog" class="block text-lg font-medium text-gray-800 hover:text-red-600">Blog</a>
-  </div>
+<!-- Mobile Menu -->
+<div id="mobile-menu" class="md:hidden px-4 pt-4 pb-6 space-y-4 bg-white shadow">
+  <a href="/games" class="block text-lg font-medium font-sans text-gray-800 hover:text-primary">Games</a>
+  <a href="/stores" class="block text-lg font-medium font-sans text-gray-800 hover:text-primary">Stores</a>
+  <a href="/blog" class="block text-lg font-medium font-sans text-gray-800 hover:text-primary">Blog</a>
+</div>
+  
 </nav>
-
-<!-- Navbar Hide/Show on Scroll Script -->
-<script type="module" is:inline>
-  let lastScrollTop = 0;
-  const header = document.getElementById('site-header');
-
-  window.addEventListener('scroll', () => {
-    const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
-    if (currentScroll > lastScrollTop) {
-      // Scrolling down
-      header.classList.add('translate-y-[-100%]');
-    } else {
-      // Scrolling up
-      header.classList.remove('translate-y-[-100%]');
-    }
-    lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
-  });
-</script>

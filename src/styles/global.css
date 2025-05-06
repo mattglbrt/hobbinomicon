@@ -4,7 +4,12 @@
 
 /* Custom base styles */
 html, body {
-  @apply bg-white text-body leading-relaxed font-libre;
+  @apply bg-white text-gray-800 leading-relaxed font-sans;
+}
+
+/* Optional fallback */
+h1, h2, h3, h4, h5, h6, a, p {
+  font-family: inherit;
 }
 
 /* Links */
@@ -14,10 +19,10 @@ a {
 
 /* Headings */
 h1, h2, h3, h4 {
-  @apply font-bold text-gray-900 font-libre;
+  @apply font-bold text-gray-900;
 }
 
-/* Button (optional future use) */
+/* Button */
 .button {
   @apply inline-block px-6 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition;
 }
@@ -32,17 +37,55 @@ img {
   @apply rounded-md;
 }
 
-/* Navbar */
-nav {
-  @apply bg-white bg-opacity-90 backdrop-blur-md transition-transform duration-300 ease-in-out transform;
-}
-
-/* Navbar hidden on scroll */
-nav.nav-up {
-  @apply -translate-y-full;
-}
-
 /* Section default padding */
 section {
   @apply py-12;
+}
+
+/* Navbar base styles */
+nav {
+  @apply bg-transparent transition-all duration-500 ease-in-out transform opacity-100;
+}
+
+/* Navbar hidden on scroll (slide up + fade out) */
+nav.nav-up {
+  transform: translateY(-100%);
+  opacity: 0;
+}
+
+/* Navbar background when scrolled (after 50px) */
+nav.navbar-scrolled {
+  @apply bg-white/70 backdrop-blur-md shadow-md;
+}
+
+/* Hamburger icon default */
+#hamburger span {
+  @apply transition-all duration-300 ease-in-out;
+}
+
+/* Hamburger open animation (into X) */
+#hamburger.open span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+#hamburger.open span:nth-child(2) {
+  opacity: 0;
+}
+
+#hamburger.open span:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* Mobile Menu fancier transition */
+#mobile-menu {
+  transform-origin: top;
+  transform: scaleY(0);
+  opacity: 0;
+  transition: all 300ms ease-in-out;
+}
+
+/* Mobile Menu open state */
+#mobile-menu.open {
+  transform: scaleY(1);
+  opacity: 1;
 }

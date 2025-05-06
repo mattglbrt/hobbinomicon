@@ -1,34 +1,39 @@
-// Navbar hide/show on scroll with tolerance
+// Navbar hide/show on scroll with tolerance and smooth background transition
 let lastScroll = 0;
-const navbar = document.querySelector('nav');
+const navbar = document.getElementById('site-header');
 const scrollTolerance = 10; // Only react if user scrolls at least 10px
 
 window.addEventListener('scroll', () => {
-  const currentScroll = window.pageYOffset;
+  const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
 
   if (Math.abs(currentScroll - lastScroll) <= scrollTolerance) {
-    // Ignore tiny scrolls
     return;
   }
 
-  if (currentScroll <= 0) {
-    navbar.classList.remove('nav-up');
-    return;
-  }
-
-  if (currentScroll > lastScroll && !navbar.classList.contains('nav-up')) {
+  if (currentScroll > lastScroll) {
     navbar.classList.add('nav-up');
-  } else if (currentScroll < lastScroll && navbar.classList.contains('nav-up')) {
+  } else {
     navbar.classList.remove('nav-up');
+
+    if (currentScroll > 50) {
+      navbar.classList.add('navbar-scrolled');
+    } else {
+      navbar.classList.remove('navbar-scrolled');
+    }
   }
-  lastScroll = currentScroll;
+
+  lastScroll = currentScroll <= 0 ? 0 : currentScroll;
 });
 
 document.addEventListener('DOMContentLoaded', function () {
   const menuButton = document.getElementById('mobile-menu-button');
   const mobileMenu = document.getElementById('mobile-menu');
+  const hamburger = document.getElementById('hamburger');
 
-  menuButton.addEventListener('click', () => {
-    mobileMenu.classList.toggle('hidden');
-  });
+  if (menuButton && mobileMenu && hamburger) {
+    menuButton.addEventListener('click', () => {
+      mobileMenu.classList.toggle('open');
+      hamburger.classList.toggle('open');
+    });
+  }
 });
