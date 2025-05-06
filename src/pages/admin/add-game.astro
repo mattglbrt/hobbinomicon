@@ -4,9 +4,9 @@ import { supabase } from "../../lib/supabase";
 
 let status = "";
 
-async function handleSubmit(event) {
+async function handleSubmit(event: SubmitEvent) {
   event.preventDefault();
-  const formData = new FormData(event.target);
+  const formData = new FormData(event.target as HTMLFormElement);
 
   const newGame = {
     title: formData.get("title"),
@@ -16,12 +16,12 @@ async function handleSubmit(event) {
     genre: formData.get("genre"),
     tone: formData.get("tone"),
     how_to_play: formData.get("how_to_play"),
-    key_features: formData.get("key_features")?.split(",").map(f => f.trim()).filter(Boolean),
+    key_features: formData.get("key_features")?.toString().split(",").map(f => f.trim()),
     difficulty_to_learn: formData.get("difficulty_to_learn"),
     difficulty_to_master: formData.get("difficulty_to_master"),
-    publication_year: parseInt(formData.get("publication_year")),
-    min_players: parseInt(formData.get("min_players")),
-    max_players: parseInt(formData.get("max_players")),
+    publication_year: Number(formData.get("publication_year")),
+    min_players: Number(formData.get("min_players")),
+    max_players: Number(formData.get("max_players")),
     play_time: formData.get("play_time"),
     age_range: formData.get("age_range"),
     solo_mode: formData.get("solo_mode") === "on",
@@ -30,13 +30,13 @@ async function handleSubmit(event) {
     official_website: formData.get("official_website"),
     rules_url: formData.get("rules_url"),
     featured_image_url: formData.get("featured_image_url"),
-    gallery: formData.get("gallery")?.split(",").map(url => url.trim()).filter(Boolean),
+    gallery: formData.get("gallery")?.toString().split(",").map(u => u.trim()),
     video_url: formData.get("video_url"),
-    community_links: formData.get("community_links")?.split(",").map(url => url.trim()).filter(Boolean),
+    community_links: formData.get("community_links")?.toString().split(",").map(u => u.trim()),
     price_range: formData.get("price_range"),
-    where_to_buy: formData.get("where_to_buy")?.split(",").map(url => url.trim()).filter(Boolean),
-    social_links: formData.get("social_links")?.split(",").map(url => url.trim()).filter(Boolean),
-    tags: formData.get("tags")?.split(",").map(tag => tag.trim()).filter(Boolean),
+    where_to_buy: formData.get("where_to_buy")?.toString().split(",").map(u => u.trim()),
+    social_links: formData.get("social_links")?.toString().split(",").map(u => u.trim()),
+    tags: formData.get("tags")?.toString().split(",").map(t => t.trim()),
   };
 
   const { error } = await supabase.from("games").insert([newGame]);
@@ -45,7 +45,7 @@ async function handleSubmit(event) {
     console.error(error.message);
     status = "error";
   } else {
-    window.location.href = "/admin"; // Redirect after successful save
+    window.location.href = "/admin/games";
   }
 }
 ---
@@ -55,7 +55,6 @@ async function handleSubmit(event) {
     <h1 class="text-4xl font-bold mb-8">Add New Game</h1>
 
     <form on:submit={handleSubmit} class="space-y-6">
-      
       <input type="text" name="title" placeholder="Game Title" required class="input" />
       <input type="text" name="slug" placeholder="Slug (optional)" class="input" />
       <input type="text" name="tagline" placeholder="Tagline" class="input" />
@@ -129,3 +128,4 @@ async function handleSubmit(event) {
       checkAuthClientSide();
     </script>
   </section>
+</BaseLayout>

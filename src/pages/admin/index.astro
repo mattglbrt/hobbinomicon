@@ -29,7 +29,7 @@ const { data: games } = await supabase.from("games").select("*");
   </section>
 
   <script type="module">
-    import { supabase } from "../../lib/supabase";
+    import { supabase } from '../../lib/supabase';
 
     async function checkAuthClientSide() {
       const { data: { session } } = await supabase.auth.getSession();
@@ -41,7 +41,6 @@ const { data: games } = await supabase.from("games").select("*");
 
     async function handleLogout() {
       await supabase.auth.signOut();
-      localStorage.removeItem('admin-session');
       window.location.href = '/admin/login';
     }
   </script>
