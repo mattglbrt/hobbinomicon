@@ -2,6 +2,20 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { supabase } from "../../../lib/supabase";
 
+// 🛠 Add getStaticPaths() to fix build
+export async function getStaticPaths() {
+  const { data: games, error } = await supabase.from('games').select('slug');
+
+  if (error) {
+    console.error("Error loading slugs:", error.message);
+    return [];
+  }
+
+  return games.map((game) => ({
+    params: { slug: game.slug },
+  }));
+}
+
 const { slug } = Astro.params;
 const { data: game } = await supabase.from("games").select("*").eq("slug", slug).single();
 
@@ -116,7 +130,7 @@ async function handleSubmit(event) {
         {status === "error" && <p class="text-red-600 mt-4">❌ Error updating the game.</p>}
       </form>
     ) : (
-      <p>Game not found.</p>
+      <p class="text-center text-gray-600">Game not found.</p>
     )}
 
     <script type="module">
