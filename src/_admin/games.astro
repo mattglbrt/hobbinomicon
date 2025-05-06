@@ -12,14 +12,14 @@ const { data: games } = await supabase.from("games").select("*");
       <button onclick="handleLogout()" class="bg-red-600 text-white px-4 py-2 rounded">Logout</button>
     </div>
 
-    <a href="/admin/add-game" class="bg-green-600 text-white px-4 py-2 rounded mb-6 inline-block">+ Add Game</a>
+    <a href="/_admin/add-game" class="bg-green-600 text-white px-4 py-2 rounded mb-6 inline-block">+ Add Game</a>
 
     {games && games.length > 0 ? (
       <ul class="space-y-4">
         {games.map(game => (
           <li class="p-4 bg-gray-100 rounded shadow">
             <h2 class="text-2xl font-semibold">{game.title}</h2>
-            <a href={`/admin/edit-game/${game.slug}`} class="text-blue-600 underline">Edit Game</a>
+            <a href={`/_admin/edit-game/${game.slug}`} class="text-blue-600 underline">Edit Game</a>
           </li>
         ))}
       </ul>
@@ -31,17 +31,9 @@ const { data: games } = await supabase.from("games").select("*");
   <script type="module">
     import { supabase } from '../../lib/supabase';
 
-    async function checkAuthClientSide() {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        window.location.href = "/admin/login";
-      }
-    }
-    checkAuthClientSide();
-
     async function handleLogout() {
       await supabase.auth.signOut();
-      window.location.href = '/admin/login';
+      window.location.href = '/_admin/login';
     }
   </script>
 </BaseLayout>

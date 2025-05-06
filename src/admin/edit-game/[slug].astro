@@ -1,0 +1,70 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { supabase } from "../../../lib/supabase";
+
+export async function getStaticPaths() {
+  const { data: games } = await supabase.from('games').select('slug');
+  if (!games) return [];
+  return games.map((game) => ({ params: { slug: game.slug } }));
+}
+
+const { slug } = Astro.params;
+const { data: game } = await supabase.from("games").select("*").eq("slug", slug).single();
+
+const { data: { session } } = await supabase.auth.getSession();
+if (!session) {
+  throw Astro.redirect('/admin/login');
+}
+---
+
+<BaseLayout>
+  <section class="max-w-4xl mx-auto py-12">
+    <h1 class="text-4xl font-bold mb-8">Edit Game: {game?.title || "Unknown"}</h1>
+
+    {game ? (
+      <form id="edit-game-form" class="space-y-6">
+        <input type="text" name="title" value={game.title} required class="input" />
+        <input type="text" name="slug" value={game.slug} required class="input" />
+        <textarea name="description" class="input">{game.description}</textarea>
+        <input type="text" name="genre" value={game.genre} class="input" />
+        <input type="text" name="tags" value={game.tags?.join(", ")} class="input" />
+
+        <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded">Save Changes</button>
+      </form>
+    ) : (
+      <p class="text-gray-600">Game not found.</p>
+    )}
+
+    <script type="module">
+      import { supabase } from "../../../lib/supabase";
+
+      const form = document.getElementById('edit-game-form') as HTMLFormElement;
+
+      form?.addEventListener('submit', async (e: SubmitEvent) => {
+        e.preventDefault();
+        const formData = new FormData(form);
+
+        const updatedGame = {
+          title: formData.get('title'),
+          slug: formData.get('slug') || formData.get('title')?.toString().toLowerCase().replace(/\s+/g, "-"),
+          description: formData.get('description'),
+          genre: formData.get('genre'),
+          tags: formData.get('tags')?.toString().split(",").map(t => t.trim()),
+        };
+
+        const { error } = await supabase.from('games').update(updatedGame).eq('slug', slug);
+
+        if (error) {
+          alert("❌ Error saving: " + error.message);
+        } else {
+          window.location.href = "/admin/games";
+        }
+      });
+
+      async function handleLogout() {
+        await supabase.auth.signOut();
+        window.location.href = '/admin/login';
+      }
+    </script>
+  </section>
+</BaseLayout>
