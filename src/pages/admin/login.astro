@@ -1,6 +1,6 @@
 ---
-import { supabase } from "../../lib/supabase";  // Correct the import path for TypeScript
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { supabase } from "../../lib/supabase";
 
 let email = "";
 let password = "";
@@ -8,18 +8,18 @@ let status = "";
 
 async function handleLogin(event) {
   event.preventDefault();
-  const { user, session, error } = await supabase.auth.signInWithPassword({
+
+  const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
 
   if (error) {
-    status = "error";
     console.error(error.message);
+    status = "error";
   } else {
-    status = "success";
-    localStorage.setItem("admin-session", session.access_token);
-    window.location.href = "/admin/games";  // Redirect to the admin dashboard
+    localStorage.setItem('admin-token', data.session.access_token);
+    window.location.href = '/admin'; // Redirect after login
   }
 }
 ---
@@ -28,26 +28,10 @@ async function handleLogin(event) {
   <section class="max-w-md mx-auto py-12">
     <h1 class="text-3xl font-bold mb-6">Admin Login</h1>
     <form on:submit={handleLogin} class="space-y-6">
-      <input
-        type="email"
-        name="email"
-        placeholder="Email"
-        required
-        bind:value={email}
-        class="input"
-      />
-      <input
-        type="password"
-        name="password"
-        placeholder="Password"
-        required
-        bind:value={password}
-        class="input"
-      />
-      <button type="submit" class="bg-red-600 text-white px-6 py-2 rounded">
-        Login
-      </button>
-      {status === "error" && <p class="text-red-600">Incorrect login details</p>}
+      <input type="email" name="email" placeholder="Email" required bind:value={email} class="input" />
+      <input type="password" name="password" placeholder="Password" required bind:value={password} class="input" />
+      <button type="submit" class="bg-red-600 text-white px-6 py-2 rounded">Login</button>
+      {status === "error" && <p class="text-red-600">Login failed. Check credentials.</p>}
     </form>
   </section>
 </BaseLayout>

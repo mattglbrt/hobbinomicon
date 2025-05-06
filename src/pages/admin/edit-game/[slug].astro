@@ -2,37 +2,36 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { supabase } from "../../../lib/supabase";
 
-// Check if the user is authenticated
-async function checkAuth() {
-  const session = supabase.auth.session();
+// Protect the page (ensure logged in)
+async function checkAdminAuth() {
+  const { data: { session } } = await supabase.auth.getSession();
   if (!session) {
-    // If no session, redirect to login
     window.location.href = "/admin/login";
   }
 }
+await checkAdminAuth();
 
-checkAuth();
-
-// Fetch the game data for the given slug
+// Get slug from URL
 const { slug } = Astro.params;
+
+// Fetch the game data
 const { data: game, error } = await supabase.from("games").select("*").eq("slug", slug).single();
 
 let status = "";
 
-// Submit handler to update game data
 async function handleSubmit(event) {
   event.preventDefault();
   const formData = new FormData(event.target);
 
   const updatedGame = {
     title: formData.get("title"),
-    slug: formData.get("slug"),
+    slug: formData.get("slug") || formData.get("title")?.toLowerCase().replace(/\s+/g, "-"),
     tagline: formData.get("tagline"),
     description: formData.get("description"),
     genre: formData.get("genre"),
     tone: formData.get("tone"),
     how_to_play: formData.get("how_to_play"),
-    key_features: formData.get("key_features").split(",").map(f => f.trim()).filter(Boolean),
+    key_features: formData.get("key_features")?.split(",").map(f => f.trim()).filter(Boolean),
     difficulty_to_learn: formData.get("difficulty_to_learn"),
     difficulty_to_master: formData.get("difficulty_to_master"),
     publication_year: parseInt(formData.get("publication_year")),
@@ -46,163 +45,92 @@ async function handleSubmit(event) {
     official_website: formData.get("official_website"),
     rules_url: formData.get("rules_url"),
     featured_image_url: formData.get("featured_image_url"),
-    gallery: formData.get("gallery").split(",").map(url => url.trim()).filter(Boolean),
+    gallery: formData.get("gallery")?.split(",").map(url => url.trim()).filter(Boolean),
     video_url: formData.get("video_url"),
-    community_links: formData.get("community_links").split(",").map(url => url.trim()).filter(Boolean),
+    community_links: formData.get("community_links")?.split(",").map(url => url.trim()).filter(Boolean),
     price_range: formData.get("price_range"),
-    where_to_buy: formData.get("where_to_buy").split(",").map(url => url.trim()).filter(Boolean),
-    social_links: formData.get("social_links").split(",").map(url => url.trim()).filter(Boolean),
-    tags: formData.get("tags").split(",").map(tag => tag.trim()).filter(Boolean),
+    where_to_buy: formData.get("where_to_buy")?.split(",").map(url => url.trim()).filter(Boolean),
+    social_links: formData.get("social_links")?.split(",").map(url => url.trim()).filter(Boolean),
+    tags: formData.get("tags")?.split(",").map(tag => tag.trim()).filter(Boolean),
   };
 
   const { error: updateError } = await supabase.from("games").update(updatedGame).eq("slug", slug);
 
   if (updateError) {
+    console.error(updateError.message);
     status = "error";
-    console.error(updateError);
   } else {
-    await saveTags(updatedGame.tags);
-    status = "success";
-  }
-}
-
-async function saveTags(tagsArray) {
-  if (!tagsArray || tagsArray.length === 0) return;
-  for (const tag of tagsArray) {
-    const slug = tag.toLowerCase().replace(/\s+/g, "-");
-    await supabase.from("tags").upsert([{ name: tag, slug }], { onConflict: "slug" });
+    window.location.href = "/admin"; // Redirect back to admin dashboard
   }
 }
 ---
 
 <BaseLayout>
-  <section class="max-w-3xl mx-auto py-12">
-    <h1 class="text-3xl font-bold mb-6">Edit Game: {game?.title || "Unknown"}</h1>
+  <section class="max-w-4xl mx-auto py-12">
+    <h1 class="text-4xl font-bold mb-8">Edit Game: {game?.title || "Unknown"}</h1>
 
     {game ? (
       <form on:submit={handleSubmit} class="space-y-6">
 
-        <!-- BASIC INFO -->
-        <div>
-          <label for="title" class="block text-sm font-medium">Game Title</label>
-          <input id="title" name="title" type="text" value={game.title} required class="input" />
-        </div>
+        <input type="text" name="title" value={game.title} required class="input" />
+        <input type="text" name="slug" value={game.slug} required class="input" />
+        <input type="text" name="tagline" value={game.tagline} class="input" />
+        <textarea name="description" class="input">{game.description}</textarea>
 
-        <div>
-          <label for="slug" class="block text-sm font-medium">Slug</label>
-          <input id="slug" name="slug" type="text" value={game.slug} required class="input" />
-        </div>
+        <input type="text" name="genre" value={game.genre} class="input" />
+        <input type="text" name="tone" value={game.tone} class="input" />
+        <textarea name="how_to_play" class="input">{game.how_to_play}</textarea>
+        <input type="text" name="key_features" value={game.key_features?.join(", ")} class="input" />
 
-        <div>
-          <label for="tagline" class="block text-sm font-medium">Tagline</label>
-          <input id="tagline" name="tagline" type="text" value={game.tagline} class="input" />
-        </div>
-
-        <div>
-          <label for="description" class="block text-sm font-medium">Description</label>
-          <textarea id="description" name="description" class="input">{game.description}</textarea>
-        </div>
-
-        <!-- GAME DETAILS -->
-        <div>
-          <label for="genre" class="block text-sm font-medium">Genre</label>
-          <input id="genre" name="genre" type="text" value={game.genre} class="input" />
-        </div>
-
-        <div>
-          <label for="tone" class="block text-sm font-medium">Tone</label>
-          <input id="tone" name="tone" type="text" value={game.tone} class="input" />
-        </div>
-
-        <div>
-          <label for="how_to_play" class="block text-sm font-medium">How to Play</label>
-          <textarea id="how_to_play" name="how_to_play" class="input">{game.how_to_play}</textarea>
-        </div>
-
-        <div>
-          <label for="key_features" class="block text-sm font-medium">Key Features</label>
-          <input id="key_features" name="key_features" type="text" value={game.key_features?.join(", ")} class="input" />
-        </div>
-
-        <!-- DIFFICULTY -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label for="difficulty_to_learn" class="block text-sm font-medium">Difficulty to Learn</label>
-            <select id="difficulty_to_learn" name="difficulty_to_learn" class="input">
-              <option value="">Select</option>
-              {["Very Easy", "Easy", "Medium", "Hard", "Very Hard"].map(level => (
-                <option value={level} selected={game.difficulty_to_learn === level}>{level}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label for="difficulty_to_master" class="block text-sm font-medium">Difficulty to Master</label>
-            <select id="difficulty_to_master" name="difficulty_to_master" class="input">
-              <option value="">Select</option>
-              {["Very Easy", "Easy", "Medium", "Hard", "Very Hard"].map(level => (
-                <option value={level} selected={game.difficulty_to_master === level}>{level}</option>
-              ))}
-            </select>
-          </div>
+          <select name="difficulty_to_learn" class="input">
+            <option value="">Difficulty to Learn</option>
+            {["Very Easy", "Easy", "Medium", "Hard", "Very Hard"].map(level => (
+              <option value={level} selected={game.difficulty_to_learn === level}>{level}</option>
+            ))}
+          </select>
+          <select name="difficulty_to_master" class="input">
+            <option value="">Difficulty to Master</option>
+            {["Very Easy", "Easy", "Medium", "Hard", "Very Hard"].map(level => (
+              <option value={level} selected={game.difficulty_to_master === level}>{level}</option>
+            ))}
+          </select>
         </div>
 
-        <!-- PLAYER DETAILS -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label for="min_players" class="block text-sm font-medium">Min Players</label>
-            <input id="min_players" name="min_players" type="number" value={game.min_players} class="input" />
-          </div>
-          <div>
-            <label for="max_players" class="block text-sm font-medium">Max Players</label>
-            <input id="max_players" name="max_players" type="number" value={game.max_players} class="input" />
-          </div>
-          <div>
-            <label for="play_time" class="block text-sm font-medium">Play Time</label>
-            <input id="play_time" name="play_time" type="text" value={game.play_time} class="input" />
-          </div>
+          <input type="number" name="min_players" value={game.min_players} class="input" />
+          <input type="number" name="max_players" value={game.max_players} class="input" />
+          <input type="text" name="play_time" value={game.play_time} class="input" />
         </div>
 
-        <div>
-          <label for="age_range" class="block text-sm font-medium">Age Range</label>
-          <input id="age_range" name="age_range" type="text" value={game.age_range} class="input" />
-        </div>
+        <input type="text" name="age_range" value={game.age_range} class="input" />
+        <input type="number" name="publication_year" value={game.publication_year} class="input" />
 
-        <div>
-          <label for="publication_year" class="block text-sm font-medium">Publication Year</label>
-          <input id="publication_year" name="publication_year" type="number" value={game.publication_year} class="input" />
-        </div>
-
-        <!-- FEATURES CHECKBOXES -->
         <div class="flex flex-wrap gap-6">
-          <label><input type="checkbox" name="solo_mode" checked={game.solo_mode} /> Supports Solo Play</label>
-          <label><input type="checkbox" name="organized_play" checked={game.organized_play} /> Supports Organized Play</label>
-          <label><input type="checkbox" name="online_play" checked={game.online_play} /> Supports Online Play</label>
+          <label><input type="checkbox" name="solo_mode" checked={game.solo_mode} /> Solo Mode</label>
+          <label><input type="checkbox" name="organized_play" checked={game.organized_play} /> Organized Play</label>
+          <label><input type="checkbox" name="online_play" checked={game.online_play} /> Online Play</label>
         </div>
 
-        <!-- LINKS & MEDIA -->
         <input type="url" name="official_website" value={game.official_website} class="input" />
         <input type="url" name="rules_url" value={game.rules_url} class="input" />
         <input type="url" name="featured_image_url" value={game.featured_image_url} class="input" />
         <input type="url" name="video_url" value={game.video_url} class="input" />
-        <textarea name="gallery" class="input">{game.gallery?.join(", ")}</textarea>
 
-        <!-- COMMUNITY & STORE -->
+        <textarea name="gallery" class="input">{game.gallery?.join(", ")}</textarea>
         <textarea name="community_links" class="input">{game.community_links?.join(", ")}</textarea>
         <input type="text" name="price_range" value={game.price_range} class="input" />
         <textarea name="where_to_buy" class="input">{game.where_to_buy?.join(", ")}</textarea>
         <textarea name="social_links" class="input">{game.social_links?.join(", ")}</textarea>
 
-        <!-- TAGS -->
         <input type="text" name="tags" value={game.tags?.join(", ")} class="input" />
 
-        <!-- SUBMIT -->
-        <button type="submit" class="bg-red-600 text-white px-6 py-2 rounded">Update Game</button>
+        <button type="submit" class="bg-red-600 text-white px-6 py-2 rounded">Save Changes</button>
 
-        {status === "success" && <p class="text-green-600 mt-4">✅ Game updated successfully!</p>}
-        {status === "error" && <p class="text-red-600 mt-4">❌ Error updating game.</p>}
+        {status === "error" && <p class="text-red-600 mt-4">❌ Error updating the game. Try again.</p>}
       </form>
     ) : (
-      <p>Game not found.</p>
+      <p class="text-center text-gray-600">❌ Game not found.</p>
     )}
   </section>
 </BaseLayout>

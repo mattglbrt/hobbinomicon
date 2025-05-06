@@ -1,0 +1,29 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { checkAdminAuth } from "../../lib/check-auth"
+import { supabase } from "../../lib/supabase";
+
+await checkAdminAuth(); // Protect the page
+
+const { data: games, error } = await supabase.from('games').select('*');
+---
+
+<BaseLayout>
+  <section class="max-w-7xl mx-auto py-12">
+    <h1 class="text-4xl font-bold mb-8">Games Dashboard</h1>
+    <a href="/admin/add-game" class="bg-green-600 text-white px-4 py-2 rounded mb-4 inline-block">+ Add Game</a>
+    
+    {games && games.length > 0 ? (
+      <ul class="space-y-4">
+        {games.map(game => (
+          <li class="p-4 bg-gray-100 rounded shadow">
+            <h2 class="text-2xl font-semibold">{game.title}</h2>
+            <a href={`/admin/edit-game/${game.slug}`} class="text-blue-600 underline">Edit Game</a>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p>No games found.</p>
+    )}
+  </section>
+</BaseLayout>
