@@ -9,6 +9,7 @@ if (window.location.pathname.startsWith('/admin')) {
       const password = sessionStorage.getItem('hobbinomiconAdminPassword');
   
       if (password) {
+        // Add Authorization header with the Bearer token
         config.headers = {
           ...(config.headers || {}),
           Authorization: `Bearer ${password}`,
@@ -17,5 +18,4 @@ if (window.location.pathname.startsWith('/admin')) {
   
       return originalFetch(resource, config);
     };
-  }
-  
+}

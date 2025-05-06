@@ -1,58 +1,44 @@
 ---
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import { supabase } from "../../lib/supabase";
-import "../../styles/global.css";
+import { checkAdminAuth } from "../scripts/checkAuth";
+import { supabase } from "../lib/supabase";
 
-const { data: games, error } = await supabase
-  .from('games')
-  .select('*')
-  .order('title', { ascending: true });
+// Check if user is authenticated
+checkAdminAuth();
+
+const { data: games, error } = await supabase.from("games").select("*");
 
 if (error) {
-  console.error('Error fetching games:', error.message);
+  console.error("Error fetching games:", error);
 }
 ---
 
-<BaseLayout title="Admin Dashboard">
-  <main class="max-w-6xl mx-auto px-6 py-10">
-    <h1 class="text-4xl font-bold mb-8 text-center">Admin Dashboard</h1>
-    <div class="flex justify-center mb-10">
-      <a href="/admin/add-game" class="bg-primary hover:bg-primary-dark text-white font-bold py-2 px-6 rounded">
-        ➕ Add New Game
-      </a>
-    </div>
-    <!-- Game table/list stays here -->
-    {games && games.length > 0 ? (
-      <div class="overflow-x-auto">
-        <table class="min-w-full bg-white border rounded-lg overflow-hidden">
-          <thead class="bg-gray-100">
-            <tr>
-              <th class="text-left py-3 px-4 font-semibold text-sm">Title</th>
-              <th class="text-left py-3 px-4 font-semibold text-sm">Slug</th>
-              <th class="text-left py-3 px-4 font-semibold text-sm">Actions</th>
+<BaseLayout>
+  <section class="max-w-7xl mx-auto py-12">
+    <h1 class="text-3xl font-bold mb-6">Games Dashboard</h1>
+    
+    {games ? (
+      <table class="w-full table-auto">
+        <thead>
+          <tr>
+            <th class="px-4 py-2">Title</th>
+            <th class="px-4 py-2">Genre</th>
+            <th class="px-4 py-2">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {games.map(game => (
+            <tr key={game.id}>
+              <td class="px-4 py-2">{game.title}</td>
+              <td class="px-4 py-2">{game.genre}</td>
+              <td class="px-4 py-2">
+                <a href={`/admin/edit-game/${game.slug}`} class="text-blue-600">Edit</a>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {games.map(game => (
-              <tr class="border-t hover:bg-gray-50 transition">
-                <td class="py-3 px-4">{game.title}</td>
-                <td class="py-3 px-4 text-gray-500">{game.slug}</td>
-                <td class="py-3 px-4 space-x-2">
-                  <a 
-                    href={`/admin/edit-game/${game.slug}`} 
-                    class="inline-block bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700 text-sm"
-                  >
-                    Edit
-                  </a>
-                  <!-- Future: Delete button here -->
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          ))}
+        </tbody>
+      </table>
     ) : (
-      <div class="text-center text-gray-500">No games found.</div>
+      <p>No games found.</p>
     )}
-  </main>
+  </section>
 </BaseLayout>

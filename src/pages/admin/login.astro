@@ -1,52 +1,53 @@
 ---
+import { supabase } from "../../lib/supabase";  // Correct the import path for TypeScript
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import "../../styles/global.css";
 
-const correctPassword = import.meta.env.ADMIN_PASSWORD;
+let email = "";
+let password = "";
+let status = "";
+
+async function handleLogin(event) {
+  event.preventDefault();
+  const { user, session, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (error) {
+    status = "error";
+    console.error(error.message);
+  } else {
+    status = "success";
+    localStorage.setItem("admin-session", session.access_token);
+    window.location.href = "/admin/games";  // Redirect to the admin dashboard
+  }
+}
 ---
 
-<BaseLayout title="Admin Login">
-  <main class="max-w-md mx-auto px-4 py-10">
-    <h1 class="text-3xl font-bold mb-6 text-center">Admin Login</h1>
-
-    <div id="status-message" class="text-center text-sm mb-6"></div>
-
-    <form id="login-form" class="space-y-6">
+<BaseLayout>
+  <section class="max-w-md mx-auto py-12">
+    <h1 class="text-3xl font-bold mb-6">Admin Login</h1>
+    <form on:submit={handleLogin} class="space-y-6">
+      <input
+        type="email"
+        name="email"
+        placeholder="Email"
+        required
+        bind:value={email}
+        class="input"
+      />
       <input
         type="password"
         name="password"
         placeholder="Password"
         required
-        class="w-full border rounded px-3 py-2"
+        bind:value={password}
+        class="input"
       />
-
-      <button
-        type="submit"
-        class="w-full bg-primary text-white font-bold py-2 px-4 rounded hover:bg-primary-dark"
-      >
-        Log In
+      <button type="submit" class="bg-red-600 text-white px-6 py-2 rounded">
+        Login
       </button>
+      {status === "error" && <p class="text-red-600">Incorrect login details</p>}
     </form>
-  </main>
-
-  <script type="module">
-    const form = document.getElementById('login-form');
-    const statusMessage = document.getElementById('status-message');
-
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-
-      const formData = new FormData(form);
-      const password = formData.get('password');
-
-      if (password === "{{ correctPassword }}") {
-        localStorage.setItem('admin-authenticated', 'true');
-        window.location.href = '/admin/games';
-      } else {
-        statusMessage.textContent = "❌ Incorrect password. Please try again.";
-        statusMessage.classList.add('text-red-600');
-        statusMessage.classList.remove('text-green-600');
-      }
-    });
-  </script>
+  </section>
 </BaseLayout>
