@@ -2,12 +2,14 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { supabase } from "../../lib/supabase";
 
-let email = "";
-let password = "";
 let status = "";
 
 async function handleLogin(event) {
   event.preventDefault();
+
+  const formData = new FormData(event.target);
+  const email = formData.get("email");
+  const password = formData.get("password");
 
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
@@ -18,20 +20,37 @@ async function handleLogin(event) {
     console.error(error.message);
     status = "error";
   } else {
-    localStorage.setItem('admin-token', data.session.access_token);
-    window.location.href = '/admin'; // Redirect after login
+    localStorage.setItem('admin-session', data.session.access_token);
+    window.location.href = '/admin'; // redirect after login
   }
 }
 ---
 
 <BaseLayout>
   <section class="max-w-md mx-auto py-12">
-    <h1 class="text-3xl font-bold mb-6">Admin Login</h1>
+    <h1 class="text-4xl font-bold mb-8">Admin Login</h1>
+
     <form on:submit={handleLogin} class="space-y-6">
-      <input type="email" name="email" placeholder="Email" required bind:value={email} class="input" />
-      <input type="password" name="password" placeholder="Password" required bind:value={password} class="input" />
+      <input type="email" name="email" placeholder="Email" required class="input" />
+      <input type="password" name="password" placeholder="Password" required class="input" />
+
       <button type="submit" class="bg-red-600 text-white px-6 py-2 rounded">Login</button>
-      {status === "error" && <p class="text-red-600">Login failed. Check credentials.</p>}
+
+      {status === "error" && (
+        <p class="text-red-600 mt-4">❌ Login failed. Check email and password.</p>
+      )}
     </form>
+
+    <script type="module">
+      import { supabase } from "../../lib/supabase";
+
+      async function checkAlreadyLoggedIn() {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          window.location.href = "/admin";
+        }
+      }
+      checkAlreadyLoggedIn();
+    </script>
   </section>
 </BaseLayout>
