@@ -7,9 +7,10 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#2563eb',  // Tailwind blue-600
+          DEFAULT: '#B91C1C',  // Tailwind blue-600
           light: '#3b82f6',
           dark: '#1e40af',
+          hover: '#991B1B'
         },
         secondary: {
           DEFAULT: '#6b7280',  // Tailwind gray-600

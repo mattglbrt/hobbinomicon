@@ -1,30 +1,43 @@
-// Navbar hide/show on scroll with tolerance and smooth background transition
-let lastScroll = 0;
 const navbar = document.getElementById('site-header');
-const scrollTolerance = 10; // Only react if user scrolls at least 10px
+const marker = document.getElementById('hero-marker');
+let lastScroll = 0;
 
+// Intersection Observer to detect hero background
+const observer = new IntersectionObserver(([entry]) => {
+  if (entry.isIntersecting) {
+    navbar.classList.add('nav-over-hero');
+  } else {
+    navbar.classList.remove('nav-over-hero');
+  }
+}, {
+  rootMargin: '-50px 0px 0px 0px', // trigger a little earlier
+  threshold: 0
+});
+
+if (marker) {
+  observer.observe(marker);
+}
+
+// Scroll behavior to hide/show nav + fade
 window.addEventListener('scroll', () => {
   const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
-
-  if (Math.abs(currentScroll - lastScroll) <= scrollTolerance) {
-    return;
-  }
 
   if (currentScroll > lastScroll) {
     navbar.classList.add('nav-up');
   } else {
     navbar.classList.remove('nav-up');
+  }
 
-    if (currentScroll > 50) {
-      navbar.classList.add('navbar-scrolled');
-    } else {
-      navbar.classList.remove('navbar-scrolled');
-    }
+  if (currentScroll > 50) {
+    navbar.classList.add('navbar-scrolled');
+  } else {
+    navbar.classList.remove('navbar-scrolled');
   }
 
   lastScroll = currentScroll <= 0 ? 0 : currentScroll;
 });
 
+// Mobile menu toggling
 document.addEventListener('DOMContentLoaded', function () {
   const menuButton = document.getElementById('mobile-menu-button');
   const mobileMenu = document.getElementById('mobile-menu');

@@ -89,3 +89,31 @@ nav.navbar-scrolled {
   transform: scaleY(1);
   opacity: 1;
 }
+
+/* Logo Visibility */
+.logo-image {
+  @apply transition-all duration-300;
+}
+
+#site-header .red-logo {
+  display: none;
+}
+#site-header .dark-logo {
+  display: block;
+}
+
+/* Nav link color default */
+.nav-link {
+  @apply text-gray-800;
+}
+
+/* When over dark hero */
+#site-header.nav-over-hero .red-logo {
+  display: block;
+}
+#site-header.nav-over-hero .dark-logo {
+  display: none;
+}
+#site-header.nav-over-hero .nav-link {
+  @apply text-primary;
+}
