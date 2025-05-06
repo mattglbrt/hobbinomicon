@@ -14,10 +14,12 @@ export default {
         secondary: {
           DEFAULT: '#6b7280',  // Tailwind gray-600 (for text, accents)
         },
+        body: '#404040',        // <-- ADD THIS LINE
       },
       fontFamily: {
         sans: ['Inter', 'ui-sans-serif', 'system-ui'],
         heading: ['Poppins', 'ui-sans-serif', 'system-ui'],
+        libre: ['"Libre Baskerville"', 'Libre', 'Georgia', 'Times', 'serif'], // <-- ADD THIS LINE TOO
       },
     },
   },

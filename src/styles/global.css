@@ -4,7 +4,7 @@
 
 /* Custom base styles */
 html, body {
-  @apply bg-white text-gray-800 leading-relaxed font-sans;
+  @apply bg-white text-body leading-relaxed font-libre;
 }
 
 /* Links */
@@ -14,7 +14,7 @@ a {
 
 /* Headings */
 h1, h2, h3, h4 {
-  @apply font-bold text-gray-900;
+  @apply font-bold text-gray-900 font-libre;
 }
 
 /* Button (optional future use) */
