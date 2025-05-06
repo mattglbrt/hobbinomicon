@@ -1,6 +1,7 @@
 [build]
   publish = "dist"
   command = "npm run build"
+  functions = "netlify/functions" # ✅ NEW: tell Netlify where your server functions are!
 
 [[headers]]
   for = "/*"
