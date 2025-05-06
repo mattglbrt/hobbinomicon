@@ -1,18 +1,19 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { checkAdminAuth } from "../../lib/check-auth"
 import { supabase } from "../../lib/supabase";
 
-await checkAdminAuth(); // Protect the page
-
-const { data: games, error } = await supabase.from('games').select('*');
+const { data: games } = await supabase.from("games").select("*");
 ---
 
 <BaseLayout>
   <section class="max-w-7xl mx-auto py-12">
-    <h1 class="text-4xl font-bold mb-8">Games Dashboard</h1>
-    <a href="/admin/add-game" class="bg-green-600 text-white px-4 py-2 rounded mb-4 inline-block">+ Add Game</a>
-    
+    <div class="flex items-center justify-between mb-8">
+      <h1 class="text-4xl font-bold">Games Dashboard</h1>
+      <button onclick="handleLogout()" class="bg-red-600 text-white px-4 py-2 rounded">Logout</button>
+    </div>
+
+    <a href="/admin/add-game" class="bg-green-600 text-white px-4 py-2 rounded mb-6 inline-block">+ Add Game</a>
+
     {games && games.length > 0 ? (
       <ul class="space-y-4">
         {games.map(game => (
@@ -26,4 +27,22 @@ const { data: games, error } = await supabase.from('games').select('*');
       <p>No games found.</p>
     )}
   </section>
+
+  <script type="module">
+    import { supabase } from "../../lib/supabase";
+
+    async function checkAuthClientSide() {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        window.location.href = "/admin/login";
+      }
+    }
+    checkAuthClientSide();
+
+    async function handleLogout() {
+      await supabase.auth.signOut();
+      localStorage.removeItem('admin-session');
+      window.location.href = '/admin/login';
+    }
+  </script>
 </BaseLayout>

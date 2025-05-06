@@ -2,15 +2,6 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { supabase } from "../../lib/supabase";
 
-// Protect the page (ensure logged in)
-async function checkAdminAuth() {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) {
-    window.location.href = "/admin/login";
-  }
-}
-await checkAdminAuth();
-
 let status = "";
 
 async function handleSubmit(event) {
@@ -54,7 +45,7 @@ async function handleSubmit(event) {
     console.error(error.message);
     status = "error";
   } else {
-    window.location.href = "/admin"; // Redirect back to dashboard on success
+    window.location.href = "/admin"; // Redirect after successful save
   }
 }
 ---
@@ -123,8 +114,18 @@ async function handleSubmit(event) {
       <input type="text" name="tags" placeholder="Tags (comma separated)" class="input" />
 
       <button type="submit" class="bg-red-600 text-white px-6 py-2 rounded">Save Game</button>
-
-      {status === "error" && <p class="text-red-600 mt-4">❌ Error saving the game. Try again.</p>}
+      {status === "error" && <p class="text-red-600 mt-4">❌ Error saving the game.</p>}
     </form>
+
+    <script type="module">
+      import { supabase } from "../../lib/supabase";
+
+      async function checkAuthClientSide() {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+          window.location.href = "/admin/login";
+        }
+      }
+      checkAuthClientSide();
+    </script>
   </section>
-</BaseLayout>
