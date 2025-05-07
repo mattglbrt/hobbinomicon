@@ -2,6 +2,9 @@
 
 Welcome, traveler, to **The Hobbinomicon** — your gateway to the world of independent tabletop games, miniature wargames, tabletop role-playing , and the communities that bring them to life.
 
+**Have a game, store, or manufacturer you want to see added? Got an idea for a new feature?
+Contact us at matt@hobbinomicon.com — we’d love to hear from you!**
+
 ## About
 
 The Hobbinomicon is a living directory created to support:

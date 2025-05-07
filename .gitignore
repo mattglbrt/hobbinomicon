@@ -23,5 +23,5 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 
-# Ignore local-only CMS
-src/pages/_admin/
+# Ignore local-only
+gamequestions.md
