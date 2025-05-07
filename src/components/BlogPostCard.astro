@@ -1,5 +1,6 @@
 ---
 const { post } = Astro.props;
+import BlogPostCard from "../components/BlogPostCard.astro";
 ---
 
 <a href={`/blog/${post.slug}`} class="block bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
