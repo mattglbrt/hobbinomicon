@@ -88,8 +88,8 @@ nav.navbar-scrolled {
 #mobile-menu.open {
   transform: scaleY(1);
   opacity: 1;
+  max-height: 500px; /* enough to show all links */
 }
-
 /* Logo Visibility */
 .logo-image {
   @apply transition-all duration-300;
@@ -116,4 +116,9 @@ nav.navbar-scrolled {
 }
 #site-header.nav-over-hero .nav-link {
   @apply text-primary;
+}
+
+#mobile-menu.open {
+  transform: scaleY(1);
+  opacity: 1;
 }
