@@ -1,0 +1,57 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import { supabase } from "../../lib/supabase";
+import GameCard from "../../components/GameCard.astro";
+
+export async function getStaticPaths() {
+  const { data: games, error } = await supabase.from("games").select("tags");
+
+  if (error) {
+    console.error("Failed to fetch tags:", error);
+    return [];
+  }
+
+  const uniqueTags = new Set();
+  games?.forEach((game) => {
+    game.tags?.forEach((tag) => uniqueTags.add(tag));
+  });
+
+  return Array.from(uniqueTags).map((tag) => ({
+    params: { tag },
+  }));
+}
+
+const { tag } = Astro.params;
+const { data: gamesWithTag, error } = await supabase
+  .from("games")
+  .select("*")
+  .contains("tags", [tag]);
+
+if (error) {
+  console.error("Failed to fetch games with tag:", error);
+}
+
+const breadcrumbs = [
+  { title: "Home", href: "/" },
+  { title: "Tags", href: "/tags" },
+  { title: tag },
+];
+---
+<BaseLayout>
+  <section class="py-8">
+    <div class="max-w-7xl mx-auto px-4">
+      <Breadcrumbs items={breadcrumbs} />
+      <h1 class="text-3xl font-bold mb-8">Games tagged with "{tag}"</h1>
+      {gamesWithTag && gamesWithTag.length > 0 ? (
+        <div class="grid md:grid-cols-3 gap-6">
+          {gamesWithTag.map((game) => (
+            <GameCard game={game} />
+          ))}
+        </div>
+      ) : (
+        <p>No games found with this tag.</p>
+      )}
+    </div>
+  </section>
+</BaseLayout>

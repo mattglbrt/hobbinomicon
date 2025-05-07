@@ -1,0 +1,40 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { supabase } from "../../lib/supabase";
+import StoreDetails from "../../components/StoreDetails.astro";
+
+export async function getStaticPaths() {
+  const { data: stores, error } = await supabase.from("stores").select("slug");
+
+  if (error) {
+    console.error("Failed to fetch stores:", error);
+    return [];
+  }
+
+  return stores.map((store) => ({
+    params: { slug: store.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+const { data: store, error } = await supabase
+  .from("stores")
+  .select("*")
+  .eq("slug", slug)
+  .single();
+
+if (error) {
+  console.error("Failed to fetch store:", error);
+}
+---
+
+<BaseLayout title={store?.name ? `${store.name} | Hobbinomicon` : "Store not found"}>
+  {store ? (
+    <StoreDetails store={store} />
+  ) : (
+    <div class="text-center py-24">
+      <h2 class="text-2xl font-bold">Store not found.</h2>
+      <a href="/stores" class="mt-4 inline-block text-red-600 hover:underline">← Back to All Stores</a>
+    </div>
+  )}
+</BaseLayout>

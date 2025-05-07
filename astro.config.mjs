@@ -1,12 +1,12 @@
 import { defineConfig } from "astro/config";
 import tailwind from "@astrojs/tailwind";
 import sitemap from "@astrojs/sitemap";
-import netlify from "@astrojs/netlify"; // ✅ New import for Netlify deployment
+import netlify from "@astrojs/netlify";
 
 export default defineConfig({
-  site: "https://hobbinomicon.com", // ✅ Keep your site URL
-  output: "server",                 // ✅ Switch to server mode for dynamic pages
-  adapter: netlify(),                // ✅ Tell Astro to use Netlify server adapter
+  site: "https://hobbinomicon.com",
+  output: "server",
+  adapter: netlify(),
   integrations: [
     tailwind(),
     sitemap(),

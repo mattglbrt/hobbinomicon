@@ -1,0 +1,28 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import GameCard from "../../components/GameCard.astro";
+import { supabase } from "../../lib/supabase";
+
+const { data: games, error } = await supabase.from("games").select("*");
+
+if (error) {
+  console.error("Failed to fetch games:", error);
+}
+---
+
+<BaseLayout>
+  <section class="py-12">
+    <div class="max-w-7xl mx-auto px-4">
+      <h1 class="text-3xl md:text-4xl font-bold mb-8 text-center">All Games</h1>
+      <div class="grid md:grid-cols-3 gap-8">
+        {games?.length > 0 ? (
+          games.map((game) => (
+            <GameCard game={game} />
+          ))
+        ) : (
+          <p class="text-center text-gray-500">No games found.</p>
+        )}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
