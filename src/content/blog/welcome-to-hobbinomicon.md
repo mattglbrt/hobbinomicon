@@ -5,10 +5,10 @@ description: "Discover what Hobbinomicon is all about and what’s coming next."
 pubDate: 2025-05-04
 category: "News"
 tags: ["Announcement"]
-featuredImage: "/images/blog/welcome.jpg"
+featuredImage: "/images/assets/blogcovers/welcome.webp"
 ---
 
-# Welcome to Hobbinomicon
+# Welcome to Hobbinomic
 
 We are building the ultimate directory for tabletop games, RPGs, miniature companies, and local gaming communities.
 

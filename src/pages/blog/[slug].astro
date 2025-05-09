@@ -57,7 +57,17 @@ const readingTime = postEntry.body ? calculateReadingTime(postEntry.body) : 0;
         {postEntry.data.featuredImage && (
           <img src={postEntry.data.featuredImage} alt={postEntry.data.title} class="rounded-lg mb-8 w-full" />
         )}
-
+ <!-- Mobile Toggle -->
+ <div class="block md:hidden mb-8">
+  <details class="border rounded-md">
+    <summary class="cursor-pointer px-4 py-3 font-semibold bg-gray-100">
+      Table of Contents
+    </summary>
+    <div class="px-4 py-2">
+      <TableOfContents headings={headings.map(({ slug, text, depth }) => ({ slug, text, depth }))} client:only="react" />
+    </div>
+  </details>
+</div>
         <article
           class="prose max-w-none prose-lg 
             [&_h1]:mt-12 [&_h1]:mb-6 [&_h1]:scroll-mt-28 [&_h1]:text-4xl
@@ -90,17 +100,7 @@ const readingTime = postEntry.body ? calculateReadingTime(postEntry.body) : 0;
           <TableOfContents headings={headings.map(({ slug, text, depth }) => ({ slug, text, depth }))} client:only="react" />
         </div>
 
-        <!-- Mobile Toggle -->
-        <div class="block md:hidden mb-8">
-          <details class="border rounded-md">
-            <summary class="cursor-pointer px-4 py-3 font-semibold bg-gray-100">
-              Table of Contents
-            </summary>
-            <div class="px-4 py-2">
-              <TableOfContents headings={headings.map(({ slug, text, depth }) => ({ slug, text, depth }))} client:only="react" />
-            </div>
-          </details>
-        </div>
+       
       </aside>
     </div>
   </section>
