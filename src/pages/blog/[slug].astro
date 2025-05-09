@@ -2,8 +2,9 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getEntryBySlug, getCollection } from "astro:content";
 import TableOfContents from "../../components/TableOfContents";
+import { useState } from "react";
 
-export const prerender = true; // ✅ Add this line to fix the warning
+export const prerender = true;
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -21,14 +22,11 @@ if (!postEntry) {
 
 const { Content, headings } = await postEntry.render();
 
-
-// Get all posts for next/prev navigation
 const posts = await getCollection('blog');
 const index = posts.findIndex((p) => p.slug === slug);
 const prevPost = index > 0 ? posts[index - 1] : null;
 const nextPost = index < posts.length - 1 ? posts[index + 1] : null;
 
-// Calculate reading time
 function calculateReadingTime(bodyText) {
   const wordsPerMinute = 200;
   const words = bodyText.trim().split(/\s+/).length;
@@ -36,22 +34,20 @@ function calculateReadingTime(bodyText) {
   return time;
 }
 const readingTime = postEntry.body ? calculateReadingTime(postEntry.body) : 0;
-
 ---
 
 <BaseLayout title={`${postEntry.data.title} | Hobbinomicon`}>
   <section class="py-12">
-    <div class="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
+    <div class="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-[3fr_1fr] gap-8">
 
-      <div class="md:col-span-3">
-        <!-- Breadcrumbs -->
+      <!-- Main Content -->
+      <div>
         <nav class="text-sm mb-6 text-gray-500">
           <a href="/" class="hover:text-red-600">Home</a> &rsaquo; 
           <a href="/blog" class="hover:text-red-600">Blog</a> &rsaquo; 
           <span class="text-gray-900">{postEntry.data.title}</span>
         </nav>
 
-        <!-- Post Header -->
         <h1 class="text-4xl font-bold mb-2">{postEntry.data.title}</h1>
         <p class="text-gray-500 text-sm mb-4">
           {postEntry.data.pubDate ? new Date(postEntry.data.pubDate).toLocaleDateString() : ''} 
@@ -62,12 +58,16 @@ const readingTime = postEntry.body ? calculateReadingTime(postEntry.body) : 0;
           <img src={postEntry.data.featuredImage} alt={postEntry.data.title} class="rounded-lg mb-8 w-full" />
         )}
 
-        <!-- Post Content -->
-        <article class="prose prose-lg max-w-none">
+        <article
+          class="prose max-w-none prose-lg 
+            [&_h1]:mt-12 [&_h1]:mb-6 [&_h1]:scroll-mt-28 [&_h1]:text-4xl
+            [&_h2]:mt-10 [&_h2]:mb-4 [&_h2]:scroll-mt-24 [&_h2]:text-3xl
+            [&_h3]:mt-8 [&_h3]:mb-3 [&_h3]:scroll-mt-20 [&_h3]:text-2xl
+            [&_h4]:mt-6 [&_h4]:mb-2 [&_h4]:scroll-mt-16 [&_h4]:text-xl"
+        >
           <Content />
         </article>
 
-        <!-- Next/Previous Navigation -->
         <div class="flex justify-between items-center mt-12 border-t pt-8">
           {prevPost && (
             <a href={`/blog/${prevPost.slug}`} class="text-red-600 hover:underline">
@@ -82,14 +82,26 @@ const readingTime = postEntry.body ? calculateReadingTime(postEntry.body) : 0;
         </div>
       </div>
 
-      <!-- Sidebar (TOC can go here later) -->
-      <aside class="hidden md:block sticky top-24">
-        <h2 class="text-xl font-bold mb-4">Table of Contents</h2>
-        <TableOfContents headings={headings.map(({ slug, text, depth }) => ({ slug, text, depth }))} client:only="react" />
+      <!-- Sidebar + Mobile TOC -->
+      <aside>
+        <!-- Desktop Sticky -->
+        <div class="hidden md:block sticky top-24">
+          <h2 class="text-xl font-bold mb-4">Table of Contents</h2>
+          <TableOfContents headings={headings.map(({ slug, text, depth }) => ({ slug, text, depth }))} client:only="react" />
+        </div>
 
+        <!-- Mobile Toggle -->
+        <div class="block md:hidden mb-8">
+          <details class="border rounded-md">
+            <summary class="cursor-pointer px-4 py-3 font-semibold bg-gray-100">
+              Table of Contents
+            </summary>
+            <div class="px-4 py-2">
+              <TableOfContents headings={headings.map(({ slug, text, depth }) => ({ slug, text, depth }))} client:only="react" />
+            </div>
+          </details>
+        </div>
       </aside>
-      
-
     </div>
   </section>
 </BaseLayout>
