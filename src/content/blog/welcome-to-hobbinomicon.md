@@ -14,6 +14,8 @@ We are building the ultimate directory for tabletop games, RPGs, miniature compa
 
 Stay tuned for news, guides, reviews, and hobby inspiration!
 
+We are adding more to the site every day and hoping to have at least the following game pages finished within the next 30 days.
+
 ## Game Directory Status
 | Game Title | % Complete |
 |------------|------------|
