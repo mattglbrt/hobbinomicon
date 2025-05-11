@@ -5,6 +5,7 @@ import GameCard from "../components/GameCard.astro";
 import BlogPostCard from "../components/BlogPostCard.astro";
 import FeaturedBanner from "../components/FeaturedBanner.astro";
 import CategorySection from "../components/CategorySection.astro";
+import LatestPostsSection from "../components/LatestPostsSection.astro";
 
 import { supabase } from "../lib/supabase";
 import { getCollection } from "astro:content";
@@ -50,8 +51,6 @@ const featuredGame = games?.find(game => game.slug === "warmachine") || games?.[
   {featuredGame && (
     <FeaturedBanner game={featuredGame} />
   )}
+<LatestPostsSection posts={posts} />
 
-  <CategorySection title="Guides" posts={posts.filter((post) => post.data.category === "Guides").slice(0, 6)} />
-  <CategorySection title="Reviews" posts={posts.filter((post) => post.data.category === "Reviews").slice(0, 6)} />
-  <CategorySection title="Hobby Log" posts={posts.filter((post) => post.data.category === "Hobby Log").slice(0, 6)} />
 </BaseLayout>
