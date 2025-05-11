@@ -14,7 +14,7 @@ h1, h2, h3, h4, h5, h6, a, p {
 
 /* Links */
 a {
-  @apply text-red-600 hover:underline transition;
+  @apply text-red-50 hover:underline transition;
 }
 
 /* Headings */
