@@ -2,17 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom base styles */
+/* Base Styles */
 html, body {
   @apply bg-white text-gray-800 leading-relaxed font-sans;
 }
 
-/* Optional fallback */
-h1, h2, h3, h4, h5, h6, a, p {
+/* Typography */
+h1, h2, h3, h4, h5, h6, p {
   font-family: inherit;
 }
 
-/* Links */
+/* Global Links */
 a:not(.nav-link) {
   @apply text-red-600 hover:underline transition;
 }
@@ -22,48 +22,45 @@ h1, h2, h3, h4 {
   @apply font-bold text-gray-900;
 }
 
-/* Button */
+/* Buttons */
 .button {
   @apply inline-block px-6 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition;
 }
 
-/* Card styles */
+/* Card Styles */
 .card {
   @apply rounded-lg shadow-md bg-white overflow-hidden hover:shadow-xl transition-all;
 }
 
-/* Image rounding */
+/* Images */
 img {
   @apply rounded-md;
 }
 
-/* Section default padding */
+/* Sections */
 section {
   @apply py-12;
 }
 
-/* Navbar base styles */
+/* Navbar */
 nav {
   @apply bg-transparent transition-all duration-500 ease-in-out transform opacity-100;
 }
 
-/* Navbar hidden on scroll (slide up + fade out) */
 nav.nav-up {
   transform: translateY(-100%);
   opacity: 0;
 }
 
-/* Navbar background when scrolled (after 50px) */
 nav.navbar-scrolled {
   @apply bg-white/70 backdrop-blur-md shadow-md;
 }
 
-/* Hamburger icon default */
+/* Hamburger Icon */
 #hamburger span {
   @apply transition-all duration-300 ease-in-out;
 }
 
-/* Hamburger open animation (into X) */
 #hamburger.open span:nth-child(1) {
   transform: rotate(45deg) translate(5px, 5px);
 }
@@ -76,20 +73,22 @@ nav.navbar-scrolled {
   transform: rotate(-45deg) translate(5px, -5px);
 }
 
-/* Mobile Menu fancier transition */
+/* Mobile Menu */
 #mobile-menu {
   transform-origin: top;
   transform: scaleY(0);
   opacity: 0;
   transition: all 300ms ease-in-out;
+  overflow: hidden;
+  max-height: 0;
 }
 
-/* Mobile Menu open state */
 #mobile-menu.open {
   transform: scaleY(1);
   opacity: 1;
-  max-height: 500px; /* enough to show all links */
+  max-height: 500px;
 }
+
 /* Logo Visibility */
 .logo-image {
   @apply transition-all duration-300;
@@ -98,27 +97,24 @@ nav.navbar-scrolled {
 #site-header .red-logo {
   display: none;
 }
+
 #site-header .dark-logo {
   display: block;
 }
 
-/* Nav link color default */
+/* Nav Link Color */
 .nav-link {
-  @apply text-gray-800;
+  @apply text-gray-800 transition-colors duration-300;
 }
 
-/* When over dark hero */
 #site-header.nav-over-hero .red-logo {
   display: block;
 }
+
 #site-header.nav-over-hero .dark-logo {
   display: none;
 }
+
 #site-header.nav-over-hero .nav-link {
   @apply text-primary;
-}
-
-#mobile-menu.open {
-  transform: scaleY(1);
-  opacity: 1;
 }
