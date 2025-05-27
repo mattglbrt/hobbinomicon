@@ -1,0 +1,267 @@
+---
+// Assets
+import Logo from "@/components/assets/Logo.astro";
+// Fundations
+import Text from "@/components/fundations/elements/Text.astro";
+import Wrapper from "@/components/fundations/containers/Wrapper.astro";
+// Components
+import BlogSearch from "@/components/blog/BlogSearch.astro";
+import EntryBrief from "@/components/blog/EntryBrief.astro";
+import EntryTicker from "@/components/blog/EntryTicker.astro";
+import PodcastBrief from "@/components/podcast/PodcastBrief.astro";
+import { getCollection } from "astro:content";
+
+// Get all podcasts
+const allPodcasts = await getCollection("podcast");
+allPodcasts.sort((a, b) => {
+  const dateA = new Date(a.data.pubDate).getTime(); // Convert to timestamp
+  const dateB = new Date(b.data.pubDate).getTime(); // Convert to timestamp
+  return dateB - dateA; // Compare timestamps
+});
+// Get all posts
+const allPosts = await getCollection("posts");
+allPosts.sort((a, b) => {
+  const dateA = new Date(a.data.pubDate).getTime(); // Convert to timestamp
+  const dateB = new Date(b.data.pubDate).getTime(); // Convert to timestamp
+  return dateB - dateA; // Compare timestamps
+});
+// Sort posts by date and grab the latest 6
+const latestPosts = [...allPosts]
+  .sort(
+    (a, b) =>
+      new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime()
+  )
+  .slice(0, 6);
+// Tags
+const tags = [...new Set(allPosts.map((post) => post.data.tags).flat())];
+// Array
+const sections = [
+  {
+    title: "Company",
+    links: [
+      { name: "About", url: "/about" },
+      { name: "Podcast", url: "/podcast/home" },
+      { name: "Carriers", url: "/jobs/home" },
+      { name: "Authors", url: "/authors/home" },
+      { name: "Advertise", url: "/pricing/advertise" },
+    ],
+  },
+  {
+    title: "Categories",
+    links: [
+      ...tags.map((tag) => ({
+        name: tag.replace(/-/g, " "), // Format the tag by replacing hyphens with spaces
+        url: `/blog/tags/${tag}`,
+      })),
+    ],
+  },
+];
+---
+
+<style>
+  #menu {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition:
+      max-height 0.5s ease-out,
+      opacity 0.5s ease-out;
+  }
+  #menu.expanded {
+    max-height: 1000px; /* Adjust this value based on your content */
+    opacity: 1;
+  }
+</style>
+<section id="navigation" class="overflow-hidden">
+  <Wrapper variant="standard" class="pb-1 pt-4">
+    <div class="bg-white">
+      <div class="grid w-full grid-cols-3 gap-4 lg:gap-12 l items-center">
+        <Text tag="p" variant="textXS" class="text-base-500 dark:textbase-400">
+          <span id="clock"> </span>
+        </Text>
+        <a href="/" class="mx-auto">
+          <Logo class="uppercase lg:text-2xl font-medium" /></a
+        >
+        <div class="flex items-center w-full gap-2 items-right">
+          <button
+            id="menubutton"
+            type="button"
+            aria-controls="menu"
+            aria-label="Toggle menu"
+            class="text-black ml-auto"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="transition duration-300 ease-in-out fill-slate-400 size-6 shrink-0"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+              <path id="menuIcon" d="M4 8l16 0"></path>
+              <path d="M4 16l16 0"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="grid w-full grid-cols-3 gap-4 lg:gap-12">
+        <div class="items-center flex gap-2">
+          <a
+            href="/system/overview"
+            class="text-xs text-base-500 hover:text-accent-500"
+          >
+            Overview
+          </a>
+          <a
+            href="https://buy.polar.sh/polar_cl_2n5Yr-tOSYnx4b6bC1VlnnLVOLACm2C5COueh86uNNk"
+            class="text-xs text-base-500 hover:text-accent-500 shrink-0"
+          >
+            Buy Phanatik
+          </a>
+        </div>
+        <div class="items-center hidden lg:flex gap-4 w-full">
+          <div class="flex gap-2 justify-start items-center w-full">
+            <Text
+              tag="p"
+              variant="textXS"
+              class="shrink-0 lg:border-r-2 lg:pr-2 lg:border-base-200 text-accen-500 uppercase font-medium"
+            >
+              Lates news
+            </Text>
+            {
+              tags.map((tag) => {
+                const formattedTag = tag.replace(/-/g, " ");
+                return (
+                  <Text
+                    tag="a"
+                    variant="textXS"
+                    href={`/blog/tags/${tag}`}
+                    class="capitalize  shrink-0 font-normal inline-block text-base-500"
+                  >
+                    {formattedTag}
+                  </Text>
+                );
+              })
+            }
+          </div>
+        </div>
+        <div
+          class="flex items-center w-full gap-2 lg:col-span-auto col-start-3 items-right"
+        >
+          <Text
+            tag="a"
+            variant="textXS"
+            href="/forms/sign-in"
+            class="shrink-0 ml-auto text-base-500 hover:text-accent-500"
+            >Sign in</Text
+          >
+          <div class=""><BlogSearch /></div>
+        </div>
+      </div>
+
+      <nav
+        id="menu"
+        role="navigation"
+        aria-labelledby="menubutton"
+        class="bg-base-50 rounded-xl shadow mt-4 overflow-hidden relative"
+      >
+        <div>
+          <div
+            class="grid grid-cols-1 gap-8 md:grid-cols-3 lg:grid-cols-5 p-8 lg:p-8 pb-0"
+          >
+            <div class="grid gap-4 lg:gap-8 grid-cols-2 lg:grid-cols-1">
+              {
+                sections.map((section) => (
+                  <div>
+                    <Text
+                      tag="h3"
+                      variant="textXS"
+                      class="flex gap-x-2 text-base-900 justify-between uppercase font-medium"
+                    >
+                      {section.title}
+                    </Text>
+                    <ul
+                      role="list"
+                      class="mt-2 relative before:absolute after:absolute before:bg-base-950 after:bg-base-950/10 before:top-0 before:left-0 before:h-px before:w-6 after:top-0 after:right-0 after:left-8 after:h-px pt-4"
+                    >
+                      {section.links.map((link) => (
+                        <li>
+                          <Text
+                            tag="a"
+                            variant="textXS"
+                            class="text-base-500 hover:underline capitalize"
+                            href={link.url}
+                          >
+                            {link.name}
+                          </Text>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))
+              }
+            </div>
+            <div class="lg:col-span-2">
+              <Text
+                tag="h2"
+                variant="textXS"
+                class="text-base-900 uppercase font-medium"
+              >
+                Top Stories
+              </Text>
+              <div
+                class="flex flex-col gap-4 mt-2 relative before:absolute after:absolute before:bg-base-950 after:bg-base-950/10 before:top-0 before:left-0 before:h-px before:w-6 after:top-0 after:right-0 after:left-8 after:h-px pt-4"
+              >
+                {
+                  allPosts
+                    .filter((post) => post.data.isTopStory)
+                    .slice(0, 3)
+                    .map((post) => <EntryBrief post={post} />)
+                }
+              </div>
+            </div>
+            <div class="lg:col-span-2">
+              <Text
+                tag="h2"
+                variant="textXS"
+                class="text-base-900 uppercase font-medium"
+              >
+                Latest episodes
+              </Text>
+              <div
+                class="flex flex-col gap-4 mt-2 relative before:absolute after:absolute before:bg-base-950 after:bg-base-950/10 before:top-0 before:left-0 before:h-px before:w-6 after:top-0 after:right-0 after:left-8 after:h-px pt-4"
+              >
+                {
+                  allPodcasts
+                    .filter((post) => post.data.isFeatured)
+                    .slice(0, 3)
+                    .map((post) => <PodcastBrief post={post} />)
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Ticker element to be conditionally hidden -->
+      <div id="tickerElement" class="bg-white mt-2">
+        <div
+          class="relative flex snap-x snap-proximity items-center gap-2 px-2 overflow-x-scroll scrollbar-hide animate-marquee w-max pause-on-hover"
+        >
+          {
+            latestPosts.map((post, index) => (
+              <>
+                {index > 0 && <span class="text-black">•</span>}
+                <EntryTicker post={post} />
+              </>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </Wrapper>
+ 
+</section>

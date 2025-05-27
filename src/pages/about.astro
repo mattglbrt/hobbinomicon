@@ -1,0 +1,115 @@
+---
+// Assets
+import { Image } from "astro:assets";
+import AboutImage from "@/images/assets/about.jpeg";
+// Fundations
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Text from "@/components/fundations/elements/Text.astro";
+import Wrapper from "@/components/fundations/containers/Wrapper.astro";
+// Array
+const missionVision = [
+  {
+    title: "Our Story",
+    description:
+      "The Hobbinomicon was born from a love of tabletop wargaming and a desire to champion the overlooked. We built it to help players discover indie games, support small creators, and connect with local communities.",
+  },
+  {
+    title: "Our Mission",
+    description:
+      "We spotlight independent creators, catalog unique games and miniatures, and make it easier for hobbyists to find, learn, and share what they love.",
+  },
+  {
+    title: "Our Vision",
+    description:
+      "To become the best tabletop wargaming, miniature painting, and TTRPG website in ther world.",
+  },
+];
+---
+<BaseLayout>
+  <section>
+    <Wrapper variant="standard" class="py-12">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-8">
+        <div class="lg:pr-8">
+          <div class="lg:sticky lg:top-20 lg:z-50">
+            <Text
+              tag="h3"
+              variant="textBase"
+              class="text-base-900 font-display"
+            >
+              The Hobbinomicon
+            </Text>
+            <div
+              class="relative before:absolute after:absolute before:bg-base-950 after:bg-base-950/10 before:top-0 before:left-0 before:h-px before:w-6 after:top-0 after:right-0 after:left-8 after:h-px pt-4 mt-2 flex flex-col gap-4"
+            >
+              {
+                missionVision.map((item) => (
+                  <div>
+                    <Text
+                      tag="h4"
+                      variant="textSM"
+                      class="text-base-900 font-medium"
+                    >
+                      {item.title}
+                    </Text>
+                    <Text tag="p" variant="textXS" class="text-base-500 mt-2">
+                      {item.description}
+                    </Text>
+                  </div>
+                ))
+              }
+            </div>
+            <div
+              class="relative before:absolute after:absolute before:bg-base-950 after:bg-base-950/10 before:top-0 before:left-0 before:h-px before:w-6 after:top-0 after:right-0 after:left-8 after:h-px pt-4 mt-4"
+            >
+              <Text tag="h4" variant="textSM" class="text-base-900 font-medium"
+                >Get in Touch</Text
+              >
+              <Text tag="p" variant="textXS" class="text-base-500 mt-2">
+                We'd love to hear from you! Whether it's feedback or a game guide request, feel free to reach out to us at
+              </Text>
+              <div class="mt-4">
+                <Text
+                  tag="a"
+                  variant="textXS"
+                  href="mailto:contact@exmaple.com"
+                  class="text-base-500 hover:underline"
+                  >matt@hobbinomicon.com</Text
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="lg:col-span-3 lg:pl-8 lg:relative lg:before:absolute lg:after:absolute
+          lg:before:bg-base-950 lg:after:bg-base-950/10 lg:before:top-0
+          lg:before:left-0 lg:before:h-6 lg:before:w-px lg:after:top-8
+          lg:after:bottom-0 lg:after:left-0 after:w-px"
+        >
+          <Image
+            width={1000}
+            height={1000}
+            src={AboutImage}
+            alt="About The Hobbinomicon"
+            class="object-cover w-full aspect-12/8 object-center rounded-xl"
+          />
+          <Wrapper variant="prose" class="text-sm text-base-500">
+            <div>
+              <p>
+                I am building The Hobbinomicon as an attempt to give back to the Hobby that has given me so much. I am not exxagerating when I say I have devoted most of my life to miniature painting and tabletop wargaming. It has been the only constant in my life from childhood.
+              </p>
+              <p>I am building this site to cover the big games we all know and love and provide a user friendly, easy to read and navigate website, while also highlighting the indie creators and smaller games to hopefully bring more players into the indie scene. </p>
+              
+              <div>
+                <p>Best regards,</p>
+                <p>
+                  <strong>Matt Gilbert</strong><br />
+                  Curator of the Hobbinomicon
+                </p>
+              </div>
+            </div>
+          </Wrapper>
+        </div>
+      </div>
+    </Wrapper>
+  </section>
+</BaseLayout>
