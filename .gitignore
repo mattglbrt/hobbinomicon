@@ -1,0 +1,30 @@
+# Node.js
+node_modules/
+dist/
+.build/
+
+# Astro build artifacts
+public/
+.cache/
+astro.config.mjs.ts
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment files
+.env
+.env.*.local
+
+# VS Code settings
+.vscode/
+
+# macOS system files
+.DS_Store
+
+# Optional: local Netlify/Turbo/Next cache if used
+.netlify/
+.vercel/
+turbo/
