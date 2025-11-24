@@ -1,0 +1,66 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import PostCard from '../../components/PostCard.astro';
+import Footer from '../../components/Footer.astro';
+import { filterDrafts } from '../../utils/filterDrafts';
+
+export async function getStaticPaths() {
+  const allPosts = await getCollection('blog');
+  const publishedPosts = filterDrafts(allPosts);
+
+  const categoriesMap = new Map();
+  publishedPosts.forEach(post => {
+    const category = post.data.category;
+    if (!categoriesMap.has(category)) {
+      categoriesMap.set(category, []);
+    }
+    categoriesMap.get(category).push(post);
+  });
+
+  return Array.from(categoriesMap.entries()).map(([category, posts]) => ({
+    params: { category: category.toLowerCase().replace(/\s+/g, '-') },
+    props: { category, posts: posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()) },
+  }));
+}
+
+const { category, posts } = Astro.props;
+---
+
+<BaseLayout title={`${category} - The Hobbinomicon`}>
+  <Header theme="light" />
+
+  <div class="min-h-screen bg-parchment">
+    <header class="bg-ink text-white py-16">
+      <div class="max-w-7xl mx-auto px-6">
+        <a href="/categories" class="inline-block text-white/80 hover:text-white mb-4 transition-colors">
+          ← All Categories
+        </a>
+        <h1 class="text-5xl md:text-6xl font-heading font-bold">{category}</h1>
+        <p class="text-xl text-white/80 mt-4">{posts.length} {posts.length === 1 ? 'post' : 'posts'}</p>
+      </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-6 py-16">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {posts.map((post) => (
+          <PostCard
+            slug={post.slug}
+            title={post.data.title}
+            description={post.data.description}
+            heroImage={post.data.heroImage}
+            heroImageAlt={post.data.heroImageAlt}
+            category={post.data.category}
+            pubDate={post.data.pubDate}
+            tags={post.data.tags}
+            youtubeId={post.data.youtubeId}
+            showCategory={false}
+          />
+        ))}
+      </div>
+    </div>
+
+    <Footer />
+  </div>
+</BaseLayout>

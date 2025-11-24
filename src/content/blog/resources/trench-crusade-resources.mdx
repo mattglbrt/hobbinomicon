@@ -1,0 +1,74 @@
+---
+title: "Trench Crusade Resources"
+description: "Essential tools, guides, and community resources for Trench Crusade players and hobbyists"
+pubDate: 2025-11-23
+category: "Resources"
+tags: ["trench crusade", "resources", "wargaming"]
+featured: true
+heroImage: "/images/resources/trench-crusade-hero.jpg"
+heroImageAlt: "Trench Crusade resources and guides"
+---
+
+import { getCollection } from 'astro:content';
+
+export const allPosts = await getCollection('blog');
+export const trenchCrusadePosts = allPosts
+  .filter(post => !post.data.draft)
+  .filter(post => post.data.tags?.some(tag => tag.toLowerCase().includes('trench crusade')))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+Your hub for all things Trench Crusade! Find essential tools, community resources, and helpful guides for this grimdark skirmish wargame.
+
+---
+
+## Essential Links
+
+<div class="not-prose grid gap-6 my-8">
+  <div class="p-6 bg-ink/5 border-l-4 border-ink/20 rounded-r-lg">
+    <h3 class="text-xl font-heading font-bold text-ink mb-3">Official Resources</h3>
+    <p class="text-ink/60 italic">Add your official Trench Crusade links here</p>
+  </div>
+
+  <div class="p-6 bg-ink/5 border-l-4 border-ink/20 rounded-r-lg">
+    <h3 class="text-xl font-heading font-bold text-ink mb-3">Community Tools</h3>
+    <p class="text-ink/60 italic">Add your community tools and resources here</p>
+  </div>
+
+  <div class="p-6 bg-ink/5 border-l-4 border-ink/20 rounded-r-lg">
+    <h3 class="text-xl font-heading font-bold text-ink mb-3">Painting & Modeling Guides</h3>
+    <p class="text-ink/60 italic">Add your painting and modeling guides here</p>
+  </div>
+</div>
+
+---
+
+## My Trench Crusade Content
+
+{trenchCrusadePosts.length > 0 ? (
+  <div class="not-prose grid gap-4 my-8">
+    {trenchCrusadePosts.map(post => (
+      <a href={`/blog/${post.slug}`}
+         class="block p-6 bg-ink/5 hover:bg-ink/10 border-l-4 border-ink/30 hover:border-ink transition-all rounded-r-lg group">
+        <h3 class="text-xl font-heading font-bold text-ink mb-2 group-hover:underline">
+          {post.data.title}
+        </h3>
+        <p class="text-ink/80 text-sm mb-2">{post.data.description}</p>
+        <p class="text-ink/60 text-xs">
+          Published: {new Date(post.data.pubDate).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          })}
+        </p>
+      </a>
+    ))}
+  </div>
+) : (
+  <p class="text-ink/60 italic my-8">No Trench Crusade posts yet. Check back soon!</p>
+)}
+
+---
+
+**Have a resource to suggest?** This guide is a living document. If you have Trench Crusade resources you'd like to see added, please reach out!
+
+*Last updated: November 23, 2025*

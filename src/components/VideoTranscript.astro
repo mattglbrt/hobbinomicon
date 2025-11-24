@@ -1,0 +1,39 @@
+---
+interface Props {
+  transcript: string;
+}
+
+const { transcript } = Astro.props;
+---
+
+<details class="video-transcript my-8 border-2 border-ink/10 rounded-lg overflow-hidden">
+  <summary class="cursor-pointer bg-ink/5 hover:bg-ink/10 px-6 py-4 font-serif text-lg text-ink font-medium transition-colors select-none">
+    View Transcript
+  </summary>
+  <div class="px-6 py-4 bg-white/50">
+    <div class="prose prose-sm max-w-none text-ink/80 whitespace-pre-line leading-relaxed">
+      {transcript}
+    </div>
+  </div>
+</details>
+
+<style>
+  details summary::-webkit-details-marker {
+    display: none;
+  }
+
+  details summary::marker {
+    display: none;
+  }
+
+  details summary::after {
+    content: ' ▼';
+    font-size: 0.8em;
+    margin-left: 0.5em;
+    transition: transform 0.2s;
+  }
+
+  details[open] summary::after {
+    transform: rotate(180deg);
+  }
+</style>

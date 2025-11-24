@@ -1,0 +1,391 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import HeroSection from '../components/HeroSection.astro';
+import PostCard from '../components/PostCard.astro';
+import Footer from '../components/Footer.astro';
+import { getHeroImage } from '../utils/getHeroImage';
+import { filterDrafts } from '../utils/filterDrafts';
+
+// Get all blog posts and sort by date
+const allPosts = await getCollection('blog');
+const publishedPosts = filterDrafts(allPosts);
+const sortedPosts = publishedPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+// Get the most recent post for hero
+const latestPost = sortedPosts[0];
+
+// Get 6 most recent resource posts
+const resourcePosts = sortedPosts
+  .filter(post => post.data.category === 'Resources')
+  .slice(0, 6);
+
+// Get 4 most recent vlog posts
+const vlogPosts = sortedPosts
+  .filter(post => post.data.category === 'Vlogs')
+  .slice(0, 4);
+
+// Get recent posts excluding hero, resources, and vlogs already shown
+const excludedSlugs = new Set([
+  latestPost.slug,
+  ...resourcePosts.map(p => p.slug),
+  ...vlogPosts.map(p => p.slug)
+]);
+const recentPosts = sortedPosts
+  .filter(post => !excludedSlugs.has(post.slug))
+  .slice(0, 6);
+
+// Get character posts
+const characterPosts = sortedPosts
+  .filter(post => post.data.category === 'Dramatis Personae')
+  .slice(0, 6);
+---
+
+<BaseLayout title="The Hobbinomicon">
+  <Header theme="dark" />
+
+  <div class="min-h-screen">
+    <!-- Latest Post - Full Screen Hero -->
+    {latestPost && (
+      <HeroSection
+        slug={latestPost.slug}
+        title={latestPost.data.title}
+        description={latestPost.data.description}
+        heroImage={getHeroImage(latestPost.data.heroImage, latestPost.data.youtubeId)}
+        heroImageAlt={latestPost.data.heroImageAlt}
+        category={latestPost.data.category}
+        pubDate={latestPost.data.pubDate}
+        tags={latestPost.data.tags}
+        badge="Latest Post"
+        size="large"
+      />
+    )}
+
+    <!-- Resource Posts Section -->
+    {resourcePosts.length > 0 && (
+      <section class="bg-parchment py-16 md:py-24">
+        <div class="max-w-7xl mx-auto px-6">
+          <div class="flex items-center justify-between mb-12">
+            <h2 class="text-4xl md:text-5xl font-heading font-bold text-ink">Resources</h2>
+            <a href="/categories/resources" class="text-ink hover:underline underline-offset-4 transition-all">
+              View All →
+            </a>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {resourcePosts.map((post) => (
+              <PostCard
+                slug={post.slug}
+                title={post.data.title}
+                description={post.data.description}
+                heroImage={post.data.heroImage}
+                heroImageAlt={post.data.heroImageAlt}
+                category={post.data.category}
+                pubDate={post.data.pubDate}
+                tags={post.data.tags}
+                youtubeId={post.data.youtubeId}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- Vlog Posts Slider -->
+    {vlogPosts.length > 0 && (
+      <section class="relative h-screen overflow-hidden bg-ink" id="vlog-slider">
+        <div class="featured-slides relative h-full">
+          {vlogPosts.map((post, index) => (
+            <div
+              class={`featured-slide absolute inset-0 transition-opacity duration-1000 ${index === 0 ? 'opacity-100' : 'opacity-0'}`}
+              data-slide={index}
+            >
+              <img
+                src={getHeroImage(post.data.heroImage, post.data.youtubeId)}
+                alt={post.data.heroImageAlt || post.data.title}
+                class="absolute inset-0 w-full h-full object-cover"
+                data-youtube-url={getHeroImage(post.data.heroImage, post.data.youtubeId).includes('youtube.com') ? getHeroImage(post.data.heroImage, post.data.youtubeId) : undefined}
+                onerror="if(this.dataset.youtubeUrl && this.src.includes('maxresdefault')) { this.src = this.src.replace('maxresdefault', 'sddefault'); } else if(this.dataset.youtubeUrl && this.src.includes('sddefault')) { this.src = this.src.replace('sddefault', 'hqdefault'); }"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-transparent"></div>
+
+              <div class="absolute bottom-0 left-0 right-0">
+                <div class="max-w-7xl mx-auto px-6 pb-16">
+                <div class="mb-4">
+                  <span class="inline-block px-4 py-2 bg-white/20 backdrop-blur-md text-white text-sm font-medium rounded-full">
+                    Latest Vlog
+                  </span>
+                </div>
+                <h2 class="text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-white mb-4 drop-shadow-2xl">
+                  {post.data.title}
+                </h2>
+                <p class="text-xl text-white/90 mb-6 drop-shadow-lg">
+                  {post.data.description}
+                </p>
+                <div class="flex flex-wrap gap-4 text-white/80 text-sm mb-6">
+                  <span class="px-3 py-1 bg-white/20 backdrop-blur-sm rounded">{post.data.category}</span>
+                  <time datetime={post.data.pubDate.toISOString()}>
+                    {new Date(post.data.pubDate).toLocaleDateString('en-us', { year: 'numeric', month: 'long', day: 'numeric' })}
+                  </time>
+                </div>
+                <a
+                  href={`/blog/${post.slug}`}
+                  class="inline-block px-6 py-3 bg-white text-ink font-medium rounded hover:bg-white/90 transition-colors"
+                >
+                  Read More
+                </a>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <!-- Slider Navigation -->
+        <div class="absolute bottom-8 right-8 flex gap-3 z-10">
+          {vlogPosts.map((_, index) => (
+            <button
+              class={`slider-dot w-3 h-3 rounded-full transition-all ${index === 0 ? 'bg-white w-8' : 'bg-white/50'}`}
+              data-slide={index}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
+
+        <script is:inline>
+          {
+            const slides = document.querySelectorAll('.featured-slide');
+            const dots = document.querySelectorAll('.slider-dot');
+            const sliderSection = document.getElementById('vlog-slider');
+            let currentSlide = 0;
+            let isScrolling = false;
+            let autoAdvanceInterval;
+            let mouseOverSlider = false;
+
+            function showSlide(index) {
+              slides.forEach((slide, i) => {
+                slide.classList.toggle('opacity-100', i === index);
+                slide.classList.toggle('opacity-0', i !== index);
+              });
+
+              dots.forEach((dot, i) => {
+                if (i === index) {
+                  dot.classList.add('bg-white', 'w-8');
+                  dot.classList.remove('bg-white/50');
+                } else {
+                  dot.classList.remove('bg-white', 'w-8');
+                  dot.classList.add('bg-white/50');
+                }
+              });
+
+              currentSlide = index;
+            }
+
+            function nextSlide() {
+              if (currentSlide < slides.length - 1) {
+                const next = currentSlide + 1;
+                showSlide(next);
+                return true;
+              }
+              return false;
+            }
+
+            function prevSlide() {
+              if (currentSlide > 0) {
+                const prev = currentSlide - 1;
+                showSlide(prev);
+                return true;
+              }
+              return false;
+            }
+
+            function startAutoAdvance() {
+              autoAdvanceInterval = setInterval(() => {
+                // Loop back to start when reaching the end
+                const next = (currentSlide + 1) % slides.length;
+                showSlide(next);
+              }, 5000);
+            }
+
+            function stopAutoAdvance() {
+              clearInterval(autoAdvanceInterval);
+            }
+
+            // Auto-advance slides
+            startAutoAdvance();
+
+            // Dot click handlers
+            dots.forEach((dot, index) => {
+              dot.addEventListener('click', () => {
+                stopAutoAdvance();
+                showSlide(index);
+                startAutoAdvance();
+              });
+            });
+
+            // Track mouse position over slider
+            if (sliderSection) {
+              sliderSection.addEventListener('mouseenter', () => {
+                mouseOverSlider = true;
+                stopAutoAdvance();
+              });
+
+              sliderSection.addEventListener('mouseleave', () => {
+                mouseOverSlider = false;
+                startAutoAdvance();
+              });
+
+              // Handle both vertical and horizontal scroll
+              sliderSection.addEventListener('wheel', (e) => {
+                if (isScrolling) return;
+
+                // Get scroll deltas
+                const deltaY = e.deltaY;
+                const deltaX = e.deltaX;
+
+                // Determine primary scroll direction with a threshold
+                // This helps with trackpads that send both X and Y values
+                const threshold = 5;
+                let scrollingForward = false;
+                let scrollingBackward = false;
+
+                // Check vertical scroll (most common)
+                if (Math.abs(deltaY) > threshold) {
+                  if (deltaY > 0) {
+                    scrollingForward = true;
+                  } else {
+                    scrollingBackward = true;
+                  }
+                }
+                // Check horizontal scroll (trackpad swipe)
+                else if (Math.abs(deltaX) > threshold) {
+                  if (deltaX > 0) {
+                    scrollingForward = true;
+                  } else {
+                    scrollingBackward = true;
+                  }
+                }
+
+                let didNavigate = false;
+
+                if (scrollingForward) {
+                  didNavigate = nextSlide();
+                } else if (scrollingBackward) {
+                  didNavigate = prevSlide();
+                }
+
+                // Only prevent default if we actually navigated a slide
+                if (didNavigate) {
+                  e.preventDefault();
+                  isScrolling = true;
+
+                  // Shorter debounce for smoother experience
+                  setTimeout(() => {
+                    isScrolling = false;
+                  }, 400);
+                }
+                // If we didn't navigate (at start/end), allow normal page scroll
+
+              }, { passive: false });
+            }
+          }
+        </script>
+      </section>
+    )}
+
+    <!-- Recent Posts Section -->
+    {recentPosts.length > 0 && (
+      <section class="bg-parchment py-16 md:py-24">
+        <div class="max-w-7xl mx-auto px-6">
+          <div class="flex items-center justify-between mb-12">
+            <h2 class="text-4xl md:text-5xl font-heading font-bold text-ink">More Posts</h2>
+            <a href="/blog" class="text-ink hover:underline underline-offset-4 transition-all">
+              View All →
+            </a>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {recentPosts.map((post) => (
+              <PostCard
+                slug={post.slug}
+                title={post.data.title}
+                description={post.data.description}
+                heroImage={post.data.heroImage}
+                heroImageAlt={post.data.heroImageAlt}
+                category={post.data.category}
+                pubDate={post.data.pubDate}
+                tags={post.data.tags}
+                youtubeId={post.data.youtubeId}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- Characters Section -->
+    {characterPosts.length > 0 && (
+      <section class="bg-ink py-16 md:py-24">
+        <div class="max-w-7xl mx-auto px-6">
+          <div class="flex items-center justify-between mb-12">
+            <h2 class="text-4xl md:text-5xl font-heading font-bold text-white">Dramatis Personae</h2>
+            <a href="/categories/dramatis-personae" class="text-white hover:underline underline-offset-4 transition-all">
+              View All →
+            </a>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
+            {characterPosts.map((character) => (
+              <a
+                href={`/blog/${character.slug}`}
+                class="character-card group relative aspect-[1/2] overflow-hidden rounded-lg"
+              >
+                <img
+                  src={character.data.heroImage || '/images/placeholder.jpg'}
+                  alt={character.data.heroImageAlt || character.data.title}
+                  class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-transparent opacity-40 group-hover:opacity-80 transition-opacity duration-500"></div>
+                <div class="absolute inset-0 flex items-end justify-center p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                  <h3 class="text-2xl md:text-3xl font-heading font-bold text-white text-center drop-shadow-2xl">
+                    {character.data.title}
+                  </h3>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- YouTube CTA Section -->
+    <section class="bg-parchment py-24 md:py-32">
+      <div class="max-w-4xl mx-auto px-6 text-center">
+        <div class="mb-8">
+          <svg class="w-20 h-20 mx-auto text-ink opacity-80" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+          </svg>
+        </div>
+        <h2 class="text-4xl md:text-6xl font-heading font-bold text-ink mb-6">
+          Join me in the Dungeon
+        </h2>
+        <p class="text-xl md:text-2xl text-ink/80 mb-8 leading-relaxed">
+          Join me on YouTube for painting tutorials, hobby vlogs, battle reports, and to follow my journey to become a Golden Daemon winning painter.
+        </p>
+        <a
+          href="https://www.youtube.com/@Hobbinomicon"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-3 px-8 py-4 bg-ink text-parchment font-heading font-bold text-lg rounded-lg hover:bg-ink/90 transition-all hover:scale-105 shadow-lg"
+        >
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+          </svg>
+          Subscribe on YouTube
+        </a>
+        <p class="text-sm text-ink/60 mt-6">
+          New videos every day
+        </p>
+      </div>
+    </section>
+
+    <Footer />
+  </div>
+</BaseLayout>

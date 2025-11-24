@@ -1,0 +1,72 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+
+const allPosts = await getCollection('blog');
+
+// Group posts by category
+const categoriesMap = new Map();
+allPosts.forEach(post => {
+  const category = post.data.category;
+  if (!categoriesMap.has(category)) {
+    categoriesMap.set(category, []);
+  }
+  categoriesMap.get(category).push(post);
+});
+
+// Convert to array and sort by number of posts
+const categories = Array.from(categoriesMap.entries())
+  .map(([name, posts]) => ({ name, count: posts.length, latestPost: posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())[0] }))
+  .sort((a, b) => b.count - a.count);
+---
+
+<BaseLayout title="Categories - The Hobbinomicon">
+  <Header theme="light" />
+
+  <div class="min-h-screen bg-parchment">
+    <header class="bg-ink text-white py-16">
+      <div class="max-w-7xl mx-auto px-6">
+        <a href="/" class="inline-block text-white/80 hover:text-white mb-4 transition-colors">
+          ← Back to Home
+        </a>
+        <h1 class="text-5xl md:text-6xl font-heading font-bold">Categories</h1>
+        <p class="text-xl text-white/80 mt-4">Explore posts by topic</p>
+      </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-6 py-16">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {categories.map(({ name, count, latestPost }) => (
+          <a
+            href={`/categories/${name.toLowerCase().replace(/\s+/g, '-')}`}
+            class="group block"
+          >
+            <div class="relative overflow-hidden rounded-lg aspect-[16/9]">
+              <img
+                src={latestPost.data.heroImage}
+                alt={latestPost.data.heroImageAlt || name}
+                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                loading="lazy"
+                decoding="async"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-transparent"></div>
+
+              <div class="absolute bottom-0 left-0 right-0 p-8">
+                <h2 class="text-3xl md:text-4xl font-heading font-bold text-white mb-2">
+                  {name}
+                </h2>
+                <p class="text-white/80">
+                  {count} {count === 1 ? 'post' : 'posts'}
+                </p>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+
+    <Footer />
+  </div>
+</BaseLayout>

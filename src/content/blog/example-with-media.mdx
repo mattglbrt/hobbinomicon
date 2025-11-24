@@ -1,0 +1,69 @@
+---
+title: "Example Post with Rich Media"
+description: "Demonstrating YouTube embeds, image galleries, and transcripts in The Hobbinomicon"
+pubDate: 2024-01-20
+heroImage: "/images/sample-hero.jpg"
+heroImageAlt: "Example media showcase"
+category: "Tutorials"
+tags: ["example", "media", "tutorial"]
+featured: false
+draft: true
+youtubeId: "dQw4w9WgXcQ"
+---
+
+import YouTubeEmbed from '../../components/YouTubeEmbed.astro';
+import ImageGallery from '../../components/ImageGallery.astro';
+import VideoTranscript from '../../components/VideoTranscript.astro';
+
+This example post demonstrates how to use all the rich media features available in The Hobbinomicon.
+
+## YouTube Video Embed
+
+You can easily embed YouTube videos in your posts:
+
+<YouTubeEmbed videoId="dQw4w9WgXcQ" title="Example Video" />
+
+## Image Galleries
+
+Create beautiful image galleries with captions:
+
+<ImageGallery
+  images={[
+    { src: '/images/sample-1.jpg', alt: 'Sample image 1', caption: 'A beautiful example' },
+    { src: '/images/sample-2.jpg', alt: 'Sample image 2', caption: 'Another great shot' },
+  ]}
+  columns={2}
+/>
+
+## Video Transcript
+
+For accessibility and SEO, you can add collapsible transcripts:
+
+<VideoTranscript
+  transcript="This is an example transcript of your video content.
+
+You can add the full transcript here, and it will be displayed in a collapsible section that readers can expand if they want to read along or search for specific content.
+
+This is great for accessibility and helps with SEO too!"
+/>
+
+## Regular Content
+
+Of course, you can still write regular markdown content with all the beautiful illuminated manuscript styling. The cream background and rich black text create a readable, elegant experience.
+
+### Lists Work Great
+
+- Beautiful typography
+- Responsive images
+- YouTube embeds
+- Image galleries
+- Collapsible transcripts
+
+### So Do Code Blocks
+
+```javascript
+const greeting = "Hello, Hobbinomicon!";
+console.log(greeting);
+```
+
+And **bold text**, *italic text*, and [links](https://example.com) all look wonderful with the custom styling.

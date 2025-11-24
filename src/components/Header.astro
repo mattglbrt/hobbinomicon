@@ -1,0 +1,117 @@
+---
+interface Props {
+  theme?: 'light' | 'dark';
+}
+
+const { theme = 'dark' } = Astro.props;
+const textColor = theme === 'dark' ? 'text-white' : 'text-ink';
+const borderColor = theme === 'dark' ? 'border-white/40' : 'border-ink/40';
+---
+
+<header
+  id="main-header"
+  class="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+  data-theme={theme}
+>
+  <nav class="p-4 md:p-6">
+    <div class="max-w-7xl mx-auto">
+      <!-- Wizardry 1 Style Border with transparent background -->
+      <div class={`border-2 ${borderColor} p-3 bg-gradient-to-b from-ink/80 to-ink/60 backdrop-blur-md`}>
+        <div class={`border ${borderColor} p-3`}>
+          <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+            <!-- Logo Section -->
+            <a href="/" class="transition-opacity hover:opacity-80 border border-transparent hover:border-white/40 p-2">
+              <img
+                src="/images/logo.svg"
+                alt="The Hobbinomicon"
+                class="h-8 md:h-10 w-auto"
+              />
+            </a>
+
+            <!-- Navigation Links -->
+            <div class={`flex flex-wrap justify-center gap-2 ${textColor} font-mono text-sm`}>
+              <a href="/blog" class={`border ${borderColor} px-4 py-2 hover:bg-white/10 hover:border-white transition-all uppercase tracking-wider`}>
+                [ Blog ]
+              </a>
+              <a href="/categories/resources" class={`border ${borderColor} px-4 py-2 hover:bg-white/10 hover:border-white transition-all uppercase tracking-wider`}>
+                [ Resources ]
+              </a>
+              <a href="/categories" class={`border ${borderColor} px-4 py-2 hover:bg-white/10 hover:border-white transition-all uppercase tracking-wider`}>
+                [ Categories ]
+              </a>
+              <a href="/about" class={`border ${borderColor} px-4 py-2 hover:bg-white/10 hover:border-white transition-all uppercase tracking-wider`}>
+                [ About ]
+              </a>
+              <a href="/contact" class={`border ${borderColor} px-4 py-2 hover:bg-white/10 hover:border-white transition-all uppercase tracking-wider`}>
+                [ Contact ]
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<script is:inline>
+  function initHeaderScroll() {
+    let lastScroll = 0;
+    const header = document.getElementById('main-header');
+    const scrollThreshold = 100;
+
+    if (!header) return;
+
+    function handleScroll() {
+      const currentScroll = window.pageYOffset;
+
+      // Don't hide header at the very top of the page
+      if (currentScroll <= scrollThreshold) {
+        header.style.transform = 'translateY(0)';
+        header.style.opacity = '1';
+        return;
+      }
+
+      // Scrolling down - hide header
+      if (currentScroll > lastScroll && currentScroll > scrollThreshold) {
+        header.style.transform = 'translateY(-100%)';
+        header.style.opacity = '0';
+      }
+      // Scrolling up - show header
+      else if (currentScroll < lastScroll) {
+        header.style.transform = 'translateY(0)';
+        header.style.opacity = '1';
+      }
+
+      lastScroll = currentScroll;
+    }
+
+    // Throttle scroll events for better performance
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          handleScroll();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+  }
+
+  // Initialize on page load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initHeaderScroll);
+  } else {
+    initHeaderScroll();
+  }
+
+  // Re-initialize on page transitions
+  document.addEventListener('astro:page-load', () => {
+    const header = document.getElementById('main-header');
+    if (header) {
+      header.style.transform = 'translateY(0)';
+      header.style.opacity = '1';
+    }
+    initHeaderScroll();
+  });
+</script>

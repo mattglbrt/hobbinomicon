@@ -1,0 +1,52 @@
+# Netlify configuration for The Hobbinomicon
+
+[build]
+  # Build command
+  command = "npm run build"
+  # Directory with built site
+  publish = "dist"
+
+# Form notifications
+[build.environment]
+  # Use Node.js 18 or higher for Astro
+  NODE_VERSION = "18"
+
+# Netlify Forms configuration
+[[plugins]]
+  package = "@netlify/plugin-forms"
+
+# Email notification for form submissions
+# Form submissions will be sent to the email configured in Netlify dashboard
+# You can configure this at: Site Settings > Forms > Form notifications
+
+# Redirect rules for better UX
+[[redirects]]
+  from = "/contact-success"
+  to = "/contact-success"
+  status = 200
+  force = false
+
+# Headers for security and performance
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Cache static assets
+[[headers]]
+  for = "/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
