@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import { getHeroImage } from '../utils/getHeroImage';
 
 interface Props {
@@ -28,6 +29,7 @@ const {
 } = Astro.props;
 
 const displayImage = getHeroImage(heroImage, youtubeId);
+const isRemoteImage = displayImage.startsWith('http');
 
 const formattedDate = new Date(pubDate).toLocaleDateString('en-us', {
   year: 'numeric',
@@ -36,18 +38,71 @@ const formattedDate = new Date(pubDate).toLocaleDateString('en-us', {
 });
 ---
 
+<style>
+  .image-wrapper img {
+    animation: fadeIn 0.3s ease-in;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* Blur-up effect for loading images */
+  .image-loading {
+    backdrop-filter: blur(10px);
+    background: linear-gradient(to bottom, #e5d5c1, #d4c4b0);
+  }
+</style>
+
 <article class="group">
   <a href={`/blog/${slug}`} class="block">
-    <div class="relative overflow-hidden rounded-lg mb-4 aspect-[4/3]">
-      <img
-        src={displayImage}
-        alt={heroImageAlt || title}
-        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-        loading="lazy"
-        decoding="async"
-        data-youtube-id={youtubeId}
-        onerror="if(this.dataset.youtubeId && this.src.includes('maxresdefault')) { this.src = 'https://img.youtube.com/vi/' + this.dataset.youtubeId + '/sddefault.jpg'; } else if(this.dataset.youtubeId && this.src.includes('sddefault')) { this.src = 'https://img.youtube.com/vi/' + this.dataset.youtubeId + '/hqdefault.jpg'; }"
-      />
+    <div class="relative overflow-hidden rounded-lg mb-4 aspect-[4/3] image-wrapper">
+      <div class="absolute inset-0 image-loading"></div>
+      {isRemoteImage ? (
+        <picture>
+          <source
+            srcset={displayImage}
+            type="image/webp"
+            media="(min-width: 768px)"
+          />
+          <source
+            srcset={displayImage}
+            type="image/jpeg"
+          />
+          <img
+            src={displayImage}
+            alt={heroImageAlt || title}
+            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            loading="lazy"
+            decoding="async"
+            width="800"
+            height="600"
+            data-youtube-id={youtubeId}
+            onerror="if(this.dataset.youtubeId && this.src.includes('maxresdefault')) { this.src = 'https://img.youtube.com/vi/' + this.dataset.youtubeId + '/sddefault.jpg'; } else if(this.dataset.youtubeId && this.src.includes('sddefault')) { this.src = 'https://img.youtube.com/vi/' + this.dataset.youtubeId + '/hqdefault.jpg'; }"
+          />
+        </picture>
+      ) : (
+        <picture>
+          <Image
+            src={displayImage}
+            alt={heroImageAlt || title}
+            width={800}
+            height={600}
+            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            loading="lazy"
+            decoding="async"
+            format="webp"
+            quality={80}
+            widths={[400, 800, 1200]}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
+        </picture>
+      )}
       <div class="absolute inset-0 bg-gradient-to-t from-ink/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
     </div>
 

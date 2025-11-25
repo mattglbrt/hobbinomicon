@@ -2,6 +2,43 @@
 
 A beautiful, performant personal portfolio and blog built with Astro 5, featuring an illuminated manuscript aesthetic for blog posts and full-screen hero sections for stunning visual impact.
 
+# To Do List
+2. Image Optimization (High Impact, High Value)
+Replace <img> tags with Astro's <Image> component for automatic WebP conversion and responsive sizing
+Currently every image loads at full resolution on all devices
+This would significantly improve Core Web Vitals
+
+3. Search Functionality (High Impact, Medium Effort)
+Add Pagefind or Algolia search so users can find specific content
+Right now users can only browse categories/tags
+
+4. Reading Time & Related Posts (Medium Impact, Low Effort)
+Add estimated reading time to blog posts
+Show 3-4 related posts at the end of each article to increase engagement
+
+5. SEO Enhancements (High Impact, Medium Effort)
+Add Schema.org structured data (BlogPosting, Person) for rich snippets
+Generate sitemap.xml automatically
+Add category-specific meta descriptions
+
+6. Social Sharing Buttons (Medium Impact, Low Effort)
+Add Twitter, Facebook, Pinterest share buttons to blog posts
+Include Twitter card creator attribution
+
+## Quick Wins (Low Effort, Good Impact)
+- [ ] Add skip-to-content link for accessibility
+- [ ] Extract duplicate code (date formatting, YouTube fallback - [ ] logic) into utilities
+- [ ] Improve color contrast on hover states (bg-white/10 → bg-white/20)
+- [ ] Add breadcrumbs to category pages
+- [ ] Add "Back to Top" button on long posts
+
+## User Experience Polish
+- [ ] Table of Contents for long blog posts
+- [ ] Newsletter signup form in footer
+- [ ] Comments system 
+- [ ] View counter to show popular posts
+- [ ] Loading skeletons for images
+
 ## Features
 
 - **Full-screen hero sections** with image overlays on homepage

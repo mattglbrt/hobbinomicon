@@ -1,4 +1,6 @@
 ---
+import { Image } from 'astro:assets';
+
 interface Props {
   slug: string;
   title: string;
@@ -36,18 +38,65 @@ const titleSize = size === 'large'
   : 'text-4xl md:text-5xl lg:text-6xl';
 
 const descriptionVisible = size === 'large';
+const isRemoteImage = heroImage.startsWith('http');
 ---
 
-<section class="relative h-screen overflow-hidden group pt-20 md:pt-24">
-  <img
-    src={heroImage}
-    alt={heroImageAlt || title}
-    class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-    loading={badge === 'Latest Post' ? 'eager' : 'lazy'}
-    decoding="async"
-    data-youtube-url={heroImage.includes('youtube.com') ? heroImage : undefined}
-    onerror="if(this.dataset.youtubeUrl && this.src.includes('maxresdefault')) { this.src = this.src.replace('maxresdefault', 'sddefault'); } else if(this.dataset.youtubeUrl && this.src.includes('sddefault')) { this.src = this.src.replace('sddefault', 'hqdefault'); }"
-  />
+<style>
+  .hero-image-wrapper img {
+    animation: fadeIn 0.5s ease-in;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .hero-loading {
+    backdrop-filter: blur(20px);
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  }
+</style>
+
+<section class="relative h-screen overflow-hidden group pt-20 md:pt-24 hero-image-wrapper">
+  <div class="absolute inset-0 hero-loading"></div>
+  {isRemoteImage ? (
+    <picture>
+      <source
+        srcset={heroImage}
+        type="image/webp"
+        media="(min-width: 1024px)"
+      />
+      <img
+        src={heroImage}
+        alt={heroImageAlt || title}
+        class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+        loading={badge === 'Latest Post' ? 'eager' : 'lazy'}
+        decoding="async"
+        width="1920"
+        height="1080"
+        data-youtube-url={heroImage.includes('youtube.com') ? heroImage : undefined}
+        onerror="if(this.dataset.youtubeUrl && this.src.includes('maxresdefault')) { this.src = this.src.replace('maxresdefault', 'sddefault'); } else if(this.dataset.youtubeUrl && this.src.includes('sddefault')) { this.src = this.src.replace('sddefault', 'hqdefault'); }"
+      />
+    </picture>
+  ) : (
+    <Image
+      src={heroImage}
+      alt={heroImageAlt || title}
+      width={1920}
+      height={1080}
+      class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+      loading={badge === 'Latest Post' ? 'eager' : 'lazy'}
+      decoding="async"
+      format="webp"
+      quality={85}
+      widths={[768, 1024, 1920, 2560]}
+      sizes="100vw"
+    />
+  )}
   <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-transparent"></div>
 
   <a

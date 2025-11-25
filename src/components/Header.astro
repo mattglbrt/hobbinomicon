@@ -8,6 +8,39 @@ const textColor = theme === 'dark' ? 'text-white' : 'text-ink';
 const borderColor = theme === 'dark' ? 'border-white/40' : 'border-ink/40';
 ---
 
+<style>
+  #mobile-menu {
+    animation: slideDown 0.3s ease-out;
+    transform-origin: top;
+  }
+
+  #mobile-menu.hidden {
+    display: none;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Smooth icon transitions */
+  #hamburger-icon,
+  #close-icon {
+    transition: transform 0.2s ease-in-out;
+  }
+
+  #mobile-menu-button:hover #hamburger-icon,
+  #mobile-menu-button:hover #close-icon {
+    transform: scale(1.1);
+  }
+</style>
+
 <header
   id="main-header"
   class="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
@@ -18,7 +51,7 @@ const borderColor = theme === 'dark' ? 'border-white/40' : 'border-ink/40';
       <!-- Wizardry 1 Style Border with transparent background -->
       <div class={`border-2 ${borderColor} p-3 bg-gradient-to-b from-ink/80 to-ink/60 backdrop-blur-md`}>
         <div class={`border ${borderColor} p-3`}>
-          <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+          <div class="flex justify-between items-center">
             <!-- Logo Section -->
             <a href="/" class="transition-opacity hover:opacity-80 border border-transparent hover:border-white/40 p-2">
               <img
@@ -28,21 +61,57 @@ const borderColor = theme === 'dark' ? 'border-white/40' : 'border-ink/40';
               />
             </a>
 
-            <!-- Navigation Links -->
-            <div class="flex flex-wrap justify-center gap-2 text-white font-mono text-sm">
-              <a href="/blog" class={`border ${borderColor} px-4 py-2 hover:bg-white/10 hover:border-white transition-all uppercase tracking-wider`}>
+            <!-- Desktop Navigation Links -->
+            <div class="hidden md:flex gap-2 text-white font-mono text-sm">
+              <a href="/blog" class={`border ${borderColor} px-4 py-2 hover:bg-white/20 hover:border-white transition-all uppercase tracking-wider`}>
                 [ Blog ]
               </a>
-              <a href="/categories/resources" class={`border ${borderColor} px-4 py-2 hover:bg-white/10 hover:border-white transition-all uppercase tracking-wider`}>
+              <a href="/categories/resources" class={`border ${borderColor} px-4 py-2 hover:bg-white/20 hover:border-white transition-all uppercase tracking-wider`}>
                 [ Resources ]
               </a>
-              <a href="/categories" class={`border ${borderColor} px-4 py-2 hover:bg-white/10 hover:border-white transition-all uppercase tracking-wider`}>
+              <a href="/categories" class={`border ${borderColor} px-4 py-2 hover:bg-white/20 hover:border-white transition-all uppercase tracking-wider`}>
                 [ Categories ]
               </a>
-              <a href="/about" class={`border ${borderColor} px-4 py-2 hover:bg-white/10 hover:border-white transition-all uppercase tracking-wider`}>
+              <a href="/about" class={`border ${borderColor} px-4 py-2 hover:bg-white/20 hover:border-white transition-all uppercase tracking-wider`}>
                 [ About ]
               </a>
-              <a href="/contact" class={`border ${borderColor} px-4 py-2 hover:bg-white/10 hover:border-white transition-all uppercase tracking-wider`}>
+              <a href="/contact" class={`border ${borderColor} px-4 py-2 hover:bg-white/20 hover:border-white transition-all uppercase tracking-wider`}>
+                [ Contact ]
+              </a>
+            </div>
+
+            <!-- Mobile Hamburger Button -->
+            <button
+              id="mobile-menu-button"
+              class="md:hidden text-white p-2 hover:bg-white/20 border border-white/40 hover:border-white transition-all"
+              aria-label="Toggle mobile menu"
+              aria-expanded="false"
+            >
+              <svg id="hamburger-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+              </svg>
+              <svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Mobile Navigation Menu -->
+          <div id="mobile-menu" class="hidden md:hidden mt-4 pt-4 border-t border-white/40">
+            <div class="flex flex-col gap-2 text-white font-mono text-sm">
+              <a href="/blog" class={`border ${borderColor} px-4 py-3 hover:bg-white/20 hover:border-white transition-all uppercase tracking-wider text-center`}>
+                [ Blog ]
+              </a>
+              <a href="/categories/resources" class={`border ${borderColor} px-4 py-3 hover:bg-white/20 hover:border-white transition-all uppercase tracking-wider text-center`}>
+                [ Resources ]
+              </a>
+              <a href="/categories" class={`border ${borderColor} px-4 py-3 hover:bg-white/20 hover:border-white transition-all uppercase tracking-wider text-center`}>
+                [ Categories ]
+              </a>
+              <a href="/about" class={`border ${borderColor} px-4 py-3 hover:bg-white/20 hover:border-white transition-all uppercase tracking-wider text-center`}>
+                [ About ]
+              </a>
+              <a href="/contact" class={`border ${borderColor} px-4 py-3 hover:bg-white/20 hover:border-white transition-all uppercase tracking-wider text-center`}>
                 [ Contact ]
               </a>
             </div>
@@ -53,13 +122,56 @@ const borderColor = theme === 'dark' ? 'border-white/40' : 'border-ink/40';
   </nav>
 </header>
 
-<script is:inline>
-  function initHeaderScroll() {
-    let lastScroll = 0;
-    const header = document.getElementById('main-header');
-    const scrollThreshold = 100;
+<script>
+  const header = document.getElementById('main-header');
+  const mobileMenuButton = document.getElementById('mobile-menu-button');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const hamburgerIcon = document.getElementById('hamburger-icon');
+  const closeIcon = document.getElementById('close-icon');
 
-    if (!header) return;
+  // Mobile menu toggle
+  if (mobileMenuButton && mobileMenu && hamburgerIcon && closeIcon) {
+    mobileMenuButton.addEventListener('click', () => {
+      const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+
+      // Toggle menu visibility
+      mobileMenu.classList.toggle('hidden');
+
+      // Toggle icons
+      hamburgerIcon.classList.toggle('hidden');
+      closeIcon.classList.toggle('hidden');
+
+      // Update aria-expanded for accessibility
+      mobileMenuButton.setAttribute('aria-expanded', !isExpanded);
+    });
+
+    // Close menu when clicking a link
+    const mobileLinks = mobileMenu.querySelectorAll('a');
+    mobileLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.add('hidden');
+        hamburgerIcon.classList.remove('hidden');
+        closeIcon.classList.add('hidden');
+        mobileMenuButton.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    // Close menu on escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !mobileMenu.classList.contains('hidden')) {
+        mobileMenu.classList.add('hidden');
+        hamburgerIcon.classList.remove('hidden');
+        closeIcon.classList.add('hidden');
+        mobileMenuButton.setAttribute('aria-expanded', 'false');
+        mobileMenuButton.focus();
+      }
+    });
+  }
+
+  // Header scroll behavior
+  if (header) {
+    let lastScroll = 0;
+    const scrollThreshold = 100;
 
     function handleScroll() {
       const currentScroll = window.pageYOffset;
@@ -75,6 +187,13 @@ const borderColor = theme === 'dark' ? 'border-white/40' : 'border-ink/40';
       if (currentScroll > lastScroll && currentScroll > scrollThreshold) {
         header.style.transform = 'translateY(-100%)';
         header.style.opacity = '0';
+        // Close mobile menu when hiding header
+        if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+          mobileMenu.classList.add('hidden');
+          hamburgerIcon.classList.remove('hidden');
+          closeIcon.classList.add('hidden');
+          mobileMenuButton.setAttribute('aria-expanded', 'false');
+        }
       }
       // Scrolling up - show header
       else if (currentScroll < lastScroll) {
@@ -97,21 +216,4 @@ const borderColor = theme === 'dark' ? 'border-white/40' : 'border-ink/40';
       }
     });
   }
-
-  // Initialize on page load
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initHeaderScroll);
-  } else {
-    initHeaderScroll();
-  }
-
-  // Re-initialize on page transitions
-  document.addEventListener('astro:page-load', () => {
-    const header = document.getElementById('main-header');
-    if (header) {
-      header.style.transform = 'translateY(0)';
-      header.style.opacity = '1';
-    }
-    initHeaderScroll();
-  });
 </script>
