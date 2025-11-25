@@ -20,7 +20,6 @@ Include Twitter card creator attribution
 - [ ] Newsletter signup form in footer
 - [ ] Comments system 
 - [ ] View counter to show popular posts
-- [ ] Loading skeletons for images
 
 ## Features
 
