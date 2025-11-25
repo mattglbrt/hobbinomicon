@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
+import PageHeader from '../../components/PageHeader.astro';
 import PostCard from '../../components/PostCard.astro';
 import Footer from '../../components/Footer.astro';
 import { filterDrafts } from '../../utils/filterDrafts';
@@ -18,16 +19,11 @@ const categories = [...new Set(publishedPosts.map(post => post.data.category))].
   <Header theme="light" />
 
   <div class="min-h-screen bg-parchment">
-    <!-- Header -->
-    <header class="bg-ink text-white py-16">
-      <div class="max-w-7xl mx-auto px-6">
-        <a href="/" class="inline-block text-white/80 hover:text-white mb-4 transition-colors">
-          ← Back to Home
-        </a>
-        <h1 class="text-5xl md:text-6xl font-heading font-bold">All Posts</h1>
-        <p class="text-xl text-white/80 mt-4">Exploring hobbies, projects, and creative pursuits</p>
-      </div>
-    </header>
+    <PageHeader
+      title="All Posts"
+      description="Exploring hobbies, projects, and creative pursuits"
+      backLink={{ href: "/", text: "Back to Home" }}
+    />
 
     <!-- Category Shortcuts -->
     <div class="bg-parchment border-b-2 border-ink/10 py-8">
