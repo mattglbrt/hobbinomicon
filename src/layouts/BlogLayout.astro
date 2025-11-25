@@ -3,7 +3,10 @@ import { Image } from 'astro:assets';
 import BaseLayout from './BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import RelatedPosts from '../components/RelatedPosts.astro';
 import { getHeroImage } from '../utils/getHeroImage';
+import { formatReadingTime } from '../utils/readingTime';
+import type { CollectionEntry } from 'astro:content';
 
 interface Props {
   title: string;
@@ -15,9 +18,11 @@ interface Props {
   category: string;
   tags: string[];
   youtubeId?: string;
+  readingTime?: number;
+  relatedPosts?: CollectionEntry<'blog'>[];
 }
 
-const { title, description, pubDate, updatedDate, heroImage, heroImageAlt, category, tags, youtubeId } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, heroImageAlt, category, tags, youtubeId, readingTime, relatedPosts = [] } = Astro.props;
 
 const displayImage = getHeroImage(heroImage, youtubeId);
 const isRemoteImage = displayImage.startsWith('http');
@@ -71,6 +76,12 @@ const formattedUpdatedDate = updatedDate
           </h1>
           <div class="flex flex-wrap gap-4 text-white/90 text-sm md:text-base">
             <time datetime={pubDate.toISOString()}>{formattedDate}</time>
+            {readingTime && (
+              <>
+                <span>•</span>
+                <span>{formatReadingTime(readingTime)}</span>
+              </>
+            )}
             <span>•</span>
             <span class="px-3 py-1 bg-white/20 backdrop-blur-sm rounded">{category}</span>
           </div>
@@ -124,6 +135,11 @@ const formattedUpdatedDate = updatedDate
         <p class="text-sm text-ink/60 italic mt-12 pt-8 border-t border-ink/10">
           Last updated: {formattedUpdatedDate}
         </p>
+      )}
+
+      <!-- Related Posts -->
+      {relatedPosts.length > 0 && (
+        <RelatedPosts posts={relatedPosts} />
       )}
     </article>
   </div>

@@ -1,0 +1,43 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import PostCard from './PostCard.astro';
+
+interface Props {
+  posts: CollectionEntry<'blog'>[];
+}
+
+const { posts } = Astro.props;
+
+// Only display if we have related posts
+if (posts.length === 0) {
+  return null;
+}
+---
+
+<section class="mt-16 pt-12 border-t-2 border-ink/10">
+  <div class="mb-8">
+    <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink mb-2">
+      Related Posts
+    </h2>
+    <p class="text-ink/60">
+      Continue exploring similar topics
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    {posts.map((post) => (
+      <PostCard
+        slug={post.slug}
+        title={post.data.title}
+        description={post.data.description}
+        heroImage={post.data.heroImage}
+        heroImageAlt={post.data.heroImageAlt}
+        category={post.data.category}
+        pubDate={post.data.pubDate}
+        tags={post.data.tags}
+        showCategory={true}
+        youtubeId={post.data.youtubeId}
+      />
+    ))}
+  </div>
+</section>

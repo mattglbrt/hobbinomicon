@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BlogLayout from '../../layouts/BlogLayout.astro';
+import { calculateReadingTime } from '../../utils/readingTime';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -12,8 +13,27 @@ export async function getStaticPaths() {
 
 const post = Astro.props;
 const { Content } = await post.render();
+
+// Calculate reading time from post body
+const readingTime = calculateReadingTime(post.body);
+
+// Get related posts (same tags, excluding current post)
+const allPosts = await getCollection('blog');
+const relatedPosts = allPosts
+  .filter((p) =>
+    p.slug !== post.slug &&
+    !p.data.draft &&
+    p.data.tags.some((tag) => post.data.tags.includes(tag))
+  )
+  .sort((a, b) => {
+    // Sort by number of matching tags
+    const aMatches = a.data.tags.filter((tag) => post.data.tags.includes(tag)).length;
+    const bMatches = b.data.tags.filter((tag) => post.data.tags.includes(tag)).length;
+    return bMatches - aMatches;
+  })
+  .slice(0, 4);
 ---
 
-<BlogLayout {...post.data}>
+<BlogLayout {...post.data} readingTime={readingTime} relatedPosts={relatedPosts}>
   <Content />
 </BlogLayout>
