@@ -72,5 +72,6 @@ export default new Map([
 ["src/content/blog/characters/crownandskull/Lanyssa.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fblog%2Fcharacters%2Fcrownandskull%2FLanyssa.mdx&astroContentModuleFlag=true")],
 ["src/content/blog/characters/crownandskull/Mordryth.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fblog%2Fcharacters%2Fcrownandskull%2FMordryth.mdx&astroContentModuleFlag=true")],
 ["src/content/blog/characters/crownandskull/Ryva.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fblog%2Fcharacters%2Fcrownandskull%2FRyva.mdx&astroContentModuleFlag=true")],
-["src/content/blog/characters/crownandskull/Vyr.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fblog%2Fcharacters%2Fcrownandskull%2FVyr.mdx&astroContentModuleFlag=true")]]);
+["src/content/blog/characters/crownandskull/Vyr.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fblog%2Fcharacters%2Fcrownandskull%2FVyr.mdx&astroContentModuleFlag=true")],
+["src/content/blog/campaigns/crown-and-skull/the-last-watch/chapter-1.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fblog%2Fcampaigns%2Fcrown-and-skull%2Fthe-last-watch%2Fchapter-1.mdx&astroContentModuleFlag=true")]]);
 		
