@@ -1,0 +1,111 @@
+---
+// No props needed - this is a self-contained easter egg component
+---
+
+<style>
+  #random-toad {
+    position: fixed;
+    z-index: 9999;
+    width: 60px;
+    height: 60px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out, transform 0.3s ease-in-out;
+  }
+
+  #random-toad.visible {
+    opacity: 1;
+  }
+
+  #random-toad:hover {
+    transform: scale(1.2) rotate(5deg);
+  }
+
+  #random-toad img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+  }
+
+  @keyframes hop {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  #random-toad:hover {
+    animation: hop 0.5s ease-in-out;
+  }
+</style>
+
+<a id="random-toad" href="/toad-prompt" aria-label="Secret toad - click to discover">
+  <img src="/images/thetoad.png" alt="Secret toad" />
+</a>
+
+<script>
+  const toad = document.getElementById('random-toad');
+
+  if (toad) {
+    // Define possible positions (corners and edges)
+    const positions = [
+      // Corners
+      { top: '20px', left: '20px', name: 'top-left' },
+      { top: '20px', right: '20px', name: 'top-right' },
+      { bottom: '20px', left: '20px', name: 'bottom-left' },
+      { bottom: '20px', right: '20px', name: 'bottom-right' },
+
+      // Top edge positions
+      { top: '20px', left: '25%', name: 'top-quarter' },
+      { top: '20px', left: '50%', transform: 'translateX(-50%)', name: 'top-center' },
+      { top: '20px', left: '75%', name: 'top-three-quarter' },
+
+      // Bottom edge positions
+      { bottom: '20px', left: '25%', name: 'bottom-quarter' },
+      { bottom: '20px', left: '50%', transform: 'translateX(-50%)', name: 'bottom-center' },
+      { bottom: '20px', left: '75%', name: 'bottom-three-quarter' },
+
+      // Left edge positions
+      { top: '25%', left: '20px', name: 'left-quarter' },
+      { top: '50%', left: '20px', transform: 'translateY(-50%)', name: 'left-center' },
+      { top: '75%', left: '20px', name: 'left-three-quarter' },
+
+      // Right edge positions
+      { top: '25%', right: '20px', name: 'right-quarter' },
+      { top: '50%', right: '20px', transform: 'translateY(-50%)', name: 'right-center' },
+      { top: '75%', right: '20px', name: 'right-three-quarter' },
+    ];
+
+    // Select a random position
+    const randomPosition = positions[Math.floor(Math.random() * positions.length)];
+
+    // Apply the position styles
+    Object.keys(randomPosition).forEach(key => {
+      if (key !== 'name') {
+        toad.style[key] = randomPosition[key];
+      }
+    });
+
+    // Check if we're on the toad-prompt or secret-toad page
+    const currentPath = window.location.pathname;
+    const isToadPage = currentPath.includes('toad-prompt') || currentPath.includes('secret-toad');
+
+    // Don't show toad on its own pages
+    if (!isToadPage) {
+      // Fade in the toad after a short delay
+      setTimeout(() => {
+        toad.classList.add('visible');
+      }, 1000);
+    }
+
+    // Optional: Add a chance factor (e.g., 30% chance to appear)
+    // Uncomment the following lines if you want the toad to only appear sometimes
+    // const shouldAppear = Math.random() < 0.3;
+    // if (!shouldAppear || isToadPage) {
+    //   toad.style.display = 'none';
+    // }
+  }
+</script>

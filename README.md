@@ -20,7 +20,7 @@ Include Twitter card creator attribution
 - [ ] Extract duplicate code (date formatting, YouTube fallback - [ ] logic) into utilities
 - [ ] Improve color contrast on hover states (bg-white/10 → bg-white/20)
 - [ ] Add breadcrumbs to category pages
-- [ ] Add "Back to Top" button on long posts
+
 
 ## User Experience Polish
 - [ ] Table of Contents for long blog posts

@@ -1,0 +1,96 @@
+---
+// No props needed - this is a self-contained component
+---
+
+<style>
+  #back-to-top {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out, transform 0.2s ease-in-out;
+  }
+
+  #back-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  #back-to-top:hover {
+    transform: translateY(-4px);
+  }
+
+  #back-to-top:active {
+    transform: translateY(-2px);
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  #back-to-top.visible {
+    animation: slideUp 0.3s ease-out;
+  }
+</style>
+
+<button
+  id="back-to-top"
+  aria-label="Back to top"
+  class="fixed bottom-8 right-8 z-40 p-4 bg-ink text-white rounded-full shadow-2xl hover:bg-ink/90 focus:outline-none focus:ring-4 focus:ring-ink/20 border-2 border-white/10"
+>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    class="h-6 w-6"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+    stroke-width="2"
+  >
+    <path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+  </svg>
+</button>
+
+<script>
+  const backToTopButton = document.getElementById('back-to-top');
+
+  if (backToTopButton) {
+    // Show button when user scrolls down
+    function handleScroll() {
+      const scrollThreshold = 500; // Show after scrolling 500px
+
+      if (window.pageYOffset > scrollThreshold) {
+        backToTopButton.classList.add('visible');
+      } else {
+        backToTopButton.classList.remove('visible');
+      }
+    }
+
+    // Smooth scroll to top when clicked
+    backToTopButton.addEventListener('click', () => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+
+    // Throttle scroll events for better performance
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          handleScroll();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+
+    // Initial check
+    handleScroll();
+  }
+</script>

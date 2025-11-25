@@ -4,6 +4,7 @@ import BaseLayout from './BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import RelatedPosts from '../components/RelatedPosts.astro';
+import BackToTop from '../components/BackToTop.astro';
 import { getHeroImage } from '../utils/getHeroImage';
 import { formatReadingTime } from '../utils/readingTime';
 import type { CollectionEntry } from 'astro:content';
@@ -142,6 +143,9 @@ const formattedUpdatedDate = updatedDate
         <RelatedPosts posts={relatedPosts} />
       )}
     </article>
+
+    <!-- Back to Top Button -->
+    <BackToTop />
   </div>
   <Footer />
 </BaseLayout>
