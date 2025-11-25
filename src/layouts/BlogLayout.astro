@@ -7,6 +7,8 @@ import RelatedPosts from '../components/RelatedPosts.astro';
 import BackToTop from '../components/BackToTop.astro';
 import { getHeroImage } from '../utils/getHeroImage';
 import { formatReadingTime } from '../utils/readingTime';
+import { formatDateLong } from '../utils/formatDate';
+import { getYouTubeFallbackHandler } from '../utils/youtubeImageFallback';
 import type { CollectionEntry } from 'astro:content';
 
 interface Props {
@@ -28,26 +30,15 @@ const { title, description, pubDate, updatedDate, heroImage, heroImageAlt, categ
 const displayImage = getHeroImage(heroImage, youtubeId);
 const isRemoteImage = displayImage.startsWith('http');
 
-const formattedDate = new Date(pubDate).toLocaleDateString('en-us', {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-});
-
-const formattedUpdatedDate = updatedDate
-  ? new Date(updatedDate).toLocaleDateString('en-us', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    })
-  : null;
+const formattedDate = formatDateLong(pubDate);
+const formattedUpdatedDate = updatedDate ? formatDateLong(updatedDate) : null;
 ---
 
 <BaseLayout title={title} description={description}>
   <Header />
   <div class="min-h-screen bg-parchment">
     <!-- Hero Image -->
-    <div class="relative h-[60vh] md:h-[70vh] overflow-hidden pt-20 md:pt-24">
+    <div class="relative h-[60vh] md:h-[70vh] overflow-hidden">
       {isRemoteImage ? (
         <img
           src={displayImage}
@@ -56,7 +47,7 @@ const formattedUpdatedDate = updatedDate
           width="1920"
           height="1080"
           data-youtube-id={youtubeId}
-          onerror="if(this.dataset.youtubeId && this.src.includes('maxresdefault')) { this.src = 'https://img.youtube.com/vi/' + this.dataset.youtubeId + '/sddefault.jpg'; } else if(this.dataset.youtubeId && this.src.includes('sddefault')) { this.src = 'https://img.youtube.com/vi/' + this.dataset.youtubeId + '/hqdefault.jpg'; }"
+          onerror={getYouTubeFallbackHandler('id')}
         />
       ) : (
         <Image
@@ -103,7 +94,7 @@ const formattedUpdatedDate = updatedDate
           {tags.map((tag) => (
             <a
               href={`/tags/${tag}`}
-              class="text-sm px-3 py-1 bg-ink/5 hover:bg-ink/10 text-ink rounded-full transition-colors"
+              class="text-sm px-3 py-1 bg-ink/5 hover:bg-ink/20 text-ink rounded-full transition-colors"
             >
               #{tag}
             </a>

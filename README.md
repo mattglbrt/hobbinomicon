@@ -2,7 +2,7 @@
 
 A beautiful, performant personal portfolio and blog built with Astro 5, featuring an illuminated manuscript aesthetic for blog posts and full-screen hero sections for stunning visual impact.
 
-# To Do List
+## To Do List
 - [ ] Search Functionality (High Impact, Medium Effort)
 Add Pagefind or Algolia search so users can find specific content
 
@@ -15,14 +15,7 @@ Add category-specific meta descriptions
 Add Twitter, Facebook, Pinterest share buttons to blog posts
 Include Twitter card creator attribution
 
-## Quick Wins (Low Effort, Good Impact)
-- [ ] Add skip-to-content link for accessibility
-- [ ] Extract duplicate code (date formatting, YouTube fallback - [ ] logic) into utilities
-- [ ] Improve color contrast on hover states (bg-white/10 → bg-white/20)
-- [ ] Add breadcrumbs to category pages
-
-
-## User Experience Polish
+### User Experience Polish
 - [ ] Table of Contents for long blog posts
 - [ ] Newsletter signup form in footer
 - [ ] Comments system 

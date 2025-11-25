@@ -36,7 +36,10 @@ const { category, posts } = Astro.props;
     <PageHeader
       title={category}
       description={`${posts.length} ${posts.length === 1 ? 'post' : 'posts'}`}
-      backLink={{ href: "/categories", text: "All Categories" }}
+      breadcrumbs={[
+        { label: "Categories", href: "/categories" },
+        { label: category, href: `/categories/${category.toLowerCase().replace(/\s+/g, '-')}` }
+      ]}
     />
 
     <div class="max-w-7xl mx-auto px-6 py-16">

@@ -30,7 +30,9 @@ const categories = Array.from(categoriesMap.entries())
     <PageHeader
       title="Categories"
       description="Explore posts by topic"
-      backLink={{ href: "/", text: "Back to Home" }}
+      breadcrumbs={[
+        { label: "Categories", href: "/categories" }
+      ]}
     />
 
     <div class="max-w-7xl mx-auto px-6 py-16">

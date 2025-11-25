@@ -7,6 +7,8 @@ import PostCard from '../components/PostCard.astro';
 import Footer from '../components/Footer.astro';
 import { getHeroImage } from '../utils/getHeroImage';
 import { filterDrafts } from '../utils/filterDrafts';
+import { formatDateLong } from '../utils/formatDate';
+import { getYouTubeFallbackHandler } from '../utils/youtubeImageFallback';
 
 // Get all blog posts and sort by date
 const allPosts = await getCollection('blog');
@@ -73,7 +75,7 @@ const characterPosts = sortedPosts
             </a>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {resourcePosts.map((post) => (
+            {resourcePosts.map((post, index) => (
               <PostCard
                 slug={post.slug}
                 title={post.data.title}
@@ -84,6 +86,7 @@ const characterPosts = sortedPosts
                 pubDate={post.data.pubDate}
                 tags={post.data.tags}
                 youtubeId={post.data.youtubeId}
+                eager={index < 3}
               />
             ))}
           </div>
@@ -104,8 +107,11 @@ const characterPosts = sortedPosts
                 src={getHeroImage(post.data.heroImage, post.data.youtubeId)}
                 alt={post.data.heroImageAlt || post.data.title}
                 class="absolute inset-0 w-full h-full object-cover"
+                loading={index === 0 ? 'eager' : 'lazy'}
+                decoding="async"
+                fetchpriority={index === 0 ? 'high' : 'auto'}
                 data-youtube-url={getHeroImage(post.data.heroImage, post.data.youtubeId).includes('youtube.com') ? getHeroImage(post.data.heroImage, post.data.youtubeId) : undefined}
-                onerror="if(this.dataset.youtubeUrl && this.src.includes('maxresdefault')) { this.src = this.src.replace('maxresdefault', 'sddefault'); } else if(this.dataset.youtubeUrl && this.src.includes('sddefault')) { this.src = this.src.replace('sddefault', 'hqdefault'); }"
+                onerror={getYouTubeFallbackHandler('url')}
               />
               <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-transparent"></div>
 
@@ -125,7 +131,7 @@ const characterPosts = sortedPosts
                 <div class="flex flex-wrap gap-4 text-white/80 text-sm mb-6">
                   <span class="px-3 py-1 bg-white/20 backdrop-blur-sm rounded">{post.data.category}</span>
                   <time datetime={post.data.pubDate.toISOString()}>
-                    {new Date(post.data.pubDate).toLocaleDateString('en-us', { year: 'numeric', month: 'long', day: 'numeric' })}
+                    {formatDateLong(post.data.pubDate)}
                   </time>
                 </div>
                 <a
@@ -303,7 +309,7 @@ const characterPosts = sortedPosts
             </a>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {recentPosts.map((post) => (
+            {recentPosts.map((post, index) => (
               <PostCard
                 slug={post.slug}
                 title={post.data.title}
@@ -314,6 +320,7 @@ const characterPosts = sortedPosts
                 pubDate={post.data.pubDate}
                 tags={post.data.tags}
                 youtubeId={post.data.youtubeId}
+                eager={index < 3}
               />
             ))}
           </div>

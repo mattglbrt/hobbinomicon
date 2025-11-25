@@ -1,5 +1,7 @@
 ---
 import { Image } from 'astro:assets';
+import { formatDateLong } from '../utils/formatDate';
+import { getYouTubeFallbackHandler } from '../utils/youtubeImageFallback';
 
 interface Props {
   slug: string;
@@ -27,11 +29,7 @@ const {
   size = 'large'
 } = Astro.props;
 
-const formattedDate = new Date(pubDate).toLocaleDateString('en-us', {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-});
+const formattedDate = formatDateLong(pubDate);
 
 const titleSize = size === 'large'
   ? 'text-4xl md:text-6xl lg:text-7xl'
@@ -79,7 +77,7 @@ const isRemoteImage = heroImage.startsWith('http');
         width="1920"
         height="1080"
         data-youtube-url={heroImage.includes('youtube.com') ? heroImage : undefined}
-        onerror="if(this.dataset.youtubeUrl && this.src.includes('maxresdefault')) { this.src = this.src.replace('maxresdefault', 'sddefault'); } else if(this.dataset.youtubeUrl && this.src.includes('sddefault')) { this.src = this.src.replace('sddefault', 'hqdefault'); }"
+        onerror={getYouTubeFallbackHandler('url')}
       />
     </picture>
   ) : (

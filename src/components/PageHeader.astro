@@ -1,4 +1,6 @@
 ---
+import Breadcrumbs, { type BreadcrumbItem } from './Breadcrumbs.astro';
+
 interface Props {
   title: string;
   description?: string;
@@ -6,14 +8,18 @@ interface Props {
     href: string;
     text: string;
   };
+  breadcrumbs?: BreadcrumbItem[];
 }
 
-const { title, description, backLink } = Astro.props;
+const { title, description, backLink, breadcrumbs } = Astro.props;
 ---
 
 <header class="bg-ink text-white py-16 pt-36 md:pt-40">
   <div class="max-w-7xl mx-auto px-6">
-    {backLink && (
+    {breadcrumbs && breadcrumbs.length > 0 && (
+      <Breadcrumbs items={breadcrumbs} />
+    )}
+    {backLink && !breadcrumbs && (
       <a href={backLink.href} class="inline-block text-white/80 hover:text-white mb-4 transition-colors">
         ← {backLink.text}
       </a>
