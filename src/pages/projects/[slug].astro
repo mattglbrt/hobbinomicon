@@ -1,0 +1,141 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import PostCard from '../../components/PostCard.astro';
+import BackToTop from '../../components/BackToTop.astro';
+import { filterDrafts } from '../../utils/filterDrafts';
+
+export async function getStaticPaths() {
+  const allProjects = await getCollection('projects');
+  const allPosts = await getCollection('blog');
+  const publishedPosts = filterDrafts(allPosts);
+
+  return allProjects
+    .filter(project => !project.data.draft)
+    .map(project => {
+      const projectPosts = publishedPosts
+        .filter(post => post.data.project === project.data.slug)
+        .sort((a, b) => {
+          // Sort by projectOrder if available, otherwise by pubDate
+          if (a.data.projectOrder !== undefined && b.data.projectOrder !== undefined) {
+            return a.data.projectOrder - b.data.projectOrder;
+          }
+          return a.data.pubDate.valueOf() - b.data.pubDate.valueOf();
+        });
+
+      return {
+        params: { slug: project.data.slug },
+        props: { project, posts: projectPosts },
+      };
+    });
+}
+
+const { project, posts } = Astro.props;
+const { Content } = await project.render();
+
+// Get the latest post's hero image for the header
+const latestPost = [...posts].sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())[0];
+const heroImage = latestPost?.data.heroImage;
+const heroImageAlt = latestPost?.data.heroImageAlt || project.data.title;
+---
+
+<BaseLayout title={`${project.data.title} - The Hobbinomicon`} description={project.data.description}>
+  <Header />
+  <div class="min-h-screen bg-parchment">
+    <!-- Hero Image -->
+    <div class="relative h-[50vh] md:h-[60vh] overflow-hidden">
+      {heroImage ? (
+        <img
+          src={heroImage}
+          alt={heroImageAlt}
+          class="w-full h-full object-cover"
+          width="1920"
+          height="1080"
+        />
+      ) : (
+        <div class="w-full h-full bg-ink/20"></div>
+      )}
+      <div class="absolute inset-0 bg-gradient-to-t from-ink/70 to-transparent"></div>
+
+      <!-- Title Overlay -->
+      <div class="absolute bottom-0 left-0 right-0 p-8 md:p-12 lg:p-16">
+        <div class="max-w-4xl">
+          <a href="/projects" class="inline-block text-white/80 hover:text-white mb-4 transition-colors text-sm">
+            ← Back to Projects
+          </a>
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-white mb-4 drop-shadow-2xl">
+            {project.data.title}
+          </h1>
+          <p class="text-white/90 text-lg md:text-xl max-w-2xl">
+            {project.data.description}
+          </p>
+          <div class="mt-4 text-white/70 text-sm">
+            {posts.length} {posts.length === 1 ? 'post' : 'posts'} in this project
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Project Introduction Content -->
+    <div class="max-w-3xl mx-auto px-6 py-12 md:py-16">
+      <div class="prose prose-lg max-w-none
+        prose-headings:font-heading prose-headings:text-ink
+        prose-h2:text-3xl prose-h2:mt-12 prose-h2:mb-6 prose-h2:font-bold
+        prose-h3:text-2xl prose-h3:mt-8 prose-h3:mb-4 prose-h3:font-bold
+        prose-p:text-ink prose-p:leading-relaxed prose-p:text-lg prose-p:mb-6
+        prose-a:text-ink prose-a:underline prose-a:decoration-2 prose-a:underline-offset-4 hover:prose-a:decoration-4 prose-a:transition-colors
+        prose-strong:text-ink prose-strong:font-bold
+        prose-em:text-ink prose-em:italic
+        prose-blockquote:border-l-4 prose-blockquote:border-ink/30 prose-blockquote:pl-6 prose-blockquote:italic prose-blockquote:text-ink/80
+        prose-ul:list-disc prose-ul:pl-6 prose-ul:text-ink
+        prose-ol:list-decimal prose-ol:pl-6 prose-ol:text-ink
+        prose-li:text-ink prose-li:mb-2
+        prose-img:rounded-lg prose-img:shadow-xl
+      ">
+        <Content />
+      </div>
+    </div>
+
+    <!-- Posts Section -->
+    <div class="bg-ink/5 border-t-2 border-ink/10">
+      <div class="max-w-7xl mx-auto px-6 py-16">
+        <h2 class="text-3xl font-heading font-bold text-ink mb-8">
+          Posts in this Project
+        </h2>
+
+        {posts.length === 0 ? (
+          <p class="text-ink/60 text-lg">No posts in this project yet. Check back soon!</p>
+        ) : (
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {posts.map((post, index) => (
+              <div class="relative">
+                {post.data.projectOrder !== undefined && (
+                  <div class="absolute -top-3 -left-3 w-8 h-8 bg-ink text-parchment rounded-full flex items-center justify-center text-sm font-bold z-10">
+                    {post.data.projectOrder}
+                  </div>
+                )}
+                <PostCard
+                  slug={post.slug}
+                  title={post.data.title}
+                  description={post.data.description}
+                  heroImage={post.data.heroImage}
+                  heroImageAlt={post.data.heroImageAlt}
+                  category={post.data.category}
+                  pubDate={post.data.pubDate}
+                  tags={post.data.tags}
+                  youtubeId={post.data.youtubeId}
+                  showCategory={true}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+
+    <BackToTop />
+  </div>
+  <Footer />
+</BaseLayout>

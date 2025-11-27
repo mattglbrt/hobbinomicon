@@ -15,7 +15,20 @@ const blog = defineCollection({
     draft: z.boolean().default(false),
     youtubeId: z.string().optional(),
     youtubeTranscript: z.string().optional(),
+    project: z.string().optional(),
+    projectOrder: z.number().optional(),
   }),
 });
 
-export const collections = { blog };
+const projects = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    slug: z.string(),
+    pubDate: z.coerce.date(),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { blog, projects };
