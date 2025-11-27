@@ -72,6 +72,12 @@
         "youtubeTranscript": {
           "type": "string"
         },
+        "project": {
+          "type": "string"
+        },
+        "projectOrder": {
+          "type": "number"
+        },
         "$schema": {
           "type": "string"
         }

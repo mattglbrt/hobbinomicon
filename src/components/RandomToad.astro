@@ -93,19 +93,17 @@
     const currentPath = window.location.pathname;
     const isToadPage = currentPath.includes('toad-prompt') || currentPath.includes('secret-toad');
 
-    // Don't show toad on its own pages
-    if (!isToadPage) {
+    // Add a chance factor (15% chance to appear)
+    const shouldAppear = Math.random() < 0.15;
+
+    // Don't show toad on its own pages or if probability check fails
+    if (!shouldAppear || isToadPage) {
+      toad.style.display = 'none';
+    } else {
       // Fade in the toad after a short delay
       setTimeout(() => {
         toad.classList.add('visible');
       }, 1000);
     }
-
-    // Optional: Add a chance factor (e.g., 30% chance to appear)
-    // Uncomment the following lines if you want the toad to only appear sometimes
-    // const shouldAppear = Math.random() < 0.3;
-    // if (!shouldAppear || isToadPage) {
-    //   toad.style.display = 'none';
-    // }
   }
 </script>

@@ -6,6 +6,7 @@ import Footer from '../../components/Footer.astro';
 import PostCard from '../../components/PostCard.astro';
 import BackToTop from '../../components/BackToTop.astro';
 import { filterDrafts } from '../../utils/filterDrafts';
+import { getHeroImage } from '../../utils/getHeroImage';
 
 export async function getStaticPaths() {
   const allProjects = await getCollection('projects');
@@ -15,8 +16,10 @@ export async function getStaticPaths() {
   return allProjects
     .filter(project => !project.data.draft)
     .map(project => {
+      // Strip file extension from project.id for matching
+      const projectSlug = project.id.replace(/\.[^/.]+$/, '');
       const projectPosts = publishedPosts
-        .filter(post => post.data.project === project.data.slug)
+        .filter(post => post.data.project === projectSlug)
         .sort((a, b) => {
           // Sort by projectOrder if available, otherwise by pubDate
           if (a.data.projectOrder !== undefined && b.data.projectOrder !== undefined) {
@@ -26,7 +29,7 @@ export async function getStaticPaths() {
         });
 
       return {
-        params: { slug: project.data.slug },
+        params: { slug: projectSlug },
         props: { project, posts: projectPosts },
       };
     });
@@ -37,7 +40,7 @@ const { Content } = await project.render();
 
 // Get the latest post's hero image for the header
 const latestPost = [...posts].sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())[0];
-const heroImage = latestPost?.data.heroImage;
+const heroImage = latestPost ? getHeroImage(latestPost.data.heroImage, latestPost.data.youtubeId) : null;
 const heroImageAlt = latestPost?.data.heroImageAlt || project.data.title;
 ---
 

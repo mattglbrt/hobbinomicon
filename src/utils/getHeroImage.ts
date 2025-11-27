@@ -6,8 +6,8 @@ export function getHeroImage(heroImage?: string, youtubeId?: string): string {
 
   // If YouTube ID is provided, use the highest quality thumbnail
   // YouTube provides thumbnails in this priority order:
-  // 1. maxresdefault.jpg (1280x720) - not always available
-  // 2. sddefault.jpg (640x480) - not always available
+  // 1. maxresdefault.jpg (1280x720) - highest quality, not always available
+  // 2. sddefault.jpg (640x480) - good fallback
   // 3. hqdefault.jpg (480x360) - almost always available
   // We'll use maxresdefault and let the browser fall back via onerror
   if (youtubeId) {
