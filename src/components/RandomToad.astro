@@ -42,7 +42,7 @@
   }
 </style>
 
-<a id="random-toad" href="/toad-prompt" aria-label="Secret toad - click to discover">
+<a id="random-toad" href="/secret-toad" aria-label="Secret toad - click to discover">
   <img src="/images/thetoad.png" alt="Secret toad" />
 </a>
 
@@ -89,9 +89,9 @@
       }
     });
 
-    // Check if we're on the toad-prompt or secret-toad page
+    // Check if we're on the secret-toad page
     const currentPath = window.location.pathname;
-    const isToadPage = currentPath.includes('toad-prompt') || currentPath.includes('secret-toad');
+    const isToadPage = currentPath.includes('secret-toad');
 
     // Add a chance factor (15% chance to appear)
     const shouldAppear = Math.random() < 0.15;
