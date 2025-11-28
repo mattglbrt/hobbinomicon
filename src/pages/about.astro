@@ -3,50 +3,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import HeroHeader from '../components/HeroHeader.astro';
 import Footer from '../components/Footer.astro';
-import ImageGallery from '../components/ImageGallery.astro';
-
-// Add your personal images here
-const personalImages = [
-  {
-    src: '/images/about/profile-1.jpg',
-    alt: 'Your name painting miniatures',
-    caption: 'At the hobby desk'
-  },
-  {
-    src: '/images/about/profile-2.jpg',
-    alt: 'Your name at a gaming table',
-    caption: 'Game night'
-  },
-];
-
-// Add your art/project images here
-const artImages = [
-  {
-    src: '/images/about/art-1.jpg',
-    alt: 'Warhammer miniature',
-    caption: 'Recent Warhammer project'
-  },
-  {
-    src: '/images/about/art-2.jpg',
-    alt: 'Scale model',
-    caption: 'Scale modeling work'
-  },
-  {
-    src: '/images/about/art-3.jpg',
-    alt: 'TTRPG terrain',
-    caption: 'Custom terrain piece'
-  },
-  {
-    src: '/images/about/art-4.jpg',
-    alt: 'Painted army',
-    caption: 'Completed army showcase'
-  },
-];
 ---
 
 <BaseLayout
   title="About - The Hobbinomicon"
-  description="Learn more about The Hobbinomicon - a journal, spell book, and hobby blog focused on scale modeling, Warhammer, TTRPGs, and wargames."
+  description="Learn more about The Hobbinomicon - a journal, spell book, and hobby blog focused on scale modeling, Warmachine, TTRPGs, and indie wargames."
 >
   <Header theme="light" />
 
@@ -64,80 +25,12 @@ const artImages = [
         <p class="text-2xl md:text-3xl text-ink font-serif leading-relaxed mb-8 first-letter:text-6xl first-letter:font-heading first-letter:font-bold first-letter:float-left first-letter:mr-3 first-letter:leading-none first-letter:mt-1">
           The Hobbinomicon is part journal, part spell book, part hobby blog.
           I post daily vlogs and cool things I make. Mostly focused on scale modeling,
-          Warhammer, TTRPGs, and wargames.
+          Warmachine, TTRPGs, and indie wargames.
+        </p>
+        <p class="text-2xl md:text-3xl text-ink font-serif leading-relaxed">
+          I am documenting my daily journey of going from a normal tabletop level painter to becoming a Golden Daemon winning painter. Hopefully.
         </p>
       </div>
-
-      <!-- About Me Section with Images -->
-      <section class="mb-20">
-        <h2 class="text-4xl md:text-5xl font-heading font-bold text-ink mb-8 pb-4 border-b-2 border-ink/20">
-          The Hobbyist
-        </h2>
-
-        <div class="mb-12">
-          <p class="text-xl text-ink leading-relaxed mb-6">
-            Welcome to my corner of the hobby world! Whether I'm painting tiny warriors,
-            crafting immersive terrain, or rolling dice at the gaming table, I'm always
-            working on something creative.
-          </p>
-          <p class="text-xl text-ink leading-relaxed">
-            Through daily vlogs and project showcases, I share the journey of bringing
-            imagination to life—one brushstroke, dice roll, and adventure at a time.
-          </p>
-        </div>
-
-        <ImageGallery images={personalImages} columns={2} />
-      </section>
-
-      <!-- What I Do Section -->
-      <section class="mb-20">
-        <h2 class="text-4xl md:text-5xl font-heading font-bold text-ink mb-8 pb-4 border-b-2 border-ink/20">
-          What You'll Find Here
-        </h2>
-
-        <div class="grid md:grid-cols-2 gap-8 mb-12">
-          <div class="bg-white/50 backdrop-blur-sm p-8 rounded-lg border-2 border-ink/10 hover:border-ink/30 transition-colors">
-            <h3 class="text-2xl font-heading font-bold text-ink mb-4">Scale Modeling</h3>
-            <p class="text-ink/80 leading-relaxed">
-              Detailed builds and painting techniques for scale models, from military vehicles
-              to sci-fi subjects.
-            </p>
-          </div>
-
-          <div class="bg-white/50 backdrop-blur-sm p-8 rounded-lg border-2 border-ink/10 hover:border-ink/30 transition-colors">
-            <h3 class="text-2xl font-heading font-bold text-ink mb-4">Warhammer</h3>
-            <p class="text-ink/80 leading-relaxed">
-              Army builds, painting guides, and battle reports from the grim darkness of the
-              far future and the mortal realms.
-            </p>
-          </div>
-
-          <div class="bg-white/50 backdrop-blur-sm p-8 rounded-lg border-2 border-ink/10 hover:border-ink/30 transition-colors">
-            <h3 class="text-2xl font-heading font-bold text-ink mb-4">TTRPGs</h3>
-            <p class="text-ink/80 leading-relaxed">
-              Campaign journals, homebrew content, terrain crafting, and stories from the
-              tabletop.
-            </p>
-          </div>
-
-          <div class="bg-white/50 backdrop-blur-sm p-8 rounded-lg border-2 border-ink/10 hover:border-ink/30 transition-colors">
-            <h3 class="text-2xl font-heading font-bold text-ink mb-4">Wargames</h3>
-            <p class="text-ink/80 leading-relaxed">
-              Tactics, strategies, and showcases from various tabletop wargaming systems
-              and historical periods.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <!-- Gallery Section -->
-      <section class="mb-20">
-        <h2 class="text-4xl md:text-5xl font-heading font-bold text-ink mb-8 pb-4 border-b-2 border-ink/20">
-          Recent Work
-        </h2>
-
-        <ImageGallery images={artImages} columns={2} />
-      </section>
 
       <!-- YouTube CTA Section -->
       <section class="bg-ink text-white p-12 md:p-16 rounded-lg text-center">
