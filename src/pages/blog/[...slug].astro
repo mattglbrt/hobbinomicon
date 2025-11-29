@@ -17,8 +17,10 @@ const { Content } = await post.render();
 // Calculate reading time from post body
 const readingTime = calculateReadingTime(post.body);
 
-// Get related posts (same tags, excluding current post) unless hideRelatedPosts is set
+// Get all posts for related posts and project navigation
 const allPosts = await getCollection('blog');
+
+// Get related posts (same tags, excluding current post) unless hideRelatedPosts is set
 const relatedPosts = post.data.hideRelatedPosts ? [] : allPosts
   .filter((p) =>
     p.slug !== post.slug &&
@@ -32,8 +34,31 @@ const relatedPosts = post.data.hideRelatedPosts ? [] : allPosts
     return bMatches - aMatches;
   })
   .slice(0, 4);
+
+// Get project navigation (previous/next posts in the same project)
+let projectNavigation = null;
+if (post.data.project) {
+  const projectPosts = allPosts
+    .filter((p) => p.data.project === post.data.project && !p.data.draft)
+    .sort((a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf()); // Sort by date ascending (oldest first)
+
+  const currentIndex = projectPosts.findIndex((p) => p.slug === post.slug);
+
+  if (currentIndex !== -1) {
+    // Get project info
+    const projects = await getCollection('projects');
+    const project = projects.find((p) => p.slug === post.data.project);
+
+    projectNavigation = {
+      previousPost: currentIndex > 0 ? projectPosts[currentIndex - 1] : null,
+      nextPost: currentIndex < projectPosts.length - 1 ? projectPosts[currentIndex + 1] : null,
+      projectName: project?.data.title || post.data.project,
+      projectSlug: post.data.project,
+    };
+  }
+}
 ---
 
-<BlogLayout {...post.data} readingTime={readingTime} relatedPosts={relatedPosts}>
+<BlogLayout {...post.data} readingTime={readingTime} relatedPosts={relatedPosts} projectNavigation={projectNavigation}>
   <Content />
 </BlogLayout>

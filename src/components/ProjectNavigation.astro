@@ -1,0 +1,101 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getHeroImage } from '../utils/getHeroImage';
+
+interface Props {
+  previousPost: CollectionEntry<'blog'> | null;
+  nextPost: CollectionEntry<'blog'> | null;
+  projectName: string;
+  projectSlug: string;
+}
+
+const { previousPost, nextPost, projectName, projectSlug } = Astro.props;
+
+function getPostImage(post: CollectionEntry<'blog'>): string {
+  return getHeroImage(post.data.heroImage, post.data.youtubeId);
+}
+---
+
+{(previousPost || nextPost) && (
+  <div class="mt-12 pt-8 border-t border-ink/10">
+    <div class="flex items-center justify-between mb-6">
+      <h3 class="text-xl font-heading font-bold text-ink">
+        More from this project
+      </h3>
+      <a
+        href={`/projects/${projectSlug}`}
+        class="text-sm text-ink/60 hover:text-ink transition-colors"
+      >
+        View all {projectName} posts →
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {previousPost && (
+        <a
+          href={`/blog/${previousPost.slug}`}
+          class="group block bg-ink/5 rounded-lg overflow-hidden hover:bg-ink/10 transition-colors"
+        >
+          <div class="aspect-video relative overflow-hidden">
+            <img
+              src={getPostImage(previousPost)}
+              alt={previousPost.data.heroImageAlt || previousPost.data.title}
+              class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              loading="lazy"
+              decoding="async"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-ink/60 to-transparent"></div>
+            <div class="absolute bottom-3 left-3">
+              <span class="text-xs text-white/80 bg-ink/50 px-2 py-1 rounded">← Previous</span>
+            </div>
+          </div>
+          <div class="p-4">
+            <h4 class="font-heading font-bold text-ink group-hover:underline line-clamp-2">
+              {previousPost.data.title}
+            </h4>
+            <p class="text-sm text-ink/60 mt-1">
+              {new Date(previousPost.data.pubDate).toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+              })}
+            </p>
+          </div>
+        </a>
+      )}
+
+      {nextPost && (
+        <a
+          href={`/blog/${nextPost.slug}`}
+          class={`group block bg-ink/5 rounded-lg overflow-hidden hover:bg-ink/10 transition-colors ${!previousPost ? 'md:col-start-2' : ''}`}
+        >
+          <div class="aspect-video relative overflow-hidden">
+            <img
+              src={getPostImage(nextPost)}
+              alt={nextPost.data.heroImageAlt || nextPost.data.title}
+              class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              loading="lazy"
+              decoding="async"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-ink/60 to-transparent"></div>
+            <div class="absolute bottom-3 right-3">
+              <span class="text-xs text-white/80 bg-ink/50 px-2 py-1 rounded">Next →</span>
+            </div>
+          </div>
+          <div class="p-4">
+            <h4 class="font-heading font-bold text-ink group-hover:underline line-clamp-2">
+              {nextPost.data.title}
+            </h4>
+            <p class="text-sm text-ink/60 mt-1">
+              {new Date(nextPost.data.pubDate).toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+              })}
+            </p>
+          </div>
+        </a>
+      )}
+    </div>
+  </div>
+)}

@@ -4,12 +4,20 @@ import BaseLayout from './BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import RelatedPosts from '../components/RelatedPosts.astro';
+import ProjectNavigation from '../components/ProjectNavigation.astro';
 import BackToTop from '../components/BackToTop.astro';
 import { getHeroImage } from '../utils/getHeroImage';
 import { formatReadingTime } from '../utils/readingTime';
 import { formatDateLong } from '../utils/formatDate';
 import { getYouTubeFallbackHandler } from '../utils/youtubeImageFallback';
 import type { CollectionEntry } from 'astro:content';
+
+interface ProjectNav {
+  previousPost: CollectionEntry<'blog'> | null;
+  nextPost: CollectionEntry<'blog'> | null;
+  projectName: string;
+  projectSlug: string;
+}
 
 interface Props {
   title: string;
@@ -23,50 +31,31 @@ interface Props {
   youtubeId?: string;
   readingTime?: number;
   relatedPosts?: CollectionEntry<'blog'>[];
+  projectNavigation?: ProjectNav | null;
 }
 
-const { title, description, pubDate, updatedDate, heroImage, heroImageAlt, category, tags, youtubeId, readingTime, relatedPosts = [] } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, heroImageAlt, category, tags, youtubeId, readingTime, relatedPosts = [], projectNavigation = null } = Astro.props;
 
 const displayImage = getHeroImage(heroImage, youtubeId);
 const isRemoteImage = displayImage.startsWith('http');
 
 const formattedDate = formatDateLong(pubDate);
 const formattedUpdatedDate = updatedDate ? formatDateLong(updatedDate) : null;
+const isCharacterPost = category === 'Dramatis Personae';
 ---
 
 <BaseLayout title={title} description={description}>
   <Header />
   <div class="min-h-screen bg-parchment">
-    <!-- Hero Image -->
-    <div class="relative h-[60vh] md:h-[70vh] overflow-hidden">
-      {isRemoteImage ? (
-        <img
-          src={displayImage}
-          alt={heroImageAlt || title}
-          class="w-full h-full object-cover"
-          width="1920"
-          height="1080"
-          data-youtube-id={youtubeId}
-          onerror={getYouTubeFallbackHandler('id')}
-        />
-      ) : (
-        <Image
-          src={displayImage}
-          alt={heroImageAlt || title}
-          width={1920}
-          height={1080}
-          class="w-full h-full object-cover"
-        />
-      )}
-      <div class="absolute inset-0 bg-gradient-to-t from-ink/60 to-transparent"></div>
-
-      <!-- Title Overlay -->
-      <div class="absolute bottom-0 left-0 right-0 p-8 md:p-12 lg:p-16">
-        <div class="max-w-4xl">
-          <h1 class="text-4xl md:text-6xl lg:text-7xl font-heading font-bold text-white mb-4 drop-shadow-2xl">
+    {isCharacterPost ? (
+      <!-- Character Post Layout -->
+      <div class="pt-24 md:pt-32">
+        <article class="max-w-6xl mx-auto px-6 py-12 md:py-16">
+          <!-- Title -->
+          <h1 class="text-4xl md:text-6xl lg:text-7xl font-heading font-bold text-ink mb-4">
             {title}
           </h1>
-          <div class="flex flex-wrap gap-4 text-white/90 text-sm md:text-base">
+          <div class="flex flex-wrap gap-4 text-ink/70 text-sm md:text-base mb-8">
             <time datetime={pubDate.toISOString()}>{formattedDate}</time>
             {readingTime && (
               <>
@@ -75,65 +64,214 @@ const formattedUpdatedDate = updatedDate ? formatDateLong(updatedDate) : null;
               </>
             )}
             <span>•</span>
-            <span class="px-3 py-1 bg-white/20 backdrop-blur-sm rounded">{category}</span>
+            <span class="px-3 py-1 bg-ink/10 rounded">{category}</span>
+          </div>
+
+          <!-- Tags -->
+          {tags.length > 0 && (
+            <div class="flex flex-wrap gap-2 mb-8">
+              {tags.map((tag) => (
+                <a
+                  href={`/tags/${tag}`}
+                  class="text-sm px-3 py-1 bg-ink/5 hover:bg-ink/20 text-ink rounded-full transition-colors"
+                >
+                  #{tag}
+                </a>
+              ))}
+            </div>
+          )}
+
+          <!-- Two Column Layout: Image + Content -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+            <!-- Character Image -->
+            <div class="relative">
+              <div class="sticky top-24">
+                {isRemoteImage ? (
+                  <img
+                    src={displayImage}
+                    alt={heroImageAlt || title}
+                    class="w-full rounded-lg shadow-2xl object-cover object-top"
+                    width="800"
+                    height="1200"
+                    data-youtube-id={youtubeId}
+                    onerror={getYouTubeFallbackHandler('id')}
+                  />
+                ) : (
+                  <Image
+                    src={displayImage}
+                    alt={heroImageAlt || title}
+                    width={800}
+                    height={1200}
+                    class="w-full rounded-lg shadow-2xl object-cover object-top"
+                  />
+                )}
+              </div>
+            </div>
+
+            <!-- Content -->
+            <div>
+              <!-- Description -->
+              <p class="text-xl md:text-2xl text-ink/80 font-serif italic mb-8 leading-relaxed border-l-4 border-ink/30 pl-6">
+                {description}
+              </p>
+
+              <!-- Blog Content -->
+              <div class="prose prose-lg max-w-none
+                prose-headings:font-heading prose-headings:text-ink
+                prose-h2:text-3xl prose-h2:mt-8 prose-h2:mb-4 prose-h2:font-bold
+                prose-h3:text-2xl prose-h3:mt-6 prose-h3:mb-3 prose-h3:font-bold
+                prose-p:text-ink prose-p:leading-relaxed prose-p:text-lg prose-p:mb-6
+                prose-a:text-ink prose-a:underline prose-a:decoration-2 prose-a:underline-offset-4 hover:prose-a:decoration-4 prose-a:transition-colors
+                prose-strong:text-ink prose-strong:font-bold
+                prose-em:text-ink prose-em:italic
+                prose-blockquote:border-l-4 prose-blockquote:border-ink/30 prose-blockquote:pl-6 prose-blockquote:italic prose-blockquote:text-ink/80
+                prose-code:text-ink prose-code:bg-ink/5 prose-code:px-2 prose-code:py-1 prose-code:rounded
+                prose-pre:bg-ink/5 prose-pre:border prose-pre:border-ink/10
+                prose-ul:list-disc prose-ul:pl-6 prose-ul:text-ink
+                prose-ol:list-decimal prose-ol:pl-6 prose-ol:text-ink
+                prose-li:text-ink prose-li:mb-2
+                prose-img:rounded-lg prose-img:shadow-xl
+              ">
+                <slot />
+              </div>
+
+              <!-- Updated Date -->
+              {formattedUpdatedDate && (
+                <p class="text-sm text-ink/60 italic mt-12 pt-8 border-t border-ink/10">
+                  Last updated: {formattedUpdatedDate}
+                </p>
+              )}
+
+              <!-- Project Navigation (Previous/Next in series) -->
+              {projectNavigation && (
+                <ProjectNavigation
+                  previousPost={projectNavigation.previousPost}
+                  nextPost={projectNavigation.nextPost}
+                  projectName={projectNavigation.projectName}
+                  projectSlug={projectNavigation.projectSlug}
+                />
+              )}
+
+              <!-- Related Posts -->
+              {relatedPosts.length > 0 && (
+                <RelatedPosts posts={relatedPosts} />
+              )}
+            </div>
+          </div>
+        </article>
+      </div>
+    ) : (
+      <!-- Standard Blog Post Layout -->
+      <>
+        <!-- Hero Image -->
+        <div class="relative h-[60vh] md:h-[70vh] overflow-hidden">
+          {isRemoteImage ? (
+            <img
+              src={displayImage}
+              alt={heroImageAlt || title}
+              class="w-full h-full object-cover object-top"
+              width="1920"
+              height="1080"
+              data-youtube-id={youtubeId}
+              onerror={getYouTubeFallbackHandler('id')}
+            />
+          ) : (
+            <Image
+              src={displayImage}
+              alt={heroImageAlt || title}
+              width={1920}
+              height={1080}
+              class="w-full h-full object-cover object-top"
+            />
+          )}
+          <div class="absolute inset-0 bg-gradient-to-t from-ink/60 to-transparent"></div>
+
+          <!-- Title Overlay -->
+          <div class="absolute bottom-0 left-0 right-0 p-8 md:p-12 lg:p-16">
+            <div class="max-w-4xl">
+              <h1 class="text-4xl md:text-6xl lg:text-7xl font-heading font-bold text-white mb-4 drop-shadow-2xl">
+                {title}
+              </h1>
+              <div class="flex flex-wrap gap-4 text-white/90 text-sm md:text-base">
+                <time datetime={pubDate.toISOString()}>{formattedDate}</time>
+                {readingTime && (
+                  <>
+                    <span>•</span>
+                    <span>{formatReadingTime(readingTime)}</span>
+                  </>
+                )}
+                <span>•</span>
+                <span class="px-3 py-1 bg-white/20 backdrop-blur-sm rounded">{category}</span>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <!-- Content -->
-    <article class="max-w-3xl mx-auto px-6 py-12 md:py-16">
-      <!-- Description -->
-      <p class="text-xl md:text-2xl text-ink/80 font-serif italic mb-8 leading-relaxed border-l-4 border-ink/30 pl-6">
-        {description}
-      </p>
+        <!-- Content -->
+        <article class="max-w-3xl mx-auto px-6 py-12 md:py-16">
+          <!-- Description -->
+          <p class="text-xl md:text-2xl text-ink/80 font-serif italic mb-8 leading-relaxed border-l-4 border-ink/30 pl-6">
+            {description}
+          </p>
 
-      <!-- Tags -->
-      {tags.length > 0 && (
-        <div class="flex flex-wrap gap-2 mb-8">
-          {tags.map((tag) => (
-            <a
-              href={`/tags/${tag}`}
-              class="text-sm px-3 py-1 bg-ink/5 hover:bg-ink/20 text-ink rounded-full transition-colors"
-            >
-              #{tag}
-            </a>
-          ))}
-        </div>
-      )}
+          <!-- Tags -->
+          {tags.length > 0 && (
+            <div class="flex flex-wrap gap-2 mb-8">
+              {tags.map((tag) => (
+                <a
+                  href={`/tags/${tag}`}
+                  class="text-sm px-3 py-1 bg-ink/5 hover:bg-ink/20 text-ink rounded-full transition-colors"
+                >
+                  #{tag}
+                </a>
+              ))}
+            </div>
+          )}
 
-      <!-- Blog Content -->
-      <div class="prose prose-lg max-w-none
-        prose-headings:font-heading prose-headings:text-ink
-        prose-h2:text-3xl prose-h2:mt-12 prose-h2:mb-6 prose-h2:font-bold
-        prose-h3:text-2xl prose-h3:mt-8 prose-h3:mb-4 prose-h3:font-bold
-        prose-p:text-ink prose-p:leading-relaxed prose-p:text-lg prose-p:mb-6
-        prose-a:text-ink prose-a:underline prose-a:decoration-2 prose-a:underline-offset-4 hover:prose-a:decoration-4 prose-a:transition-colors
-        prose-strong:text-ink prose-strong:font-bold
-        prose-em:text-ink prose-em:italic
-        prose-blockquote:border-l-4 prose-blockquote:border-ink/30 prose-blockquote:pl-6 prose-blockquote:italic prose-blockquote:text-ink/80
-        prose-code:text-ink prose-code:bg-ink/5 prose-code:px-2 prose-code:py-1 prose-code:rounded
-        prose-pre:bg-ink/5 prose-pre:border prose-pre:border-ink/10
-        prose-ul:list-disc prose-ul:pl-6 prose-ul:text-ink
-        prose-ol:list-decimal prose-ol:pl-6 prose-ol:text-ink
-        prose-li:text-ink prose-li:mb-2
-        prose-img:rounded-lg prose-img:shadow-xl
-      ">
-        <slot />
-      </div>
+          <!-- Blog Content -->
+          <div class="prose prose-lg max-w-none
+            prose-headings:font-heading prose-headings:text-ink
+            prose-h2:text-3xl prose-h2:mt-12 prose-h2:mb-6 prose-h2:font-bold
+            prose-h3:text-2xl prose-h3:mt-8 prose-h3:mb-4 prose-h3:font-bold
+            prose-p:text-ink prose-p:leading-relaxed prose-p:text-lg prose-p:mb-6
+            prose-a:text-ink prose-a:underline prose-a:decoration-2 prose-a:underline-offset-4 hover:prose-a:decoration-4 prose-a:transition-colors
+            prose-strong:text-ink prose-strong:font-bold
+            prose-em:text-ink prose-em:italic
+            prose-blockquote:border-l-4 prose-blockquote:border-ink/30 prose-blockquote:pl-6 prose-blockquote:italic prose-blockquote:text-ink/80
+            prose-code:text-ink prose-code:bg-ink/5 prose-code:px-2 prose-code:py-1 prose-code:rounded
+            prose-pre:bg-ink/5 prose-pre:border prose-pre:border-ink/10
+            prose-ul:list-disc prose-ul:pl-6 prose-ul:text-ink
+            prose-ol:list-decimal prose-ol:pl-6 prose-ol:text-ink
+            prose-li:text-ink prose-li:mb-2
+            prose-img:rounded-lg prose-img:shadow-xl
+          ">
+            <slot />
+          </div>
 
-      <!-- Updated Date -->
-      {formattedUpdatedDate && (
-        <p class="text-sm text-ink/60 italic mt-12 pt-8 border-t border-ink/10">
-          Last updated: {formattedUpdatedDate}
-        </p>
-      )}
+          <!-- Updated Date -->
+          {formattedUpdatedDate && (
+            <p class="text-sm text-ink/60 italic mt-12 pt-8 border-t border-ink/10">
+              Last updated: {formattedUpdatedDate}
+            </p>
+          )}
 
-      <!-- Related Posts -->
-      {relatedPosts.length > 0 && (
-        <RelatedPosts posts={relatedPosts} />
-      )}
-    </article>
+          <!-- Project Navigation (Previous/Next in series) -->
+          {projectNavigation && (
+            <ProjectNavigation
+              previousPost={projectNavigation.previousPost}
+              nextPost={projectNavigation.nextPost}
+              projectName={projectNavigation.projectName}
+              projectSlug={projectNavigation.projectSlug}
+            />
+          )}
+
+          <!-- Related Posts -->
+          {relatedPosts.length > 0 && (
+            <RelatedPosts posts={relatedPosts} />
+          )}
+        </article>
+      </>
+    )}
 
     <!-- Back to Top Button -->
     <BackToTop />

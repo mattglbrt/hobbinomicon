@@ -61,9 +61,14 @@ const recentPosts = sortedPosts
   .filter(post => !excludedSlugs.has(post.slug) && post.data.category !== 'Dramatis Personae')
   .slice(0, 6);
 
-// Get character posts
-const characterPosts = sortedPosts
+// Get character posts sorted by most recently updated
+const characterPosts = publishedPosts
   .filter(post => post.data.category === 'Dramatis Personae')
+  .sort((a, b) => {
+    const dateA = (a.data.updatedDate || a.data.pubDate).valueOf();
+    const dateB = (b.data.updatedDate || b.data.pubDate).valueOf();
+    return dateB - dateA;
+  })
   .slice(0, 6);
 ---
 
@@ -469,12 +474,15 @@ const characterPosts = sortedPosts
     {characterPosts.length > 0 && (
       <section class="bg-ink py-16 md:py-24">
         <div class="max-w-7xl mx-auto px-6">
-          <div class="flex items-center justify-between mb-12">
+          <div class="flex items-center justify-between mb-4">
             <h2 class="text-4xl md:text-5xl font-heading font-bold text-white">Dramatis Personae</h2>
             <a href="/categories/dramatis-personae" class="text-white hover:underline underline-offset-4 transition-all">
               View All →
             </a>
           </div>
+          <p class="text-white/70 text-lg mb-12 max-w-2xl">
+            Characters from my various TTRPG campaigns. Each one has their own story, miniature, and adventure.
+          </p>
           <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
             {characterPosts.map((character) => (
               <a
@@ -484,7 +492,7 @@ const characterPosts = sortedPosts
                 <img
                   src={character.data.heroImage || '/images/placeholder.jpg'}
                   alt={character.data.heroImageAlt || character.data.title}
-                  class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  class="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
                 />
                 <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-transparent opacity-40 group-hover:opacity-80 transition-opacity duration-500"></div>
                 <div class="absolute inset-0 flex items-end justify-center p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500">

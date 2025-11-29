@@ -17,9 +17,23 @@ allPosts.forEach(post => {
   categoriesMap.get(category).push(post);
 });
 
+// Helper to get category image (heroImage or YouTube thumbnail)
+function getCategoryImage(post: any): string | null {
+  if (post.data.heroImage) return post.data.heroImage;
+  if (post.data.youtubeId) return `https://img.youtube.com/vi/${post.data.youtubeId}/maxresdefault.jpg`;
+  return null;
+}
+
 // Convert to array and sort by number of posts
 const categories = Array.from(categoriesMap.entries())
-  .map(([name, posts]) => ({ name, count: posts.length, latestPost: posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())[0] }))
+  .map(([name, posts]) => {
+    // Sort posts by date (newest first)
+    const sortedPosts = posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+    // Find the most recent post with a hero image or YouTube video
+    const postWithImage = sortedPosts.find(post => post.data.heroImage || post.data.youtubeId) || sortedPosts[0];
+    const categoryImage = getCategoryImage(postWithImage);
+    return { name, count: posts.length, latestPost: postWithImage, categoryImage };
+  })
   .sort((a, b) => b.count - a.count);
 ---
 
@@ -37,19 +51,25 @@ const categories = Array.from(categoriesMap.entries())
 
     <div class="max-w-7xl mx-auto px-6 py-16">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {categories.map(({ name, count, latestPost }) => (
+        {categories.map(({ name, count, latestPost, categoryImage }) => (
           <a
             href={`/categories/${name.toLowerCase().replace(/\s+/g, '-')}`}
             class="group block"
           >
             <div class="relative overflow-hidden rounded-lg aspect-[16/9]">
-              <img
-                src={latestPost.data.heroImage}
-                alt={latestPost.data.heroImageAlt || name}
-                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                loading="lazy"
-                decoding="async"
-              />
+              {categoryImage ? (
+                <img
+                  src={categoryImage}
+                  alt={latestPost.data.heroImageAlt || name}
+                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  loading="lazy"
+                  decoding="async"
+                />
+              ) : (
+                <div class="w-full h-full bg-ink/20 flex items-center justify-center">
+                  <span class="text-ink/40 text-6xl font-heading">{name.charAt(0)}</span>
+                </div>
+              )}
               <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-transparent"></div>
 
               <div class="absolute bottom-0 left-0 right-0 p-8">
