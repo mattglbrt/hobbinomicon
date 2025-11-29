@@ -6,24 +6,17 @@ import PageHeader from '../../components/PageHeader.astro';
 import PostCard from '../../components/PostCard.astro';
 import Footer from '../../components/Footer.astro';
 import StructuredData from '../../components/StructuredData.astro';
-import { filterDrafts } from '../../utils/filterDrafts';
+import ContentContainer from '../../components/ContentContainer.astro';
+import { getPublishedPosts, groupByCategory, sortByDate } from '../../utils/collections';
 
 export async function getStaticPaths() {
   const allPosts = await getCollection('blog');
-  const publishedPosts = filterDrafts(allPosts);
-
-  const categoriesMap = new Map();
-  publishedPosts.forEach(post => {
-    const category = post.data.category;
-    if (!categoriesMap.has(category)) {
-      categoriesMap.set(category, []);
-    }
-    categoriesMap.get(category).push(post);
-  });
+  const publishedPosts = getPublishedPosts(allPosts);
+  const categoriesMap = groupByCategory(publishedPosts);
 
   return Array.from(categoriesMap.entries()).map(([category, posts]) => ({
     params: { category: category.toLowerCase().replace(/\s+/g, '-') },
-    props: { category, posts: posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()) },
+    props: { category, posts: sortByDate(posts) },
   }));
 }
 
@@ -53,24 +46,13 @@ const { category, posts } = Astro.props;
       ]}
     />
 
-    <div class="max-w-7xl mx-auto px-6 py-16">
+    <ContentContainer class="py-16">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {posts.map((post) => (
-          <PostCard
-            slug={post.slug}
-            title={post.data.title}
-            description={post.data.description}
-            heroImage={post.data.heroImage}
-            heroImageAlt={post.data.heroImageAlt}
-            category={post.data.category}
-            pubDate={post.data.pubDate}
-            tags={post.data.tags}
-            youtubeId={post.data.youtubeId}
-            showCategory={false}
-          />
+          <PostCard post={post} showCategory={false} />
         ))}
       </div>
-    </div>
+    </ContentContainer>
 
     <Footer />
   </main>

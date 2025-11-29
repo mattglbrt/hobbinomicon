@@ -1,10 +1,13 @@
 ---
 import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
 import { getHeroImage } from '../utils/getHeroImage';
 import { formatDateShort } from '../utils/formatDate';
 import { getYouTubeFallbackHandler } from '../utils/youtubeImageFallback';
 
-interface Props {
+// Support both individual props OR a post object
+type IndividualProps = {
+  post?: never;
   slug: string;
   title: string;
   description: string;
@@ -13,24 +16,43 @@ interface Props {
   category: string;
   pubDate: Date;
   tags?: string[];
-  showCategory?: boolean;
   youtubeId?: string;
+};
+
+type PostObjectProps = {
+  post: CollectionEntry<'blog'>;
+  slug?: never;
+  title?: never;
+  description?: never;
+  heroImage?: never;
+  heroImageAlt?: never;
+  category?: never;
+  pubDate?: never;
+  tags?: never;
+  youtubeId?: never;
+};
+
+interface CommonProps {
+  showCategory?: boolean;
   eager?: boolean;
 }
 
-const {
-  slug,
-  title,
-  description,
-  heroImage,
-  heroImageAlt,
-  category,
-  pubDate,
-  tags = [],
-  showCategory = true,
-  youtubeId,
-  eager = false
-} = Astro.props;
+type Props = CommonProps & (IndividualProps | PostObjectProps);
+
+const props = Astro.props;
+
+// Extract values from either post object or individual props
+const slug = props.post?.slug ?? props.slug!;
+const title = props.post?.data.title ?? props.title!;
+const description = props.post?.data.description ?? props.description!;
+const heroImage = props.post?.data.heroImage ?? props.heroImage;
+const heroImageAlt = props.post?.data.heroImageAlt ?? props.heroImageAlt;
+const category = props.post?.data.category ?? props.category!;
+const pubDate = props.post?.data.pubDate ?? props.pubDate!;
+const tags = props.post?.data.tags ?? props.tags ?? [];
+const youtubeId = props.post?.data.youtubeId ?? props.youtubeId;
+const showCategory = props.showCategory ?? true;
+const eager = props.eager ?? false;
 
 const displayImage = getHeroImage(heroImage, youtubeId);
 const isRemoteImage = displayImage.startsWith('http');
@@ -83,7 +105,7 @@ const formattedDate = formatDateShort(pubDate);
           <img
             src={displayImage}
             alt={heroImageAlt || title}
-            class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            class="w-full h-full object-cover img-hover"
             loading={eager ? 'eager' : 'lazy'}
             decoding="async"
             width="800"
@@ -100,7 +122,7 @@ const formattedDate = formatDateShort(pubDate);
             alt={heroImageAlt || title}
             width={800}
             height={600}
-            class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            class="w-full h-full object-cover img-hover"
             loading={eager ? 'eager' : 'lazy'}
             decoding="async"
             format="webp"

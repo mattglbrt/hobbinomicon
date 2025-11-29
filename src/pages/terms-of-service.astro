@@ -1,142 +1,116 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
+import LegalPageLayout from '../layouts/LegalPageLayout.astro';
+import LegalSection from '../components/LegalSection.astro';
 ---
 
-<BaseLayout title="Terms of Service - The Hobbinomicon">
-  <Header theme="light" />
+<LegalPageLayout title="Terms of Service" lastUpdated="November 23, 2025">
+  <LegalSection title="1. Acceptance of Terms">
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+      By accessing and using The Hobbinomicon website ("Site"), you accept and agree to be bound by the terms and provisions of this agreement. If you do not agree to these Terms of Service, please do not use this Site.
+    </p>
+  </LegalSection>
 
-  <main class="min-h-screen bg-parchment">
-    <div class="max-w-4xl mx-auto px-6 py-24">
-      <h1 class="text-5xl md:text-6xl font-heading font-bold text-ink mb-8">Terms of Service</h1>
-      <p class="text-ink/60 mb-12">Last Updated: November 23, 2025</p>
+  <LegalSection title="2. Fan Site Disclaimer">
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+      The Hobbinomicon is an independent fan site dedicated to tabletop gaming, miniature painting, and hobby content. This Site is NOT affiliated with, endorsed by, or sponsored by Games Workshop, Warhammer, Citadel, or any other gaming company, manufacturer, or trademark holder mentioned on this Site.
+    </p>
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+      All trademarks, service marks, trade names, product names, and logos appearing on this Site are the property of their respective owners. Any use of such trademarks is purely for descriptive and editorial purposes and does not imply any affiliation with or endorsement by the trademark holders.
+    </p>
+  </LegalSection>
 
-      <div class="prose prose-lg max-w-none">
-        <section class="mb-12">
-          <h2 class="text-3xl font-heading font-bold text-ink mb-4">1. Acceptance of Terms</h2>
-          <p class="text-ink/80 leading-relaxed mb-4">
-            By accessing and using The Hobbinomicon website ("Site"), you accept and agree to be bound by the terms and provisions of this agreement. If you do not agree to these Terms of Service, please do not use this Site.
-          </p>
-        </section>
+  <LegalSection title="3. Use License">
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+      Permission is granted to temporarily access the materials on The Hobbinomicon for personal, non-commercial viewing only. This is the grant of a license, not a transfer of title, and under this license you may not:
+    </p>
+    <ul class="list-disc pl-8 text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4 space-y-2">
+      <li>Modify or copy the materials</li>
+      <li>Use the materials for any commercial purpose</li>
+      <li>Attempt to decompile or reverse engineer any software on the Site</li>
+      <li>Remove any copyright or other proprietary notations from the materials</li>
+      <li>Transfer the materials to another person or "mirror" the materials on any other server</li>
+    </ul>
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+      This license shall automatically terminate if you violate any of these restrictions and may be terminated by The Hobbinomicon at any time.
+    </p>
+  </LegalSection>
 
-        <section class="mb-12">
-          <h2 class="text-3xl font-heading font-bold text-ink mb-4">2. Fan Site Disclaimer</h2>
-          <p class="text-ink/80 leading-relaxed mb-4">
-            The Hobbinomicon is an independent fan site dedicated to tabletop gaming, miniature painting, and hobby content. This Site is NOT affiliated with, endorsed by, or sponsored by Games Workshop, Warhammer, Citadel, or any other gaming company, manufacturer, or trademark holder mentioned on this Site.
-          </p>
-          <p class="text-ink/80 leading-relaxed mb-4">
-            All trademarks, service marks, trade names, product names, and logos appearing on this Site are the property of their respective owners. Any use of such trademarks is purely for descriptive and editorial purposes and does not imply any affiliation with or endorsement by the trademark holders.
-          </p>
-        </section>
+  <LegalSection title="4. User Content and Comments">
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+      By submitting content, comments, or messages through our contact form or any other means, you grant The Hobbinomicon a non-exclusive, royalty-free, perpetual, and worldwide license to use, reproduce, modify, and display such content.
+    </p>
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+      You agree not to post content that:
+    </p>
+    <ul class="list-disc pl-8 text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4 space-y-2">
+      <li>Is unlawful, threatening, abusive, harassing, defamatory, or invasive of privacy</li>
+      <li>Infringes any patent, trademark, trade secret, copyright, or other proprietary rights</li>
+      <li>Contains software viruses or any other malicious code</li>
+      <li>Is spam or unsolicited advertising</li>
+    </ul>
+  </LegalSection>
 
-        <section class="mb-12">
-          <h2 class="text-3xl font-heading font-bold text-ink mb-4">3. Use License</h2>
-          <p class="text-ink/80 leading-relaxed mb-4">
-            Permission is granted to temporarily access the materials on The Hobbinomicon for personal, non-commercial viewing only. This is the grant of a license, not a transfer of title, and under this license you may not:
-          </p>
-          <ul class="list-disc pl-8 text-ink/80 leading-relaxed mb-4 space-y-2">
-            <li>Modify or copy the materials</li>
-            <li>Use the materials for any commercial purpose</li>
-            <li>Attempt to decompile or reverse engineer any software on the Site</li>
-            <li>Remove any copyright or other proprietary notations from the materials</li>
-            <li>Transfer the materials to another person or "mirror" the materials on any other server</li>
-          </ul>
-          <p class="text-ink/80 leading-relaxed mb-4">
-            This license shall automatically terminate if you violate any of these restrictions and may be terminated by The Hobbinomicon at any time.
-          </p>
-        </section>
+  <LegalSection title="5. External Links">
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+      The Hobbinomicon may contain links to external websites that are not provided or maintained by us. We do not guarantee the accuracy, relevance, timeliness, or completeness of any information on these external websites. The inclusion of any links does not imply endorsement by The Hobbinomicon.
+    </p>
+  </LegalSection>
 
-        <section class="mb-12">
-          <h2 class="text-3xl font-heading font-bold text-ink mb-4">4. User Content and Comments</h2>
-          <p class="text-ink/80 leading-relaxed mb-4">
-            By submitting content, comments, or messages through our contact form or any other means, you grant The Hobbinomicon a non-exclusive, royalty-free, perpetual, and worldwide license to use, reproduce, modify, and display such content.
-          </p>
-          <p class="text-ink/80 leading-relaxed mb-4">
-            You agree not to post content that:
-          </p>
-          <ul class="list-disc pl-8 text-ink/80 leading-relaxed mb-4 space-y-2">
-            <li>Is unlawful, threatening, abusive, harassing, defamatory, or invasive of privacy</li>
-            <li>Infringes any patent, trademark, trade secret, copyright, or other proprietary rights</li>
-            <li>Contains software viruses or any other malicious code</li>
-            <li>Is spam or unsolicited advertising</li>
-          </ul>
-        </section>
+  <LegalSection title="6. Disclaimer of Warranties">
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+      The materials on The Hobbinomicon are provided on an "as is" basis. The Hobbinomicon makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights.
+    </p>
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+      Further, The Hobbinomicon does not warrant or make any representations concerning the accuracy, likely results, or reliability of the use of the materials on its website or otherwise relating to such materials or on any sites linked to this Site.
+    </p>
+  </LegalSection>
 
-        <section class="mb-12">
-          <h2 class="text-3xl font-heading font-bold text-ink mb-4">5. External Links</h2>
-          <p class="text-ink/80 leading-relaxed mb-4">
-            The Hobbinomicon may contain links to external websites that are not provided or maintained by us. We do not guarantee the accuracy, relevance, timeliness, or completeness of any information on these external websites. The inclusion of any links does not imply endorsement by The Hobbinomicon.
-          </p>
-        </section>
+  <LegalSection title="7. Limitations of Liability">
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+      In no event shall The Hobbinomicon or its contributors be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on The Hobbinomicon, even if The Hobbinomicon or an authorized representative has been notified orally or in writing of the possibility of such damage.
+    </p>
+  </LegalSection>
 
-        <section class="mb-12">
-          <h2 class="text-3xl font-heading font-bold text-ink mb-4">6. Disclaimer of Warranties</h2>
-          <p class="text-ink/80 leading-relaxed mb-4">
-            The materials on The Hobbinomicon are provided on an "as is" basis. The Hobbinomicon makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights.
-          </p>
-          <p class="text-ink/80 leading-relaxed mb-4">
-            Further, The Hobbinomicon does not warrant or make any representations concerning the accuracy, likely results, or reliability of the use of the materials on its website or otherwise relating to such materials or on any sites linked to this Site.
-          </p>
-        </section>
+  <LegalSection title="8. Intellectual Property">
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+      All original content on The Hobbinomicon, including but not limited to text, graphics, logos, images, and video content created by the site owner, is the property of The Hobbinomicon and is protected by copyright laws.
+    </p>
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+      All third-party trademarks, product names, company names, and logos mentioned on this Site are the property of their respective owners and are used here for identification and reference purposes only. Their use does not imply any affiliation with or endorsement by the trademark holders.
+    </p>
+  </LegalSection>
 
-        <section class="mb-12">
-          <h2 class="text-3xl font-heading font-bold text-ink mb-4">7. Limitations of Liability</h2>
-          <p class="text-ink/80 leading-relaxed mb-4">
-            In no event shall The Hobbinomicon or its contributors be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on The Hobbinomicon, even if The Hobbinomicon or an authorized representative has been notified orally or in writing of the possibility of such damage.
-          </p>
-        </section>
+  <LegalSection title="9. Copyright Infringement">
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+      If you believe that any content on The Hobbinomicon infringes your copyright, please contact us at matt@hobbinomicon.com with the following information:
+    </p>
+    <ul class="list-disc pl-8 text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4 space-y-2">
+      <li>Identification of the copyrighted work claimed to have been infringed</li>
+      <li>Identification of the material that is claimed to be infringing</li>
+      <li>Your contact information</li>
+      <li>A statement that you have a good faith belief that use of the material is not authorized</li>
+      <li>A statement that the information in the notification is accurate</li>
+    </ul>
+  </LegalSection>
 
-        <section class="mb-12">
-          <h2 class="text-3xl font-heading font-bold text-ink mb-4">8. Intellectual Property</h2>
-          <p class="text-ink/80 leading-relaxed mb-4">
-            All original content on The Hobbinomicon, including but not limited to text, graphics, logos, images, and video content created by the site owner, is the property of The Hobbinomicon and is protected by copyright laws.
-          </p>
-          <p class="text-ink/80 leading-relaxed mb-4">
-            All third-party trademarks, product names, company names, and logos mentioned on this Site are the property of their respective owners and are used here for identification and reference purposes only. Their use does not imply any affiliation with or endorsement by the trademark holders.
-          </p>
-        </section>
+  <LegalSection title="10. Modifications to Terms">
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+      The Hobbinomicon may revise these Terms of Service at any time without notice. By using this Site, you are agreeing to be bound by the then-current version of these Terms of Service.
+    </p>
+  </LegalSection>
 
-        <section class="mb-12">
-          <h2 class="text-3xl font-heading font-bold text-ink mb-4">9. Copyright Infringement</h2>
-          <p class="text-ink/80 leading-relaxed mb-4">
-            If you believe that any content on The Hobbinomicon infringes your copyright, please contact us at matt@hobbinomicon.com with the following information:
-          </p>
-          <ul class="list-disc pl-8 text-ink/80 leading-relaxed mb-4 space-y-2">
-            <li>Identification of the copyrighted work claimed to have been infringed</li>
-            <li>Identification of the material that is claimed to be infringing</li>
-            <li>Your contact information</li>
-            <li>A statement that you have a good faith belief that use of the material is not authorized</li>
-            <li>A statement that the information in the notification is accurate</li>
-          </ul>
-        </section>
+  <LegalSection title="11. Governing Law">
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+      These terms and conditions are governed by and construed in accordance with the laws of the jurisdiction in which The Hobbinomicon operates, and you irrevocably submit to the exclusive jurisdiction of the courts in that location.
+    </p>
+  </LegalSection>
 
-        <section class="mb-12">
-          <h2 class="text-3xl font-heading font-bold text-ink mb-4">10. Modifications to Terms</h2>
-          <p class="text-ink/80 leading-relaxed mb-4">
-            The Hobbinomicon may revise these Terms of Service at any time without notice. By using this Site, you are agreeing to be bound by the then-current version of these Terms of Service.
-          </p>
-        </section>
-
-        <section class="mb-12">
-          <h2 class="text-3xl font-heading font-bold text-ink mb-4">11. Governing Law</h2>
-          <p class="text-ink/80 leading-relaxed mb-4">
-            These terms and conditions are governed by and construed in accordance with the laws of the jurisdiction in which The Hobbinomicon operates, and you irrevocably submit to the exclusive jurisdiction of the courts in that location.
-          </p>
-        </section>
-
-        <section class="mb-12">
-          <h2 class="text-3xl font-heading font-bold text-ink mb-4">12. Contact Information</h2>
-          <p class="text-ink/80 leading-relaxed mb-4">
-            If you have any questions about these Terms of Service, please contact us at:
-          </p>
-          <p class="text-ink/80 leading-relaxed">
-            Email: <a href="mailto:matt@hobbinomicon.com" class="text-ink hover:underline">matt@hobbinomicon.com</a>
-          </p>
-        </section>
-      </div>
-    </div>
-  </main>
-
-  <Footer />
-</BaseLayout>
+  <LegalSection title="12. Contact Information">
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+      If you have any questions about these Terms of Service, please contact us at:
+    </p>
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed">
+      Email: <a href="mailto:matt@hobbinomicon.com" class="text-ink dark:text-ink-dark hover:underline">matt@hobbinomicon.com</a>
+    </p>
+  </LegalSection>
+</LegalPageLayout>

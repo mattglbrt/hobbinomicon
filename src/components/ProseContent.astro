@@ -1,0 +1,109 @@
+---
+/**
+ * ProseContent Component
+ * Consolidated prose styling for blog posts and project pages
+ * Supports two variants for different spacing needs
+ */
+
+interface Props {
+  /**
+   * Spacing variant:
+   * - 'default': Standard spacing for blog posts and project pages (larger margins)
+   * - 'compact': Tighter spacing for character posts and constrained layouts
+   */
+  variant?: 'default' | 'compact';
+  class?: string;
+}
+
+const { variant = 'default', class: className } = Astro.props;
+
+// Base prose classes shared by all variants
+const baseClasses = [
+  'prose',
+  'prose-lg',
+  'max-w-none',
+  // Headings
+  'prose-headings:font-heading',
+  'prose-headings:text-ink',
+  'dark:prose-headings:text-ink-dark',
+  // Paragraphs
+  'prose-p:text-ink',
+  'dark:prose-p:text-ink-dark',
+  'prose-p:leading-relaxed',
+  'prose-p:text-lg',
+  'prose-p:mb-6',
+  // Links
+  'prose-a:text-ink',
+  'dark:prose-a:text-ink-dark',
+  'prose-a:underline',
+  'prose-a:decoration-2',
+  'prose-a:underline-offset-4',
+  'hover:prose-a:decoration-4',
+  'prose-a:transition-colors',
+  // Strong/emphasis
+  'prose-strong:text-ink',
+  'dark:prose-strong:text-ink-dark',
+  'prose-strong:font-bold',
+  'prose-em:text-ink',
+  'dark:prose-em:text-ink-dark',
+  'prose-em:italic',
+  // Blockquotes
+  'prose-blockquote:border-l-4',
+  'prose-blockquote:border-ink/30',
+  'prose-blockquote:pl-6',
+  'prose-blockquote:italic',
+  'prose-blockquote:text-ink/80',
+  // Code
+  'prose-code:text-ink',
+  'prose-code:bg-ink/5',
+  'prose-code:px-2',
+  'prose-code:py-1',
+  'prose-code:rounded',
+  'prose-pre:bg-ink/5',
+  'prose-pre:border',
+  'prose-pre:border-ink/10',
+  // Lists
+  'prose-ul:list-disc',
+  'prose-ul:pl-6',
+  'prose-ul:text-ink',
+  'dark:prose-ul:text-ink-dark',
+  'prose-ol:list-decimal',
+  'prose-ol:pl-6',
+  'prose-ol:text-ink',
+  'dark:prose-ol:text-ink-dark',
+  'prose-li:text-ink',
+  'dark:prose-li:text-ink-dark',
+  'prose-li:mb-2',
+  // Images
+  'prose-img:rounded-lg',
+  'prose-img:shadow-xl',
+];
+
+// Variant-specific heading spacing
+const variantClasses = {
+  default: [
+    'prose-h2:text-3xl',
+    'prose-h2:mt-12',
+    'prose-h2:mb-6',
+    'prose-h2:font-bold',
+    'prose-h3:text-2xl',
+    'prose-h3:mt-8',
+    'prose-h3:mb-4',
+    'prose-h3:font-bold',
+  ],
+  compact: [
+    'prose-h2:text-3xl',
+    'prose-h2:mt-8',
+    'prose-h2:mb-4',
+    'prose-h2:font-bold',
+    'prose-h3:text-2xl',
+    'prose-h3:mt-6',
+    'prose-h3:mb-3',
+    'prose-h3:font-bold',
+  ],
+};
+---
+
+<div class:list={[baseClasses, variantClasses[variant], className]}>
+  <slot />
+</div>

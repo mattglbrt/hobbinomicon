@@ -5,37 +5,20 @@ import Header from '../../components/Header.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import Footer from '../../components/Footer.astro';
 import StructuredData from '../../components/StructuredData.astro';
+import ContentContainer from '../../components/ContentContainer.astro';
+import ImageCard from '../../components/ImageCard.astro';
+import { getCategoriesWithCounts } from '../../utils/collections';
+import { getHeroImage } from '../../utils/getHeroImage';
 
 const allPosts = await getCollection('blog');
 
-// Group posts by category
-const categoriesMap = new Map();
-allPosts.forEach(post => {
-  const category = post.data.category;
-  if (!categoriesMap.has(category)) {
-    categoriesMap.set(category, []);
-  }
-  categoriesMap.get(category).push(post);
+// Get categories with counts, sorted by post count
+const categories = getCategoriesWithCounts(allPosts).map(({ name, count, posts }) => {
+  // Find the most recent post with a hero image or YouTube video
+  const postWithImage = posts.find(post => post.data.heroImage || post.data.youtubeId) || posts[0];
+  const categoryImage = postWithImage ? getHeroImage(postWithImage.data.heroImage, postWithImage.data.youtubeId) : null;
+  return { name, count, latestPost: postWithImage, categoryImage };
 });
-
-// Helper to get category image (heroImage or YouTube thumbnail)
-function getCategoryImage(post: any): string | null {
-  if (post.data.heroImage) return post.data.heroImage;
-  if (post.data.youtubeId) return `https://img.youtube.com/vi/${post.data.youtubeId}/maxresdefault.jpg`;
-  return null;
-}
-
-// Convert to array and sort by number of posts
-const categories = Array.from(categoriesMap.entries())
-  .map(([name, posts]) => {
-    // Sort posts by date (newest first)
-    const sortedPosts = posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-    // Find the most recent post with a hero image or YouTube video
-    const postWithImage = sortedPosts.find(post => post.data.heroImage || post.data.youtubeId) || sortedPosts[0];
-    const categoryImage = getCategoryImage(postWithImage);
-    return { name, count: posts.length, latestPost: postWithImage, categoryImage };
-  })
-  .sort((a, b) => b.count - a.count);
 ---
 
 <BaseLayout title="Categories - The Hobbinomicon">
@@ -59,42 +42,22 @@ const categories = Array.from(categoriesMap.entries())
       ]}
     />
 
-    <div class="max-w-7xl mx-auto px-6 py-16">
+    <ContentContainer class="py-16">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         {categories.map(({ name, count, latestPost, categoryImage }) => (
-          <a
+          <ImageCard
             href={`/categories/${name.toLowerCase().replace(/\s+/g, '-')}`}
-            class="group block"
-          >
-            <div class="relative overflow-hidden rounded-lg aspect-[16/9]">
-              {categoryImage ? (
-                <img
-                  src={categoryImage}
-                  alt={latestPost.data.heroImageAlt || name}
-                  class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                  loading="lazy"
-                  decoding="async"
-                />
-              ) : (
-                <div class="w-full h-full bg-ink/20 flex items-center justify-center">
-                  <span class="text-ink/40 text-6xl font-heading">{name.charAt(0)}</span>
-                </div>
-              )}
-              <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-transparent"></div>
-
-              <div class="absolute bottom-0 left-0 right-0 p-8">
-                <h2 class="text-3xl md:text-4xl font-heading font-bold text-white mb-2">
-                  {name}
-                </h2>
-                <p class="text-white/80">
-                  {count} {count === 1 ? 'post' : 'posts'}
-                </p>
-              </div>
-            </div>
-          </a>
+            image={categoryImage}
+            imageAlt={latestPost.data.heroImageAlt || name}
+            title={name}
+            subtitle={`${count} ${count === 1 ? 'post' : 'posts'}`}
+            fallbackLetter={name.charAt(0)}
+            aspectRatio="16/9"
+            variant="overlay"
+          />
         ))}
       </div>
-    </div>
+    </ContentContainer>
 
     <Footer />
   </main>

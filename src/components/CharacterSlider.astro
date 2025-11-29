@@ -1,4 +1,7 @@
 ---
+import ContentContainer from './ContentContainer.astro';
+import ViewAllLink from './ViewAllLink.astro';
+
 interface Character {
   slug: string;
   data: {
@@ -25,15 +28,13 @@ const {
 
 {characters.length > 0 && (
   <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24 overflow-hidden">
-    <div class="max-w-7xl mx-auto px-6">
+    <ContentContainer>
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-4xl md:text-5xl font-heading font-bold text-ink dark:text-ink-dark">{title}</h2>
-        <a href={viewAllLink} class="text-ink dark:text-ink-dark hover:underline underline-offset-4 transition-all">
-          View All →
-        </a>
+        <ViewAllLink href={viewAllLink}>View All →</ViewAllLink>
       </div>
       <p class="text-ink/70 dark:text-ink-dark/70 text-lg mb-12 max-w-2xl" set:html={description} />
-    </div>
+    </ContentContainer>
 
     <!-- Horizontal Slider -->
     <div class="relative group/slider" id="character-slider">
@@ -52,7 +53,7 @@ const {
             <img
               src={character.data.heroImage || '/images/placeholder.jpg'}
               alt={character.data.heroImageAlt || character.data.title}
-              class="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+              class="absolute inset-0 w-full h-full object-cover object-top img-hover-slow"
               loading="lazy"
               decoding="async"
             />

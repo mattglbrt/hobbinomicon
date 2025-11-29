@@ -1,6 +1,9 @@
 ---
 import { getCollection } from 'astro:content';
 import { getHeroImage } from '../utils/getHeroImage';
+import { formatDateLong } from '../utils/formatDate';
+import ListCard from './ListCard.astro';
+import ViewAllLink from './ViewAllLink.astro';
 
 interface Props {
   tag: string;
@@ -32,45 +35,23 @@ if (limit) {
 {taggedPosts.length > 0 ? (
   <div class="not-prose my-8">
     <div class="grid gap-4">
-      {taggedPosts.map(post => {
-        const heroImage = getHeroImage(post.data.heroImage, post.data.youtubeId);
-        return (
-          <a href={`/blog/${post.slug}`}
-             class="flex gap-4 p-4 bg-ink/5 hover:bg-ink/10 border-l-4 border-ink/30 hover:border-ink transition-all rounded-r-lg group">
-            <div class="flex-shrink-0 w-24 h-24 overflow-hidden rounded">
-              <img
-                src={heroImage}
-                alt={post.data.title}
-                class="w-full h-full object-cover"
-                loading="lazy"
-              />
-            </div>
-            <div class="flex-1 min-w-0">
-              <h3 class="text-xl font-heading font-bold text-ink mb-2 group-hover:underline">
-                {post.data.title}
-              </h3>
-              <p class="text-ink/80 text-sm mb-2 line-clamp-2">{post.data.description}</p>
-              <p class="text-ink/60 text-xs">
-                {new Date(post.data.pubDate).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                })}
-              </p>
-            </div>
-          </a>
-        );
-      })}
+      {taggedPosts.map(post => (
+        <ListCard
+          href={`/blog/${post.slug}`}
+          image={getHeroImage(post.data.heroImage, post.data.youtubeId)}
+          imageAlt={post.data.title}
+          title={post.data.title}
+          description={post.data.description}
+          meta={formatDateLong(post.data.pubDate)}
+          borderAccent
+        />
+      ))}
     </div>
     {hasMore && (
       <div class="mt-6 text-center">
-        <a href={`/tags/${tag}`}
-           class="inline-flex items-center gap-2 px-4 py-2 bg-ink/10 hover:bg-ink/20 text-ink rounded-lg transition-colors">
+        <ViewAllLink href={`/tags/${tag}`} variant="button">
           View all {totalCount} posts
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-          </svg>
-        </a>
+        </ViewAllLink>
       </div>
     )}
   </div>

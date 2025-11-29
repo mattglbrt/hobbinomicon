@@ -1,25 +1,14 @@
 ---
+import type { CollectionEntry } from 'astro:content';
 import PostCard from './PostCard.astro';
-
-interface Post {
-  slug: string;
-  data: {
-    title: string;
-    description: string;
-    heroImage?: string;
-    heroImageAlt?: string;
-    category: string;
-    pubDate: Date;
-    tags: string[];
-    youtubeId?: string;
-  };
-}
+import ContentContainer from './ContentContainer.astro';
+import ViewAllLink from './ViewAllLink.astro';
 
 interface Props {
   title: string;
   viewAllLink: string;
   viewAllText?: string;
-  posts: Post[];
+  posts: CollectionEntry<'blog'>[];
   eagerCount?: number;
 }
 
@@ -28,29 +17,16 @@ const { title, viewAllLink, viewAllText = 'View All →', posts, eagerCount = 3 
 
 {posts.length > 0 && (
   <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24">
-    <div class="max-w-7xl mx-auto px-6">
+    <ContentContainer>
       <div class="flex items-center justify-between mb-12">
         <h2 class="text-4xl md:text-5xl font-heading font-bold text-ink dark:text-ink-dark">{title}</h2>
-        <a href={viewAllLink} class="text-ink dark:text-ink-dark hover:underline underline-offset-4 transition-all">
-          {viewAllText}
-        </a>
+        <ViewAllLink href={viewAllLink}>{viewAllText}</ViewAllLink>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {posts.map((post, index) => (
-          <PostCard
-            slug={post.slug}
-            title={post.data.title}
-            description={post.data.description}
-            heroImage={post.data.heroImage}
-            heroImageAlt={post.data.heroImageAlt}
-            category={post.data.category}
-            pubDate={post.data.pubDate}
-            tags={post.data.tags}
-            youtubeId={post.data.youtubeId}
-            eager={index < eagerCount}
-          />
+          <PostCard post={post} eager={index < eagerCount} />
         ))}
       </div>
-    </div>
+    </ContentContainer>
   </section>
 )}

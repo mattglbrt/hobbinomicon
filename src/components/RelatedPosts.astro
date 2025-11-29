@@ -26,18 +26,7 @@ if (posts.length === 0) {
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
     {posts.map((post) => (
-      <PostCard
-        slug={post.slug}
-        title={post.data.title}
-        description={post.data.description}
-        heroImage={post.data.heroImage}
-        heroImageAlt={post.data.heroImageAlt}
-        category={post.data.category}
-        pubDate={post.data.pubDate}
-        tags={post.data.tags}
-        showCategory={true}
-        youtubeId={post.data.youtubeId}
-      />
+      <PostCard post={post} />
     ))}
   </div>
 </section>

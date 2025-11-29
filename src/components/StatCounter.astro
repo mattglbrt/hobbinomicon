@@ -1,0 +1,19 @@
+---
+interface Props {
+  value: number;
+  label: string;
+  singularLabel?: string;
+}
+
+const { value, label, singularLabel } = Astro.props;
+const displayLabel = value === 1 && singularLabel ? singularLabel : label;
+---
+
+<div class="bg-ink/5 dark:bg-ink-dark/5 border-l-4 border-ink/30 dark:border-ink-dark/30 rounded-r-lg p-6 md:p-8 text-center">
+  <div class="text-4xl md:text-5xl font-heading font-bold text-ink dark:text-ink-dark mb-2">
+    {value}
+  </div>
+  <div class="text-base text-ink/70 dark:text-ink-dark/70 font-serif">
+    {displayLabel}
+  </div>
+</div>

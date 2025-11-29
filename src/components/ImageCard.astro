@@ -1,0 +1,123 @@
+---
+interface Props {
+  href: string;
+  image?: string | null;
+  imageAlt?: string;
+  title: string;
+  subtitle?: string;
+  fallbackIcon?: string;
+  fallbackLetter?: string;
+  aspectRatio?: '16/9' | '4/3' | '2/3' | 'video' | 'square';
+  variant?: 'overlay' | 'stacked';
+  class?: string;
+}
+
+const {
+  href,
+  image,
+  imageAlt,
+  title,
+  subtitle,
+  fallbackIcon,
+  fallbackLetter,
+  aspectRatio = '16/9',
+  variant = 'overlay',
+  class: className = '',
+} = Astro.props;
+
+const aspectClasses: Record<string, string> = {
+  '16/9': 'aspect-[16/9]',
+  '4/3': 'aspect-[4/3]',
+  '2/3': 'aspect-[2/3]',
+  'video': 'aspect-video',
+  'square': 'aspect-square',
+};
+
+const hasSlot = Astro.slots.has('default');
+---
+
+{variant === 'overlay' ? (
+  <!-- Overlay variant: Image with gradient overlay and content at bottom -->
+  <a
+    href={href}
+    class:list={['group block', className]}
+  >
+    <div class:list={['relative overflow-hidden rounded-lg shadow-lg', aspectClasses[aspectRatio]]}>
+      {image ? (
+        <img
+          src={image}
+          alt={imageAlt || title}
+          class="absolute inset-0 w-full h-full object-cover object-top img-hover"
+          loading="lazy"
+          decoding="async"
+        />
+      ) : fallbackLetter ? (
+        <div class="w-full h-full bg-ink/20 dark:bg-ink-dark/20 flex items-center justify-center">
+          <span class="text-ink/40 dark:text-ink-dark/40 text-6xl font-heading">{fallbackLetter}</span>
+        </div>
+      ) : fallbackIcon ? (
+        <div class="w-full h-full bg-ink/10 dark:bg-ink-dark/10 flex items-center justify-center">
+          <span class="text-ink/40 dark:text-ink-dark/40 text-4xl">{fallbackIcon}</span>
+        </div>
+      ) : null}
+      <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-transparent"></div>
+      <div class="absolute bottom-0 left-0 right-0 p-4 md:p-6">
+        {hasSlot ? (
+          <slot />
+        ) : (
+          <>
+            <h3 class="text-lg md:text-xl lg:text-2xl font-heading font-bold text-white drop-shadow-lg">
+              {title}
+            </h3>
+            {subtitle && (
+              <p class="text-white/80 mt-1 text-sm md:text-base">{subtitle}</p>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  </a>
+) : (
+  <!-- Stacked variant: Image on top, content below in a card -->
+  <a
+    href={href}
+    class:list={[
+      'group block bg-white dark:bg-parchment-dark rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border-2 border-ink/10 dark:border-ink-dark/10 hover:border-ink/20 dark:hover:border-ink-dark/20',
+      className
+    ]}
+  >
+    {image ? (
+      <div class:list={['overflow-hidden', aspectClasses[aspectRatio]]}>
+        <img
+          src={image}
+          alt={imageAlt || title}
+          class="w-full h-full object-cover img-hover"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+    ) : fallbackIcon ? (
+      <div class:list={['bg-ink/10 dark:bg-ink-dark/10 flex items-center justify-center', aspectClasses[aspectRatio]]}>
+        <span class="text-ink/40 dark:text-ink-dark/40 text-4xl">{fallbackIcon}</span>
+      </div>
+    ) : fallbackLetter ? (
+      <div class:list={['bg-ink/20 dark:bg-ink-dark/20 flex items-center justify-center', aspectClasses[aspectRatio]]}>
+        <span class="text-ink/40 dark:text-ink-dark/40 text-6xl font-heading">{fallbackLetter}</span>
+      </div>
+    ) : null}
+    <div class="p-6">
+      {hasSlot ? (
+        <slot />
+      ) : (
+        <>
+          <h3 class="text-xl font-heading font-bold text-ink dark:text-ink-dark group-hover:text-ink/80 dark:group-hover:text-ink-dark/80 transition-colors">
+            {title}
+          </h3>
+          {subtitle && (
+            <p class="text-ink/70 dark:text-ink-dark/70 mt-2 line-clamp-2">{subtitle}</p>
+          )}
+        </>
+      )}
+    </div>
+  </a>
+)}

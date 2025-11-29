@@ -9,12 +9,12 @@ import CharacterSlider from '../components/CharacterSlider.astro';
 import YouTubeCTA from '../components/YouTubeCTA.astro';
 import Footer from '../components/Footer.astro';
 import { getHeroImage } from '../utils/getHeroImage';
-import { filterDrafts } from '../utils/filterDrafts';
+import { getPublishedPosts, sortByDate } from '../utils/collections';
 
 // Get all blog posts and sort by date
 const allPosts = await getCollection('blog');
-const publishedPosts = filterDrafts(allPosts);
-const sortedPosts = publishedPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const publishedPosts = getPublishedPosts(allPosts);
+const sortedPosts = publishedPosts;
 
 // Get the most recent featured post for hero, or fall back to latest post
 const featuredPosts = sortedPosts.filter(post => post.data.featured);
@@ -32,10 +32,7 @@ const publishedProjects = allProjects.filter(project => !project.data.draft);
 // For each project, get the latest post
 const projectsWithLatestPost = publishedProjects.map(project => {
   const projectSlug = project.id.replace(/\.[^/.]+$/, '');
-  const projectPosts = sortedPosts
-    .filter(post => post.data.project === projectSlug)
-    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-
+  const projectPosts = sortByDate(sortedPosts.filter(post => post.data.project === projectSlug));
   const latestProjectPost = projectPosts[0];
 
   return {
@@ -74,10 +71,9 @@ const characterPosts = publishedPosts
 
 // Get the most recent project with its posts for the featured section
 const featuredProject = projectsWithLatestPost[0];
-const featuredProjectPosts = featuredProject ? sortedPosts
-  .filter(post => post.data.project === featuredProject.projectSlug)
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 4) : [];
+const featuredProjectPosts = featuredProject
+  ? sortByDate(sortedPosts.filter(post => post.data.project === featuredProject.projectSlug)).slice(0, 4)
+  : [];
 ---
 
 <BaseLayout title="The Hobbinomicon">

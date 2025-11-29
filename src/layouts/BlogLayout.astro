@@ -8,6 +8,7 @@ import ProjectNavigation from '../components/ProjectNavigation.astro';
 import BackToTop from '../components/BackToTop.astro';
 import StructuredData from '../components/StructuredData.astro';
 import Comments from '../components/Comments.astro';
+import ProseContent from '../components/ProseContent.astro';
 import { getHeroImage } from '../utils/getHeroImage';
 import { formatReadingTime } from '../utils/readingTime';
 import { formatDateLong } from '../utils/formatDate';
@@ -174,24 +175,9 @@ const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
               </p>
 
               <!-- Blog Content -->
-              <div class="prose prose-lg max-w-none
-                prose-headings:font-heading prose-headings:text-ink dark:prose-headings:text-ink-dark
-                prose-h2:text-3xl prose-h2:mt-8 prose-h2:mb-4 prose-h2:font-bold
-                prose-h3:text-2xl prose-h3:mt-6 prose-h3:mb-3 prose-h3:font-bold
-                prose-p:text-ink dark:prose-p:text-ink-dark prose-p:leading-relaxed prose-p:text-lg prose-p:mb-6
-                prose-a:text-ink dark:prose-a:text-ink-dark prose-a:underline prose-a:decoration-2 prose-a:underline-offset-4 hover:prose-a:decoration-4 prose-a:transition-colors
-                prose-strong:text-ink dark:prose-strong:text-ink-dark prose-strong:font-bold
-                prose-em:text-ink dark:prose-em:text-ink-dark prose-em:italic
-                prose-blockquote:border-l-4 prose-blockquote:border-ink/30 prose-blockquote:pl-6 prose-blockquote:italic prose-blockquote:text-ink/80
-                prose-code:text-ink prose-code:bg-ink/5 prose-code:px-2 prose-code:py-1 prose-code:rounded
-                prose-pre:bg-ink/5 prose-pre:border prose-pre:border-ink/10
-                prose-ul:list-disc prose-ul:pl-6 prose-ul:text-ink dark:prose-ul:text-ink-dark
-                prose-ol:list-decimal prose-ol:pl-6 prose-ol:text-ink dark:prose-ol:text-ink-dark
-                prose-li:text-ink dark:prose-li:text-ink-dark prose-li:mb-2
-                prose-img:rounded-lg prose-img:shadow-xl
-              ">
+              <ProseContent variant="compact">
                 <slot />
-              </div>
+              </ProseContent>
 
               <!-- Updated Date -->
               {formattedUpdatedDate && (
@@ -292,24 +278,9 @@ const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
           )}
 
           <!-- Blog Content -->
-          <div class="prose prose-lg max-w-none
-            prose-headings:font-heading prose-headings:text-ink dark:prose-headings:text-ink-dark
-            prose-h2:text-3xl prose-h2:mt-12 prose-h2:mb-6 prose-h2:font-bold
-            prose-h3:text-2xl prose-h3:mt-8 prose-h3:mb-4 prose-h3:font-bold
-            prose-p:text-ink dark:prose-p:text-ink-dark prose-p:leading-relaxed prose-p:text-lg prose-p:mb-6
-            prose-a:text-ink dark:prose-a:text-ink-dark prose-a:underline prose-a:decoration-2 prose-a:underline-offset-4 hover:prose-a:decoration-4 prose-a:transition-colors
-            prose-strong:text-ink dark:prose-strong:text-ink-dark prose-strong:font-bold
-            prose-em:text-ink dark:prose-em:text-ink-dark prose-em:italic
-            prose-blockquote:border-l-4 prose-blockquote:border-ink/30 prose-blockquote:pl-6 prose-blockquote:italic prose-blockquote:text-ink/80
-            prose-code:text-ink prose-code:bg-ink/5 prose-code:px-2 prose-code:py-1 prose-code:rounded
-            prose-pre:bg-ink/5 prose-pre:border prose-pre:border-ink/10
-            prose-ul:list-disc prose-ul:pl-6 prose-ul:text-ink dark:prose-ul:text-ink-dark
-            prose-ol:list-decimal prose-ol:pl-6 prose-ol:text-ink dark:prose-ol:text-ink-dark
-            prose-li:text-ink dark:prose-li:text-ink-dark prose-li:mb-2
-            prose-img:rounded-lg prose-img:shadow-xl
-          ">
+          <ProseContent>
             <slot />
-          </div>
+          </ProseContent>
 
           <!-- Updated Date -->
           {formattedUpdatedDate && (

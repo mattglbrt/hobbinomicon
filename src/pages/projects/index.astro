@@ -5,6 +5,8 @@ import Header from '../../components/Header.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import Footer from '../../components/Footer.astro';
 import StructuredData from '../../components/StructuredData.astro';
+import ContentContainer from '../../components/ContentContainer.astro';
+import ImageCard from '../../components/ImageCard.astro';
 import { getHeroImage } from '../../utils/getHeroImage';
 
 const allProjects = await getCollection('projects');
@@ -58,45 +60,33 @@ const projectsWithMeta = publishedProjects.map(project => {
       backLink={{ href: "/", text: "Back to Home" }}
     />
 
-    <div class="max-w-7xl mx-auto px-6 py-16">
+    <ContentContainer class="py-16">
       {projectsWithMeta.length === 0 ? (
-        <p class="text-center text-ink/60 text-lg">No projects yet. Check back soon!</p>
+        <p class="text-center text-ink/60 dark:text-ink-dark/60 text-lg">No projects yet. Check back soon!</p>
       ) : (
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {projectsWithMeta.map((project) => (
-            <a
+            <ImageCard
               href={`/projects/${project.projectSlug}`}
-              class="group block bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border-2 border-ink/10 hover:border-ink/20"
+              image={project.heroImage}
+              imageAlt={project.heroImageAlt}
+              title={project.data.title}
+              fallbackIcon="📁"
+              aspectRatio="video"
+              variant="stacked"
             >
-              {project.heroImage ? (
-                <div class="aspect-video overflow-hidden">
-                  <img
-                    src={project.heroImage}
-                    alt={project.heroImageAlt}
-                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-              ) : (
-                <div class="aspect-video bg-ink/10 flex items-center justify-center">
-                  <span class="text-ink/40 text-4xl">📁</span>
-                </div>
-              )}
-              <div class="p-6">
-                <h2 class="text-xl font-heading font-bold text-ink group-hover:text-ink/80 transition-colors">
-                  {project.data.title}
-                </h2>
-                <p class="text-ink/70 mt-2 line-clamp-2">{project.data.description}</p>
-                <div class="mt-4 flex items-center text-sm text-ink/50">
-                  <span>{project.postCount} {project.postCount === 1 ? 'post' : 'posts'}</span>
-                </div>
+              <h2 class="text-xl font-heading font-bold text-ink dark:text-ink-dark group-hover:text-ink/80 dark:group-hover:text-ink-dark/80 transition-colors">
+                {project.data.title}
+              </h2>
+              <p class="text-ink/70 dark:text-ink-dark/70 mt-2 line-clamp-2">{project.data.description}</p>
+              <div class="mt-4 flex items-center text-sm text-ink/50 dark:text-ink-dark/50">
+                <span>{project.postCount} {project.postCount === 1 ? 'post' : 'posts'}</span>
               </div>
-            </a>
+            </ImageCard>
           ))}
         </div>
       )}
-    </div>
+    </ContentContainer>
 
     <Footer />
   </main>

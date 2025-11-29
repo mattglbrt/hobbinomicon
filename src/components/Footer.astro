@@ -1,9 +1,11 @@
 ---
+import ContentContainer from './ContentContainer.astro';
+
 const currentYear = new Date().getFullYear();
 ---
 
 <footer class="bg-ink text-white py-12 relative">
-  <div class="max-w-7xl mx-auto px-6">
+  <ContentContainer>
     <!-- Wizardry 1 Style Main Content -->
     <div class="border-2 border-white/40 p-4 mb-8">
       <div class="border border-white/60 p-6">
@@ -78,5 +80,5 @@ const currentYear = new Date().getFullYear();
         </a>
       </div>
     </div>
-  </div>
+  </ContentContainer>
 </footer>

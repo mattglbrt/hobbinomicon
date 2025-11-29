@@ -71,7 +71,7 @@ const isRemoteImage = heroImage.startsWith('http');
       <img
         src={heroImage}
         alt={heroImageAlt || title}
-        class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        class="absolute inset-0 w-full h-full object-cover img-hover-slow"
         loading={badge === 'Latest Post' ? 'eager' : 'lazy'}
         decoding="async"
         width="1920"
@@ -86,7 +86,7 @@ const isRemoteImage = heroImage.startsWith('http');
       alt={heroImageAlt || title}
       width={1920}
       height={1080}
-      class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+      class="absolute inset-0 w-full h-full object-cover img-hover-slow"
       loading={badge === 'Latest Post' ? 'eager' : 'lazy'}
       decoding="async"
       format="webp"

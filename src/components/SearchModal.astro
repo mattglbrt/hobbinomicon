@@ -4,10 +4,10 @@
  * Client-side search with keyboard navigation and accessibility
  */
 import { getCollection } from 'astro:content';
-import { filterDrafts } from '../utils/filterDrafts';
+import { getPublishedPosts } from '../utils/collections';
 
 const allPosts = await getCollection('blog');
-const publishedPosts = filterDrafts(allPosts);
+const publishedPosts = getPublishedPosts(allPosts);
 
 // Build search index
 const searchIndex = publishedPosts.map(post => ({

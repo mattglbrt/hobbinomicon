@@ -1,0 +1,32 @@
+---
+import ContentContainer from './ContentContainer.astro';
+
+interface Props {
+  categories: string[];
+  title?: string;
+}
+
+const { categories, title = "Browse by Category" } = Astro.props;
+---
+
+<div class="bg-parchment dark:bg-parchment-dark border-b-2 border-ink/10 dark:border-ink-dark/10 py-8">
+  <ContentContainer>
+    <h2 class="text-lg font-heading font-bold text-ink dark:text-ink-dark mb-4">{title}</h2>
+    <div class="flex flex-wrap gap-3">
+      <a
+        href="/categories"
+        class="inline-block px-4 py-2 bg-ink dark:bg-ink-dark text-parchment dark:text-parchment-dark font-mono text-sm rounded hover:bg-ink/90 dark:hover:bg-ink-dark/90 transition-colors"
+      >
+        All Categories
+      </a>
+      {categories.map((category) => (
+        <a
+          href={`/categories/${category.toLowerCase().replace(/ /g, '-')}`}
+          class="inline-block px-4 py-2 bg-white dark:bg-parchment-dark border-2 border-ink/20 dark:border-ink-dark/20 text-ink dark:text-ink-dark font-mono text-sm rounded hover:border-ink/40 dark:hover:border-ink-dark/40 hover:bg-ink/5 dark:hover:bg-ink-dark/5 transition-all"
+        >
+          {category}
+        </a>
+      ))}
+    </div>
+  </ContentContainer>
+</div>

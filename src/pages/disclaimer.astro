@@ -1,154 +1,128 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
+import LegalPageLayout from '../layouts/LegalPageLayout.astro';
+import LegalSection from '../components/LegalSection.astro';
 ---
 
-<BaseLayout title="Disclaimer - The Hobbinomicon">
-  <Header theme="light" />
+<LegalPageLayout title="Disclaimer" lastUpdated="November 23, 2025">
+  <LegalSection title="General Disclaimer">
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+      The information provided by The Hobbinomicon ("we," "us," or "our") on this website is for general informational and entertainment purposes only. All information on the Site is provided in good faith, however we make no representation or warranty of any kind, express or implied, regarding the accuracy, adequacy, validity, reliability, availability, or completeness of any information on the Site.
+    </p>
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+      UNDER NO CIRCUMSTANCE SHALL WE HAVE ANY LIABILITY TO YOU FOR ANY LOSS OR DAMAGE OF ANY KIND INCURRED AS A RESULT OF THE USE OF THE SITE OR RELIANCE ON ANY INFORMATION PROVIDED ON THE SITE. YOUR USE OF THE SITE AND YOUR RELIANCE ON ANY INFORMATION ON THE SITE IS SOLELY AT YOUR OWN RISK.
+    </p>
+  </LegalSection>
 
-  <main class="min-h-screen bg-parchment">
-    <div class="max-w-4xl mx-auto px-6 py-24">
-      <h1 class="text-5xl md:text-6xl font-heading font-bold text-ink mb-8">Disclaimer</h1>
-      <p class="text-ink/60 mb-12">Last Updated: November 23, 2025</p>
+  <LegalSection title="Fan Site and Non-Affiliation">
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+      The Hobbinomicon is an INDEPENDENT FAN SITE created by hobbyists for hobbyists. This website is NOT officially affiliated with, endorsed by, sponsored by, or in any way connected to:
+    </p>
+    <ul class="list-disc pl-8 text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4 space-y-2">
+      <li>Games Workshop Limited</li>
+      <li>Citadel Miniatures</li>
+      <li>Warhammer (all versions and variants)</li>
+      <li>Privateer Press</li>
+      <li>Trench Crusade</li>
+      <li>Any other gaming company, manufacturer, publisher, or distributor</li>
+      <li>Any trademark holders mentioned on this Site</li>
+    </ul>
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+      Any opinions, advice, statements, services, offers, or other information expressed or made available by third parties, including visitors, are those of the respective author(s) and not of The Hobbinomicon.
+    </p>
+  </LegalSection>
 
-      <div class="prose prose-lg max-w-none">
-        <section class="mb-12">
-          <h2 class="text-3xl font-heading font-bold text-ink mb-4">General Disclaimer</h2>
-          <p class="text-ink/80 leading-relaxed mb-4">
-            The information provided by The Hobbinomicon ("we," "us," or "our") on this website is for general informational and entertainment purposes only. All information on the Site is provided in good faith, however we make no representation or warranty of any kind, express or implied, regarding the accuracy, adequacy, validity, reliability, availability, or completeness of any information on the Site.
-          </p>
-          <p class="text-ink/80 leading-relaxed mb-4">
-            UNDER NO CIRCUMSTANCE SHALL WE HAVE ANY LIABILITY TO YOU FOR ANY LOSS OR DAMAGE OF ANY KIND INCURRED AS A RESULT OF THE USE OF THE SITE OR RELIANCE ON ANY INFORMATION PROVIDED ON THE SITE. YOUR USE OF THE SITE AND YOUR RELIANCE ON ANY INFORMATION ON THE SITE IS SOLELY AT YOUR OWN RISK.
-          </p>
-        </section>
+  <LegalSection title="Trademark Disclaimer">
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+      All trademarks, service marks, trade names, trade dress, product names, and logos appearing on this Site are the property of their respective owners, including but not limited to:
+    </p>
+    <ul class="list-disc pl-8 text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4 space-y-2">
+      <li>Warhammer®, Warhammer 40,000®, Age of Sigmar®, and all associated marks are trademarks of Games Workshop Limited</li>
+      <li>Citadel® and all associated product names are trademarks of Games Workshop Limited</li>
+      <li>All other trademarks are the property of their respective owners</li>
+    </ul>
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+      The use of any trademark on this Site is purely for descriptive, editorial, and informational purposes. Such use does NOT imply any affiliation with, endorsement by, or sponsorship by the trademark holder. We do not claim any ownership of these trademarks.
+    </p>
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+      If you are a trademark holder and believe your trademark is being used inappropriately, please contact us at matt@hobbinomicon.com.
+    </p>
+  </LegalSection>
 
-        <section class="mb-12">
-          <h2 class="text-3xl font-heading font-bold text-ink mb-4">Fan Site and Non-Affiliation</h2>
-          <p class="text-ink/80 leading-relaxed mb-4">
-            The Hobbinomicon is an INDEPENDENT FAN SITE created by hobbyists for hobbyists. This website is NOT officially affiliated with, endorsed by, sponsored by, or in any way connected to:
-          </p>
-          <ul class="list-disc pl-8 text-ink/80 leading-relaxed mb-4 space-y-2">
-            <li>Games Workshop Limited</li>
-            <li>Citadel Miniatures</li>
-            <li>Warhammer (all versions and variants)</li>
-            <li>Privateer Press</li>
-            <li>Trench Crusade</li>
-            <li>Any other gaming company, manufacturer, publisher, or distributor</li>
-            <li>Any trademark holders mentioned on this Site</li>
-          </ul>
-          <p class="text-ink/80 leading-relaxed mb-4">
-            Any opinions, advice, statements, services, offers, or other information expressed or made available by third parties, including visitors, are those of the respective author(s) and not of The Hobbinomicon.
-          </p>
-        </section>
+  <LegalSection title="External Links Disclaimer">
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+      The Site may contain (or you may be sent through the Site) links to other websites or content belonging to or originating from third parties or links to websites and features in banners or other advertising. Such external links are not investigated, monitored, or checked for accuracy, adequacy, validity, reliability, availability, or completeness by us.
+    </p>
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+      WE DO NOT WARRANT, ENDORSE, GUARANTEE, OR ASSUME RESPONSIBILITY FOR THE ACCURACY OR RELIABILITY OF ANY INFORMATION OFFERED BY THIRD-PARTY WEBSITES LINKED THROUGH THE SITE OR ANY WEBSITE OR FEATURE LINKED IN ANY BANNER OR OTHER ADVERTISING. WE WILL NOT BE A PARTY TO OR IN ANY WAY BE RESPONSIBLE FOR MONITORING ANY TRANSACTION BETWEEN YOU AND THIRD-PARTY PROVIDERS OF PRODUCTS OR SERVICES.
+    </p>
+  </LegalSection>
 
-        <section class="mb-12">
-          <h2 class="text-3xl font-heading font-bold text-ink mb-4">Trademark Disclaimer</h2>
-          <p class="text-ink/80 leading-relaxed mb-4">
-            All trademarks, service marks, trade names, trade dress, product names, and logos appearing on this Site are the property of their respective owners, including but not limited to:
-          </p>
-          <ul class="list-disc pl-8 text-ink/80 leading-relaxed mb-4 space-y-2">
-            <li>Warhammer®, Warhammer 40,000®, Age of Sigmar®, and all associated marks are trademarks of Games Workshop Limited</li>
-            <li>Citadel® and all associated product names are trademarks of Games Workshop Limited</li>
-            <li>All other trademarks are the property of their respective owners</li>
-          </ul>
-          <p class="text-ink/80 leading-relaxed mb-4">
-            The use of any trademark on this Site is purely for descriptive, editorial, and informational purposes. Such use does NOT imply any affiliation with, endorsement by, or sponsorship by the trademark holder. We do not claim any ownership of these trademarks.
-          </p>
-          <p class="text-ink/80 leading-relaxed mb-4">
-            If you are a trademark holder and believe your trademark is being used inappropriately, please contact us at matt@hobbinomicon.com.
-          </p>
-        </section>
+  <LegalSection title="YouTube and Video Content">
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+      The Hobbinomicon may embed or link to YouTube videos and other video content. These videos are hosted by third-party platforms and are subject to their respective terms of service and privacy policies. We are not responsible for the availability, content, or practices of these third-party video platforms.
+    </p>
+  </LegalSection>
 
-        <section class="mb-12">
-          <h2 class="text-3xl font-heading font-bold text-ink mb-4">External Links Disclaimer</h2>
-          <p class="text-ink/80 leading-relaxed mb-4">
-            The Site may contain (or you may be sent through the Site) links to other websites or content belonging to or originating from third parties or links to websites and features in banners or other advertising. Such external links are not investigated, monitored, or checked for accuracy, adequacy, validity, reliability, availability, or completeness by us.
-          </p>
-          <p class="text-ink/80 leading-relaxed mb-4">
-            WE DO NOT WARRANT, ENDORSE, GUARANTEE, OR ASSUME RESPONSIBILITY FOR THE ACCURACY OR RELIABILITY OF ANY INFORMATION OFFERED BY THIRD-PARTY WEBSITES LINKED THROUGH THE SITE OR ANY WEBSITE OR FEATURE LINKED IN ANY BANNER OR OTHER ADVERTISING. WE WILL NOT BE A PARTY TO OR IN ANY WAY BE RESPONSIBLE FOR MONITORING ANY TRANSACTION BETWEEN YOU AND THIRD-PARTY PROVIDERS OF PRODUCTS OR SERVICES.
-          </p>
-        </section>
+  <LegalSection title="Product and Technique Information">
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+      Content on The Hobbinomicon includes hobby techniques, painting tutorials, product reviews, and recommendations. This information is provided for educational and entertainment purposes only and represents the personal opinions and experiences of the content creator.
+    </p>
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+      We make no representations or warranties regarding:
+    </p>
+    <ul class="list-disc pl-8 text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4 space-y-2">
+      <li>The safety or suitability of any products, techniques, or methods discussed</li>
+      <li>The results you may achieve by following any tutorials or advice</li>
+      <li>The compatibility of products or techniques with your specific situation</li>
+      <li>The current availability or specifications of any products mentioned</li>
+    </ul>
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+      Always follow manufacturer instructions and safety guidelines when using hobby products, paints, adhesives, or tools. Use appropriate ventilation and safety equipment as recommended.
+    </p>
+  </LegalSection>
 
-        <section class="mb-12">
-          <h2 class="text-3xl font-heading font-bold text-ink mb-4">YouTube and Video Content</h2>
-          <p class="text-ink/80 leading-relaxed mb-4">
-            The Hobbinomicon may embed or link to YouTube videos and other video content. These videos are hosted by third-party platforms and are subject to their respective terms of service and privacy policies. We are not responsible for the availability, content, or practices of these third-party video platforms.
-          </p>
-        </section>
+  <LegalSection title="No Professional Advice">
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+      The content on The Hobbinomicon is for informational and entertainment purposes only and should not be considered professional advice of any kind. You should not act or refrain from acting on the basis of any content included on the Site without seeking appropriate professional advice.
+    </p>
+  </LegalSection>
 
-        <section class="mb-12">
-          <h2 class="text-3xl font-heading font-bold text-ink mb-4">Product and Technique Information</h2>
-          <p class="text-ink/80 leading-relaxed mb-4">
-            Content on The Hobbinomicon includes hobby techniques, painting tutorials, product reviews, and recommendations. This information is provided for educational and entertainment purposes only and represents the personal opinions and experiences of the content creator.
-          </p>
-          <p class="text-ink/80 leading-relaxed mb-4">
-            We make no representations or warranties regarding:
-          </p>
-          <ul class="list-disc pl-8 text-ink/80 leading-relaxed mb-4 space-y-2">
-            <li>The safety or suitability of any products, techniques, or methods discussed</li>
-            <li>The results you may achieve by following any tutorials or advice</li>
-            <li>The compatibility of products or techniques with your specific situation</li>
-            <li>The current availability or specifications of any products mentioned</li>
-          </ul>
-          <p class="text-ink/80 leading-relaxed mb-4">
-            Always follow manufacturer instructions and safety guidelines when using hobby products, paints, adhesives, or tools. Use appropriate ventilation and safety equipment as recommended.
-          </p>
-        </section>
+  <LegalSection title="Errors and Omissions">
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+      While we strive to provide accurate and up-to-date information, The Hobbinomicon makes no representations or warranties of any kind about the completeness, accuracy, reliability, suitability, or availability of the information, products, services, or related graphics contained on the Site.
+    </p>
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+      Any reliance you place on such information is therefore strictly at your own risk. We reserve the right to correct any errors or omissions without prior notice.
+    </p>
+  </LegalSection>
 
-        <section class="mb-12">
-          <h2 class="text-3xl font-heading font-bold text-ink mb-4">No Professional Advice</h2>
-          <p class="text-ink/80 leading-relaxed mb-4">
-            The content on The Hobbinomicon is for informational and entertainment purposes only and should not be considered professional advice of any kind. You should not act or refrain from acting on the basis of any content included on the Site without seeking appropriate professional advice.
-          </p>
-        </section>
+  <LegalSection title="User-Generated Content">
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+      Comments, messages, and other content submitted by users do not reflect the views or opinions of The Hobbinomicon. We do not pre-screen user content but reserve the right to remove any content that violates our Terms of Service or is otherwise objectionable.
+    </p>
+  </LegalSection>
 
-        <section class="mb-12">
-          <h2 class="text-3xl font-heading font-bold text-ink mb-4">Errors and Omissions</h2>
-          <p class="text-ink/80 leading-relaxed mb-4">
-            While we strive to provide accurate and up-to-date information, The Hobbinomicon makes no representations or warranties of any kind about the completeness, accuracy, reliability, suitability, or availability of the information, products, services, or related graphics contained on the Site.
-          </p>
-          <p class="text-ink/80 leading-relaxed mb-4">
-            Any reliance you place on such information is therefore strictly at your own risk. We reserve the right to correct any errors or omissions without prior notice.
-          </p>
-        </section>
+  <LegalSection title="Fair Use Statement">
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+      This Site may include copyrighted material, the use of which may not always have been specifically authorized by the copyright owner. Such material is made available for educational, commentary, criticism, and news reporting purposes in accordance with fair use principles.
+    </p>
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+      If you believe that any content on this Site infringes your copyright, please contact us immediately at matt@hobbinomicon.com with detailed information, and we will investigate and take appropriate action.
+    </p>
+  </LegalSection>
 
-        <section class="mb-12">
-          <h2 class="text-3xl font-heading font-bold text-ink mb-4">User-Generated Content</h2>
-          <p class="text-ink/80 leading-relaxed mb-4">
-            Comments, messages, and other content submitted by users do not reflect the views or opinions of The Hobbinomicon. We do not pre-screen user content but reserve the right to remove any content that violates our Terms of Service or is otherwise objectionable.
-          </p>
-        </section>
+  <LegalSection title="Changes to This Disclaimer">
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+      We reserve the right to modify this Disclaimer at any time. Changes will be posted on this page with an updated revision date. Your continued use of the Site following any changes constitutes acceptance of those changes.
+    </p>
+  </LegalSection>
 
-        <section class="mb-12">
-          <h2 class="text-3xl font-heading font-bold text-ink mb-4">Fair Use Statement</h2>
-          <p class="text-ink/80 leading-relaxed mb-4">
-            This Site may include copyrighted material, the use of which may not always have been specifically authorized by the copyright owner. Such material is made available for educational, commentary, criticism, and news reporting purposes in accordance with fair use principles.
-          </p>
-          <p class="text-ink/80 leading-relaxed mb-4">
-            If you believe that any content on this Site infringes your copyright, please contact us immediately at matt@hobbinomicon.com with detailed information, and we will investigate and take appropriate action.
-          </p>
-        </section>
-
-        <section class="mb-12">
-          <h2 class="text-3xl font-heading font-bold text-ink mb-4">Changes to This Disclaimer</h2>
-          <p class="text-ink/80 leading-relaxed mb-4">
-            We reserve the right to modify this Disclaimer at any time. Changes will be posted on this page with an updated revision date. Your continued use of the Site following any changes constitutes acceptance of those changes.
-          </p>
-        </section>
-
-        <section class="mb-12">
-          <h2 class="text-3xl font-heading font-bold text-ink mb-4">Contact Information</h2>
-          <p class="text-ink/80 leading-relaxed mb-4">
-            If you have any questions about this Disclaimer, please contact us at:
-          </p>
-          <p class="text-ink/80 leading-relaxed">
-            Email: <a href="mailto:matt@hobbinomicon.com" class="text-ink hover:underline">matt@hobbinomicon.com</a>
-          </p>
-        </section>
-      </div>
-    </div>
-  </main>
-
-  <Footer />
-</BaseLayout>
+  <LegalSection title="Contact Information">
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+      If you have any questions about this Disclaimer, please contact us at:
+    </p>
+    <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed">
+      Email: <a href="mailto:matt@hobbinomicon.com" class="text-ink dark:text-ink-dark hover:underline">matt@hobbinomicon.com</a>
+    </p>
+  </LegalSection>
+</LegalPageLayout>
