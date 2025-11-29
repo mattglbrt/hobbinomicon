@@ -43,7 +43,7 @@ const isCampaignTag = characterPosts.length > 0 && chapterPosts.length > 0;
 <BaseLayout title={`#${tag} - The Hobbinomicon`}>
   <Header theme="light" />
 
-  <div class="min-h-screen bg-parchment">
+  <main id="main-content" class="min-h-screen bg-parchment">
     <header class="bg-ink text-white pt-36 md:pt-40 pb-16">
       <div class="max-w-7xl mx-auto px-6">
         <a href="/blog" class="inline-block text-white/80 hover:text-white mb-4 transition-colors">
@@ -166,5 +166,5 @@ const isCampaignTag = characterPosts.length > 0 && chapterPosts.length > 0;
     </div>
 
     <Footer />
-  </div>
+  </main>
 </BaseLayout>

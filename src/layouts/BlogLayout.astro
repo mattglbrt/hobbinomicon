@@ -47,7 +47,7 @@ const isCharacterPost = category === 'Dramatis Personae';
 
 <BaseLayout title={title} description={description}>
   <Header />
-  <div class="min-h-screen bg-parchment">
+  <main id="main-content" class="min-h-screen bg-parchment">
     {isCharacterPost ? (
       <!-- Character Post Layout -->
       <div class="pt-24 md:pt-32">
@@ -291,6 +291,6 @@ const isCharacterPost = category === 'Dramatis Personae';
 
     <!-- Back to Top Button -->
     <BackToTop />
-  </div>
+  </main>
   <Footer />
 </BaseLayout>

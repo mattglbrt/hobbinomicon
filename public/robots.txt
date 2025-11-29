@@ -1,0 +1,11 @@
+# robots.txt for The Hobbinomicon
+# https://hobbinomicon.com
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://hobbinomicon.com/sitemap-index.xml
+
+# Disallow admin/system paths (if any)
+Disallow: /_astro/

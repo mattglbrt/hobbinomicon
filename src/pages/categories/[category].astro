@@ -32,7 +32,7 @@ const { category, posts } = Astro.props;
 <BaseLayout title={`${category} - The Hobbinomicon`}>
   <Header theme="light" />
 
-  <div class="min-h-screen bg-parchment">
+  <main id="main-content" class="min-h-screen bg-parchment">
     <PageHeader
       title={category}
       description={`${posts.length} ${posts.length === 1 ? 'post' : 'posts'}`}
@@ -62,5 +62,5 @@ const { category, posts } = Astro.props;
     </div>
 
     <Footer />
-  </div>
+  </main>
 </BaseLayout>

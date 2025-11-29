@@ -18,7 +18,7 @@ const categories = [...new Set(publishedPosts.map(post => post.data.category))].
 <BaseLayout title="Blog - The Hobbinomicon">
   <Header theme="light" />
 
-  <div class="min-h-screen bg-parchment">
+  <main id="main-content" class="min-h-screen bg-parchment">
     <PageHeader
       title="All Posts"
       description="Exploring hobbies, projects, and creative pursuits"
@@ -68,5 +68,5 @@ const categories = [...new Set(publishedPosts.map(post => post.data.category))].
     </div>
 
     <Footer />
-  </div>
+  </main>
 </BaseLayout>

@@ -1,6 +1,7 @@
 ---
 import { ViewTransitions } from 'astro:transitions';
 import RandomToad from '../components/RandomToad.astro';
+import SkipLink from '../components/SkipLink.astro';
 
 interface Props {
   title: string;
@@ -47,6 +48,8 @@ const canonicalURL = Astro.site
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={new URL(image, Astro.url)} />
+    <meta property="og:site_name" content="The Hobbinomicon" />
+    <meta property="og:locale" content="en_US" />
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
@@ -54,11 +57,13 @@ const canonicalURL = Astro.site
     <meta property="twitter:title" content={title} />
     <meta property="twitter:description" content={description} />
     <meta property="twitter:image" content={new URL(image, Astro.url)} />
+    <meta property="twitter:creator" content="@hobbinomicon" />
 
     <title>{title}</title>
     <ViewTransitions />
   </head>
   <body class="min-h-screen font-serif">
+    <SkipLink />
     <slot />
     <RandomToad />
   </body>

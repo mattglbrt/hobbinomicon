@@ -1,0 +1,172 @@
+---
+/**
+ * 404 Page - Retro RPG Style
+ * Inspired by 1980s computer RPGs
+ */
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>404 - Party Wiped - The Hobbinomicon</title>
+    <meta name="description" content="Page not found. Your entire party has been wiped out." />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html, body {
+        height: 100%;
+        overflow: hidden;
+      }
+      body {
+        background-color: #000;
+        color: #fff;
+        font-family: monospace;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+      }
+      .container {
+        max-width: 36rem;
+        width: 100%;
+        border: 3px solid #fff;
+        padding: 1rem 1.5rem;
+        text-align: center;
+      }
+      pre {
+        font-size: 0.5rem;
+        line-height: 1.1;
+        margin-bottom: 0.75rem;
+        display: inline-block;
+        text-align: left;
+      }
+      @media (min-width: 768px) {
+        pre {
+          font-size: 0.7rem;
+        }
+      }
+      .message-box {
+        border: 2px solid #fff;
+        padding: 0.75rem;
+        margin-bottom: 0.75rem;
+      }
+      h1 {
+        font-size: 1rem;
+        margin-bottom: 0.25rem;
+        letter-spacing: 0.1em;
+      }
+      @media (min-width: 768px) {
+        h1 {
+          font-size: 1.25rem;
+        }
+      }
+      h2 {
+        font-size: 0.875rem;
+        margin-bottom: 0.25rem;
+        letter-spacing: 0.1em;
+      }
+      @media (min-width: 768px) {
+        h2 {
+          font-size: 1rem;
+        }
+      }
+      .subtext {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+      }
+      .options {
+        border: 2px solid #fff;
+        padding: 0.75rem;
+        margin-bottom: 0.75rem;
+      }
+      .options p {
+        font-size: 0.875rem;
+        margin-bottom: 0.5rem;
+      }
+      .options a {
+        display: block;
+        color: #fff;
+        text-decoration: none;
+        padding: 0.25rem 0.5rem;
+        border: 1px solid #fff;
+        margin-bottom: 0.5rem;
+        font-size: 0.875rem;
+        transition: all 0.2s;
+      }
+      .options a:last-child {
+        margin-bottom: 0;
+      }
+      .options a:hover {
+        background-color: #fff;
+        color: #000;
+      }
+      .footer {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.75rem;
+      }
+      .error-code {
+        color: rgba(255, 255, 255, 0.4);
+        font-size: 0.625rem;
+        margin-top: 0.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="container">
+      <!-- ASCII Art -->
+      <pre>
+    _______________
+   /               \
+  |  R.I.P.  404   |
+  |                 |
+  |   YOUR PARTY   |
+  |_________________|
+       |       |
+      \|/     \|/
+  _____|_______|_____
+ /                   \
+|    +-----------+    |
+|    |  *     *  |    |
+|    |     ^     |    |
+|    |   \___/   |    |
+|    +-----------+    |
+ \___________________/
+      </pre>
+
+      <!-- Main Message -->
+      <div class="message-box">
+        <h1>*** YOUR ENTIRE PARTY ***</h1>
+        <h2>*** HAS BEEN WIPED OUT ***</h2>
+        <p class="subtext">The page you seek does not exist in this realm.</p>
+      </div>
+
+      <!-- Options -->
+      <div class="options">
+        <p>What would you like to do?</p>
+        <a href="/">[R] Return to Town (Home)</a>
+        <a href="/blog">[B] Browse the Archives (Blog)</a>
+        <a href="/projects">[P] View Past Quests (Projects)</a>
+      </div>
+
+      <!-- Footer -->
+      <p class="footer">Press any key to continue...</p>
+      <p class="error-code">Error 404 - Page Not Found</p>
+    </main>
+
+    <script>
+      document.addEventListener('keydown', function(e) {
+        const key = e.key.toLowerCase();
+        if (key === 'r') window.location.href = '/';
+        if (key === 'b') window.location.href = '/blog';
+        if (key === 'p') window.location.href = '/projects';
+      });
+    </script>
+  </body>
+</html>

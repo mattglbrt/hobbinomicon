@@ -46,7 +46,7 @@ const heroImageAlt = latestPost?.data.heroImageAlt || project.data.title;
 
 <BaseLayout title={`${project.data.title} - The Hobbinomicon`} description={project.data.description}>
   <Header />
-  <div class="min-h-screen bg-parchment">
+  <main id="main-content" class="min-h-screen bg-parchment">
     <!-- Hero Image -->
     <div class="relative h-[50vh] md:h-[60vh] overflow-hidden">
       {heroImage ? (
@@ -139,6 +139,6 @@ const heroImageAlt = latestPost?.data.heroImageAlt || project.data.title;
     </div>
 
     <BackToTop />
-  </div>
+  </main>
   <Footer />
 </BaseLayout>
