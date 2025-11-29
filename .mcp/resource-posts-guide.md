@@ -4,14 +4,13 @@ This guide documents the standard pattern for creating resource posts in the Hob
 
 ## Overview
 
-Resource posts are special blog posts in the "Resources" category that aggregate external links and internal content around a specific topic. They use a card-based design system for visual consistency and easy scanning.
+Resource posts are special blog posts in the "Resources" category that serve as hubs for specific games or topics. They pull in related projects and content automatically using dedicated components.
 
 ## File Location
 
 Resource posts are located in: `/src/content/blog/resources/`
 
 Examples:
-- `competition-painting-guides.mdx`
 - `trench-crusade-resources.mdx`
 - `warmachine-resources.mdx`
 
@@ -19,15 +18,28 @@ Examples:
 
 ```yaml
 ---
-title: "[Topic] Resources"
-description: "Essential tools, guides, and community resources for [topic]"
+title: "[Game/Topic] Resources"
+description: "Essential tools, guides, and community resources for [topic] players and hobbyists"
 pubDate: YYYY-MM-DD
 category: "Resources"
-tags: ["[main-tag]", "resources", "[additional-tags]"]
-featured: true
-heroImage: "/images/resources/[topic]-hero.jpg"
+tags: ["[main-tag]", "resources", "wargaming"]
+heroImage: "/images/[topic]-hero.jpg"
 heroImageAlt: "[Topic] resources and guides"
+hideRelatedPosts: true
 ---
+```
+
+**Key frontmatter fields:**
+- `hideRelatedPosts: true` - Disables the auto-generated related posts section at the bottom
+- `category: "Resources"` - Use this category for all resource pages
+- `tags` - Include the game/topic name tag so it links to other content
+
+## Required Imports
+
+```mdx
+import TaggedPostsList from '../../../components/TaggedPostsList.astro';
+import GameProjectsList from '../../../components/GameProjectsList.astro';
+import TableOfContents from '../../../components/TableOfContents.astro';
 ```
 
 ## Content Structure
@@ -38,112 +50,115 @@ Start with a welcoming introduction that explains what the resource page offers.
 
 ```markdown
 Your hub for all things [Topic]! Find essential tools, community resources, and helpful guides for [description].
+```
+
+### 2. Table of Contents
+
+Add a table of contents for easy navigation:
+
+```mdx
+<TableOfContents items={[
+  { title: "Essential Links", slug: "essential-links" },
+  { title: "My [Topic] Projects", slug: "my-topic-projects" },
+  { title: "My [Topic] Content", slug: "my-topic-content" },
+]} />
 
 ---
 ```
 
-### 2. External Links Section (Static Links)
+### 3. Essential Links Section
 
-For curated external resources, use the card-based link design:
+Use card-based sections with bulleted lists for external resources:
 
-```markdown
-## Essential Resources
-
-Brief description of the resources.
+```mdx
+## Essential Links
 
 <div class="not-prose grid gap-6 my-8">
-  <a href="[URL]"
-     class="block p-6 bg-ink/5 hover:bg-ink/10 border-l-4 border-ink/30 hover:border-ink transition-all rounded-r-lg group"
-     target="_blank"
-     rel="noopener noreferrer">
-    <h3 class="text-2xl font-heading font-bold text-ink mb-2 group-hover:underline">
-      [Link Title] →
-    </h3>
-    <p class="text-ink/80 leading-relaxed">
-      [Description of what this resource provides]
-    </p>
-  </a>
+  <div class="p-6 bg-ink/5 border-l-4 border-ink/20 rounded-r-lg">
+    <h3 class="text-xl font-heading font-bold text-ink mb-3">Official Resources</h3>
+    <ul class="space-y-2 text-ink/80">
+      <li><a href="https://example.com" class="underline hover:text-ink">Official Website</a></li>
+      <li><a href="https://example.com/rules" class="underline hover:text-ink">Rules PDF</a></li>
+    </ul>
+  </div>
 
-  <!-- Add more link cards as needed -->
+  <div class="p-6 bg-ink/5 border-l-4 border-ink/20 rounded-r-lg">
+    <h3 class="text-xl font-heading font-bold text-ink mb-3">Community Tools</h3>
+    <ul class="space-y-2 text-ink/80">
+      <li><a href="https://discord.gg/example" class="underline hover:text-ink">Discord Server</a></li>
+      <li><a href="https://reddit.com/r/example" class="underline hover:text-ink">Subreddit</a></li>
+    </ul>
+  </div>
 </div>
 ```
 
-**Key Features:**
-- `not-prose` class to escape prose styling
-- `grid gap-6 my-8` for consistent spacing
-- Arrow (→) indicates external link
-- `target="_blank" rel="noopener noreferrer"` for security
-- Hover effects: background darkens, border intensifies, title underlines
-
-### 3. Placeholder Link Sections
+### 4. Placeholder Link Sections
 
 For sections where links will be added later:
 
-```markdown
-<div class="not-prose grid gap-6 my-8">
-  <div class="p-6 bg-ink/5 border-l-4 border-ink/20 rounded-r-lg">
-    <h3 class="text-xl font-heading font-bold text-ink mb-3">[Section Name]</h3>
-    <p class="text-ink/60 italic">Add your [section description] here</p>
-  </div>
+```mdx
+<div class="p-6 bg-ink/5 border-l-4 border-ink/20 rounded-r-lg">
+  <h3 class="text-xl font-heading font-bold text-ink mb-3">[Section Name]</h3>
+  <p class="text-ink/60 italic">Add your [section description] here</p>
 </div>
 ```
 
-**Key Features:**
-- Same card structure but non-clickable
-- Lighter border (`border-ink/20`) to indicate placeholder
-- Italic text for "coming soon" message
+### 5. Projects Section (Auto-Generated)
 
-### 4. Auto-Generated Content Section (Optional)
+Use the `GameProjectsList` component to automatically display projects:
 
-For automatically pulling in blog posts with specific tags:
+```mdx
+---
 
-```markdown
-import { getCollection } from 'astro:content';
+## My [Topic] Projects
 
-export const allPosts = await getCollection('blog');
-export const filteredPosts = allPosts
-  .filter(post => !post.data.draft)
-  .filter(post => post.data.tags?.some(tag => tag.toLowerCase().includes('[tag-name]')))
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+<GameProjectsList game="[game-name]" />
 ```
 
-Then in the content:
+This component displays projects that have matching `game` field in their frontmatter, showing the latest post image as the project thumbnail.
 
-```markdown
+### 6. Content Section (Auto-Generated)
+
+Use the `TaggedPostsList` component to automatically display related blog posts:
+
+```mdx
+---
+
 ## My [Topic] Content
 
-{filteredPosts.length > 0 ? (
-  <div class="not-prose grid gap-4 my-8">
-    {filteredPosts.map(post => (
-      <a href={`/blog/${post.slug}`}
-         class="block p-6 bg-ink/5 hover:bg-ink/10 border-l-4 border-ink/30 hover:border-ink transition-all rounded-r-lg group">
-        <h3 class="text-xl font-heading font-bold text-ink mb-2 group-hover:underline">
-          {post.data.title}
-        </h3>
-        <p class="text-ink/80 text-sm mb-2">{post.data.description}</p>
-        <p class="text-ink/60 text-xs">
-          Published: {new Date(post.data.pubDate).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-          })}
-        </p>
-      </a>
-    ))}
-  </div>
-) : (
-  <p class="text-ink/60 italic my-8">No [topic] posts yet. Check back soon!</p>
-)}
+<TaggedPostsList tag="[tag-name]" excludeCategory="Resources" excludeProjectPosts={true} limit={4} />
 ```
 
-### 5. Footer
+### 7. Footer
 
 ```markdown
 ---
 
 **Have a resource to suggest?** This guide is a living document. If you have [topic] resources you'd like to see added, please reach out!
 
-*Last updated: [Date]*
+*Last updated: [Month Day, Year]*
+```
+
+## Component Reference
+
+| Component | Props | Description |
+| :--- | :--- | :--- |
+| `TaggedPostsList` | `tag`, `excludeCategory?`, `excludeProjectPosts?`, `limit?` | Lists blog posts with a specific tag |
+| `GameProjectsList` | `game`, `limit?` | Lists projects for a specific game (with latest post image) |
+| `TableOfContents` | `items: {title, slug}[]` | Jump links to page sections |
+
+## Linking Projects to Resource Pages
+
+To have projects appear in a resource page, set the `game` field in the project's frontmatter:
+
+```yaml
+---
+title: "My Project"
+description: "Project description"
+pubDate: 2025-01-01
+draft: false
+game: "trench crusade"
+---
 ```
 
 ## Design System
@@ -152,35 +167,23 @@ Then in the content:
 - `ink` - Primary dark color (#1a1614)
 - `parchment` - Background color (#F4ECD8)
 - `ink/5` - Very light background for cards
-- `ink/10` - Hover background
-- `ink/20` - Subtle borders for placeholders
-- `ink/30` - Normal borders
-- `ink/60` - Muted text
+- `ink/20` - Subtle borders
+- `ink/60` - Muted text (italics, placeholder text)
 - `ink/80` - Body text
 
 ### Typography
 - `font-heading` - IM Fell DW Pica for headings
 - `font-serif` - Besley for body text
 
-### Card Variants
+### Card Structure
 
-**Clickable External Link Card:**
-```html
-<a href="[url]"
-   class="block p-6 bg-ink/5 hover:bg-ink/10 border-l-4 border-ink/30 hover:border-ink transition-all rounded-r-lg group"
-   target="_blank"
-   rel="noopener noreferrer">
-```
+All link cards use the same base structure:
 
-**Placeholder Card:**
 ```html
 <div class="p-6 bg-ink/5 border-l-4 border-ink/20 rounded-r-lg">
-```
-
-**Internal Link Card (auto-generated):**
-```html
-<a href={`/blog/${post.slug}`}
-   class="block p-6 bg-ink/5 hover:bg-ink/10 border-l-4 border-ink/30 hover:border-ink transition-all rounded-r-lg group">
+  <h3 class="text-xl font-heading font-bold text-ink mb-3">[Title]</h3>
+  <!-- Content: either a list or placeholder text -->
+</div>
 ```
 
 ## Quick Start Checklist
@@ -188,32 +191,82 @@ Then in the content:
 When creating a new resource post:
 
 - [ ] Create file in `/src/content/blog/resources/[topic]-resources.mdx`
-- [ ] Add complete frontmatter with title, description, tags
+- [ ] Add complete frontmatter with `hideRelatedPosts: true`
+- [ ] Import all three components (TaggedPostsList, GameProjectsList, TableOfContents)
 - [ ] Write introduction paragraph
+- [ ] Add TableOfContents with section links
 - [ ] Add horizontal rule (`---`)
-- [ ] Create section headings with `##`
-- [ ] Wrap link cards in `<div class="not-prose grid gap-6 my-8">`
-- [ ] For external links, use clickable card with arrow (→)
-- [ ] For placeholders, use non-clickable card with italic text
-- [ ] Add imports at top if using auto-generated content
+- [ ] Create Essential Links section with card grid
+- [ ] Add `<GameProjectsList game="[game-name]" />` for projects
+- [ ] Add `<TaggedPostsList tag="[tag-name]" excludeCategory="Resources" excludeProjectPosts={true} />` for content
 - [ ] Include footer with "suggest a resource" message
 - [ ] Update "Last updated" date
 
-## Common Patterns
+## Complete Example
 
-### Multiple Sections
-Separate different types of resources (Official, Community, Tools, etc.) into their own card grids.
+See `/src/content/blog/resources/trench-crusade-resources.mdx` for a complete working example.
 
-### Section Ordering
-1. Introduction
-2. Static external links (most important)
-3. Placeholder sections (for future expansion)
-4. Auto-generated internal content
-5. Footer
+```mdx
+---
+title: "My Game Resources"
+description: "Essential tools, guides, and community resources for My Game players and hobbyists"
+pubDate: 2025-01-01
+category: "Resources"
+tags: ["my game", "resources", "wargaming"]
+heroImage: "/images/my-game-hero.jpg"
+heroImageAlt: "My Game resources and guides"
+hideRelatedPosts: true
+---
 
-### Consistency
-All resource posts should follow the same visual pattern for a cohesive user experience.
+import TaggedPostsList from '../../../components/TaggedPostsList.astro';
+import GameProjectsList from '../../../components/GameProjectsList.astro';
+import TableOfContents from '../../../components/TableOfContents.astro';
 
-## Example File
+Your hub for all things My Game! Brief intro text here.
 
-See `/src/content/blog/resources/competition-painting-guides.mdx` for a complete working example.
+<TableOfContents items={[
+  { title: "Essential Links", slug: "essential-links" },
+  { title: "My Projects", slug: "my-projects" },
+  { title: "My Content", slug: "my-content" },
+]} />
+
+---
+
+## Essential Links
+
+<div class="not-prose grid gap-6 my-8">
+  <div class="p-6 bg-ink/5 border-l-4 border-ink/20 rounded-r-lg">
+    <h3 class="text-xl font-heading font-bold text-ink mb-3">Official Resources</h3>
+    <ul class="space-y-2 text-ink/80">
+      <li><a href="https://example.com" class="underline hover:text-ink">Official Website</a></li>
+      <li><a href="https://example.com/rules" class="underline hover:text-ink">Rules PDF</a></li>
+    </ul>
+  </div>
+
+  <div class="p-6 bg-ink/5 border-l-4 border-ink/20 rounded-r-lg">
+    <h3 class="text-xl font-heading font-bold text-ink mb-3">Community Tools</h3>
+    <ul class="space-y-2 text-ink/80">
+      <li><a href="https://discord.gg/example" class="underline hover:text-ink">Discord Server</a></li>
+      <li><a href="https://reddit.com/r/example" class="underline hover:text-ink">Subreddit</a></li>
+    </ul>
+  </div>
+</div>
+
+---
+
+## My Projects
+
+<GameProjectsList game="my game" />
+
+---
+
+## My Content
+
+<TaggedPostsList tag="my game" excludeCategory="Resources" excludeProjectPosts={true} limit={4} />
+
+---
+
+**Have a resource to suggest?** This guide is a living document!
+
+*Last updated: January 1, 2025*
+```

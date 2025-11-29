@@ -3,6 +3,28 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import HeroHeader from '../components/HeroHeader.astro';
 import Footer from '../components/Footer.astro';
+import { getCollection } from 'astro:content';
+
+// Manual counters - update these as needed
+const miniaturesPainted = 11;
+const xactoBlades = 7;
+const plasticGlueBottles = 1;
+const superGlueBottles = 2;
+const toadsShipped = 2;
+
+// Get all published blog posts
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+
+// Count total posts
+const totalPosts = allPosts.length;
+
+// Count posts with YouTube videos
+const totalVideos = allPosts.filter(post => post.data.youtubeId).length;
+
+// Calculate days since content creation started (September 11, 2025 EST)
+const startDate = new Date('2025-09-11T00:00:00-05:00');
+const now = new Date();
+const daysSinceStart = Math.floor((now.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
 ---
 
 <BaseLayout
@@ -31,6 +53,74 @@ import Footer from '../components/Footer.astro';
           I am documenting my daily journey of going from a normal tabletop level painter to becoming a Golden Daemon winning painter. Hopefully.
         </p>
       </div>
+
+      <!-- Stats Counters -->
+      <section class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
+        <div class="bg-ink/5 border-l-4 border-ink/30 rounded-r-lg p-6 md:p-8 text-center">
+          <div class="text-4xl md:text-5xl font-heading font-bold text-ink mb-2">
+            {daysSinceStart > 0 ? daysSinceStart : 0}
+          </div>
+          <div class="text-base text-ink/70 font-serif">
+            {daysSinceStart === 1 ? 'Day' : 'Day'} Hobby Streak
+          </div>
+        </div>
+        <div class="bg-ink/5 border-l-4 border-ink/30 rounded-r-lg p-6 md:p-8 text-center">
+          <div class="text-4xl md:text-5xl font-heading font-bold text-ink mb-2">
+            {totalPosts}
+          </div>
+          <div class="text-base text-ink/70 font-serif">
+            {totalPosts === 1 ? 'Post' : 'Posts'} Published
+          </div>
+        </div>
+        <div class="bg-ink/5 border-l-4 border-ink/30 rounded-r-lg p-6 md:p-8 text-center">
+          <div class="text-4xl md:text-5xl font-heading font-bold text-ink mb-2">
+            {totalVideos}
+          </div>
+          <div class="text-base text-ink/70 font-serif">
+            {totalVideos === 1 ? 'Video' : 'Videos'} Created
+          </div>
+        </div>
+        <div class="bg-ink/5 border-l-4 border-ink/30 rounded-r-lg p-6 md:p-8 text-center">
+          <div class="text-4xl md:text-5xl font-heading font-bold text-ink mb-2">
+            {miniaturesPainted}
+          </div>
+          <div class="text-base text-ink/70 font-serif">
+            {miniaturesPainted === 1 ? 'Mini' : 'Minis'} Painted
+          </div>
+        </div>
+        <div class="bg-ink/5 border-l-4 border-ink/30 rounded-r-lg p-6 md:p-8 text-center">
+          <div class="text-4xl md:text-5xl font-heading font-bold text-ink mb-2">
+            {xactoBlades}
+          </div>
+          <div class="text-base text-ink/70 font-serif">
+            Xacto {xactoBlades === 1 ? 'Blade' : 'Blades'}
+          </div>
+        </div>
+        <div class="bg-ink/5 border-l-4 border-ink/30 rounded-r-lg p-6 md:p-8 text-center">
+          <div class="text-4xl md:text-5xl font-heading font-bold text-ink mb-2">
+            {plasticGlueBottles}
+          </div>
+          <div class="text-base text-ink/70 font-serif">
+            Plastic Glue {plasticGlueBottles === 1 ? 'Bottle' : 'Bottles'}
+          </div>
+        </div>
+        <div class="bg-ink/5 border-l-4 border-ink/30 rounded-r-lg p-6 md:p-8 text-center">
+          <div class="text-4xl md:text-5xl font-heading font-bold text-ink mb-2">
+            {superGlueBottles}
+          </div>
+          <div class="text-base text-ink/70 font-serif">
+            Super Glue {superGlueBottles === 1 ? 'Bottle' : 'Bottles'}
+          </div>
+        </div>
+        <div class="bg-ink/5 border-l-4 border-ink/30 rounded-r-lg p-6 md:p-8 text-center">
+          <div class="text-4xl md:text-5xl font-heading font-bold text-ink mb-2">
+            {toadsShipped}
+          </div>
+          <div class="text-base text-ink/70 font-serif">
+            {toadsShipped === 1 ? 'Toad' : 'Toads'} Shipped
+          </div>
+        </div>
+      </section>
 
       <!-- YouTube CTA Section -->
       <section class="bg-ink text-white p-12 md:p-16 rounded-lg text-center">

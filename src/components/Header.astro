@@ -129,97 +129,105 @@ const borderColor = theme === 'dark' ? 'border-white/40' : 'border-ink/40';
 </header>
 
 <script>
-  const header = document.getElementById('main-header');
-  const mobileMenuButton = document.getElementById('mobile-menu-button');
-  const mobileMenu = document.getElementById('mobile-menu');
-  const hamburgerIcon = document.getElementById('hamburger-icon');
-  const closeIcon = document.getElementById('close-icon');
+  function initHeader() {
+    const header = document.getElementById('main-header');
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const hamburgerIcon = document.getElementById('hamburger-icon');
+    const closeIcon = document.getElementById('close-icon');
 
-  // Mobile menu toggle
-  if (mobileMenuButton && mobileMenu && hamburgerIcon && closeIcon) {
-    mobileMenuButton.addEventListener('click', () => {
-      const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+    // Mobile menu toggle
+    if (mobileMenuButton && mobileMenu && hamburgerIcon && closeIcon) {
+      mobileMenuButton.addEventListener('click', () => {
+        const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
 
-      // Toggle menu visibility
-      mobileMenu.classList.toggle('hidden');
+        // Toggle menu visibility
+        mobileMenu.classList.toggle('hidden');
 
-      // Toggle icons
-      hamburgerIcon.classList.toggle('hidden');
-      closeIcon.classList.toggle('hidden');
+        // Toggle icons
+        hamburgerIcon.classList.toggle('hidden');
+        closeIcon.classList.toggle('hidden');
 
-      // Update aria-expanded for accessibility
-      mobileMenuButton.setAttribute('aria-expanded', !isExpanded);
-    });
-
-    // Close menu when clicking a link
-    const mobileLinks = mobileMenu.querySelectorAll('a');
-    mobileLinks.forEach(link => {
-      link.addEventListener('click', () => {
-        mobileMenu.classList.add('hidden');
-        hamburgerIcon.classList.remove('hidden');
-        closeIcon.classList.add('hidden');
-        mobileMenuButton.setAttribute('aria-expanded', 'false');
+        // Update aria-expanded for accessibility
+        mobileMenuButton.setAttribute('aria-expanded', String(!isExpanded));
       });
-    });
 
-    // Close menu on escape key
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && !mobileMenu.classList.contains('hidden')) {
-        mobileMenu.classList.add('hidden');
-        hamburgerIcon.classList.remove('hidden');
-        closeIcon.classList.add('hidden');
-        mobileMenuButton.setAttribute('aria-expanded', 'false');
-        mobileMenuButton.focus();
-      }
-    });
-  }
-
-  // Header scroll behavior
-  if (header) {
-    let lastScroll = 0;
-    const scrollThreshold = 100;
-
-    function handleScroll() {
-      const currentScroll = window.pageYOffset;
-
-      // Don't hide header at the very top of the page
-      if (currentScroll <= scrollThreshold) {
-        header.style.transform = 'translateY(0)';
-        header.style.opacity = '1';
-        return;
-      }
-
-      // Scrolling down - hide header
-      if (currentScroll > lastScroll && currentScroll > scrollThreshold) {
-        header.style.transform = 'translateY(-100%)';
-        header.style.opacity = '0';
-        // Close mobile menu when hiding header
-        if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+      // Close menu when clicking a link
+      const mobileLinks = mobileMenu.querySelectorAll('a');
+      mobileLinks.forEach(link => {
+        link.addEventListener('click', () => {
           mobileMenu.classList.add('hidden');
           hamburgerIcon.classList.remove('hidden');
           closeIcon.classList.add('hidden');
           mobileMenuButton.setAttribute('aria-expanded', 'false');
-        }
-      }
-      // Scrolling up - show header
-      else if (currentScroll < lastScroll) {
-        header.style.transform = 'translateY(0)';
-        header.style.opacity = '1';
-      }
+        });
+      });
 
-      lastScroll = currentScroll;
+      // Close menu on escape key
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !mobileMenu.classList.contains('hidden')) {
+          mobileMenu.classList.add('hidden');
+          hamburgerIcon.classList.remove('hidden');
+          closeIcon.classList.add('hidden');
+          mobileMenuButton.setAttribute('aria-expanded', 'false');
+          mobileMenuButton.focus();
+        }
+      });
     }
 
-    // Throttle scroll events for better performance
-    let ticking = false;
-    window.addEventListener('scroll', () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          handleScroll();
-          ticking = false;
-        });
-        ticking = true;
+    // Header scroll behavior
+    if (header) {
+      let lastScroll = 0;
+      const scrollThreshold = 100;
+
+      function handleScroll() {
+        const currentScroll = window.scrollY;
+
+        // Don't hide header at the very top of the page
+        if (currentScroll <= scrollThreshold) {
+          header.style.transform = 'translateY(0)';
+          header.style.opacity = '1';
+          return;
+        }
+
+        // Scrolling down - hide header
+        if (currentScroll > lastScroll && currentScroll > scrollThreshold) {
+          header.style.transform = 'translateY(-100%)';
+          header.style.opacity = '0';
+          // Close mobile menu when hiding header
+          if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+            mobileMenu.classList.add('hidden');
+            hamburgerIcon?.classList.remove('hidden');
+            closeIcon?.classList.add('hidden');
+            mobileMenuButton?.setAttribute('aria-expanded', 'false');
+          }
+        }
+        // Scrolling up - show header
+        else if (currentScroll < lastScroll) {
+          header.style.transform = 'translateY(0)';
+          header.style.opacity = '1';
+        }
+
+        lastScroll = currentScroll;
       }
-    });
+
+      // Throttle scroll events for better performance
+      let ticking = false;
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          window.requestAnimationFrame(() => {
+            handleScroll();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }, { passive: true });
+    }
   }
+
+  // Initialize on first load
+  initHeader();
+
+  // Re-initialize after View Transitions navigation
+  document.addEventListener('astro:after-swap', initHeader);
 </script>
