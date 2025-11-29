@@ -11,10 +11,6 @@
   # Use Node.js 18 or higher for Astro
   NODE_VERSION = "18"
 
-# Netlify Forms configuration
-[[plugins]]
-  package = "@netlify/plugin-forms"
-
 # Email notification for form submissions
 # Form submissions will be sent to the email configured in Netlify dashboard
 # You can configure this at: Site Settings > Forms > Form notifications
