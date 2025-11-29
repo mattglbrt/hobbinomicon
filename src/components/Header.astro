@@ -3,11 +3,19 @@ import DarkModeToggle from './DarkModeToggle.astro';
 
 interface Props {
   theme?: 'light' | 'dark';
+  containerWidth?: 'full' | 'content' | 'wide';
 }
 
-const { theme = 'dark' } = Astro.props;
+const { theme = 'dark', containerWidth = 'full' } = Astro.props;
 const textColor = theme === 'dark' ? 'text-white' : 'text-ink';
 const borderColor = theme === 'dark' ? 'border-white/40' : 'border-ink/40';
+
+// Container width classes based on prop
+const containerClass = {
+  full: 'max-w-7xl',
+  content: 'max-w-3xl',
+  wide: 'max-w-6xl',
+}[containerWidth];
 ---
 
 <style>
@@ -48,8 +56,8 @@ const borderColor = theme === 'dark' ? 'border-white/40' : 'border-ink/40';
   class="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
   data-theme={theme}
 >
-  <nav class="p-4 md:p-6">
-    <div class="max-w-7xl mx-auto">
+  <nav class="px-6 py-4 md:py-6">
+    <div class={`${containerClass} mx-auto`}>
       <!-- Wizardry 1 Style Border with transparent background -->
       <div class={`border-2 ${borderColor} p-3 bg-gradient-to-b from-ink/80 to-ink/60 backdrop-blur-md`}>
         <div class={`border ${borderColor} p-3`}>
