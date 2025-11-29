@@ -1,0 +1,11 @@
+name = "hobbinomicon-comments"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+# D1 Database binding
+[[d1_databases]]
+binding = "DB"
+database_name = "hobbinomicon-comments"
+database_id = "66c42a45-6e01-4a7b-b2be-305d713c6b1d" 
+[vars]
+ALLOWED_ORIGIN = "https://hobbinomicon.com"

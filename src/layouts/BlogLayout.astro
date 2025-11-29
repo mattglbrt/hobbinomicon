@@ -7,6 +7,7 @@ import RelatedPosts from '../components/RelatedPosts.astro';
 import ProjectNavigation from '../components/ProjectNavigation.astro';
 import BackToTop from '../components/BackToTop.astro';
 import StructuredData from '../components/StructuredData.astro';
+import Comments from '../components/Comments.astro';
 import { getHeroImage } from '../utils/getHeroImage';
 import { formatReadingTime } from '../utils/readingTime';
 import { formatDateLong } from '../utils/formatDate';
@@ -34,9 +35,10 @@ interface Props {
   relatedPosts?: CollectionEntry<'blog'>[];
   projectNavigation?: ProjectNav | null;
   campaign?: string;
+  slug: string;
 }
 
-const { title, description, pubDate, updatedDate, heroImage, heroImageAlt, category, tags, youtubeId, readingTime, relatedPosts = [], projectNavigation = null, campaign } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, heroImageAlt, category, tags, youtubeId, readingTime, relatedPosts = [], projectNavigation = null, campaign, slug } = Astro.props;
 
 const displayImage = getHeroImage(heroImage, youtubeId);
 const isRemoteImage = displayImage.startsWith('http');
@@ -212,6 +214,9 @@ const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
               {relatedPosts.length > 0 && (
                 <RelatedPosts posts={relatedPosts} />
               )}
+
+              <!-- Comments -->
+              <Comments postSlug={slug} />
             </div>
           </div>
         </article>
@@ -325,6 +330,9 @@ const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
           {relatedPosts.length > 0 && (
             <RelatedPosts posts={relatedPosts} />
           )}
+
+          <!-- Comments -->
+          <Comments postSlug={slug} />
         </article>
       </>
     )}

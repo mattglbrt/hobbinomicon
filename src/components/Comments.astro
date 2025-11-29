@@ -1,0 +1,232 @@
+---
+/**
+ * Comments Component
+ * Displays and allows submission of comments for blog posts
+ */
+
+interface Props {
+  postSlug: string;
+}
+
+const { postSlug } = Astro.props;
+
+// API URL - update this after deploying your Worker
+const API_URL = import.meta.env.PUBLIC_COMMENTS_API_URL || 'https://hobbinomicon-comments.YOUR_SUBDOMAIN.workers.dev';
+---
+
+<section class="comments-section mt-16 pt-12 border-t-2 border-ink/20 dark:border-ink-dark/20" data-post-slug={postSlug} data-api-url={API_URL}>
+  <h2 class="text-3xl font-heading font-bold text-ink dark:text-ink-dark mb-8">Comments</h2>
+
+  <!-- Comment Form -->
+  <form id="comment-form" class="mb-12 bg-ink/5 dark:bg-ink-dark/5 p-6 rounded-lg">
+    <h3 class="text-xl font-heading font-bold text-ink dark:text-ink-dark mb-4">Leave a Comment</h3>
+
+    <div class="mb-4">
+      <label for="author_name" class="block text-sm font-medium text-ink dark:text-ink-dark mb-2">
+        Name *
+      </label>
+      <input
+        type="text"
+        id="author_name"
+        name="author_name"
+        required
+        minlength="2"
+        maxlength="100"
+        class="w-full px-4 py-2 bg-white dark:bg-ink border border-ink/20 dark:border-ink-dark/20 rounded-lg text-ink dark:text-ink-dark placeholder-ink/50 dark:placeholder-ink-dark/50 focus:outline-none focus:ring-2 focus:ring-ink dark:focus:ring-ink-dark"
+        placeholder="Your name"
+      />
+    </div>
+
+    <!-- Honeypot field (hidden from users, catches bots) -->
+    <div class="hidden" aria-hidden="true">
+      <label for="website">Website</label>
+      <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" />
+    </div>
+
+    <div class="mb-4">
+      <label for="content" class="block text-sm font-medium text-ink dark:text-ink-dark mb-2">
+        Comment *
+      </label>
+      <textarea
+        id="content"
+        name="content"
+        required
+        minlength="3"
+        maxlength="5000"
+        rows="4"
+        class="w-full px-4 py-2 bg-white dark:bg-ink border border-ink/20 dark:border-ink-dark/20 rounded-lg text-ink dark:text-ink-dark placeholder-ink/50 dark:placeholder-ink-dark/50 focus:outline-none focus:ring-2 focus:ring-ink dark:focus:ring-ink-dark resize-y"
+        placeholder="Share your thoughts..."
+      ></textarea>
+    </div>
+
+    <div class="flex items-center justify-between">
+      <button
+        type="submit"
+        id="submit-btn"
+        class="px-6 py-2 bg-ink dark:bg-ink-dark text-parchment dark:text-parchment-dark font-medium rounded-lg hover:bg-ink/90 dark:hover:bg-ink-dark/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        Submit Comment
+      </button>
+      <p class="text-sm text-ink/60 dark:text-ink-dark/60">
+        Comments are moderated
+      </p>
+    </div>
+
+    <!-- Status messages -->
+    <div id="form-status" class="mt-4 hidden">
+      <p id="form-message" class="text-sm p-3 rounded-lg"></p>
+    </div>
+  </form>
+
+  <!-- Comments List -->
+  <div id="comments-list">
+    <div id="comments-loading" class="text-center py-8 text-ink/60 dark:text-ink-dark/60">
+      Loading comments...
+    </div>
+    <div id="comments-empty" class="hidden text-center py-8 text-ink/60 dark:text-ink-dark/60">
+      <p>No comments yet. Be the first to share your thoughts!</p>
+    </div>
+    <div id="comments-error" class="hidden text-center py-8 text-red-600 dark:text-red-400">
+      <p>Failed to load comments. Please try refreshing the page.</p>
+    </div>
+    <div id="comments-container" class="space-y-6"></div>
+  </div>
+</section>
+
+<script is:inline>
+(function() {
+  function initComments() {
+    const section = document.querySelector('.comments-section');
+    if (!section) return;
+
+    const postSlug = section.dataset.postSlug;
+    const apiUrl = section.dataset.apiUrl;
+
+    const form = document.getElementById('comment-form');
+    const submitBtn = document.getElementById('submit-btn');
+    const formStatus = document.getElementById('form-status');
+    const formMessage = document.getElementById('form-message');
+    const commentsLoading = document.getElementById('comments-loading');
+    const commentsEmpty = document.getElementById('comments-empty');
+    const commentsError = document.getElementById('comments-error');
+    const commentsContainer = document.getElementById('comments-container');
+
+    // Format date
+    function formatDate(dateStr) {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+
+    // Render a single comment
+    function renderComment(comment) {
+      return '<div class="comment bg-white dark:bg-ink/50 p-4 rounded-lg border border-ink/10 dark:border-ink-dark/10">' +
+        '<div class="flex items-center justify-between mb-2">' +
+          '<span class="font-medium text-ink dark:text-ink-dark">' + comment.author_name + '</span>' +
+          '<time class="text-sm text-ink/60 dark:text-ink-dark/60" datetime="' + comment.created_at + '">' +
+            formatDate(comment.created_at) +
+          '</time>' +
+        '</div>' +
+        '<p class="text-ink/80 dark:text-ink-dark/80 whitespace-pre-wrap">' + comment.content + '</p>' +
+      '</div>';
+    }
+
+    // Load comments
+    async function loadComments() {
+      try {
+        const response = await fetch(apiUrl + '/comments?post_slug=' + encodeURIComponent(postSlug));
+
+        if (!response.ok) {
+          throw new Error('Failed to load comments');
+        }
+
+        const data = await response.json();
+
+        commentsLoading.classList.add('hidden');
+
+        if (data.comments && data.comments.length > 0) {
+          commentsContainer.innerHTML = data.comments.map(renderComment).join('');
+          commentsEmpty.classList.add('hidden');
+        } else {
+          commentsEmpty.classList.remove('hidden');
+        }
+      } catch (error) {
+        console.error('Error loading comments:', error);
+        commentsLoading.classList.add('hidden');
+        commentsError.classList.remove('hidden');
+      }
+    }
+
+    // Show status message
+    function showStatus(message, isError) {
+      formStatus.classList.remove('hidden');
+      formMessage.textContent = message;
+      formMessage.className = 'text-sm p-3 rounded-lg ' +
+        (isError ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400' : 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400');
+    }
+
+    // Handle form submission
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const authorName = document.getElementById('author_name').value.trim();
+      const content = document.getElementById('content').value.trim();
+      const website = document.getElementById('website').value; // Honeypot
+
+      // Disable submit button
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting...';
+
+      try {
+        const response = await fetch(apiUrl + '/comments', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            post_slug: postSlug,
+            author_name: authorName,
+            content: content,
+            website: website // Honeypot
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to submit comment');
+        }
+
+        // Success
+        showStatus('Thank you! Your comment has been submitted for moderation.', false);
+        form.reset();
+
+      } catch (error) {
+        console.error('Error submitting comment:', error);
+        showStatus(error.message || 'Failed to submit comment. Please try again.', true);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Comment';
+      }
+    });
+
+    // Load comments on page load
+    loadComments();
+  }
+
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initComments);
+  } else {
+    initComments();
+  }
+
+  // Re-initialize after View Transitions
+  document.addEventListener('astro:after-swap', initComments);
+})();
+</script>

@@ -2,69 +2,106 @@
 
 A beautiful, performant personal portfolio and blog built with Astro 5, featuring an illuminated manuscript aesthetic for blog posts and full-screen hero sections for stunning visual impact.
 
-## To Do List
-RSS feed - Let readers subscribe to new posts
-Reading progress indicator - Shows how far through an article
-Social share buttons - Twitter, Facebook, copy link
-Table of contents - Auto-generated for longer posts
-Estimated reading time - Already in BlogLayout, but could add to PostCard
-Image lazy loading with blur placeholders - Already partially done
-Newsletter signup - If you want to collect emails
-Comments - Giscus, Disqus, or similar
+**Live site:** [hobbinomicon.com](https://hobbinomicon.com)
 
 ## Features
 
+### Content & Navigation
 - **Full-screen hero sections** with image overlays on homepage
 - **Illuminated manuscript styling** for blog posts (cream background, rich black typography)
 - **Content Collections** for type-safe blog posts with frontmatter validation
 - **Categories & Tags** for organized content browsing
-- **Reusable components** for maintainable code
+- **Project collections** with series navigation (previous/next posts)
+- **Related posts** automatically generated based on shared tags
+- **Paginated blog index** for browsing large content archives
+- **Client-side search** with keyboard shortcut (Cmd/Ctrl+K)
+
+### User Experience
+- **Dark mode** with system preference detection and toggle (dark by default)
 - **View Transitions** for smooth, SPA-like navigation
-- **Responsive design** with Tailwind CSS
-- **Performance optimized** with lazy loading and proper image handling
-- **Rich media support**: YouTube embeds, image galleries, and video transcripts
-- **SEO ready** with OpenGraph and Twitter Card meta tags
+- **Back to top button** for easy navigation on long posts
+- **Skip links** for keyboard/screen reader accessibility
+- **Reading time estimates** displayed on posts
+- **Print stylesheet** for clean printed articles
+
+### Comments System
+- **Self-hosted comments** using Cloudflare Workers + D1 database
+- **Rate limiting** (5 comments per IP per hour)
+- **Honeypot spam protection** to catch bots
+- **XSS sanitization** for secure content
+- **Privacy-preserving** IP hashing
+- **Moderation queue** - comments require approval by default
+
+### SEO & Performance
+- **Structured data (JSON-LD)** for blog posts and breadcrumbs
+- **OpenGraph and Twitter Card** meta tags
+- **Sitemap** auto-generated
+- **Responsive images** with lazy loading
+- **Optimized fonts** with proper fallbacks
+- **Tailwind CSS tree-shaking** eliminates unused styles
+
+### Rich Media
+- **YouTube embeds** with privacy-enhanced mode
+- **Image galleries** with lightbox support
+- **Video transcripts** collapsible component
+- **YouTube thumbnail fallbacks** for hero images
 
 ## Tech Stack
 
-- [Astro 5.15.9](https://astro.build) - Web framework
+- [Astro 5](https://astro.build) - Web framework
 - [Tailwind CSS 3](https://tailwindcss.com) - Styling
 - TypeScript - Type safety
 - Content Collections - Type-safe content management
+- [Cloudflare Workers](https://workers.cloudflare.com) - Comments API
+- [Cloudflare D1](https://developers.cloudflare.com/d1/) - SQLite database for comments
+- [Netlify](https://netlify.com) - Hosting
 
 ## Project Structure
 
 ```
 /
 ├── public/
-│   └── images/          # Static images
+│   └── images/              # Static images
 ├── src/
-│   ├── components/      # Reusable components
-│   │   ├── Header.astro
+│   ├── components/          # Reusable components
+│   │   ├── Header.astro     # Navigation with dark mode toggle
 │   │   ├── Footer.astro
 │   │   ├── HeroSection.astro
 │   │   ├── PostCard.astro
+│   │   ├── Search.astro     # Client-side search modal
+│   │   ├── Comments.astro   # Comment form and display
+│   │   ├── BackToTop.astro
 │   │   ├── YouTubeEmbed.astro
 │   │   ├── ImageGallery.astro
 │   │   └── VideoTranscript.astro
 │   ├── content/
-│   │   ├── config.ts    # Content collections schema
-│   │   └── blog/        # Blog posts (Markdown)
+│   │   ├── config.ts        # Content collections schema
+│   │   ├── blog/            # Blog posts (Markdown/MDX)
+│   │   └── projects/        # Project collections
 │   ├── layouts/
-│   │   ├── BaseLayout.astro
-│   │   └── BlogLayout.astro
-│   └── pages/
-│       ├── index.astro         # Homepage
-│       ├── blog/
-│       │   ├── index.astro     # Blog index
-│       │   └── [...slug].astro # Individual blog posts
-│       ├── categories/
-│       │   ├── index.astro
-│       │   └── [category].astro
-│       └── tags/
-│           └── [tag].astro
+│   │   ├── BaseLayout.astro # Dark mode, meta tags, structured data
+│   │   └── BlogLayout.astro # Post layout with comments
+│   ├── pages/
+│   │   ├── index.astro      # Homepage
+│   │   ├── 404.astro        # Custom 404 page
+│   │   ├── blog/
+│   │   │   ├── index.astro  # Paginated blog index
+│   │   │   └── [...slug].astro
+│   │   ├── categories/
+│   │   │   ├── index.astro
+│   │   │   └── [category].astro
+│   │   └── tags/
+│   │       └── [tag].astro
+│   └── styles/
+│       └── print.css        # Print stylesheet
+├── comments-api/            # Cloudflare Worker for comments
+│   ├── src/index.ts         # API endpoints
+│   ├── schema.sql           # D1 database schema
+│   ├── wrangler.toml        # Worker configuration
+│   └── README.md            # Setup instructions
 ├── astro.config.mjs
 ├── tailwind.config.mjs
+├── netlify.toml             # Netlify deployment config
 └── package.json
 ```
 
@@ -280,18 +317,30 @@ fontFamily: {
 
 ## Deployment
 
-Build the production site:
+### Main Site (Netlify)
+
+The site is hosted on Netlify. Build and deploy:
 
 ```bash
 npm run build
 ```
 
-The static site will be generated in `./dist/` and can be deployed to any static hosting provider:
+The static site will be generated in `./dist/`. Netlify automatically deploys on push to main.
 
-- [Vercel](https://vercel.com)
-- [Netlify](https://netlify.com)
-- [Cloudflare Pages](https://pages.cloudflare.com)
-- [GitHub Pages](https://pages.github.com)
+### Comments API (Cloudflare Workers)
+
+The comments system requires a separate Cloudflare Worker deployment. See [comments-api/README.md](comments-api/README.md) for setup instructions.
+
+Quick setup:
+```bash
+cd comments-api
+npm install
+npm run db:create    # Create D1 database
+npm run db:init      # Initialize schema
+npm run deploy       # Deploy worker
+```
+
+Then set the `PUBLIC_COMMENTS_API_URL` environment variable in Netlify to your Worker URL.
 
 ## License
 

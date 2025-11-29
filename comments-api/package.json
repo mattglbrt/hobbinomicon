@@ -1,0 +1,17 @@
+{
+  "name": "hobbinomicon-comments",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:create": "wrangler d1 create hobbinomicon-comments",
+    "db:init": "wrangler d1 execute hobbinomicon-comments --file=./schema.sql",
+    "db:init:local": "wrangler d1 execute hobbinomicon-comments --local --file=./schema.sql"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240117.0",
+    "typescript": "^5.3.3",
+    "wrangler": "^4.51.0"
+  }
+}

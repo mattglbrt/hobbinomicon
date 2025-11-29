@@ -59,6 +59,6 @@ if (post.data.project) {
 }
 ---
 
-<BlogLayout {...post.data} readingTime={readingTime} relatedPosts={relatedPosts} projectNavigation={projectNavigation}>
+<BlogLayout {...post.data} slug={post.slug} readingTime={readingTime} relatedPosts={relatedPosts} projectNavigation={projectNavigation}>
   <Content />
 </BlogLayout>

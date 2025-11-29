@@ -34,3 +34,8 @@ pnpm-debug.log*
 # Local Netlify folder
 .netlify/
 
+# Cloudflare Workers
+comments-api/node_modules/
+comments-api/.wrangler/
+comments-api/.dev.vars
+
