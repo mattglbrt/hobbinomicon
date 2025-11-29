@@ -3,8 +3,14 @@
 A beautiful, performant personal portfolio and blog built with Astro 5, featuring an illuminated manuscript aesthetic for blog posts and full-screen hero sections for stunning visual impact.
 
 ## To Do List
-- [ ] Search Functionality (High Impact, Medium Effort)
-Add Pagefind or Algolia search so users can find specific content
+RSS feed - Let readers subscribe to new posts
+Reading progress indicator - Shows how far through an article
+Social share buttons - Twitter, Facebook, copy link
+Table of contents - Auto-generated for longer posts
+Estimated reading time - Already in BlogLayout, but could add to PostCard
+Image lazy loading with blur placeholders - Already partially done
+Newsletter signup - If you want to collect emails
+Comments - Giscus, Disqus, or similar
 
 ## Features
 

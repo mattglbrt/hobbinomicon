@@ -83,11 +83,32 @@ const borderColor = theme === 'dark' ? 'border-white/40' : 'border-ink/40';
               <a href="/contact" class={`border ${borderColor} px-4 py-2 hover:bg-white/20 hover:border-white transition-all uppercase tracking-wider`}>
                 [ Contact ]
               </a>
+              <button
+                type="button"
+                class={`border ${borderColor} p-2 hover:bg-white/20 hover:border-white transition-all`}
+                data-search-trigger
+                aria-label="Search posts (Cmd+K)"
+                title="Search (⌘K)"
+              >
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </button>
               <DarkModeToggle />
             </div>
 
             <!-- Mobile Controls -->
             <div class="flex md:hidden items-center gap-2">
+              <button
+                type="button"
+                class="text-white p-2 hover:bg-white/20 border border-white/40 hover:border-white transition-all"
+                data-search-trigger
+                aria-label="Search posts"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </button>
               <DarkModeToggle />
               <button
                 id="mobile-menu-button"
