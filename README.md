@@ -6,12 +6,6 @@ A beautiful, performant personal portfolio and blog built with Astro 5, featurin
 - [ ] Search Functionality (High Impact, Medium Effort)
 Add Pagefind or Algolia search so users can find specific content
 
-### SEO:
-
-Design:
-
-
-
 ## Features
 
 - **Full-screen hero sections** with image overlays on homepage
