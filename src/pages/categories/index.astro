@@ -4,6 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import Footer from '../../components/Footer.astro';
+import StructuredData from '../../components/StructuredData.astro';
 
 const allPosts = await getCollection('blog');
 
@@ -38,9 +39,18 @@ const categories = Array.from(categoriesMap.entries())
 ---
 
 <BaseLayout title="Categories - The Hobbinomicon">
+  <StructuredData
+    type="breadcrumb"
+    data={{
+      breadcrumbs: [
+        { name: 'Home', url: 'https://hobbinomicon.com/' },
+        { name: 'Categories', url: 'https://hobbinomicon.com/categories' },
+      ],
+    }}
+  />
   <Header theme="light" />
 
-  <main id="main-content" class="min-h-screen bg-parchment">
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
     <PageHeader
       title="Categories"
       description="Explore posts by topic"
@@ -61,7 +71,7 @@ const categories = Array.from(categoriesMap.entries())
                 <img
                   src={categoryImage}
                   alt={latestPost.data.heroImageAlt || name}
-                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                   loading="lazy"
                   decoding="async"
                 />

@@ -1,0 +1,107 @@
+---
+/**
+ * Dark Mode Toggle Component
+ * Toggles between light and dark themes with localStorage persistence
+ */
+---
+
+<button
+  class="dark-mode-toggle p-2 hover:bg-white/20 border border-white/40 hover:border-white transition-all"
+  aria-label="Toggle dark mode"
+  title="Toggle dark mode"
+>
+  <!-- Sun icon (shown in dark mode) -->
+  <svg
+    class="sun-icon w-5 h-5 text-white hidden"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+    />
+  </svg>
+  <!-- Moon icon (shown in light mode) -->
+  <svg
+    class="moon-icon w-5 h-5 text-white"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+    />
+  </svg>
+</button>
+
+<script is:inline>
+  (function() {
+    // Only initialize once per page
+    if (window.darkModeInitialized) return;
+    window.darkModeInitialized = true;
+
+    function initDarkModeToggle() {
+      const toggles = document.querySelectorAll('.dark-mode-toggle');
+      const sunIcons = document.querySelectorAll('.sun-icon');
+      const moonIcons = document.querySelectorAll('.moon-icon');
+
+      function updateAllIcons(isDark) {
+        sunIcons.forEach(function(icon) {
+          if (isDark) {
+            icon.classList.remove('hidden');
+          } else {
+            icon.classList.add('hidden');
+          }
+        });
+        moonIcons.forEach(function(icon) {
+          if (isDark) {
+            icon.classList.add('hidden');
+          } else {
+            icon.classList.remove('hidden');
+          }
+        });
+      }
+
+      function toggleDarkMode() {
+        var html = document.documentElement;
+        var isDark = html.classList.toggle('dark');
+        localStorage.setItem('darkMode', isDark ? 'dark' : 'light');
+        updateAllIcons(isDark);
+      }
+
+      // Set initial icon state
+      var isDark = document.documentElement.classList.contains('dark');
+      updateAllIcons(isDark);
+
+      // Add click handler to all toggles
+      toggles.forEach(function(toggle) {
+        // Remove any existing listeners by cloning
+        var newToggle = toggle.cloneNode(true);
+        toggle.parentNode.replaceChild(newToggle, toggle);
+        newToggle.addEventListener('click', toggleDarkMode);
+      });
+    }
+
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initDarkModeToggle);
+    } else {
+      initDarkModeToggle();
+    }
+
+    // Re-initialize after View Transitions navigation
+    document.addEventListener('astro:after-swap', function() {
+      window.darkModeInitialized = false;
+      initDarkModeToggle();
+      window.darkModeInitialized = true;
+    });
+  })();
+</script>

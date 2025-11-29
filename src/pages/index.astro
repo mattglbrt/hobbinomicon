@@ -94,11 +94,11 @@ const characterPosts = publishedPosts
 
     <!-- Resource Posts Section -->
     {resourcePosts.length > 0 && (
-      <section class="bg-parchment py-16 md:py-24">
+      <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24">
         <div class="max-w-7xl mx-auto px-6">
           <div class="flex items-center justify-between mb-12">
-            <h2 class="text-4xl md:text-5xl font-heading font-bold text-ink">Resources</h2>
-            <a href="/categories/resources" class="text-ink hover:underline underline-offset-4 transition-all">
+            <h2 class="text-4xl md:text-5xl font-heading font-bold text-ink dark:text-ink-dark">Resources</h2>
+            <a href="/categories/resources" class="text-ink dark:text-ink-dark hover:underline underline-offset-4 transition-all">
               View All →
             </a>
           </div>
@@ -442,11 +442,11 @@ const characterPosts = publishedPosts
 
     <!-- Recent Posts Section -->
     {recentPosts.length > 0 && (
-      <section class="bg-parchment py-16 md:py-24">
+      <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24">
         <div class="max-w-7xl mx-auto px-6">
           <div class="flex items-center justify-between mb-12">
-            <h2 class="text-4xl md:text-5xl font-heading font-bold text-ink">More Posts</h2>
-            <a href="/blog" class="text-ink hover:underline underline-offset-4 transition-all">
+            <h2 class="text-4xl md:text-5xl font-heading font-bold text-ink dark:text-ink-dark">More Posts</h2>
+            <a href="/blog" class="text-ink dark:text-ink-dark hover:underline underline-offset-4 transition-all">
               View All →
             </a>
           </div>
@@ -492,7 +492,7 @@ const characterPosts = publishedPosts
                 <img
                   src={character.data.heroImage || '/images/placeholder.jpg'}
                   alt={character.data.heroImageAlt || character.data.title}
-                  class="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
+                  class="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
                 />
                 <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-transparent opacity-40 group-hover:opacity-80 transition-opacity duration-500"></div>
                 <div class="absolute inset-0 flex items-end justify-center p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
@@ -508,31 +508,31 @@ const characterPosts = publishedPosts
     )}
 
     <!-- YouTube CTA Section -->
-    <section class="bg-parchment py-24 md:py-32">
+    <section class="bg-parchment dark:bg-parchment-dark py-24 md:py-32">
       <div class="max-w-4xl mx-auto px-6 text-center">
         <div class="mb-8">
-          <svg class="w-20 h-20 mx-auto text-ink opacity-80" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <svg class="w-20 h-20 mx-auto text-ink dark:text-ink-dark opacity-80" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
           </svg>
         </div>
-        <h2 class="text-4xl md:text-6xl font-heading font-bold text-ink mb-6">
+        <h2 class="text-4xl md:text-6xl font-heading font-bold text-ink dark:text-ink-dark mb-6">
           Join me in the Dungeon
         </h2>
-        <p class="text-xl md:text-2xl text-ink/80 mb-8 leading-relaxed">
+        <p class="text-xl md:text-2xl text-ink/80 dark:text-ink-dark/80 mb-8 leading-relaxed">
           Join me on YouTube for painting tutorials, hobby vlogs, battle reports, and to follow my journey to become a Golden Daemon winning painter.
         </p>
         <a
           href="https://www.youtube.com/@Hobbinomicon"
           target="_blank"
           rel="noopener noreferrer"
-          class="inline-flex items-center gap-3 px-8 py-4 bg-ink text-parchment font-heading font-bold text-lg rounded-lg hover:bg-ink/90 transition-all hover:scale-105 shadow-lg"
+          class="inline-flex items-center gap-3 px-8 py-4 bg-ink dark:bg-ink-dark text-parchment dark:text-parchment-dark font-heading font-bold text-lg rounded-lg hover:bg-ink/90 dark:hover:bg-ink-dark/90 transition-all hover:scale-105 shadow-lg"
         >
           <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
           </svg>
           Subscribe on YouTube
         </a>
-        <p class="text-sm text-ink/60 mt-6">
+        <p class="text-sm text-ink/60 dark:text-ink-dark/60 mt-6">
           New videos every day
         </p>
       </div>

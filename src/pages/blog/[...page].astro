@@ -1,0 +1,114 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import PostCard from '../../components/PostCard.astro';
+import Pagination from '../../components/Pagination.astro';
+import Footer from '../../components/Footer.astro';
+import StructuredData from '../../components/StructuredData.astro';
+import { filterDrafts } from '../../utils/filterDrafts';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const allPosts = await getCollection('blog');
+  const publishedPosts = filterDrafts(allPosts);
+  const sortedPosts = publishedPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+  // 12 posts per page (4 rows of 3)
+  return paginate(sortedPosts, { pageSize: 12 });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+
+// Get unique categories for the category shortcuts
+const allPosts = await getCollection('blog');
+const publishedPosts = filterDrafts(allPosts);
+const categories = [...new Set(publishedPosts.map(post => post.data.category))].sort();
+
+// Build pagination URLs
+const baseUrl = '/blog';
+const prevUrl = page.url.prev;
+const nextUrl = page.url.next;
+---
+
+<BaseLayout title={page.currentPage === 1 ? "Blog - The Hobbinomicon" : `Blog - Page ${page.currentPage} - The Hobbinomicon`}>
+  <StructuredData
+    type="breadcrumb"
+    data={{
+      breadcrumbs: [
+        { name: 'Home', url: 'https://hobbinomicon.com/' },
+        { name: 'Blog', url: 'https://hobbinomicon.com/blog' },
+      ],
+    }}
+  />
+  <Header theme="light" />
+
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
+    <PageHeader
+      title="All Posts"
+      description={page.currentPage === 1
+        ? "Exploring hobbies, projects, and creative pursuits"
+        : `Page ${page.currentPage} of ${page.lastPage}`}
+      backLink={{ href: "/", text: "Back to Home" }}
+    />
+
+    <!-- Category Shortcuts -->
+    <div class="bg-parchment dark:bg-parchment-dark border-b-2 border-ink/10 dark:border-ink-dark/10 py-8">
+      <div class="max-w-7xl mx-auto px-6">
+        <h2 class="text-lg font-heading font-bold text-ink dark:text-ink-dark mb-4">Browse by Category</h2>
+        <div class="flex flex-wrap gap-3">
+          <a
+            href="/categories"
+            class="inline-block px-4 py-2 bg-ink dark:bg-ink-dark text-parchment dark:text-parchment-dark font-mono text-sm rounded hover:bg-ink/90 dark:hover:bg-ink-dark/90 transition-colors"
+          >
+            All Categories
+          </a>
+          {categories.map((category) => (
+            <a
+              href={`/categories/${category.toLowerCase().replace(/ /g, '-')}`}
+              class="inline-block px-4 py-2 bg-white dark:bg-parchment-dark border-2 border-ink/20 dark:border-ink-dark/20 text-ink dark:text-ink-dark font-mono text-sm rounded hover:border-ink/40 dark:hover:border-ink-dark/40 hover:bg-ink/5 dark:hover:bg-ink-dark/5 transition-all"
+            >
+              {category}
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <!-- Posts Grid -->
+    <div class="max-w-7xl mx-auto px-6 py-16">
+      <!-- Post Count -->
+      <p class="text-ink/60 dark:text-ink-dark/60 text-sm mb-8">
+        Showing {page.start + 1}-{page.end + 1} of {page.total} posts
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {page.data.map((post) => (
+          <PostCard
+            slug={post.slug}
+            title={post.data.title}
+            description={post.data.description}
+            heroImage={post.data.heroImage}
+            heroImageAlt={post.data.heroImageAlt}
+            category={post.data.category}
+            pubDate={post.data.pubDate}
+            tags={post.data.tags}
+            youtubeId={post.data.youtubeId}
+          />
+        ))}
+      </div>
+
+      <!-- Pagination -->
+      <Pagination
+        currentPage={page.currentPage}
+        totalPages={page.lastPage}
+        baseUrl={baseUrl}
+        prevUrl={prevUrl}
+        nextUrl={nextUrl}
+      />
+    </div>
+
+    <Footer />
+  </main>
+</BaseLayout>

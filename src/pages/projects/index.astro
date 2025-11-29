@@ -4,6 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import Footer from '../../components/Footer.astro';
+import StructuredData from '../../components/StructuredData.astro';
 import { getHeroImage } from '../../utils/getHeroImage';
 
 const allProjects = await getCollection('projects');
@@ -39,9 +40,18 @@ const projectsWithMeta = publishedProjects.map(project => {
 ---
 
 <BaseLayout title="Projects - The Hobbinomicon">
+  <StructuredData
+    type="breadcrumb"
+    data={{
+      breadcrumbs: [
+        { name: 'Home', url: 'https://hobbinomicon.com/' },
+        { name: 'Projects', url: 'https://hobbinomicon.com/projects' },
+      ],
+    }}
+  />
   <Header theme="light" />
 
-  <main id="main-content" class="min-h-screen bg-parchment">
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
     <PageHeader
       title="Projects"
       description="Long-form series and ongoing creative endeavors"

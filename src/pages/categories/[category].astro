@@ -5,6 +5,7 @@ import Header from '../../components/Header.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import PostCard from '../../components/PostCard.astro';
 import Footer from '../../components/Footer.astro';
+import StructuredData from '../../components/StructuredData.astro';
 import { filterDrafts } from '../../utils/filterDrafts';
 
 export async function getStaticPaths() {
@@ -30,9 +31,19 @@ const { category, posts } = Astro.props;
 ---
 
 <BaseLayout title={`${category} - The Hobbinomicon`}>
+  <StructuredData
+    type="breadcrumb"
+    data={{
+      breadcrumbs: [
+        { name: 'Home', url: 'https://hobbinomicon.com/' },
+        { name: 'Categories', url: 'https://hobbinomicon.com/categories' },
+        { name: category, url: `https://hobbinomicon.com/categories/${category.toLowerCase().replace(/\s+/g, '-')}` },
+      ],
+    }}
+  />
   <Header theme="light" />
 
-  <main id="main-content" class="min-h-screen bg-parchment">
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
     <PageHeader
       title={category}
       description={`${posts.length} ${posts.length === 1 ? 'post' : 'posts'}`}

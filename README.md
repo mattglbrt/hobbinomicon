@@ -7,33 +7,10 @@ A beautiful, performant personal portfolio and blog built with Astro 5, featurin
 Add Pagefind or Algolia search so users can find specific content
 
 ### SEO:
-Structured data (JSON-LD) for blog posts, projects, organization
-Canonical URLs on all pages
-Breadcrumb structured data
-Performance:
-Image optimization (lazy loading, srcset, modern formats like WebP/AVIF)
-Font optimization (preload, font-display: swap)
-Critical CSS inlining
-Accessibility:
-ARIA labels on icon-only buttons
-Focus visible styles audit
-Alt text audit on all images
-Color contrast check
-Usability:
-Search functionality
-Related posts on blog articles
-Reading time estimates
-Table of contents for long posts
-Pagination for blog index
+
 Design:
-Consistent hover states
-Loading states/skeletons
-Dark mode toggle
-Print stylesheet
-Would you like me to tackle any specific items from this list? I'd recommend prioritizing:
-Structured data (big SEO win)
-Image optimization (performance)
-Reading time + Related posts (user engagement)
+
+
 
 ## Features
 

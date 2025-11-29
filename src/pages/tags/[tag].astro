@@ -4,6 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import PostCard from '../../components/PostCard.astro';
 import Footer from '../../components/Footer.astro';
+import StructuredData from '../../components/StructuredData.astro';
 import { filterDrafts } from '../../utils/filterDrafts';
 
 export async function getStaticPaths() {
@@ -41,9 +42,19 @@ const isCampaignTag = characterPosts.length > 0 && chapterPosts.length > 0;
 ---
 
 <BaseLayout title={`#${tag} - The Hobbinomicon`}>
+  <StructuredData
+    type="breadcrumb"
+    data={{
+      breadcrumbs: [
+        { name: 'Home', url: 'https://hobbinomicon.com/' },
+        { name: 'Blog', url: 'https://hobbinomicon.com/blog' },
+        { name: `#${tag}`, url: `https://hobbinomicon.com/tags/${tag}` },
+      ],
+    }}
+  />
   <Header theme="light" />
 
-  <main id="main-content" class="min-h-screen bg-parchment">
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
     <header class="bg-ink text-white pt-36 md:pt-40 pb-16">
       <div class="max-w-7xl mx-auto px-6">
         <a href="/blog" class="inline-block text-white/80 hover:text-white mb-4 transition-colors">
@@ -72,7 +83,7 @@ const isCampaignTag = characterPosts.length > 0 && chapterPosts.length > 0;
                       <img
                         src={character.data.heroImage || '/images/placeholder.jpg'}
                         alt={character.data.heroImageAlt || character.data.title}
-                        class="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-110"
+                        class="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-105"
                         loading="lazy"
                         decoding="async"
                       />
