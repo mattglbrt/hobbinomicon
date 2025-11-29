@@ -6,6 +6,7 @@ import Footer from '../components/Footer.astro';
 import RelatedPosts from '../components/RelatedPosts.astro';
 import ProjectNavigation from '../components/ProjectNavigation.astro';
 import BackToTop from '../components/BackToTop.astro';
+import StructuredData from '../components/StructuredData.astro';
 import { getHeroImage } from '../utils/getHeroImage';
 import { formatReadingTime } from '../utils/readingTime';
 import { formatDateLong } from '../utils/formatDate';
@@ -43,9 +44,48 @@ const isRemoteImage = displayImage.startsWith('http');
 const formattedDate = formatDateLong(pubDate);
 const formattedUpdatedDate = updatedDate ? formatDateLong(updatedDate) : null;
 const isCharacterPost = category === 'Dramatis Personae';
+
+// Build full image URL for structured data
+const imageUrl = displayImage.startsWith('http')
+  ? displayImage
+  : new URL(displayImage, Astro.site || Astro.url).toString();
+
+// Build canonical URL for this post
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site || Astro.url).toString();
+
+// Estimate word count from reading time (assuming ~200 words per minute)
+const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
 ---
 
 <BaseLayout title={title} description={description}>
+  <!-- BlogPosting Structured Data -->
+  <StructuredData
+    type="blogPosting"
+    data={{
+      title,
+      description,
+      image: imageUrl,
+      datePublished: pubDate,
+      dateModified: updatedDate,
+      authorName: 'Hobbinomicon',
+      authorUrl: 'https://hobbinomicon.com/about',
+      keywords: tags,
+      category,
+      wordCount: estimatedWordCount,
+      url: canonicalUrl,
+    }}
+  />
+  <StructuredData
+    type="breadcrumb"
+    data={{
+      breadcrumbs: [
+        { name: 'Home', url: 'https://hobbinomicon.com/' },
+        { name: 'Blog', url: 'https://hobbinomicon.com/blog' },
+        { name: category, url: `https://hobbinomicon.com/categories/${category.toLowerCase().replace(/\s+/g, '-')}` },
+        { name: title, url: canonicalUrl },
+      ],
+    }}
+  />
   <Header />
   <main id="main-content" class="min-h-screen bg-parchment">
     {isCharacterPost ? (
