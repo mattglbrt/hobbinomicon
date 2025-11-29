@@ -11,15 +11,6 @@ Add Schema.org structured data (BlogPosting, Person) for rich snippets
 Generate sitemap.xml automatically
 Add category-specific meta descriptions
 
- - [ ] Social Sharing Buttons (Medium Impact, Low Effort)
-Add Twitter, Facebook, Pinterest share buttons to blog posts
-Include Twitter card creator attribution
-
-### User Experience Polish
-- [ ] Table of Contents for long blog posts
-- [ ] Newsletter signup form in footer
-- [ ] Comments system 
-- [ ] View counter to show popular posts
 
 ## Features
 

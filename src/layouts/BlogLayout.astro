@@ -32,9 +32,10 @@ interface Props {
   readingTime?: number;
   relatedPosts?: CollectionEntry<'blog'>[];
   projectNavigation?: ProjectNav | null;
+  campaign?: string;
 }
 
-const { title, description, pubDate, updatedDate, heroImage, heroImageAlt, category, tags, youtubeId, readingTime, relatedPosts = [], projectNavigation = null } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, heroImageAlt, category, tags, youtubeId, readingTime, relatedPosts = [], projectNavigation = null, campaign } = Astro.props;
 
 const displayImage = getHeroImage(heroImage, youtubeId);
 const isRemoteImage = displayImage.startsWith('http');
@@ -55,7 +56,7 @@ const isCharacterPost = category === 'Dramatis Personae';
           <h1 class="text-4xl md:text-6xl lg:text-7xl font-heading font-bold text-ink mb-4">
             {title}
           </h1>
-          <div class="flex flex-wrap gap-4 text-ink/70 text-sm md:text-base mb-8">
+          <div class="flex flex-wrap gap-4 text-ink/70 text-sm md:text-base mb-4">
             <time datetime={pubDate.toISOString()}>{formattedDate}</time>
             {readingTime && (
               <>
@@ -66,6 +67,21 @@ const isCharacterPost = category === 'Dramatis Personae';
             <span>•</span>
             <span class="px-3 py-1 bg-ink/10 rounded">{category}</span>
           </div>
+
+          <!-- Campaign Link -->
+          {campaign && (
+            <div class="mb-8">
+              <a
+                href={`/tags/${campaign}`}
+                class="inline-flex items-center gap-2 px-4 py-2 bg-ink/10 hover:bg-ink/20 text-ink rounded-lg transition-colors"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+                <span class="font-medium">Campaign: {campaign}</span>
+              </a>
+            </div>
+          )}
 
           <!-- Tags -->
           {tags.length > 0 && (

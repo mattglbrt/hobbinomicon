@@ -8,6 +8,16 @@ These guides document the established patterns, styles, and conventions used thr
 
 ## Available Guides
 
+### [Vlog Posts Guide](./vlog-posts-guide.md)
+Learn how to create vlog posts that embed YouTube videos. Includes:
+- YouTube integration patterns
+- Frontmatter templates
+- Tagging strategies
+- Auto-thumbnail generation
+- Resource page integration
+
+**Use this when:** Publishing new YouTube videos to the blog.
+
 ### [Resource Posts Guide](./resource-posts-guide.md)
 Learn how to create resource pages with the card-based design system. Includes:
 - Frontmatter templates
@@ -18,15 +28,35 @@ Learn how to create resource pages with the card-based design system. Includes:
 
 **Use this when:** Creating new resource pages for topics like game systems, painting techniques, or community resources.
 
-### [Vlog Posts Guide](./vlog-posts-guide.md)
-Learn how to create vlog posts that embed YouTube videos. Includes:
-- YouTube integration patterns
-- Frontmatter templates
-- Tagging strategies
-- Auto-thumbnail generation
-- Resource page integration
+### [Character Posts Guide](./character-posts-guide.md)
+Learn how to create RPG character profiles with detailed character sheets. Includes:
+- Frontmatter templates for Dramatis Personae
+- Character sheet structure (skills, equipment, flaws, abilities)
+- Content sections (background, personality, appearance)
+- Campaign linking
+- Portrait image guidelines
 
-**Use this when:** Publishing new YouTube videos to the blog.
+**Use this when:** Creating character profiles for RPG campaigns.
+
+### [Campaign Posts Guide](./campaign-posts-guide.md)
+Learn how to create campaign chronicle chapters with narrative prose. Includes:
+- Frontmatter templates for Campaign Chronicles
+- Directory organization by game system and campaign
+- Narrative writing approaches
+- Draft workflow for work-in-progress chapters
+- Integration with character profiles
+
+**Use this when:** Writing campaign session recaps or narrative chapters.
+
+### [Project Posts Guide](./project-posts-guide.md)
+Learn how to create hobby project entries that aggregate related content. Includes:
+- Frontmatter templates for projects
+- Linking to resource pages via game field
+- Connecting blog posts to projects
+- Auto-thumbnail generation from linked posts
+- Content integration overview
+
+**Use this when:** Starting a new hobby project like an army build or warband.
 
 ### [Netlify Deployment Guide](./netlify-deployment-guide.md)
 Learn how to deploy and manage The Hobbinomicon on Netlify. Includes:
@@ -67,8 +97,11 @@ The Hobbinomicon uses a custom design system based on:
 ```
 .mcp/
 ├── README.md                      # This file
-├── resource-posts-guide.md        # Resource page patterns
 ├── vlog-posts-guide.md            # Vlog post patterns
+├── resource-posts-guide.md        # Resource page patterns
+├── character-posts-guide.md       # Character profile patterns
+├── campaign-posts-guide.md        # Campaign chronicle patterns
+├── project-posts-guide.md         # Project collection patterns
 └── netlify-deployment-guide.md    # Deployment and hosting
 ```
 

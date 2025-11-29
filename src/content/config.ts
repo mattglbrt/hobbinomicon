@@ -18,6 +18,7 @@ const blog = defineCollection({
     project: z.string().optional(),
     projectOrder: z.number().optional(),
     hideRelatedPosts: z.boolean().default(false),
+    campaign: z.string().optional(),
   }),
 });
 

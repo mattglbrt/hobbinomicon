@@ -27,38 +27,142 @@ export async function getStaticPaths() {
 }
 
 const { tag, posts } = Astro.props;
+
+// Separate posts by category
+const characterPosts = posts.filter(post => post.data.category === 'Dramatis Personae');
+const chapterPosts = posts.filter(post => post.data.category === 'Campaign Chronicles');
+const otherPosts = posts.filter(post =>
+  post.data.category !== 'Dramatis Personae' &&
+  post.data.category !== 'Campaign Chronicles'
+);
+
+// Check if this is a campaign tag (has both characters and chapters)
+const isCampaignTag = characterPosts.length > 0 && chapterPosts.length > 0;
 ---
 
 <BaseLayout title={`#${tag} - The Hobbinomicon`}>
   <Header theme="light" />
 
   <div class="min-h-screen bg-parchment">
-    <header class="bg-ink text-white py-16">
+    <header class="bg-ink text-white pt-36 md:pt-40 pb-16">
       <div class="max-w-7xl mx-auto px-6">
         <a href="/blog" class="inline-block text-white/80 hover:text-white mb-4 transition-colors">
           ← All Posts
         </a>
-        <h1 class="text-5xl md:text-6xl font-heading font-bold">#{tag}</h1>
+        <h1 class="text-5xl md:text-6xl font-heading font-bold">{isCampaignTag ? tag : `#${tag}`}</h1>
         <p class="text-xl text-white/80 mt-4">{posts.length} {posts.length === 1 ? 'post' : 'posts'}</p>
       </div>
     </header>
 
     <div class="max-w-7xl mx-auto px-6 py-16">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {posts.map((post) => (
-          <PostCard
-            slug={post.slug}
-            title={post.data.title}
-            description={post.data.description}
-            heroImage={post.data.heroImage}
-            heroImageAlt={post.data.heroImageAlt}
-            category={post.data.category}
-            pubDate={post.data.pubDate}
-            tags={post.data.tags}
-            youtubeId={post.data.youtubeId}
-          />
-        ))}
-      </div>
+      {isCampaignTag ? (
+        <!-- Campaign Layout with Characters and Chapters -->
+        <>
+          <!-- Characters Section -->
+          {characterPosts.length > 0 && (
+            <section class="mb-16">
+              <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink mb-8">Characters</h2>
+              <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                {characterPosts.map((character) => (
+                  <a
+                    href={`/blog/${character.slug}`}
+                    class="group block"
+                  >
+                    <div class="relative aspect-[2/3] overflow-hidden rounded-lg shadow-lg">
+                      <img
+                        src={character.data.heroImage || '/images/placeholder.jpg'}
+                        alt={character.data.heroImageAlt || character.data.title}
+                        class="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-110"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/30 to-transparent"></div>
+                      <div class="absolute bottom-0 left-0 right-0 p-4">
+                        <h3 class="text-lg md:text-xl font-heading font-bold text-white drop-shadow-lg">
+                          {character.data.title}
+                        </h3>
+                      </div>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </section>
+          )}
+
+          <!-- Chapters Section -->
+          {chapterPosts.length > 0 && (
+            <section class="mb-16">
+              <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink mb-8">Chapters</h2>
+              <div class="space-y-4">
+                {chapterPosts
+                  .sort((a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf())
+                  .map((chapter, index) => (
+                  <a
+                    href={`/blog/${chapter.slug}`}
+                    class="group flex items-center gap-6 p-4 bg-ink/5 hover:bg-ink/10 rounded-lg transition-colors"
+                  >
+                    <div class="flex-shrink-0 w-12 h-12 flex items-center justify-center bg-ink text-white rounded-full font-heading font-bold text-lg">
+                      {index + 1}
+                    </div>
+                    <div class="flex-grow min-w-0">
+                      <h3 class="text-lg md:text-xl font-heading font-bold text-ink group-hover:underline truncate">
+                        {chapter.data.title}
+                      </h3>
+                      <p class="text-ink/60 text-sm mt-1 line-clamp-1">
+                        {chapter.data.description}
+                      </p>
+                    </div>
+                    <div class="flex-shrink-0 text-ink/40 group-hover:text-ink transition-colors">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </section>
+          )}
+
+          <!-- Other Posts Section -->
+          {otherPosts.length > 0 && (
+            <section>
+              <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink mb-8">Related Posts</h2>
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {otherPosts.map((post) => (
+                  <PostCard
+                    slug={post.slug}
+                    title={post.data.title}
+                    description={post.data.description}
+                    heroImage={post.data.heroImage}
+                    heroImageAlt={post.data.heroImageAlt}
+                    category={post.data.category}
+                    pubDate={post.data.pubDate}
+                    tags={post.data.tags}
+                    youtubeId={post.data.youtubeId}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
+        </>
+      ) : (
+        <!-- Standard Tag Layout -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {posts.map((post) => (
+            <PostCard
+              slug={post.slug}
+              title={post.data.title}
+              description={post.data.description}
+              heroImage={post.data.heroImage}
+              heroImageAlt={post.data.heroImageAlt}
+              category={post.data.category}
+              pubDate={post.data.pubDate}
+              tags={post.data.tags}
+              youtubeId={post.data.youtubeId}
+            />
+          ))}
+        </div>
+      )}
     </div>
 
     <Footer />
