@@ -1,0 +1,127 @@
+---
+interface Character {
+  slug: string;
+  data: {
+    title: string;
+    heroImage?: string;
+    heroImageAlt?: string;
+  };
+}
+
+interface Props {
+  characters: Character[];
+  title?: string;
+  description?: string;
+  viewAllLink?: string;
+}
+
+const {
+  characters,
+  title = 'Dramatis Personae',
+  description = 'Characters from my various TTRPG campaigns.<br /> Each one has their own story, miniature, and adventure.<br/>Please note that the character in the art might not correspond to official cannon or their manufacturer\'s lore, they are being used in various campaigns, worlds and stories.',
+  viewAllLink = '/categories/dramatis-personae'
+} = Astro.props;
+---
+
+{characters.length > 0 && (
+  <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24 overflow-hidden">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-4xl md:text-5xl font-heading font-bold text-ink dark:text-ink-dark">{title}</h2>
+        <a href={viewAllLink} class="text-ink dark:text-ink-dark hover:underline underline-offset-4 transition-all">
+          View All →
+        </a>
+      </div>
+      <p class="text-ink/70 dark:text-ink-dark/70 text-lg mb-12 max-w-2xl" set:html={description} />
+    </div>
+
+    <!-- Horizontal Slider -->
+    <div class="relative group/slider" id="character-slider">
+      <div
+        class="character-slider flex gap-4 overflow-x-auto scroll-smooth px-6 pb-4 snap-x snap-mandatory"
+        style="scrollbar-width: none; -ms-overflow-style: none;"
+      >
+        <!-- Left padding spacer for centering on large screens -->
+        <div class="flex-shrink-0 w-[calc((100vw-80rem)/2)] hidden 2xl:block"></div>
+
+        {characters.map((character) => (
+          <a
+            href={`/blog/${character.slug}`}
+            class="character-card group flex-shrink-0 w-[calc((100vw-4rem)/2)] sm:w-[calc((100vw-5rem)/3)] md:w-[calc((100vw-6rem)/4)] lg:w-[calc((100vw-7rem)/5)] max-w-[280px] relative aspect-[2/3] overflow-hidden rounded-lg snap-start shadow-lg"
+          >
+            <img
+              src={character.data.heroImage || '/images/placeholder.jpg'}
+              alt={character.data.heroImageAlt || character.data.title}
+              class="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+              loading="lazy"
+              decoding="async"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-transparent opacity-40 group-hover:opacity-80 transition-opacity duration-500"></div>
+            <div class="absolute inset-0 flex items-end justify-center p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+              <h3 class="text-lg md:text-xl font-heading font-bold text-white text-center drop-shadow-2xl">
+                {character.data.title}
+              </h3>
+            </div>
+          </a>
+        ))}
+
+        <!-- Right padding spacer -->
+        <div class="flex-shrink-0 w-6"></div>
+      </div>
+
+      <!-- Navigation Arrows -->
+      <button
+        class="character-slider-prev absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-ink/10 hover:bg-ink/30 dark:bg-ink-dark/10 dark:hover:bg-ink-dark/30 backdrop-blur-md rounded-full transition-all opacity-0 group-hover/slider:opacity-100"
+        aria-label="Scroll left"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6 text-ink dark:text-ink-dark" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+      <button
+        class="character-slider-next absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-ink/10 hover:bg-ink/30 dark:bg-ink-dark/10 dark:hover:bg-ink-dark/30 backdrop-blur-md rounded-full transition-all opacity-0 group-hover/slider:opacity-100"
+        aria-label="Scroll right"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6 text-ink dark:text-ink-dark" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+    <style>
+      .character-slider::-webkit-scrollbar {
+        display: none;
+      }
+    </style>
+
+    <script>
+      function initCharacterSlider() {
+        const slider = document.querySelector('.character-slider');
+        const prevBtn = document.querySelector('.character-slider-prev');
+        const nextBtn = document.querySelector('.character-slider-next');
+
+        if (!slider || !prevBtn || !nextBtn) return;
+
+        const scrollAmount = 300; // Approximate card width + gap
+
+        prevBtn.addEventListener('click', () => {
+          slider.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+        });
+
+        nextBtn.addEventListener('click', () => {
+          slider.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        });
+      }
+
+      // Initialize on load
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initCharacterSlider);
+      } else {
+        initCharacterSlider();
+      }
+
+      // Re-initialize after View Transitions
+      document.addEventListener('astro:after-swap', initCharacterSlider);
+    </script>
+  </section>
+)}

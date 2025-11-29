@@ -3,11 +3,13 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import HeroSection from '../components/HeroSection.astro';
-import PostCard from '../components/PostCard.astro';
+import PostGridSection from '../components/PostGridSection.astro';
+import FeaturedProjectSection from '../components/FeaturedProjectSection.astro';
+import CharacterSlider from '../components/CharacterSlider.astro';
+import YouTubeCTA from '../components/YouTubeCTA.astro';
 import Footer from '../components/Footer.astro';
 import { getHeroImage } from '../utils/getHeroImage';
 import { filterDrafts } from '../utils/filterDrafts';
-import { formatDateLong } from '../utils/formatDate';
 
 // Get all blog posts and sort by date
 const allPosts = await getCollection('blog');
@@ -23,7 +25,7 @@ const resourcePosts = sortedPosts
   .filter(post => post.data.category === 'Resources')
   .slice(0, 6);
 
-// Get all projects and their latest posts for the slider
+// Get all projects and their latest posts
 const allProjects = await getCollection('projects');
 const publishedProjects = allProjects.filter(project => !project.data.draft);
 
@@ -42,13 +44,13 @@ const projectsWithLatestPost = publishedProjects.map(project => {
     latestPost: latestProjectPost,
     latestPostDate: latestProjectPost?.data.pubDate,
   };
-}).filter(p => p.latestPost) // Only include projects with posts
+}).filter(p => p.latestPost)
   .sort((a, b) => {
     const dateA = a.latestPostDate?.valueOf() || 0;
     const dateB = b.latestPostDate?.valueOf() || 0;
     return dateB - dateA;
   })
-  .slice(0, 5); // Limit to 5 projects
+  .slice(0, 5);
 
 // Get recent posts excluding hero, resources, featured project posts, and character posts
 const excludedSlugs = new Set([
@@ -99,282 +101,33 @@ const featuredProjectPosts = featuredProject ? sortedPosts
     )}
 
     <!-- Resource Posts Section -->
-    {resourcePosts.length > 0 && (
-      <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24">
-        <div class="max-w-7xl mx-auto px-6">
-          <div class="flex items-center justify-between mb-12">
-            <h2 class="text-4xl md:text-5xl font-heading font-bold text-ink dark:text-ink-dark">Resources</h2>
-            <a href="/categories/resources" class="text-ink dark:text-ink-dark hover:underline underline-offset-4 transition-all">
-              View All →
-            </a>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {resourcePosts.map((post, index) => (
-              <PostCard
-                slug={post.slug}
-                title={post.data.title}
-                description={post.data.description}
-                heroImage={post.data.heroImage}
-                heroImageAlt={post.data.heroImageAlt}
-                category={post.data.category}
-                pubDate={post.data.pubDate}
-                tags={post.data.tags}
-                youtubeId={post.data.youtubeId}
-                eager={index < 3}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-    )}
+    <PostGridSection
+      title="Resources"
+      viewAllLink="/categories/resources"
+      posts={resourcePosts}
+    />
 
     <!-- Featured Project Section -->
     {featuredProject && featuredProjectPosts.length > 0 && (
-      <section class="relative py-16 md:py-24 bg-gradient-to-br from-violet-950 via-ink to-indigo-950 overflow-hidden">
-        <!-- Background decoration -->
-        <div class="absolute inset-0 opacity-20 pointer-events-none">
-          <div class="absolute top-0 left-1/4 w-96 h-96 bg-violet-500 rounded-full blur-3xl"></div>
-          <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-500 rounded-full blur-3xl"></div>
-        </div>
-        <div class="max-w-7xl mx-auto px-6">
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="text-4xl md:text-5xl font-heading font-bold text-white">Current Project</h2>
-            <a href={`/projects/${featuredProject.projectSlug}`} class="text-white hover:underline underline-offset-4 transition-all">
-              View Project →
-            </a>
-          </div>
-          <p class="text-white/70 text-lg mb-12 max-w-2xl">
-            {featuredProject.project.data.description}
-          </p>
-
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <!-- Featured Post (Large) -->
-            <a
-              href={`/blog/${featuredProjectPosts[0].slug}`}
-              class="group relative aspect-[4/3] overflow-hidden rounded-lg"
-            >
-              <img
-                src={getHeroImage(featuredProjectPosts[0].data.heroImage, featuredProjectPosts[0].data.youtubeId)}
-                alt={featuredProjectPosts[0].data.heroImageAlt || featuredProjectPosts[0].data.title}
-                class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                loading="lazy"
-                decoding="async"
-              />
-              <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-transparent"></div>
-              <div class="absolute bottom-0 left-0 right-0 p-6">
-                <span class="inline-block px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-sm rounded mb-3">
-                  {featuredProjectPosts[0].data.category}
-                </span>
-                <h3 class="text-2xl md:text-3xl font-heading font-bold text-white mb-2 group-hover:underline underline-offset-4">
-                  {featuredProjectPosts[0].data.title}
-                </h3>
-                <p class="text-white/80 line-clamp-2">
-                  {featuredProjectPosts[0].data.description}
-                </p>
-              </div>
-            </a>
-
-            <!-- Recent Posts List -->
-            <div class="flex flex-col gap-4">
-              {featuredProjectPosts.slice(1, 4).map((post) => (
-                <a
-                  href={`/blog/${post.slug}`}
-                  class="group flex gap-4 bg-white/5 hover:bg-white/10 rounded-lg p-4 transition-colors"
-                >
-                  <div class="flex-shrink-0 w-24 h-24 md:w-32 md:h-32 overflow-hidden rounded-lg">
-                    <img
-                      src={getHeroImage(post.data.heroImage, post.data.youtubeId)}
-                      alt={post.data.heroImageAlt || post.data.title}
-                      class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </div>
-                  <div class="flex-grow min-w-0 flex flex-col justify-center">
-                    <span class="text-white/60 text-sm mb-1">
-                      {formatDateLong(post.data.pubDate)}
-                    </span>
-                    <h3 class="text-lg md:text-xl font-heading font-bold text-white group-hover:underline underline-offset-2 line-clamp-2">
-                      {post.data.title}
-                    </h3>
-                    <p class="text-white/70 text-sm mt-1 line-clamp-1 hidden md:block">
-                      {post.data.description}
-                    </p>
-                  </div>
-                </a>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      <FeaturedProjectSection
+        projectSlug={featuredProject.projectSlug}
+        project={featuredProject.project}
+        posts={featuredProjectPosts}
+      />
     )}
 
     <!-- Recent Posts Section -->
-    {recentPosts.length > 0 && (
-      <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24">
-        <div class="max-w-7xl mx-auto px-6">
-          <div class="flex items-center justify-between mb-12">
-            <h2 class="text-4xl md:text-5xl font-heading font-bold text-ink dark:text-ink-dark">More Posts</h2>
-            <a href="/blog" class="text-ink dark:text-ink-dark hover:underline underline-offset-4 transition-all">
-              View All →
-            </a>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {recentPosts.map((post, index) => (
-              <PostCard
-                slug={post.slug}
-                title={post.data.title}
-                description={post.data.description}
-                heroImage={post.data.heroImage}
-                heroImageAlt={post.data.heroImageAlt}
-                category={post.data.category}
-                pubDate={post.data.pubDate}
-                tags={post.data.tags}
-                youtubeId={post.data.youtubeId}
-                eager={index < 3}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-    )}
+    <PostGridSection
+      title="More Posts"
+      viewAllLink="/blog"
+      posts={recentPosts}
+    />
 
     <!-- Characters Section -->
-    {characterPosts.length > 0 && (
-      <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24 overflow-hidden">
-        <div class="max-w-7xl mx-auto px-6">
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="text-4xl md:text-5xl font-heading font-bold text-ink dark:text-ink-dark">Dramatis Personae</h2>
-            <a href="/categories/dramatis-personae" class="text-ink dark:text-ink-dark hover:underline underline-offset-4 transition-all">
-              View All →
-            </a>
-          </div>
-          <p class="text-ink/70 dark:text-ink-dark/70 text-lg mb-12 max-w-2xl">
-            Characters from my various TTRPG campaigns.<br /> Each one has their own story, miniature, and adventure.<br/>Please note that the character in the art might not correspond to official cannon or their manufacturer's lore, they are  being used in various campaigns, worlds and stories.
-          </p>
-        </div>
-
-        <!-- Horizontal Slider -->
-        <div class="relative group/slider" id="character-slider">
-          <div
-            class="character-slider flex gap-4 overflow-x-auto scroll-smooth px-6 pb-4 snap-x snap-mandatory"
-            style="scrollbar-width: none; -ms-overflow-style: none;"
-          >
-            <!-- Left padding spacer for centering on large screens -->
-            <div class="flex-shrink-0 w-[calc((100vw-80rem)/2)] hidden 2xl:block"></div>
-
-            {characterPosts.map((character) => (
-              <a
-                href={`/blog/${character.slug}`}
-                class="character-card group flex-shrink-0 w-[calc((100vw-4rem)/2)] sm:w-[calc((100vw-5rem)/3)] md:w-[calc((100vw-6rem)/4)] lg:w-[calc((100vw-7rem)/5)] max-w-[280px] relative aspect-[2/3] overflow-hidden rounded-lg snap-start shadow-lg"
-              >
-                <img
-                  src={character.data.heroImage || '/images/placeholder.jpg'}
-                  alt={character.data.heroImageAlt || character.data.title}
-                  class="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-transparent opacity-40 group-hover:opacity-80 transition-opacity duration-500"></div>
-                <div class="absolute inset-0 flex items-end justify-center p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                  <h3 class="text-lg md:text-xl font-heading font-bold text-white text-center drop-shadow-2xl">
-                    {character.data.title}
-                  </h3>
-                </div>
-              </a>
-            ))}
-
-            <!-- Right padding spacer -->
-            <div class="flex-shrink-0 w-6"></div>
-          </div>
-
-          <!-- Navigation Arrows -->
-          <button
-            class="character-slider-prev absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-ink/10 hover:bg-ink/30 dark:bg-ink-dark/10 dark:hover:bg-ink-dark/30 backdrop-blur-md rounded-full transition-all opacity-0 group-hover/slider:opacity-100"
-            aria-label="Scroll left"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6 text-ink dark:text-ink-dark" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-          <button
-            class="character-slider-next absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-ink/10 hover:bg-ink/30 dark:bg-ink-dark/10 dark:hover:bg-ink-dark/30 backdrop-blur-md rounded-full transition-all opacity-0 group-hover/slider:opacity-100"
-            aria-label="Scroll right"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6 text-ink dark:text-ink-dark" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        </div>
-
-        <style>
-          .character-slider::-webkit-scrollbar {
-            display: none;
-          }
-        </style>
-
-        <script>
-          function initCharacterSlider() {
-            const slider = document.querySelector('.character-slider');
-            const prevBtn = document.querySelector('.character-slider-prev');
-            const nextBtn = document.querySelector('.character-slider-next');
-
-            if (!slider || !prevBtn || !nextBtn) return;
-
-            const scrollAmount = 300; // Approximate card width + gap
-
-            prevBtn.addEventListener('click', () => {
-              slider.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-            });
-
-            nextBtn.addEventListener('click', () => {
-              slider.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-            });
-          }
-
-          // Initialize on load
-          if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initCharacterSlider);
-          } else {
-            initCharacterSlider();
-          }
-
-          // Re-initialize after View Transitions
-          document.addEventListener('astro:after-swap', initCharacterSlider);
-        </script>
-      </section>
-    )}
+    <CharacterSlider characters={characterPosts} />
 
     <!-- YouTube CTA Section -->
-    <section class="bg-parchment dark:bg-parchment-dark py-24 md:py-32">
-      <div class="max-w-4xl mx-auto px-6 text-center">
-        <div class="mb-8">
-          <svg class="w-20 h-20 mx-auto text-ink dark:text-ink-dark opacity-80" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-          </svg>
-        </div>
-        <h2 class="text-4xl md:text-6xl font-heading font-bold text-ink dark:text-ink-dark mb-6">
-          Join me in the Dungeon
-        </h2>
-        <p class="text-xl md:text-2xl text-ink/80 dark:text-ink-dark/80 mb-8 leading-relaxed">
-          Join me on YouTube for painting tutorials, hobby vlogs, battle reports, and to follow my journey to become a Golden Daemon winning painter.
-        </p>
-        <a
-          href="https://www.youtube.com/@Hobbinomicon"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="inline-flex items-center gap-3 px-8 py-4 bg-ink dark:bg-ink-dark text-parchment dark:text-parchment-dark font-heading font-bold text-lg rounded-lg hover:bg-ink/90 dark:hover:bg-ink-dark/90 transition-all hover:scale-105 shadow-lg"
-        >
-          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-          </svg>
-          Subscribe on YouTube
-        </a>
-        <p class="text-sm text-ink/60 dark:text-ink-dark/60 mt-6">
-          New videos every day
-        </p>
-      </div>
-    </section>
+    <YouTubeCTA />
 
     <Footer />
   </main>

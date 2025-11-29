@@ -44,49 +44,42 @@
 
 <script is:inline>
   (function() {
-    // Only initialize once per page
-    if (window.darkModeInitialized) return;
-    window.darkModeInitialized = true;
+    function updateAllIcons(isDark) {
+      // Query icons fresh each time to handle cloned elements
+      document.querySelectorAll('.sun-icon').forEach(function(icon) {
+        if (isDark) {
+          icon.classList.remove('hidden');
+        } else {
+          icon.classList.add('hidden');
+        }
+      });
+      document.querySelectorAll('.moon-icon').forEach(function(icon) {
+        if (isDark) {
+          icon.classList.add('hidden');
+        } else {
+          icon.classList.remove('hidden');
+        }
+      });
+    }
+
+    function toggleDarkMode() {
+      var html = document.documentElement;
+      var isDark = html.classList.toggle('dark');
+      localStorage.setItem('darkMode', isDark ? 'dark' : 'light');
+      updateAllIcons(isDark);
+    }
 
     function initDarkModeToggle() {
-      const toggles = document.querySelectorAll('.dark-mode-toggle');
-      const sunIcons = document.querySelectorAll('.sun-icon');
-      const moonIcons = document.querySelectorAll('.moon-icon');
-
-      function updateAllIcons(isDark) {
-        sunIcons.forEach(function(icon) {
-          if (isDark) {
-            icon.classList.remove('hidden');
-          } else {
-            icon.classList.add('hidden');
-          }
-        });
-        moonIcons.forEach(function(icon) {
-          if (isDark) {
-            icon.classList.add('hidden');
-          } else {
-            icon.classList.remove('hidden');
-          }
-        });
-      }
-
-      function toggleDarkMode() {
-        var html = document.documentElement;
-        var isDark = html.classList.toggle('dark');
-        localStorage.setItem('darkMode', isDark ? 'dark' : 'light');
-        updateAllIcons(isDark);
-      }
-
       // Set initial icon state
       var isDark = document.documentElement.classList.contains('dark');
       updateAllIcons(isDark);
 
       // Add click handler to all toggles
-      toggles.forEach(function(toggle) {
-        // Remove any existing listeners by cloning
-        var newToggle = toggle.cloneNode(true);
-        toggle.parentNode.replaceChild(newToggle, toggle);
-        newToggle.addEventListener('click', toggleDarkMode);
+      document.querySelectorAll('.dark-mode-toggle').forEach(function(toggle) {
+        // Skip if already initialized
+        if (toggle.dataset.initialized) return;
+        toggle.dataset.initialized = 'true';
+        toggle.addEventListener('click', toggleDarkMode);
       });
     }
 
@@ -98,10 +91,6 @@
     }
 
     // Re-initialize after View Transitions navigation
-    document.addEventListener('astro:after-swap', function() {
-      window.darkModeInitialized = false;
-      initDarkModeToggle();
-      window.darkModeInitialized = true;
-    });
+    document.addEventListener('astro:after-swap', initDarkModeToggle);
   })();
 </script>

@@ -1,0 +1,120 @@
+---
+import { getHeroImage } from '../utils/getHeroImage';
+import { formatDateLong } from '../utils/formatDate';
+
+interface Post {
+  slug: string;
+  data: {
+    title: string;
+    description: string;
+    heroImage?: string;
+    heroImageAlt?: string;
+    category: string;
+    pubDate: Date;
+    youtubeId?: string;
+  };
+}
+
+interface Project {
+  data: {
+    title: string;
+    description: string;
+  };
+}
+
+interface Props {
+  projectSlug: string;
+  project: Project;
+  posts: Post[];
+}
+
+const { projectSlug, project, posts } = Astro.props;
+
+// Need at least one post to display
+if (posts.length === 0) {
+  return null;
+}
+
+const featuredPost = posts[0];
+const recentPosts = posts.slice(1, 4);
+---
+
+<section class="relative py-16 md:py-24 bg-gradient-to-br from-violet-950 via-ink to-indigo-950 overflow-hidden">
+  <!-- Background decoration -->
+  <div class="absolute inset-0 opacity-20 pointer-events-none">
+    <div class="absolute top-0 left-1/4 w-96 h-96 bg-violet-500 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-500 rounded-full blur-3xl"></div>
+  </div>
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-4xl md:text-5xl font-heading font-bold text-white">Current Project</h2>
+      <a href={`/projects/${projectSlug}`} class="text-white hover:underline underline-offset-4 transition-all">
+        View Project →
+      </a>
+    </div>
+    <p class="text-white/70 text-lg mb-12 max-w-2xl">
+      {project.data.description}
+    </p>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- Featured Post (Large) -->
+      <a
+        href={`/blog/${featuredPost.slug}`}
+        class="group relative aspect-[4/3] overflow-hidden rounded-lg"
+      >
+        <img
+          src={getHeroImage(featuredPost.data.heroImage, featuredPost.data.youtubeId)}
+          alt={featuredPost.data.heroImageAlt || featuredPost.data.title}
+          class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          loading="lazy"
+          decoding="async"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-transparent"></div>
+        <div class="absolute bottom-0 left-0 right-0 p-6">
+          <span class="inline-block px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-sm rounded mb-3">
+            {featuredPost.data.category}
+          </span>
+          <h3 class="text-2xl md:text-3xl font-heading font-bold text-white mb-2 group-hover:underline underline-offset-4">
+            {featuredPost.data.title}
+          </h3>
+          <p class="text-white/80 line-clamp-2">
+            {featuredPost.data.description}
+          </p>
+        </div>
+      </a>
+
+      <!-- Recent Posts List -->
+      {recentPosts.length > 0 && (
+        <div class="flex flex-col gap-4">
+          {recentPosts.map((post) => (
+            <a
+              href={`/blog/${post.slug}`}
+              class="group flex gap-4 bg-white/5 hover:bg-white/10 rounded-lg p-4 transition-colors"
+            >
+              <div class="flex-shrink-0 w-24 h-24 md:w-32 md:h-32 overflow-hidden rounded-lg">
+                <img
+                  src={getHeroImage(post.data.heroImage, post.data.youtubeId)}
+                  alt={post.data.heroImageAlt || post.data.title}
+                  class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+              <div class="flex-grow min-w-0 flex flex-col justify-center">
+                <span class="text-white/60 text-sm mb-1">
+                  {formatDateLong(post.data.pubDate)}
+                </span>
+                <h3 class="text-lg md:text-xl font-heading font-bold text-white group-hover:underline underline-offset-2 line-clamp-2">
+                  {post.data.title}
+                </h3>
+                <p class="text-white/70 text-sm mt-1 line-clamp-1 hidden md:block">
+                  {post.data.description}
+                </p>
+              </div>
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+</section>
