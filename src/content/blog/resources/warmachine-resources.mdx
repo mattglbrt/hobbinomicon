@@ -4,19 +4,22 @@ description: "Essential tools, guides, and community resources for Warmachine pl
 pubDate: 2025-11-23
 category: "Resources"
 tags: ["warmachine", "resources", "wargaming"]
-heroImage: "/images/resources/warmachine-hero.jpg"
+heroImage: "/images/warmachinefeatured.jpeg"
 heroImageAlt: "Warmachine resources and guides"
+hideRelatedPosts: true
 ---
 
-import { getCollection } from 'astro:content';
-
-export const allPosts = await getCollection('blog');
-export const warmachinePosts = allPosts
-  .filter(post => !post.data.draft)
-  .filter(post => post.data.tags?.some(tag => tag.toLowerCase().includes('warmachine')))
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+import TaggedPostsList from '../../../components/TaggedPostsList.astro';
+import GameProjectsList from '../../../components/GameProjectsList.astro';
+import TableOfContents from '../../../components/TableOfContents.astro';
 
 Your hub for all things Warmachine! Find essential tools, community resources, and helpful guides for this steamjack-powered wargame.
+
+<TableOfContents items={[
+  { title: "Essential Links", slug: "essential-links" },
+  { title: "My Warmachine Projects", slug: "my-warmachine-projects" },
+  { title: "My Warmachine Content", slug: "my-warmachine-content" },
+]} />
 
 ---
 
@@ -41,30 +44,15 @@ Your hub for all things Warmachine! Find essential tools, community resources, a
 
 ---
 
+## My Warmachine Projects
+
+<GameProjectsList game="warmachine" />
+
+---
+
 ## My Warmachine Content
 
-{warmachinePosts.length > 0 ? (
-  <div class="not-prose grid gap-4 my-8">
-    {warmachinePosts.map(post => (
-      <a href={`/blog/${post.slug}`}
-         class="block p-6 bg-ink/5 hover:bg-ink/10 border-l-4 border-ink/30 hover:border-ink transition-all rounded-r-lg group">
-        <h3 class="text-xl font-heading font-bold text-ink mb-2 group-hover:underline">
-          {post.data.title}
-        </h3>
-        <p class="text-ink/80 text-sm mb-2">{post.data.description}</p>
-        <p class="text-ink/60 text-xs">
-          Published: {new Date(post.data.pubDate).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-          })}
-        </p>
-      </a>
-    ))}
-  </div>
-) : (
-  <p class="text-ink/60 italic my-8">No Warmachine posts yet. Check back soon!</p>
-)}
+<TaggedPostsList tag="warmachine" excludeCategory="Resources" excludeProjectPosts={true} limit={4} />
 
 ---
 

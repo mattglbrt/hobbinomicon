@@ -158,6 +158,104 @@ import VideoTranscript from '../../components/VideoTranscript.astro';
 <VideoTranscript transcript="Your full transcript text here..." />
 ```
 
+### Creating a Game/Topic Resource Page
+
+Resource pages serve as hubs for specific games or topics, pulling in related projects and content automatically. Create a new `.mdx` file in `src/content/blog/resources/`:
+
+**1. Create the resource page file** (e.g., `src/content/blog/resources/my-game-resources.mdx`):
+
+```mdx
+---
+title: "My Game Resources"
+description: "Essential tools, guides, and community resources for My Game players and hobbyists"
+pubDate: 2025-01-01
+category: "Resources"
+tags: ["my game", "resources", "wargaming"]
+heroImage: "/images/my-game-hero.jpg"
+heroImageAlt: "My Game resources and guides"
+hideRelatedPosts: true
+---
+
+import TaggedPostsList from '../../../components/TaggedPostsList.astro';
+import GameProjectsList from '../../../components/GameProjectsList.astro';
+import TableOfContents from '../../../components/TableOfContents.astro';
+
+Your hub for all things My Game! Brief intro text here.
+
+<TableOfContents items={[
+  { title: "Essential Links", slug: "essential-links" },
+  { title: "My Projects", slug: "my-projects" },
+  { title: "My Content", slug: "my-content" },
+]} />
+
+---
+
+## Essential Links
+
+<div class="not-prose grid gap-6 my-8">
+  <div class="p-6 bg-ink/5 border-l-4 border-ink/20 rounded-r-lg">
+    <h3 class="text-xl font-heading font-bold text-ink mb-3">Official Resources</h3>
+    <ul class="space-y-2 text-ink/80">
+      <li><a href="https://example.com" class="underline hover:text-ink">Official Website</a></li>
+      <li><a href="https://example.com/rules" class="underline hover:text-ink">Rules PDF</a></li>
+    </ul>
+  </div>
+
+  <div class="p-6 bg-ink/5 border-l-4 border-ink/20 rounded-r-lg">
+    <h3 class="text-xl font-heading font-bold text-ink mb-3">Community Tools</h3>
+    <ul class="space-y-2 text-ink/80">
+      <li><a href="https://discord.gg/example" class="underline hover:text-ink">Discord Server</a></li>
+      <li><a href="https://reddit.com/r/example" class="underline hover:text-ink">Subreddit</a></li>
+    </ul>
+  </div>
+</div>
+
+---
+
+## My Projects
+
+<GameProjectsList game="my game" />
+
+---
+
+## My Content
+
+<TaggedPostsList tag="my game" excludeCategory="Resources" excludeProjectPosts={true} limit={4} />
+
+---
+
+**Have a resource to suggest?** This guide is a living document!
+
+*Last updated: January 1, 2025*
+```
+
+**2. Tag your blog posts** with the game name (e.g., `tags: ["my game"]`) so they appear in the content section.
+
+**3. Set the `game` field on projects** in `src/content/projects/` to link them to this resource page:
+
+```yaml
+---
+title: "My Project"
+description: "Project description"
+pubDate: 2025-01-01
+draft: false
+game: "my game"
+---
+```
+
+**Component Options:**
+
+| Component | Props | Description |
+| :--- | :--- | :--- |
+| `TaggedPostsList` | `tag`, `excludeCategory?`, `excludeProjectPosts?`, `limit?` | Lists blog posts with a specific tag |
+| `GameProjectsList` | `game`, `limit?` | Lists projects for a specific game (with latest post image) |
+| `TableOfContents` | `items: {title, slug}[]` | Jump links to page sections |
+
+**Key frontmatter fields:**
+- `hideRelatedPosts: true` - Disables the auto-generated related posts section at the bottom
+- `category: "Resources"` - Use this category for resource pages
+- `tags` - Include the game name tag so it links to other content
+
 ## Customization
 
 ### Colors

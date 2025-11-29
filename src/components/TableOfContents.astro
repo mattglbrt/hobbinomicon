@@ -1,0 +1,30 @@
+---
+interface TocItem {
+  title: string;
+  slug: string;
+}
+
+interface Props {
+  items: TocItem[];
+}
+
+const { items } = Astro.props;
+---
+
+{items.length > 0 && (
+  <nav class="not-prose my-8 p-4 bg-ink/5 rounded-lg border-l-4 border-ink/20">
+    <h2 class="text-lg font-heading font-bold text-ink mb-3">On This Page</h2>
+    <ul class="space-y-2">
+      {items.map(item => (
+        <li>
+          <a
+            href={`#${item.slug}`}
+            class="text-ink/70 hover:text-ink hover:underline transition-colors text-sm"
+          >
+            {item.title}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+)}

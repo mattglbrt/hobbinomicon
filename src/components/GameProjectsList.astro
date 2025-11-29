@@ -1,0 +1,67 @@
+---
+import { getCollection } from 'astro:content';
+import { getHeroImage } from '../utils/getHeroImage';
+
+interface Props {
+  game: string;
+  limit?: number;
+}
+
+const { game, limit } = Astro.props;
+
+const allProjects = await getCollection('projects');
+const allPosts = await getCollection('blog');
+
+let gameProjects = allProjects
+  .filter(project => !project.data.draft)
+  .filter(project => project.data.game?.toLowerCase() === game.toLowerCase())
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+if (limit) {
+  gameProjects = gameProjects.slice(0, limit);
+}
+
+// Get the latest post's hero image for each project
+const projectImages = new Map<string, string>();
+for (const project of gameProjects) {
+  const projectPosts = allPosts
+    .filter(post => !post.data.draft && post.data.project === project.slug)
+    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+  if (projectPosts.length > 0) {
+    const latestPost = projectPosts[0];
+    projectImages.set(project.slug, getHeroImage(latestPost.data.heroImage, latestPost.data.youtubeId));
+  }
+}
+---
+
+{gameProjects.length > 0 ? (
+  <div class="not-prose grid gap-6 my-8">
+    {gameProjects.map(project => {
+      const heroImage = projectImages.get(project.slug);
+      return (
+        <a href={`/projects/${project.slug}`}
+           class="block bg-ink/5 hover:bg-ink/10 border-l-4 border-ink/30 hover:border-ink transition-all rounded-r-lg overflow-hidden group">
+          {heroImage && (
+            <div class="w-full aspect-video overflow-hidden">
+              <img
+                src={heroImage}
+                alt={project.data.title}
+                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                loading="lazy"
+              />
+            </div>
+          )}
+          <div class="p-4">
+            <h3 class="text-xl font-heading font-bold text-ink mb-2 group-hover:underline">
+              {project.data.title}
+            </h3>
+            <p class="text-ink/80 text-sm">{project.data.description}</p>
+          </div>
+        </a>
+      );
+    })}
+  </div>
+) : (
+  <p class="text-ink/60 italic my-8">No projects found for this game yet. Check back soon!</p>
+)}

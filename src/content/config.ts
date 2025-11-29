@@ -17,6 +17,7 @@ const blog = defineCollection({
     youtubeTranscript: z.string().optional(),
     project: z.string().optional(),
     projectOrder: z.number().optional(),
+    hideRelatedPosts: z.boolean().default(false),
   }),
 });
 
@@ -27,6 +28,7 @@ const projects = defineCollection({
     description: z.string(),
     pubDate: z.coerce.date(),
     draft: z.boolean().default(false),
+    game: z.string().optional(),
   }),
 });
 

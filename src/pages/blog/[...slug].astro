@@ -17,9 +17,9 @@ const { Content } = await post.render();
 // Calculate reading time from post body
 const readingTime = calculateReadingTime(post.body);
 
-// Get related posts (same tags, excluding current post)
+// Get related posts (same tags, excluding current post) unless hideRelatedPosts is set
 const allPosts = await getCollection('blog');
-const relatedPosts = allPosts
+const relatedPosts = post.data.hideRelatedPosts ? [] : allPosts
   .filter((p) =>
     p.slug !== post.slug &&
     !p.data.draft &&
