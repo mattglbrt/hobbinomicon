@@ -28,11 +28,21 @@ const canonicalURL = Astro.site
     <!-- Dark mode initialization (must be first to prevent flash) -->
     <script is:inline>
       (function() {
-        const stored = localStorage.getItem('darkMode');
-        // Dark mode is the default unless user explicitly chose light
-        if (stored !== 'light') {
-          document.documentElement.classList.add('dark');
+        function applyDarkMode() {
+          const stored = localStorage.getItem('darkMode');
+          // Dark mode is the default unless user explicitly chose light
+          if (stored !== 'light') {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
         }
+
+        // Apply immediately on page load
+        applyDarkMode();
+
+        // Re-apply after View Transitions navigation
+        document.addEventListener('astro:after-swap', applyDarkMode);
       })();
     </script>
     <meta charset="UTF-8" />
