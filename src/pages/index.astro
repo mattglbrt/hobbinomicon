@@ -20,10 +20,25 @@ const sortedPosts = publishedPosts;
 const featuredPosts = sortedPosts.filter(post => post.data.featured);
 const latestPost = featuredPosts[0] || sortedPosts[0];
 
-// Get 6 most recent resource posts
-const resourcePosts = sortedPosts
-  .filter(post => post.data.category === 'Resources')
-  .slice(0, 6);
+// Define pinned resource slugs (in order of priority)
+const pinnedResourceSlugs = [
+  'resources/trench-crusade-resources',
+  'resources/warmachine-resources'
+];
+
+// Get all resource posts
+const allResourcePosts = sortedPosts.filter(post => post.data.category === 'Resources');
+
+// Separate pinned posts from the rest
+const pinnedPosts = pinnedResourceSlugs
+  .map(slug => allResourcePosts.find(post => post.slug === slug))
+  .filter(Boolean);
+
+const unpinnedResourcePosts = allResourcePosts
+  .filter(post => !pinnedResourceSlugs.includes(post.slug));
+
+// Combine: pinned first, then most recent unpinned posts
+const resourcePosts = [...pinnedPosts, ...unpinnedResourcePosts].slice(0, 6);
 
 // Get all projects and their latest posts
 const allProjects = await getCollection('projects');
