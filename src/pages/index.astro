@@ -64,14 +64,16 @@ const projectsWithLatestPost = publishedProjects.map(project => {
   })
   .slice(0, 5);
 
-// Get recent posts excluding hero, resources, featured project posts, and character posts
+// Get recent posts excluding hero, resources, and featured project posts
 const excludedSlugs = new Set([
   latestPost.slug,
   ...resourcePosts.map(p => p.slug),
   ...projectsWithLatestPost.map(p => p.latestPost.slug)
 ]);
-const recentPosts = sortedPosts
-  .filter(post => !excludedSlugs.has(post.slug) && post.data.category !== 'Dramatis Personae')
+
+// Get recent vlog posts (posts with YouTube videos)
+const recentVlogs = sortedPosts
+  .filter(post => !excludedSlugs.has(post.slug) && post.data.youtubeId)
   .slice(0, 6);
 
 // Get character posts sorted by most recently updated
@@ -127,11 +129,11 @@ const featuredProjectPosts = featuredProject
       />
     )}
 
-    <!-- Recent Posts Section -->
+    <!-- Recent Vlogs Section -->
     <PostGridSection
-      title="More Posts"
+      title="Recent Vlogs"
       viewAllLink="/blog"
-      posts={recentPosts}
+      posts={recentVlogs}
     />
 
     <!-- Characters Section -->
