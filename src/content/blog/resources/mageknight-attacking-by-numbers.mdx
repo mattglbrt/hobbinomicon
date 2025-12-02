@@ -1,0 +1,159 @@
+---
+title: "Attacking by the Numbers"
+description: "Statistical analysis of attack values, defense values, and combat probabilities in Mage Knight 1.0"
+pubDate: 2025-12-02
+category: "Resources"
+tags: ["mage knight", "resources", "wargaming", "strategy"]
+heroImage: "/images/Mage-Knight-Artwork-Rebellion-Elemental.jpg"
+heroImageAlt: "Mageknight Banner"
+hideRelatedPosts: true
+---
+
+> **Archive Notice:** This content was originally published at [mk.strats-welt.at](http://mk.strats-welt.at/web/DrakeTheLesser/AttackingByTheNumbers.htm). I'm working to archive as much [Mage Knight](/tags/mage-knight) 1.0 content as I can find before it disappears from the web.
+
+# Attacking by the Numbers
+
+*by Drake the Lesser*
+
+---
+
+## Primary Click Analysis
+
+It's sometimes useful to know how good a figure's attack or defense values are when compared to whatever else is out there. The key number in all cases is **7**. If you need 7 to hit, then you have a 55% chance to succeed. If you need 8, you have only a 42% chance. So, when planning an attack, you're looking for something that will work if you roll 7 or better.
+
+Each figure has a position on its combat dial known as the **primary click**. This is the click that has the best attack and generally (though not always) does the most damage. For most figures, the primary click is their full health position. For some, however, they start out weak and get stronger as they take damage. A figure that does this is called a **push spawn**, because generally you have to push the figure to get it to full strength.
+
+### Push Spawn Primary Clicks
+
+| Figure | Cost | Primary Click |
+|--------|------|---------------|
+| Werecat \* | 19 | 2 |
+| Werecat \*\* | 22 | 2 |
+| Werecat \*\*\* | 25 | 2 |
+| Wereboar \* | 40 | 3 |
+| Wereboar \*\* | 44 | 3 |
+| Wereboar \*\*\* | 52 | 3 |
+| Weresabretooth \* | 44 | 2 |
+| Weresabretooth \*\* | 50 | 2 |
+| Weresabretooth \*\*\* | 60 | 2 |
+| Ankhet | 32 | 2 |
+| Tusk | 57 | 3 |
+| Atayet | 73 | 2 |
+| Werewolf \* | 22 | 2 |
+| Werewolf \*\* | 28 | 2 |
+| Werewolf \*\*\* | 30 | 2 |
+| Werebear \* | 34 | 4 |
+| Werebear \*\* | 40 | 4 |
+| Werebear \*\*\* | 45 | 4 |
+| Crypt Worm \* | 35 | 3 |
+| Crypt Worm \*\* | 39 | 3 |
+| Crypt Worm \*\*\* | 43 | 3 |
+| Goblin Volunteer \* | 5 | 2 |
+| Goblin Volunteer \*\* | 6 | 2 |
+| Goblin Volunteer \*\*\* | 7 | 2 |
+| Martyr | 74 | 5 |
+| Podo | 3 | 2 |
+| Thorn Crawler \* | 33 | 4 |
+| Thorn Crawler \*\* | 37 | 3 |
+| Thorn Crawler \*\*\* | 38 | 3 |
+
+We make the simplifying assumption that most figures spend the bulk of the game on their primary click. It's not always true, but it's what each player is hoping will be the case for their own army, so it's a useful assumption to make.
+
+---
+
+## The Close Combat Table
+
+In this table, the attack and defense values shown are close-combat, not ranged.
+
+| Attack | Count | Defense | Count |
+|--------|-------|---------|-------|
+| 15 | 1 | 22 | 992 |
+| 14 | 3 | 21 | 992 |
+| 13 | 28 | 20 | 992 |
+| 12 | 69 | 19 | 992 |
+| 11 | 111 | 18 | 982 |
+| 10 | 204 | 17 | 935 |
+| 9 | 209 | 16 | 831 |
+| 8 | 212 | 15 | 548 |
+| 7 | 121 | 14 | 157 |
+| 6 | 27 | 13 | 20 |
+
+### Key Insight
+
+It's worth noting how effective close-combat attacks are on average. **An attack of 8, which is pretty far down the list, still has a better-than-even chance of hitting 55% of the possible targets.**
+
+Don't get over-confident, however: not all figures have an equal chance of being played, and special abilities like **Defend** can make close combat attacks a lot harder. (Even a Goblin Volunteer is a hard target when next to an Elemental Priest.)
+
+---
+
+## The Ranged Combat Table
+
+Ranged combat is a little different, because not all figures have ranged attacks, and because figures with **Battle Armor** and **Invulnerability** get a +2 defense against ranged attacks. In addition, figures with **Limited Invisibility** can't be targeted at all!
+
+| Attack | Count | Defense | Count |
+|--------|-------|---------|-------|
+| 15 | 1 | 22 | 976 |
+| 14 | 2 | 21 | 976 |
+| 13 | 11 | 20 | 975 |
+| 12 | 37 | 19 | 961 |
+| 11 | 47 | 18 | 920 |
+| 10 | 99 | 17 | 800 |
+| 9 | 89 | 16 | 660 |
+| 8 | 124 | 15 | 452 |
+| 7 | 61 | 14 | 143 |
+| 6 | 13 | 13 | 20 |
+
+### Battle Armor Impact
+
+Battle Armor is more common than it appears. A close combat attack of 10 has a good chance of hitting 935 figures, but a ranged combat attack of 10 has a good chance of hitting only 800 figures—**a reduction of 135 (a little less than 15%)**. Battle Armor is the difference.
+
+There are also more mitigating factors for ranged combat than close combat: both **hindering terrain** and **elevated terrain** can increase a target's defense for ranged combat.
+
+**You pay a price for your ability to hit from a distance!**
+
+---
+
+## The Capturing Table
+
+There is a third type of attack: **capturing**. Capturing is only an option if:
+- Neither figure has Battle Fury, Invulnerability, or Berserk
+- The target does not have Command
+- Neither figure is multi-dial
+
+That knocks 322 figures out of the equation right off the bat! In addition, **the target gets +2 defense**, so an attack of 6 is only going to have a better-than-even chance if the defense is 11 rather than 13.
+
+| Attack | Count | Defense | Count |
+|--------|-------|---------|-------|
+| 15 | 0 | 20 | 670 |
+| 14 | 2 | 19 | 670 |
+| 13 | 11 | 18 | 666 |
+| 12 | 39 | 17 | 651 |
+| 11 | 60 | 16 | 608 |
+| 10 | 111 | 15 | 414 |
+| 9 | 128 | 14 | 117 |
+| 8 | 140 | 13 | 16 |
+| 7 | 91 | 12 | 3 |
+| 6 | 26 | 11 | 0 |
+
+---
+
+## How to Read These Tables
+
+The **Attack/Count** columns show how many figures have each attack value on their primary click.
+
+The **Defense/Count** columns show how many figures have that defense value or lower on their primary clicks—in other words, how many figures that attack value has a better-than-even chance of hitting.
+
+### Example
+
+If you have an attack of 10:
+- In **close combat**, you have a good chance of hitting 935 figures
+- In **ranged combat**, you have a good chance of hitting 800 figures
+- When **capturing**, you have a good chance of capturing 414 figures
+
+---
+
+*Note: Each version of a scalable figure and each dial of a multi-dial figure is considered a different figure in the tables above. So, for example, the Great Fire Dragon counts as six figures—one for each dial, plus one for the Young version and one for the Mature version. The numbers include all figures available as of 3/20/02 plus the Castle pieces.*
+
+---
+
+*—Drake the Lesser*
