@@ -7,8 +7,6 @@ interface Props {
 }
 
 const { theme = 'dark', containerWidth = 'full' } = Astro.props;
-const textColor = theme === 'dark' ? 'text-white' : 'text-ink';
-const borderColor = theme === 'dark' ? 'border-white/40' : 'border-ink/40';
 
 // Container width classes based on prop
 const containerClass = {
@@ -19,6 +17,54 @@ const containerClass = {
 ---
 
 <style>
+  .glass-nav {
+    background: rgba(26, 22, 20, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .nav-link {
+    position: relative;
+    color: rgba(255, 255, 255, 0.8);
+    transition: all 0.2s ease;
+  }
+
+  .nav-link:hover {
+    color: rgba(255, 255, 255, 1);
+  }
+
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+  }
+
+  .nav-link:hover::after {
+    width: 100%;
+  }
+
+  .icon-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.2s ease;
+  }
+
+  .icon-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.25);
+    transform: translateY(-1px);
+  }
+
   #mobile-menu {
     animation: slideDown 0.3s ease-out;
     transform-origin: top;
@@ -39,15 +85,15 @@ const containerClass = {
     }
   }
 
-  /* Smooth icon transitions */
-  #hamburger-icon,
-  #close-icon {
-    transition: transform 0.2s ease-in-out;
+  .mobile-link {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.2s ease;
   }
 
-  #mobile-menu-button:hover #hamburger-icon,
-  #mobile-menu-button:hover #close-icon {
-    transform: scale(1.1);
+  .mobile-link:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.25);
   }
 </style>
 
@@ -56,106 +102,106 @@ const containerClass = {
   class="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
   data-theme={theme}
 >
-  <nav class="px-6 py-4 md:py-6">
+  <nav class="px-4 py-3 md:px-6 md:py-4">
     <div class={`${containerClass} mx-auto`}>
-      <!-- Wizardry 1 Style Border with transparent background -->
-      <div class={`border-2 ${borderColor} p-3 bg-gradient-to-b from-ink/80 to-ink/60 backdrop-blur-md`}>
-        <div class={`border ${borderColor} p-3`}>
-          <div class="flex justify-between items-center">
-            <!-- Logo Section -->
-            <a href="/" class="transition-opacity hover:opacity-80 border border-transparent hover:border-white/40 p-2">
-              <img
-                src="/images/logo.svg"
-                alt="The Hobbinomicon"
-                class="h-8 md:h-10 w-auto"
-              />
+      <div class="glass-nav rounded-2xl px-4 py-3 md:px-6 md:py-4">
+        <div class="flex justify-between items-center">
+          <!-- Logo Section -->
+          <a href="/" class="transition-all hover:opacity-80 hover:scale-105">
+            <img
+              src="/images/logo.svg"
+              alt="The Hobbinomicon"
+              class="h-7 md:h-9 w-auto"
+            />
+          </a>
+
+          <!-- Desktop Navigation Links -->
+          <div class="hidden md:flex items-center gap-1">
+            <a href="/blog" class="nav-link px-4 py-2 text-sm font-medium tracking-wide">
+              Blog
+            </a>
+            <a href="/projects" class="nav-link px-4 py-2 text-sm font-medium tracking-wide">
+              Projects
+            </a>
+            <a href="/categories/resources" class="nav-link px-4 py-2 text-sm font-medium tracking-wide">
+              Resources
+            </a>
+            <a href="/categories" class="nav-link px-4 py-2 text-sm font-medium tracking-wide">
+              Categories
+            </a>
+            <a href="/about" class="nav-link px-4 py-2 text-sm font-medium tracking-wide">
+              About
+            </a>
+            <a href="/contact" class="nav-link px-4 py-2 text-sm font-medium tracking-wide">
+              Contact
             </a>
 
-            <!-- Desktop Navigation Links -->
-            <div class="hidden md:flex gap-2 text-white font-mono text-sm">
-              <a href="/blog" class={`border ${borderColor} px-4 py-2 hover:bg-white/20 hover:border-white transition-all uppercase tracking-wider`}>
-                [ Blog ]
-              </a>
-              <a href="/projects" class={`border ${borderColor} px-4 py-2 hover:bg-white/20 hover:border-white transition-all uppercase tracking-wider`}>
-                [ Projects ]
-              </a>
-              <a href="/categories/resources" class={`border ${borderColor} px-4 py-2 hover:bg-white/20 hover:border-white transition-all uppercase tracking-wider`}>
-                [ Resources ]
-              </a>
-              <a href="/categories" class={`border ${borderColor} px-4 py-2 hover:bg-white/20 hover:border-white transition-all uppercase tracking-wider`}>
-                [ Categories ]
-              </a>
-              <a href="/about" class={`border ${borderColor} px-4 py-2 hover:bg-white/20 hover:border-white transition-all uppercase tracking-wider`}>
-                [ About ]
-              </a>
-              <a href="/contact" class={`border ${borderColor} px-4 py-2 hover:bg-white/20 hover:border-white transition-all uppercase tracking-wider`}>
-                [ Contact ]
-              </a>
-              <button
-                type="button"
-                class={`border ${borderColor} p-2 hover:bg-white/20 hover:border-white transition-all`}
-                data-search-trigger
-                aria-label="Search posts (Cmd+K)"
-                title="Search (⌘K)"
-              >
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </button>
-              <DarkModeToggle />
-            </div>
+            <div class="w-px h-6 bg-white/20 mx-2"></div>
 
-            <!-- Mobile Controls -->
-            <div class="flex md:hidden items-center gap-2">
-              <button
-                type="button"
-                class="text-white p-2 hover:bg-white/20 border border-white/40 hover:border-white transition-all"
-                data-search-trigger
-                aria-label="Search posts"
-              >
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </button>
-              <DarkModeToggle />
-              <button
-                id="mobile-menu-button"
-                class="text-white p-2 hover:bg-white/20 border border-white/40 hover:border-white transition-all"
-                aria-label="Toggle mobile menu"
-                aria-expanded="false"
-              >
-                <svg id="hamburger-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                </svg>
-                <svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-              </button>
-            </div>
+            <button
+              type="button"
+              class="icon-btn p-2.5 rounded-xl"
+              data-search-trigger
+              aria-label="Search posts (Cmd+K)"
+              title="Search (⌘K)"
+            >
+              <svg class="w-4 h-4 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </button>
+            <DarkModeToggle />
           </div>
 
-          <!-- Mobile Navigation Menu -->
-          <div id="mobile-menu" class="hidden md:hidden mt-4 pt-4 border-t border-white/40">
-            <div class="flex flex-col gap-2 text-white font-mono text-sm">
-              <a href="/blog" class={`border ${borderColor} px-4 py-3 hover:bg-white/20 hover:border-white transition-all uppercase tracking-wider text-center`}>
-                [ Blog ]
-              </a>
-              <a href="/projects" class={`border ${borderColor} px-4 py-3 hover:bg-white/20 hover:border-white transition-all uppercase tracking-wider text-center`}>
-                [ Projects ]
-              </a>
-              <a href="/categories/resources" class={`border ${borderColor} px-4 py-3 hover:bg-white/20 hover:border-white transition-all uppercase tracking-wider text-center`}>
-                [ Resources ]
-              </a>
-              <a href="/categories" class={`border ${borderColor} px-4 py-3 hover:bg-white/20 hover:border-white transition-all uppercase tracking-wider text-center`}>
-                [ Categories ]
-              </a>
-              <a href="/about" class={`border ${borderColor} px-4 py-3 hover:bg-white/20 hover:border-white transition-all uppercase tracking-wider text-center`}>
-                [ About ]
-              </a>
-              <a href="/contact" class={`border ${borderColor} px-4 py-3 hover:bg-white/20 hover:border-white transition-all uppercase tracking-wider text-center`}>
-                [ Contact ]
-              </a>
-            </div>
+          <!-- Mobile Controls -->
+          <div class="flex md:hidden items-center gap-2">
+            <button
+              type="button"
+              class="icon-btn p-2.5 rounded-xl text-white/80"
+              data-search-trigger
+              aria-label="Search posts"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </button>
+            <DarkModeToggle />
+            <button
+              id="mobile-menu-button"
+              class="icon-btn p-2.5 rounded-xl text-white/80"
+              aria-label="Toggle mobile menu"
+              aria-expanded="false"
+            >
+              <svg id="hamburger-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+              </svg>
+              <svg id="close-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobile-menu" class="hidden md:hidden mt-4 pt-4 border-t border-white/10">
+          <div class="flex flex-col gap-2">
+            <a href="/blog" class="mobile-link px-4 py-3 rounded-xl text-white/80 text-sm font-medium text-center">
+              Blog
+            </a>
+            <a href="/projects" class="mobile-link px-4 py-3 rounded-xl text-white/80 text-sm font-medium text-center">
+              Projects
+            </a>
+            <a href="/categories/resources" class="mobile-link px-4 py-3 rounded-xl text-white/80 text-sm font-medium text-center">
+              Resources
+            </a>
+            <a href="/categories" class="mobile-link px-4 py-3 rounded-xl text-white/80 text-sm font-medium text-center">
+              Categories
+            </a>
+            <a href="/about" class="mobile-link px-4 py-3 rounded-xl text-white/80 text-sm font-medium text-center">
+              About
+            </a>
+            <a href="/contact" class="mobile-link px-4 py-3 rounded-xl text-white/80 text-sm font-medium text-center">
+              Contact
+            </a>
           </div>
         </div>
       </div>

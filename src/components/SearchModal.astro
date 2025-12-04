@@ -26,6 +26,76 @@ const searchIndex = publishedPosts.map(post => ({
 }));
 ---
 
+<style>
+  .glass-modal {
+    background: rgba(26, 22, 20, 0.85);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow:
+      0 25px 50px -12px rgba(0, 0, 0, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .glass-input {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.2s ease;
+  }
+
+  .glass-input:focus {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+  }
+
+  .glass-input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .result-item {
+    transition: all 0.15s ease;
+  }
+
+  .result-item:hover,
+  .result-item.selected {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .glass-kbd {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .glass-tag {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .glass-footer {
+    background: rgba(255, 255, 255, 0.03);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* Custom scrollbar for results */
+  #search-results::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  #search-results::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  #search-results::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+  }
+
+  #search-results::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+</style>
+
 <!-- Search Modal -->
 <div
   id="search-modal"
@@ -35,17 +105,17 @@ const searchIndex = publishedPosts.map(post => ({
   aria-labelledby="search-modal-title"
 >
   <!-- Backdrop -->
-  <div class="absolute inset-0 bg-ink/80 backdrop-blur-sm" data-search-backdrop></div>
+  <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" data-search-backdrop></div>
 
   <!-- Modal Content -->
-  <div class="relative flex items-start justify-center pt-[15vh] px-4">
-    <div class="w-full max-w-2xl bg-parchment dark:bg-parchment-dark border-2 border-ink dark:border-ink-dark rounded-lg shadow-2xl overflow-hidden">
+  <div class="relative flex items-start justify-center pt-[12vh] px-4">
+    <div class="w-full max-w-2xl glass-modal rounded-2xl overflow-hidden">
       <!-- Search Header -->
-      <div class="p-4 border-b border-ink/20 dark:border-ink-dark/20">
+      <div class="p-4">
         <label for="search-input" id="search-modal-title" class="sr-only">Search posts</label>
         <div class="relative">
           <svg
-            class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-ink/50 dark:text-ink-dark/50"
+            class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -55,52 +125,52 @@ const searchIndex = publishedPosts.map(post => ({
           <input
             type="text"
             id="search-input"
-            class="w-full pl-12 pr-4 py-3 bg-white dark:bg-ink border border-ink/20 dark:border-ink-dark/20 rounded-lg text-ink dark:text-ink-dark placeholder-ink/50 dark:placeholder-ink-dark/50 focus:outline-none focus:ring-2 focus:ring-ink dark:focus:ring-ink-dark"
+            class="w-full pl-12 pr-20 py-3.5 glass-input rounded-xl text-white text-base focus:outline-none"
             placeholder="Search posts..."
             autocomplete="off"
             autocapitalize="off"
             spellcheck="false"
           />
-          <kbd class="absolute right-4 top-1/2 -translate-y-1/2 hidden sm:inline-block px-2 py-1 text-xs font-mono bg-ink/10 dark:bg-ink-dark/10 text-ink/60 dark:text-ink-dark/60 rounded">ESC</kbd>
+          <kbd class="absolute right-4 top-1/2 -translate-y-1/2 hidden sm:inline-block px-2 py-1 text-xs font-mono glass-kbd text-white/50 rounded-lg">ESC</kbd>
         </div>
       </div>
 
       <!-- Search Results -->
-      <div id="search-results" class="max-h-[60vh] overflow-y-auto">
+      <div id="search-results" class="max-h-[55vh] overflow-y-auto">
         <!-- Empty state -->
-        <div id="search-empty" class="p-8 text-center text-ink/60 dark:text-ink-dark/60">
-          <p class="text-lg">Type to search posts</p>
-          <p class="text-sm mt-2">Search by title, description, category, or tags</p>
+        <div id="search-empty" class="p-8 text-center">
+          <p class="text-lg text-white/60">Type to search posts</p>
+          <p class="text-sm mt-2 text-white/40">Search by title, description, category, or tags</p>
         </div>
 
         <!-- No results state -->
-        <div id="search-no-results" class="hidden p-8 text-center text-ink/60 dark:text-ink-dark/60">
-          <p class="text-lg">No results found</p>
-          <p class="text-sm mt-2">Try different keywords</p>
+        <div id="search-no-results" class="hidden p-8 text-center">
+          <p class="text-lg text-white/60">No results found</p>
+          <p class="text-sm mt-2 text-white/40">Try different keywords</p>
         </div>
 
         <!-- Results list -->
-        <ul id="search-results-list" class="hidden divide-y divide-ink/10 dark:divide-ink-dark/10" role="listbox">
+        <ul id="search-results-list" class="hidden" role="listbox">
         </ul>
       </div>
 
       <!-- Footer -->
-      <div class="p-3 border-t border-ink/20 dark:border-ink-dark/20 bg-ink/5 dark:bg-ink-dark/5">
-        <div class="flex items-center justify-between text-xs text-ink/50 dark:text-ink-dark/50">
+      <div class="glass-footer p-3">
+        <div class="flex items-center justify-between text-xs text-white/40">
           <div class="flex items-center gap-4">
-            <span class="flex items-center gap-1">
-              <kbd class="px-1.5 py-0.5 bg-ink/10 dark:bg-ink-dark/10 rounded">↑</kbd>
-              <kbd class="px-1.5 py-0.5 bg-ink/10 dark:bg-ink-dark/10 rounded">↓</kbd>
+            <span class="flex items-center gap-1.5">
+              <kbd class="px-1.5 py-0.5 glass-kbd rounded text-white/50">↑</kbd>
+              <kbd class="px-1.5 py-0.5 glass-kbd rounded text-white/50">↓</kbd>
               <span>navigate</span>
             </span>
-            <span class="flex items-center gap-1">
-              <kbd class="px-1.5 py-0.5 bg-ink/10 dark:bg-ink-dark/10 rounded">↵</kbd>
+            <span class="flex items-center gap-1.5">
+              <kbd class="px-1.5 py-0.5 glass-kbd rounded text-white/50">↵</kbd>
               <span>select</span>
             </span>
           </div>
           <button
             type="button"
-            class="text-ink/50 dark:text-ink-dark/50 hover:text-ink dark:hover:text-ink-dark transition-colors"
+            class="text-white/40 hover:text-white/70 transition-colors"
             data-search-close
           >
             Close
@@ -202,12 +272,12 @@ const searchIndex = publishedPosts.map(post => ({
         var highlightedDesc = highlightTerms(result.description, terms);
 
         return '<li role="option" id="search-result-' + index + '">' +
-          '<a href="/blog/' + result.slug + '" class="block p-4 hover:bg-ink/5 dark:hover:bg-ink-dark/5 transition-colors search-result-link" data-index="' + index + '">' +
-            '<div class="font-heading font-bold text-ink dark:text-ink-dark mb-1">' + highlightedTitle + '</div>' +
-            '<div class="text-sm text-ink/70 dark:text-ink-dark/70 line-clamp-2">' + highlightedDesc + '</div>' +
+          '<a href="/blog/' + result.slug + '" class="block px-4 py-3 result-item search-result-link" data-index="' + index + '">' +
+            '<div class="font-medium text-white/90 mb-1">' + highlightedTitle + '</div>' +
+            '<div class="text-sm text-white/50 line-clamp-2">' + highlightedDesc + '</div>' +
             '<div class="flex items-center gap-2 mt-2">' +
-              '<span class="text-xs px-2 py-0.5 bg-ink/10 dark:bg-ink-dark/10 text-ink/60 dark:text-ink-dark/60 rounded">' + result.category + '</span>' +
-              (result.tags.length > 0 ? '<span class="text-xs text-ink/50 dark:text-ink-dark/50">#' + result.tags[0] + '</span>' : '') +
+              '<span class="text-xs px-2 py-0.5 glass-tag text-white/60 rounded-lg">' + result.category + '</span>' +
+              (result.tags.length > 0 ? '<span class="text-xs text-white/40">#' + result.tags[0] + '</span>' : '') +
             '</div>' +
           '</a>' +
         '</li>';
@@ -219,7 +289,7 @@ const searchIndex = publishedPosts.map(post => ({
       var result = escapeHtml(text);
       terms.forEach(function(term) {
         var regex = new RegExp('(' + escapeRegex(term) + ')', 'gi');
-        result = result.replace(regex, '<mark class="bg-yellow-200 dark:bg-yellow-800 text-ink dark:text-ink-dark">$1</mark>');
+        result = result.replace(regex, '<mark class="bg-white/20 text-white rounded px-0.5">$1</mark>');
       });
       return result;
     }
@@ -240,7 +310,7 @@ const searchIndex = publishedPosts.map(post => ({
 
       // Remove previous selection
       items.forEach(function(item) {
-        item.classList.remove('bg-ink/5', 'dark:bg-ink-dark/5');
+        item.querySelector('a').classList.remove('selected');
         item.removeAttribute('aria-selected');
       });
 
@@ -252,7 +322,7 @@ const searchIndex = publishedPosts.map(post => ({
       // Apply new selection
       var selected = items[selectedIndex];
       if (selected) {
-        selected.classList.add('bg-ink/5', 'dark:bg-ink-dark/5');
+        selected.querySelector('a').classList.add('selected');
         selected.setAttribute('aria-selected', 'true');
         selected.scrollIntoView({ block: 'nearest' });
       }
