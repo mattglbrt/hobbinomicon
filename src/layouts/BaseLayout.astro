@@ -30,11 +30,18 @@ const canonicalURL = Astro.site
       (function() {
         function applyDarkMode() {
           const stored = localStorage.getItem('darkMode');
-          // Dark mode is the default unless user explicitly chose light
-          if (stored !== 'light') {
+
+          if (stored === 'dark') {
             document.documentElement.classList.add('dark');
-          } else {
+          } else if (stored === 'light') {
             document.documentElement.classList.remove('dark');
+          } else {
+            // No preference stored - use system preference
+            if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+              document.documentElement.classList.add('dark');
+            } else {
+              document.documentElement.classList.remove('dark');
+            }
           }
         }
 
