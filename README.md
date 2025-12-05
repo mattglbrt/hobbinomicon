@@ -134,6 +134,24 @@ npm run dev
 | `npm run dev` | Start dev server at `localhost:4321` |
 | `npm run build` | Build production site to `./dist/` |
 | `npm run preview` | Preview production build locally |
+| `npm run download-heroes` | Download YouTube thumbnails for hero images |
+
+### Adding New YouTube Content
+
+When adding a new blog post with a `youtubeId`, run the following before pushing to git:
+
+```bash
+npm run download-heroes      # Downloads new YouTube thumbnails
+git add public/images/hero-cache/
+git commit -m "Add new post + hero image"
+git push
+```
+
+This caches YouTube thumbnails locally for better Core Web Vitals (LCP). The script:
+- Scans all posts with `youtubeId` in frontmatter
+- Downloads maxres thumbnails to `public/images/hero-cache/`
+- Skips already-cached images
+- Commits ensure thumbnails are available on deploy without fetching from YouTube
 
 ## Creating Content
 

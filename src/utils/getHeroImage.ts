@@ -4,14 +4,12 @@ export function getHeroImage(heroImage?: string, youtubeId?: string): string {
     return heroImage;
   }
 
-  // If YouTube ID is provided, use the highest quality thumbnail
-  // YouTube provides thumbnails in this priority order:
-  // 1. maxresdefault.jpg (1280x720) - highest quality, not always available
-  // 2. sddefault.jpg (640x480) - good fallback
-  // 3. hqdefault.jpg (480x360) - almost always available
-  // We'll use maxresdefault and let the browser fall back via onerror
+  // If YouTube ID is provided, check for cached local version first
+  // This improves LCP by serving from local CDN instead of YouTube
   if (youtubeId) {
-    return `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`;
+    // Use cached local image (downloaded by scripts/download-hero-images.js)
+    // Falls back to YouTube URL if cache doesn't exist (handled at runtime)
+    return `/images/hero-cache/yt-${youtubeId}.jpg`;
   }
 
   // Fallback placeholder image
