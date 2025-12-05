@@ -4,6 +4,7 @@ import RandomToad from '../components/RandomToad.astro';
 import SkipLink from '../components/SkipLink.astro';
 import StructuredData from '../components/StructuredData.astro';
 import SearchModal from '../components/SearchModal.astro';
+import '../styles/fonts.css';
 
 interface Props {
   title: string;
@@ -59,11 +60,9 @@ const canonicalURL = Astro.site
     <!-- Slot for critical page-specific preloads (LCP images) - must be early in head -->
     <slot name="head" />
 
-    <!-- Google Fonts (async loading to avoid render blocking) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Besley:ital,wght@0,400;0,700;1,400;1,700&family=IM+Fell+DW+Pica:ital@0;1&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Besley:ital,wght@0,400;0,700;1,400;1,700&family=IM+Fell+DW+Pica:ital@0;1&display=swap" /></noscript>
+    <!-- Preload critical fonts -->
+    <link rel="preload" href="/fonts/besley-regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/imfell-regular.woff2" as="font" type="font/woff2" crossorigin />
 
     <!-- Preconnect to YouTube for hero images -->
     <link rel="preconnect" href="https://img.youtube.com" crossorigin />
