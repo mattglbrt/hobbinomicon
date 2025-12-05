@@ -60,6 +60,9 @@ const canonicalURL = Astro.site
     <!-- Slot for critical page-specific preloads (LCP images) - must be early in head -->
     <slot name="head" />
 
+    <!-- Preload heading font (used in LCP element) -->
+    <link rel="preload" href="/fonts/imfell-regular.woff2" as="font" type="font/woff2" crossorigin />
+
     <!-- Preconnect to YouTube for hero images -->
     <link rel="preconnect" href="https://img.youtube.com" crossorigin />
     <link rel="dns-prefetch" href="https://img.youtube.com" />
