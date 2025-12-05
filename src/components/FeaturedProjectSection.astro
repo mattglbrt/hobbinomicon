@@ -1,5 +1,5 @@
 ---
-import { getHeroImage } from '../utils/getHeroImage';
+import { getHeroImageUrl } from '../utils/getHeroImage';
 import { formatDateLong } from '../utils/formatDate';
 import ContentContainer from './ContentContainer.astro';
 import ListCard from './ListCard.astro';
@@ -65,7 +65,7 @@ const recentPosts = posts.slice(1, 4);
         class="group relative aspect-[4/3] overflow-hidden rounded-lg"
       >
         <img
-          src={getHeroImage(featuredPost.data.heroImage, featuredPost.data.youtubeId)}
+          src={getHeroImageUrl(featuredPost.data.heroImage, featuredPost.data.youtubeId)}
           alt={featuredPost.data.heroImageAlt || featuredPost.data.title}
           class="absolute inset-0 w-full h-full object-cover img-hover-slow"
           loading="lazy"
@@ -91,7 +91,7 @@ const recentPosts = posts.slice(1, 4);
           {recentPosts.map((post) => (
             <ListCard
               href={`/blog/${post.slug}`}
-              image={getHeroImage(post.data.heroImage, post.data.youtubeId)}
+              image={getHeroImageUrl(post.data.heroImage, post.data.youtubeId)}
               imageAlt={post.data.heroImageAlt || post.data.title}
               title={post.data.title}
               description={post.data.description}
