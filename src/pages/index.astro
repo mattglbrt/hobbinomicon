@@ -8,7 +8,7 @@ import FeaturedProjectSection from '../components/FeaturedProjectSection.astro';
 import CharacterSlider from '../components/CharacterSlider.astro';
 import YouTubeCTA from '../components/YouTubeCTA.astro';
 import Footer from '../components/Footer.astro';
-import { getHeroImage } from '../utils/getHeroImage';
+import { getHeroImage, getHeroImageUrl } from '../utils/getHeroImage';
 import { getPublishedPosts, sortByDate } from '../utils/collections';
 
 // Get all blog posts and sort by date
@@ -92,8 +92,9 @@ const featuredProjectPosts = featuredProject
   ? sortByDate(sortedPosts.filter(post => post.data.project === featuredProject.projectSlug)).slice(0, 4)
   : [];
 
-// Get hero image URL for preloading
-const heroImageUrl = getHeroImage(latestPost?.data.heroImage, latestPost?.data.youtubeId);
+// Get hero image for component and URL for preloading
+const heroImage = getHeroImage(latestPost?.data.heroImage, latestPost?.data.youtubeId);
+const heroImageUrl = getHeroImageUrl(latestPost?.data.heroImage, latestPost?.data.youtubeId);
 ---
 
 <BaseLayout title="The Hobbinomicon">
@@ -108,7 +109,7 @@ const heroImageUrl = getHeroImage(latestPost?.data.heroImage, latestPost?.data.y
         slug={latestPost.slug}
         title={latestPost.data.title}
         description={latestPost.data.description}
-        heroImage={getHeroImage(latestPost.data.heroImage, latestPost.data.youtubeId)}
+        heroImage={heroImage}
         heroImageAlt={latestPost.data.heroImageAlt}
         category={latestPost.data.category}
         pubDate={latestPost.data.pubDate}

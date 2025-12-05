@@ -11,7 +11,7 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const CONTENT_DIR = path.join(__dirname, '../src/content/blog');
-const IMAGES_DIR = path.join(__dirname, '../public/images/hero-cache');
+const IMAGES_DIR = path.join(__dirname, '../src/assets/hero-cache');
 
 // Ensure cache directory exists
 if (!fs.existsSync(IMAGES_DIR)) {

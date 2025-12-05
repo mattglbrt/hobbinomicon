@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
-import { getHeroImage } from '../utils/getHeroImage';
+import { getHeroImage, isImageMetadata } from '../utils/getHeroImage';
 import { formatDateShort } from '../utils/formatDate';
 import { getYouTubeFallbackHandler } from '../utils/youtubeImageFallback';
 
@@ -55,7 +55,10 @@ const showCategory = props.showCategory ?? true;
 const eager = props.eager ?? false;
 
 const displayImage = getHeroImage(heroImage, youtubeId);
-const isRemoteImage = displayImage.startsWith('http');
+
+// Determine image type for rendering
+const isOptimizedImage = isImageMetadata(displayImage);
+const isRemoteImage = !isOptimizedImage && typeof displayImage === 'string' && displayImage.startsWith('http');
 
 const formattedDate = formatDateShort(pubDate);
 ---
@@ -91,7 +94,24 @@ const formattedDate = formatDateShort(pubDate);
   <a href={`/blog/${slug}`} class="block">
     <div class="relative overflow-hidden rounded-lg mb-4 aspect-[4/3] image-wrapper">
       <div class="absolute inset-0 image-loading" data-placeholder></div>
-      {isRemoteImage ? (
+      {isOptimizedImage ? (
+        <!-- Optimized image from hero-cache (ImageMetadata) -->
+        <Image
+          src={displayImage}
+          alt={heroImageAlt || title}
+          width={800}
+          height={600}
+          class="w-full h-full object-cover img-hover"
+          loading={eager ? 'eager' : 'lazy'}
+          decoding="async"
+          format="webp"
+          quality={80}
+          widths={[400, 800]}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          onload="this.closest('.image-wrapper').querySelector('[data-placeholder]').classList.add('loaded')"
+        />
+      ) : isRemoteImage ? (
+        <!-- Remote image (YouTube fallback) -->
         <picture>
           <source
             srcset={displayImage}
@@ -116,22 +136,21 @@ const formattedDate = formatDateShort(pubDate);
           />
         </picture>
       ) : (
-        <picture>
-          <Image
-            src={displayImage}
-            alt={heroImageAlt || title}
-            width={800}
-            height={600}
-            class="w-full h-full object-cover img-hover"
-            loading={eager ? 'eager' : 'lazy'}
-            decoding="async"
-            format="webp"
-            quality={80}
-            widths={[400, 800, 1200]}
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            onload="this.closest('.image-wrapper').querySelector('[data-placeholder]').classList.add('loaded')"
-          />
-        </picture>
+        <!-- Local public image (string path) -->
+        <Image
+          src={displayImage}
+          alt={heroImageAlt || title}
+          width={800}
+          height={600}
+          class="w-full h-full object-cover img-hover"
+          loading={eager ? 'eager' : 'lazy'}
+          decoding="async"
+          format="webp"
+          quality={80}
+          widths={[400, 800]}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          onload="this.closest('.image-wrapper').querySelector('[data-placeholder]').classList.add('loaded')"
+        />
       )}
       <div class="absolute inset-0 bg-gradient-to-t from-ink/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
     </div>

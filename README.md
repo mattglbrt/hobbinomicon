@@ -142,15 +142,16 @@ When adding a new blog post with a `youtubeId`, run the following before pushing
 
 ```bash
 npm run download-heroes      # Downloads new YouTube thumbnails
-git add public/images/hero-cache/
+git add src/assets/hero-cache/
 git commit -m "Add new post + hero image"
 git push
 ```
 
 This caches YouTube thumbnails locally for better Core Web Vitals (LCP). The script:
 - Scans all posts with `youtubeId` in frontmatter
-- Downloads maxres thumbnails to `public/images/hero-cache/`
+- Downloads maxres thumbnails to `src/assets/hero-cache/`
 - Skips already-cached images
+- Astro optimizes these to WebP format at build time
 - Commits ensure thumbnails are available on deploy without fetching from YouTube
 
 ## Creating Content

@@ -9,7 +9,7 @@ import BackToTop from '../components/BackToTop.astro';
 import StructuredData from '../components/StructuredData.astro';
 import Comments from '../components/Comments.astro';
 import ProseContent from '../components/ProseContent.astro';
-import { getHeroImage } from '../utils/getHeroImage';
+import { getHeroImage, getHeroImageUrl, isImageMetadata } from '../utils/getHeroImage';
 import { formatReadingTime } from '../utils/readingTime';
 import { formatDateLong } from '../utils/formatDate';
 import { getYouTubeFallbackHandler } from '../utils/youtubeImageFallback';
@@ -42,16 +42,18 @@ interface Props {
 const { title, description, pubDate, updatedDate, heroImage, heroImageAlt, category, tags, youtubeId, readingTime, relatedPosts = [], projectNavigation = null, campaign, slug } = Astro.props;
 
 const displayImage = getHeroImage(heroImage, youtubeId);
-const isRemoteImage = displayImage.startsWith('http');
+const displayImageUrl = getHeroImageUrl(heroImage, youtubeId);
+const isOptimizedImage = isImageMetadata(displayImage);
+const isRemoteImage = !isOptimizedImage && typeof displayImage === 'string' && displayImage.startsWith('http');
 
 const formattedDate = formatDateLong(pubDate);
 const formattedUpdatedDate = updatedDate ? formatDateLong(updatedDate) : null;
 const isCharacterPost = category === 'Dramatis Personae';
 
 // Build full image URL for structured data
-const imageUrl = displayImage.startsWith('http')
-  ? displayImage
-  : new URL(displayImage, Astro.site || Astro.url).toString();
+const imageUrl = displayImageUrl.startsWith('http')
+  ? displayImageUrl
+  : new URL(displayImageUrl, Astro.site || Astro.url).toString();
 
 // Build canonical URL for this post
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site || Astro.url).toString();
@@ -212,7 +214,21 @@ const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
       <>
         <!-- Hero Image -->
         <div class="relative h-[60vh] md:h-[70vh] overflow-hidden">
-          {isRemoteImage ? (
+          {isOptimizedImage ? (
+            <!-- Optimized image from hero-cache (ImageMetadata) -->
+            <Image
+              src={displayImage}
+              alt={heroImageAlt || title}
+              width={1920}
+              height={1080}
+              class="w-full h-full object-cover object-top"
+              loading="eager"
+              decoding="sync"
+              format="webp"
+              quality={80}
+            />
+          ) : isRemoteImage ? (
+            <!-- Remote image (YouTube fallback) -->
             <img
               src={displayImage}
               alt={heroImageAlt || title}
@@ -226,6 +242,7 @@ const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
               onerror={getYouTubeFallbackHandler('id')}
             />
           ) : (
+            <!-- Local public image (string path) -->
             <Image
               src={displayImage}
               alt={heroImageAlt || title}
@@ -234,6 +251,8 @@ const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
               class="w-full h-full object-cover object-top"
               loading="eager"
               decoding="sync"
+              format="webp"
+              quality={80}
             />
           )}
           <div class="absolute inset-0 bg-gradient-to-t from-ink/60 to-transparent"></div>
