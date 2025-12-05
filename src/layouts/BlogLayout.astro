@@ -219,6 +219,9 @@ const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
               class="w-full h-full object-cover object-top"
               width="1920"
               height="1080"
+              loading="eager"
+              fetchpriority="high"
+              decoding="sync"
               data-youtube-id={youtubeId}
               onerror={getYouTubeFallbackHandler('id')}
             />
@@ -229,6 +232,8 @@ const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
               width={1920}
               height={1080}
               class="w-full h-full object-cover object-top"
+              loading="eager"
+              decoding="sync"
             />
           )}
           <div class="absolute inset-0 bg-gradient-to-t from-ink/60 to-transparent"></div>

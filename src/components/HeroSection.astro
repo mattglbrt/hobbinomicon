@@ -73,7 +73,8 @@ const isRemoteImage = heroImage.startsWith('http');
         alt={heroImageAlt || title}
         class="absolute inset-0 w-full h-full object-cover img-hover-slow"
         loading={badge === 'Latest Post' ? 'eager' : 'lazy'}
-        decoding="async"
+        fetchpriority={badge === 'Latest Post' ? 'high' : 'auto'}
+        decoding={badge === 'Latest Post' ? 'sync' : 'async'}
         width="1920"
         height="1080"
         data-youtube-url={heroImage.includes('youtube.com') ? heroImage : undefined}
@@ -88,7 +89,7 @@ const isRemoteImage = heroImage.startsWith('http');
       height={1080}
       class="absolute inset-0 w-full h-full object-cover img-hover-slow"
       loading={badge === 'Latest Post' ? 'eager' : 'lazy'}
-      decoding="async"
+      decoding={badge === 'Latest Post' ? 'sync' : 'async'}
       format="webp"
       quality={85}
       widths={[768, 1024, 1920, 2560]}
