@@ -91,6 +91,15 @@ const canonicalURL = Astro.site
     <title>{title}</title>
     <ViewTransitions />
 
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-990EP8N5XW"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-990EP8N5XW');
+    </script>
+
     <!-- Print Stylesheet -->
     <style is:global>
       @media print {
