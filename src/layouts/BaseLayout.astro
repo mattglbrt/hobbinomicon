@@ -269,6 +269,8 @@ const canonicalURL = Astro.site
         ],
       }}
     />
+    <!-- Slot for page-specific head content (preloads, etc.) -->
+    <slot name="head" />
   </head>
   <body class="min-h-screen font-serif bg-parchment dark:bg-parchment-dark text-ink dark:text-ink-dark transition-colors duration-300">
     <SkipLink />

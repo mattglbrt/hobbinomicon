@@ -91,9 +91,14 @@ const featuredProject = projectsWithLatestPost[0];
 const featuredProjectPosts = featuredProject
   ? sortByDate(sortedPosts.filter(post => post.data.project === featuredProject.projectSlug)).slice(0, 4)
   : [];
+
+// Get hero image URL for preloading
+const heroImageUrl = getHeroImage(latestPost?.data.heroImage, latestPost?.data.youtubeId);
 ---
 
 <BaseLayout title="The Hobbinomicon">
+  {/* Preload LCP hero image */}
+  <link slot="head" rel="preload" as="image" href={heroImageUrl} fetchpriority="high" />
   <Header theme="dark" />
 
   <main id="main-content" class="min-h-screen">
