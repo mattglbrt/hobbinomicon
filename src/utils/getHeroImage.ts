@@ -7,13 +7,35 @@ const heroImages = import.meta.glob<{ default: ImageMetadata }>(
   { eager: true }
 );
 
+// Pre-import custom hero images from src/assets/images/
+const customImages = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/images/*.{jpg,jpeg,png,webp}',
+  { eager: true }
+);
+
 /**
  * Get the hero image for a post
  * Returns either a string path (for public images) or an ImageMetadata object (for optimized images)
  */
 export function getHeroImage(heroImage?: string, youtubeId?: string): string | ImageMetadata {
-  // If custom hero image is provided, use it as-is
+  // If custom hero image is provided, check if it's in our optimized assets
   if (heroImage) {
+    // Check if it's a /images/ path that we can map to src/assets/images/
+    if (heroImage.startsWith('/images/')) {
+      const filename = heroImage.replace('/images/', '');
+      // Try different extensions
+      const possiblePaths = [
+        `/src/assets/images/${filename}`,
+      ];
+
+      for (const path of possiblePaths) {
+        if (customImages[path]) {
+          return customImages[path].default;
+        }
+      }
+    }
+
+    // Return as-is if not found in optimized assets
     return heroImage;
   }
 
