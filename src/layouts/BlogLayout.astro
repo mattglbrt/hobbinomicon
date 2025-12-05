@@ -225,7 +225,9 @@ const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
               loading="eager"
               decoding="sync"
               format="webp"
-              quality={80}
+              quality={65}
+              widths={[640, 1024, 1920]}
+              sizes="100vw"
             />
           ) : isRemoteImage ? (
             <!-- Remote image (YouTube fallback) -->
@@ -252,7 +254,9 @@ const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
               loading="eager"
               decoding="sync"
               format="webp"
-              quality={80}
+              quality={65}
+              widths={[640, 1024, 1920]}
+              sizes="100vw"
             />
           )}
           <div class="absolute inset-0 bg-gradient-to-t from-ink/60 to-transparent"></div>
