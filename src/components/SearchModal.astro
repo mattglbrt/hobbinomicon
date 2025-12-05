@@ -115,7 +115,7 @@ const searchIndex = publishedPosts.map(post => ({
         <label for="search-input" id="search-modal-title" class="sr-only">Search posts</label>
         <div class="relative">
           <svg
-            class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40"
+            class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/60"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -131,7 +131,7 @@ const searchIndex = publishedPosts.map(post => ({
             autocapitalize="off"
             spellcheck="false"
           />
-          <kbd class="absolute right-4 top-1/2 -translate-y-1/2 hidden sm:inline-block px-2 py-1 text-xs font-mono glass-kbd text-white/50 rounded-lg">ESC</kbd>
+          <kbd class="absolute right-4 top-1/2 -translate-y-1/2 hidden sm:inline-block px-2 py-1 text-xs font-mono glass-kbd text-white/70 rounded-lg">ESC</kbd>
         </div>
       </div>
 
@@ -140,13 +140,13 @@ const searchIndex = publishedPosts.map(post => ({
         <!-- Empty state -->
         <div id="search-empty" class="p-8 text-center">
           <p class="text-lg text-white/60">Type to search posts</p>
-          <p class="text-sm mt-2 text-white/40">Search by title, description, category, or tags</p>
+          <p class="text-sm mt-2 text-white/60">Search by title, description, category, or tags</p>
         </div>
 
         <!-- No results state -->
         <div id="search-no-results" class="hidden p-8 text-center">
           <p class="text-lg text-white/60">No results found</p>
-          <p class="text-sm mt-2 text-white/40">Try different keywords</p>
+          <p class="text-sm mt-2 text-white/60">Try different keywords</p>
         </div>
 
         <!-- Results list -->
@@ -156,21 +156,21 @@ const searchIndex = publishedPosts.map(post => ({
 
       <!-- Footer -->
       <div class="glass-footer p-3">
-        <div class="flex items-center justify-between text-xs text-white/40">
+        <div class="flex items-center justify-between text-xs text-white/60">
           <div class="flex items-center gap-4">
             <span class="flex items-center gap-1.5">
-              <kbd class="px-1.5 py-0.5 glass-kbd rounded text-white/50">↑</kbd>
-              <kbd class="px-1.5 py-0.5 glass-kbd rounded text-white/50">↓</kbd>
+              <kbd class="px-1.5 py-0.5 glass-kbd rounded text-white/70">↑</kbd>
+              <kbd class="px-1.5 py-0.5 glass-kbd rounded text-white/70">↓</kbd>
               <span>navigate</span>
             </span>
             <span class="flex items-center gap-1.5">
-              <kbd class="px-1.5 py-0.5 glass-kbd rounded text-white/50">↵</kbd>
+              <kbd class="px-1.5 py-0.5 glass-kbd rounded text-white/70">↵</kbd>
               <span>select</span>
             </span>
           </div>
           <button
             type="button"
-            class="text-white/40 hover:text-white/70 transition-colors"
+            class="text-white/60 hover:text-white/70 transition-colors"
             data-search-close
           >
             Close
@@ -274,10 +274,10 @@ const searchIndex = publishedPosts.map(post => ({
         return '<li role="option" id="search-result-' + index + '">' +
           '<a href="/blog/' + result.slug + '" class="block px-4 py-3 result-item search-result-link" data-index="' + index + '">' +
             '<div class="font-medium text-white/90 mb-1">' + highlightedTitle + '</div>' +
-            '<div class="text-sm text-white/50 line-clamp-2">' + highlightedDesc + '</div>' +
+            '<div class="text-sm text-white/70 line-clamp-2">' + highlightedDesc + '</div>' +
             '<div class="flex items-center gap-2 mt-2">' +
               '<span class="text-xs px-2 py-0.5 glass-tag text-white/60 rounded-lg">' + result.category + '</span>' +
-              (result.tags.length > 0 ? '<span class="text-xs text-white/40">#' + result.tags[0] + '</span>' : '') +
+              (result.tags.length > 0 ? '<span class="text-xs text-white/60">#' + result.tags[0] + '</span>' : '') +
             '</div>' +
           '</a>' +
         '</li>';

@@ -67,7 +67,7 @@ const API_URL = import.meta.env.PUBLIC_COMMENTS_API_URL || 'https://hobbinomicon
       >
         Submit Comment
       </button>
-      <p class="text-sm text-ink/60 dark:text-ink-dark/60">
+      <p class="text-sm text-ink/70 dark:text-ink-dark/70">
         Comments are moderated
       </p>
     </div>
@@ -80,10 +80,10 @@ const API_URL = import.meta.env.PUBLIC_COMMENTS_API_URL || 'https://hobbinomicon
 
   <!-- Comments List -->
   <div id="comments-list">
-    <div id="comments-loading" class="text-center py-8 text-ink/60 dark:text-ink-dark/60">
+    <div id="comments-loading" class="text-center py-8 text-ink/70 dark:text-ink-dark/70">
       Loading comments...
     </div>
-    <div id="comments-empty" class="hidden text-center py-8 text-ink/60 dark:text-ink-dark/60">
+    <div id="comments-empty" class="hidden text-center py-8 text-ink/70 dark:text-ink-dark/70">
       <p>No comments yet. Be the first to share your thoughts!</p>
     </div>
     <div id="comments-error" class="hidden text-center py-8 text-red-600 dark:text-red-400">
@@ -128,7 +128,7 @@ const API_URL = import.meta.env.PUBLIC_COMMENTS_API_URL || 'https://hobbinomicon
       return '<div class="comment bg-white dark:bg-ink/50 p-4 rounded-lg border border-ink/10 dark:border-ink-dark/10">' +
         '<div class="flex items-center justify-between mb-2">' +
           '<span class="font-medium text-ink dark:text-ink-dark">' + comment.author_name + '</span>' +
-          '<time class="text-sm text-ink/60 dark:text-ink-dark/60" datetime="' + comment.created_at + '">' +
+          '<time class="text-sm text-ink/70 dark:text-ink-dark/70" datetime="' + comment.created_at + '">' +
             formatDate(comment.created_at) +
           '</time>' +
         '</div>' +

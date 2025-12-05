@@ -25,7 +25,7 @@ function getPostImage(post: CollectionEntry<'blog'>): string {
       </h3>
       <a
         href={`/projects/${projectSlug}`}
-        class="text-sm text-ink/60 hover:text-ink transition-colors"
+        class="text-sm text-ink/70 hover:text-ink transition-colors"
       >
         View all {projectName} posts →
       </a>
@@ -54,7 +54,7 @@ function getPostImage(post: CollectionEntry<'blog'>): string {
             <h4 class="font-heading font-bold text-ink group-hover:underline line-clamp-2">
               {previousPost.data.title}
             </h4>
-            <p class="text-sm text-ink/60 mt-1">
+            <p class="text-sm text-ink/70 mt-1">
               {formatDateShort(previousPost.data.pubDate)}
             </p>
           </div>
@@ -83,7 +83,7 @@ function getPostImage(post: CollectionEntry<'blog'>): string {
             <h4 class="font-heading font-bold text-ink group-hover:underline line-clamp-2">
               {nextPost.data.title}
             </h4>
-            <p class="text-sm text-ink/60 mt-1">
+            <p class="text-sm text-ink/70 mt-1">
               {formatDateShort(nextPost.data.pubDate)}
             </p>
           </div>
