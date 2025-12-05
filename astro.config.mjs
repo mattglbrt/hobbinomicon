@@ -3,6 +3,7 @@ import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
+import critters from 'astro-critters';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -48,6 +49,7 @@ export default defineConfig({
   integrations: [
     tailwind(),
     mdx(),
+    critters(),
     sitemap({
       filter: (page) => {
         // Exclude low-value and private pages
