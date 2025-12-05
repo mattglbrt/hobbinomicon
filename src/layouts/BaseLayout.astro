@@ -56,6 +56,9 @@ const canonicalURL = Astro.site
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width" />
 
+    <!-- Slot for critical page-specific preloads (LCP images) - must be early in head -->
+    <slot name="head" />
+
     <!-- Google Fonts (async loading to avoid render blocking) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -269,8 +272,6 @@ const canonicalURL = Astro.site
         ],
       }}
     />
-    <!-- Slot for page-specific head content (preloads, etc.) -->
-    <slot name="head" />
   </head>
   <body class="min-h-screen font-serif bg-parchment dark:bg-parchment-dark text-ink dark:text-ink-dark transition-colors duration-300">
     <SkipLink />

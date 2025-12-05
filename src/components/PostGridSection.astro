@@ -12,7 +12,7 @@ interface Props {
   eagerCount?: number;
 }
 
-const { title, viewAllLink, viewAllText = 'View All →', posts, eagerCount = 3 } = Astro.props;
+const { title, viewAllLink, viewAllText = 'View All →', posts, eagerCount = 0 } = Astro.props;
 ---
 
 {posts.length > 0 && (
