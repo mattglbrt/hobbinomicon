@@ -60,6 +60,17 @@ const canonicalURL = Astro.site
     <!-- Slot for critical page-specific preloads (LCP images) - must be early in head -->
     <slot name="head" />
 
+    <!-- Critical font-face declarations (must be inline for LCP optimization) -->
+    <style is:inline>
+      @font-face {
+        font-family: 'IM Fell DW Pica';
+        font-style: normal;
+        font-weight: 400;
+        font-display: optional;
+        src: url('/fonts/imfell-regular.woff2') format('woff2');
+      }
+    </style>
+
     <!-- Preconnect to YouTube for hero images -->
     <link rel="preconnect" href="https://img.youtube.com" crossorigin />
     <link rel="dns-prefetch" href="https://img.youtube.com" />
