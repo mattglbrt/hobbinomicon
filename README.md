@@ -134,25 +134,37 @@ npm run dev
 | `npm run dev` | Start dev server at `localhost:4321` |
 | `npm run build` | Build production site to `./dist/` |
 | `npm run preview` | Preview production build locally |
+| `npm run sync-vlogs` | Sync new videos from YouTube channel and create blog posts |
 | `npm run download-heroes` | Download YouTube thumbnails for hero images |
 
 ### Adding New YouTube Content
 
-When adding a new blog post with a `youtubeId`, run the following before pushing to git:
+When you publish a new video to your YouTube channel, run the following to sync it to your blog:
 
 ```bash
-npm run download-heroes      # Downloads new YouTube thumbnails
-git add src/assets/hero-cache/
-git commit -m "Add new post + hero image"
+npm run sync-vlogs           # Pulls new videos and creates blog posts
+npm run build                # Downloads thumbnails (via prebuild) and builds site
+git add src/content/blog/ src/assets/hero-cache/
+git commit -m "Add new video post + hero image"
 git push
 ```
 
-This caches YouTube thumbnails locally for better Core Web Vitals (LCP). The script:
-- Scans all posts with `youtubeId` in frontmatter
+**What each script does:**
+
+`npm run sync-vlogs`:
+- Connects to YouTube API via Google Cloud
+- Fetches new videos from your channel
+- Creates blog post files with video metadata (title, description, youtubeId)
+
+`npm run build`:
+- Automatically runs `download-hero-images.js` first (via `prebuild` hook)
 - Downloads maxres thumbnails to `src/assets/hero-cache/`
 - Skips already-cached images
-- Astro optimizes these to WebP format at build time
-- Commits ensure thumbnails are available on deploy without fetching from YouTube
+- Then builds the Astro site with optimized WebP images
+
+`npm run download-heroes` (optional):
+- Run manually if you want to download thumbnails without a full build
+- Useful during development to cache images before committing
 
 ## Creating Content
 
