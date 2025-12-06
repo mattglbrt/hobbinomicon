@@ -19,6 +19,8 @@ const blog = defineCollection({
     projectOrder: z.number().optional(),
     hideRelatedPosts: z.boolean().default(false),
     campaign: z.string().optional(),
+    // Resource type for categorizing resource pages
+    resourceType: z.enum(['hub', 'guide', 'article', 'checklist']).optional(),
   }),
 });
 

@@ -7,7 +7,7 @@ import Footer from '../../components/Footer.astro';
 import StructuredData from '../../components/StructuredData.astro';
 import ContentContainer from '../../components/ContentContainer.astro';
 import ImageCard from '../../components/ImageCard.astro';
-import { getHeroImage } from '../../utils/getHeroImage';
+import { getHeroImageUrl } from '../../utils/getHeroImage';
 
 const allProjects = await getCollection('projects');
 const allPosts = await getCollection('blog');
@@ -29,7 +29,7 @@ const projectsWithMeta = publishedProjects.map(project => {
     ...project,
     projectSlug,
     postCount: projectPosts.length,
-    heroImage: latestPost ? getHeroImage(latestPost.data.heroImage, latestPost.data.youtubeId) : null,
+    heroImage: latestPost ? getHeroImageUrl(latestPost.data.heroImage, latestPost.data.youtubeId) : null,
     heroImageAlt: latestPost?.data.heroImageAlt || project.data.title,
     latestPostDate: latestPost?.data.pubDate,
   };

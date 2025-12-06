@@ -1,6 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
-import { getHeroImage } from '../utils/getHeroImage';
+import { getHeroImageUrl } from '../utils/getHeroImage';
 import { formatDateLong } from '../utils/formatDate';
 import ListCard from './ListCard.astro';
 import ViewAllLink from './ViewAllLink.astro';
@@ -10,10 +10,11 @@ interface Props {
   excludeSelf?: string;
   excludeCategory?: string;
   excludeProjectPosts?: boolean;
+  excludeHubs?: boolean;
   limit?: number;
 }
 
-const { tag, excludeSelf, excludeCategory, excludeProjectPosts = false, limit } = Astro.props;
+const { tag, excludeSelf, excludeCategory, excludeProjectPosts = false, excludeHubs = true, limit } = Astro.props;
 
 const allPosts = await getCollection('blog');
 let taggedPosts = allPosts
@@ -21,6 +22,7 @@ let taggedPosts = allPosts
   .filter(post => excludeSelf ? post.slug !== excludeSelf : true)
   .filter(post => excludeCategory ? post.data.category.toLowerCase() !== excludeCategory.toLowerCase() : true)
   .filter(post => excludeProjectPosts ? !post.data.project : true)
+  .filter(post => excludeHubs ? post.data.resourceType !== 'hub' : true)
   .filter(post => post.data.tags?.some(t => t.toLowerCase().includes(tag.toLowerCase())))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
@@ -38,7 +40,7 @@ if (limit) {
       {taggedPosts.map(post => (
         <ListCard
           href={`/blog/${post.slug}`}
-          image={getHeroImage(post.data.heroImage, post.data.youtubeId)}
+          image={getHeroImageUrl(post.data.heroImage, post.data.youtubeId)}
           imageAlt={post.data.title}
           title={post.data.title}
           description={post.data.description}

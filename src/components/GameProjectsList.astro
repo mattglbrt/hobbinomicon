@@ -1,6 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
-import { getHeroImage } from '../utils/getHeroImage';
+import { getHeroImageUrl } from '../utils/getHeroImage';
 
 interface Props {
   game: string;
@@ -30,7 +30,7 @@ for (const project of gameProjects) {
 
   if (projectPosts.length > 0) {
     const latestPost = projectPosts[0];
-    projectImages.set(project.slug, getHeroImage(latestPost.data.heroImage, latestPost.data.youtubeId));
+    projectImages.set(project.slug, getHeroImageUrl(latestPost.data.heroImage, latestPost.data.youtubeId));
   }
 }
 ---

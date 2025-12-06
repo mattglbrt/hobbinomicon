@@ -221,53 +221,68 @@ tags: ["my game", "resources", "wargaming"]
 heroImage: "/images/my-game-hero.jpg"
 heroImageAlt: "My Game resources and guides"
 hideRelatedPosts: true
+resourceType: "hub"
 ---
 
 import TaggedPostsList from '../../../components/TaggedPostsList.astro';
 import GameProjectsList from '../../../components/GameProjectsList.astro';
-import TableOfContents from '../../../components/TableOfContents.astro';
+import ResourceCard from '../../../components/ResourceCard.astro';
+import ResourceSection from '../../../components/ResourceSection.astro';
 
 Your hub for all things My Game! Brief intro text here.
 
-<TableOfContents items={[
-  { title: "Essential Links", slug: "essential-links" },
-  { title: "My Projects", slug: "my-projects" },
-  { title: "My Content", slug: "my-content" },
-]} />
-
----
-
-## Essential Links
-
-<div class="not-prose grid gap-6 my-8">
-  <div class="p-6 bg-ink/5 border-l-4 border-ink/20 rounded-r-lg">
-    <h3 class="text-xl font-heading font-bold text-ink mb-3">Official Resources</h3>
-    <ul class="space-y-2 text-ink/80">
-      <li><a href="https://example.com" class="underline hover:text-ink">Official Website</a></li>
-      <li><a href="https://example.com/rules" class="underline hover:text-ink">Rules PDF</a></li>
-    </ul>
-  </div>
-
-  <div class="p-6 bg-ink/5 border-l-4 border-ink/20 rounded-r-lg">
-    <h3 class="text-xl font-heading font-bold text-ink mb-3">Community Tools</h3>
-    <ul class="space-y-2 text-ink/80">
-      <li><a href="https://discord.gg/example" class="underline hover:text-ink">Discord Server</a></li>
-      <li><a href="https://reddit.com/r/example" class="underline hover:text-ink">Subreddit</a></li>
-    </ul>
-  </div>
+{/* Featured Start Here Card */}
+<div class="not-prose my-8">
+  <ResourceCard
+    title="Start Here: Essential Guide"
+    description="The best place to start learning the game. Covers all the basics you need to know."
+    href="/blog/resources/my-game-guide"
+    variant="featured"
+    icon="🎯"
+  />
 </div>
 
----
+<ResourceSection title="Official Resources" columns={2}>
+  <ResourceCard
+    title="Official Website"
+    description="Rules, lore, and news"
+    href="https://example.com"
+    external
+    icon="🌐"
+  />
+  <ResourceCard
+    title="Rules PDF"
+    description="Download the rulebook"
+    href="https://example.com/rules"
+    external
+    icon="📜"
+  />
+</ResourceSection>
 
-## My Projects
+<ResourceSection title="Community" columns={2}>
+  <ResourceCard
+    title="Discord Server"
+    description="Join the community"
+    href="https://discord.gg/example"
+    external
+    icon="💬"
+  />
+  <ResourceCard
+    title="Subreddit"
+    description="r/MyGame"
+    href="https://reddit.com/r/example"
+    external
+    icon="🔗"
+  />
+</ResourceSection>
 
-<GameProjectsList game="my game" />
+<ResourceSection title="My Projects">
+  <GameProjectsList game="my game" />
+</ResourceSection>
 
----
-
-## My Content
-
-<TaggedPostsList tag="my game" excludeCategory="Resources" excludeProjectPosts={true} limit={4} />
+<ResourceSection title="My Content">
+  <TaggedPostsList tag="my game" excludeCategory="Resources" excludeProjectPosts={true} limit={4} />
+</ResourceSection>
 
 ---
 
@@ -290,18 +305,56 @@ game: "my game"
 ---
 ```
 
-**Component Options:**
+**Resource Components:**
 
 | Component | Props | Description |
 | :--- | :--- | :--- |
+| `ResourceCard` | `title`, `description?`, `href`, `external?`, `variant?`, `icon?` | Individual resource link card |
+| `ResourceSection` | `title`, `description?`, `columns?` | Groups ResourceCards with a header |
 | `TaggedPostsList` | `tag`, `excludeCategory?`, `excludeProjectPosts?`, `limit?` | Lists blog posts with a specific tag |
 | `GameProjectsList` | `game`, `limit?` | Lists projects for a specific game (with latest post image) |
-| `TableOfContents` | `items: {title, slug}[]` | Jump links to page sections |
+
+**ResourceCard variants:**
+- `default` - Standard card with subtle background
+- `featured` - Highlighted card with amber border (use for "Start Here" links)
+- `compact` - Smaller card with left border accent
+
+**ResourceSection columns:**
+- `1` - Single column (default)
+- `2` - Two columns on medium+ screens
+- `3` - Three columns on large screens
 
 **Key frontmatter fields:**
 - `hideRelatedPosts: true` - Disables the auto-generated related posts section at the bottom
 - `category: "Resources"` - Use this category for resource pages
 - `tags` - Include the game name tag so it links to other content
+- `resourceType` - Differentiates between resource page types (see below)
+
+**Resource Types (`resourceType` field):**
+
+Use this field to categorize resource pages. Hub pages are automatically excluded from post listings.
+
+| Type | Use For | Example |
+| :--- | :--- | :--- |
+| `hub` | Main resource landing pages that link to other content | "Mage Knight Resources" |
+| `guide` | Tutorial or how-to content | "Stormfox's Newbie Guide" |
+| `article` | Reference articles, lists, or informational content | "2003 Tournament Meta" |
+| `checklist` | Checklists or quick reference sheets | "Army Checklist" |
+
+Example frontmatter for a guide:
+```yaml
+---
+title: "My Strategy Guide"
+description: "A guide to playing the game"
+pubDate: 2025-01-01
+category: "Resources"
+tags: ["my game", "resources"]
+heroImage: "/images/guide-hero.jpg"
+heroImageAlt: "Guide banner"
+hideRelatedPosts: true
+resourceType: "guide"
+---
+```
 
 ## Customization
 

@@ -21,6 +21,27 @@ export async function getStaticPaths() {
 }
 
 const { category, posts } = Astro.props;
+
+// For Resources category, separate hubs from other content
+const isResourcesCategory = category.toLowerCase() === 'resources';
+const hubPosts = isResourcesCategory
+  ? posts.filter((post) => post.data.resourceType === 'hub')
+  : [];
+const nonHubPosts = isResourcesCategory
+  ? posts.filter((post) => post.data.resourceType !== 'hub')
+  : posts;
+
+// Extract unique game names from hub posts for filtering
+const gameFilters = hubPosts.map((hub) => {
+  // Get the primary game tag (first non-generic tag)
+  const gameTag = hub.data.tags?.find(
+    (tag) => !['resources', 'wargaming'].includes(tag.toLowerCase())
+  );
+  return {
+    name: hub.data.title.replace(' Resources', ''),
+    tag: gameTag?.toLowerCase() || '',
+  };
+}).filter((game) => game.tag);
 ---
 
 <BaseLayout title={`${category} - The Hobbinomicon`}>
@@ -47,13 +68,113 @@ const { category, posts } = Astro.props;
     />
 
     <ContentContainer class="py-16">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {posts.map((post) => (
-          <PostCard post={post} showCategory={false} />
-        ))}
-      </div>
+      {isResourcesCategory && hubPosts.length > 0 && (
+        <section class="mb-16">
+          <h2 class="text-2xl md:text-3xl font-heading font-bold text-ink dark:text-ink-dark mb-2">
+            Resource Hubs
+          </h2>
+          <p class="text-ink/70 dark:text-ink-dark/70 text-lg mb-8">
+            Main resource pages for each game
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {hubPosts.map((post) => (
+              <PostCard post={post} showCategory={false} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {isResourcesCategory && nonHubPosts.length > 0 && (
+        <div class="mt-12">
+          <h2 class="text-2xl md:text-3xl font-heading font-bold text-ink dark:text-ink-dark mb-2">
+            Guides & Articles
+          </h2>
+          <p class="text-ink/70 dark:text-ink-dark/70 text-lg mb-4">
+            Strategy guides, checklists, and reference articles
+          </p>
+
+          {/* Game Filter Buttons */}
+          {gameFilters.length > 0 && (
+            <div class="flex flex-wrap gap-2 mb-8" id="game-filters">
+              <button
+                type="button"
+                class="filter-btn px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 bg-ink dark:bg-ink-dark text-parchment dark:text-parchment-dark"
+                data-filter="all"
+              >
+                All Games
+              </button>
+              {gameFilters.map((game) => (
+                <button
+                  type="button"
+                  class="filter-btn px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 bg-ink/10 dark:bg-ink-dark/20 text-ink dark:text-ink-dark hover:bg-ink/20 dark:hover:bg-ink-dark/30"
+                  data-filter={game.tag}
+                >
+                  {game.name}
+                </button>
+              ))}
+            </div>
+          )}
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="articles-grid">
+            {nonHubPosts.map((post) => (
+              <div class="article-card" data-tags={post.data.tags?.map(t => t.toLowerCase()).join(',') || ''}>
+                <PostCard post={post} showCategory={false} />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {!isResourcesCategory && (
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {posts.map((post) => (
+            <PostCard post={post} showCategory={false} />
+          ))}
+        </div>
+      )}
     </ContentContainer>
 
     <Footer />
   </main>
+
+  {isResourcesCategory && (
+    <script>
+      function initFilters() {
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const articleCards = document.querySelectorAll('.article-card');
+
+        if (filterBtns.length === 0) return;
+
+        filterBtns.forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const filter = btn.getAttribute('data-filter');
+
+            // Update button styles
+            filterBtns.forEach((b) => {
+              b.classList.remove('bg-ink', 'dark:bg-ink-dark', 'text-parchment', 'dark:text-parchment-dark');
+              b.classList.add('bg-ink/10', 'dark:bg-ink-dark/20', 'text-ink', 'dark:text-ink-dark');
+            });
+            btn.classList.remove('bg-ink/10', 'dark:bg-ink-dark/20', 'text-ink', 'dark:text-ink-dark');
+            btn.classList.add('bg-ink', 'dark:bg-ink-dark', 'text-parchment', 'dark:text-parchment-dark');
+
+            // Filter cards
+            articleCards.forEach((card) => {
+              const tags = card.getAttribute('data-tags') || '';
+              if (filter === 'all' || tags.includes(filter)) {
+                card.style.display = '';
+              } else {
+                card.style.display = 'none';
+              }
+            });
+          });
+        });
+      }
+
+      // Initialize on page load
+      initFilters();
+
+      // Re-initialize after view transitions
+      document.addEventListener('astro:after-swap', initFilters);
+    </script>
+  )}
 </BaseLayout>

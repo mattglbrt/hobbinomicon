@@ -1,0 +1,87 @@
+---
+/**
+ * ResourceCard Component
+ * A visually appealing card for resource pages with icon, title, description, and optional CTA
+ */
+
+interface Props {
+  /** Card title */
+  title: string;
+  /** Brief description */
+  description?: string;
+  /** URL to link to */
+  href: string;
+  /** Whether link opens in new tab */
+  external?: boolean;
+  /** Visual style variant */
+  variant?: 'default' | 'featured' | 'compact';
+  /** Optional icon (emoji or text) */
+  icon?: string;
+}
+
+const {
+  title,
+  description,
+  href,
+  external = false,
+  variant = 'default',
+  icon,
+} = Astro.props;
+
+const externalProps = external
+  ? { target: '_blank', rel: 'noopener noreferrer' }
+  : {};
+
+const variantClasses = {
+  default: 'p-5 bg-ink/5 dark:bg-ink-dark/10 border border-ink/10 dark:border-ink-dark/20 hover:border-ink/30 dark:hover:border-ink-dark/40 hover:bg-ink/10 dark:hover:bg-ink-dark/20',
+  featured: 'p-6 bg-amber-50 dark:bg-amber-900/20 border-2 border-amber-400 dark:border-amber-600 hover:border-amber-500 dark:hover:border-amber-500 hover:bg-amber-100 dark:hover:bg-amber-900/30',
+  compact: 'p-4 bg-ink/5 dark:bg-ink-dark/10 hover:bg-ink/10 dark:hover:bg-ink-dark/20 border-l-4 border-ink/20 dark:border-ink-dark/30 hover:border-ink/50 dark:hover:border-ink-dark/50 rounded-l-none',
+};
+
+const titleClasses = {
+  default: 'text-lg font-heading font-bold text-ink dark:text-ink-dark group-hover:underline underline-offset-2',
+  featured: 'text-xl font-heading font-bold text-ink dark:text-ink-dark group-hover:underline underline-offset-2',
+  compact: 'text-base font-heading font-bold text-ink dark:text-ink-dark group-hover:underline underline-offset-2',
+};
+---
+
+<a
+  href={href}
+  class:list={[
+    'group block rounded-lg transition-all duration-200',
+    variantClasses[variant],
+  ]}
+  {...externalProps}
+>
+  <div class="flex items-start gap-4">
+    {icon && (
+      <span class:list={[
+        'flex-shrink-0 text-2xl',
+        variant === 'featured' ? 'text-3xl' : 'text-2xl',
+      ]}>
+        {icon}
+      </span>
+    )}
+    <div class="flex-grow min-w-0">
+      <h3 class={titleClasses[variant]}>
+        {title}
+        {external && (
+          <span class="inline-block ml-1 text-ink/50 dark:text-ink-dark/50 text-sm">
+            <svg class="inline w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+          </span>
+        )}
+      </h3>
+      {description && (
+        <p class:list={[
+          'mt-1 text-ink/70 dark:text-ink-dark/70',
+          variant === 'compact' ? 'text-sm' : 'text-base',
+        ]}>
+          {description}
+        </p>
+      )}
+      <slot />
+    </div>
+  </div>
+</a>

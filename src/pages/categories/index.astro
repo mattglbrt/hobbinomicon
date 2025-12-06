@@ -8,7 +8,7 @@ import StructuredData from '../../components/StructuredData.astro';
 import ContentContainer from '../../components/ContentContainer.astro';
 import ImageCard from '../../components/ImageCard.astro';
 import { getCategoriesWithCounts } from '../../utils/collections';
-import { getHeroImage } from '../../utils/getHeroImage';
+import { getHeroImageUrl } from '../../utils/getHeroImage';
 
 const allPosts = await getCollection('blog');
 
@@ -16,7 +16,7 @@ const allPosts = await getCollection('blog');
 const categories = getCategoriesWithCounts(allPosts).map(({ name, count, posts }) => {
   // Find the most recent post with a hero image or YouTube video
   const postWithImage = posts.find(post => post.data.heroImage || post.data.youtubeId) || posts[0];
-  const categoryImage = postWithImage ? getHeroImage(postWithImage.data.heroImage, postWithImage.data.youtubeId) : null;
+  const categoryImage = postWithImage ? getHeroImageUrl(postWithImage.data.heroImage, postWithImage.data.youtubeId) : null;
   return { name, count, latestPost: postWithImage, categoryImage };
 });
 ---
