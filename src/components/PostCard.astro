@@ -42,7 +42,9 @@ type Props = CommonProps & (IndividualProps | PostObjectProps);
 const props = Astro.props;
 
 // Extract values from either post object or individual props
-const slug = props.post?.slug ?? props.slug!;
+// Ensure slug is always a string to prevent [object Object] URLs
+const rawSlug = props.post?.slug ?? props.slug;
+const slug = typeof rawSlug === 'string' ? rawSlug : String(rawSlug ?? '');
 const title = props.post?.data.title ?? props.title!;
 const description = props.post?.data.description ?? props.description!;
 const heroImage = props.post?.data.heroImage ?? props.heroImage;

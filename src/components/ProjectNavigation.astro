@@ -15,6 +15,12 @@ const { previousPost, nextPost, projectName, projectSlug } = Astro.props;
 function getPostImage(post: CollectionEntry<'blog'>): string {
   return getHeroImage(post.data.heroImage, post.data.youtubeId);
 }
+
+// Helper to safely get slug as string
+function getSlug(post: CollectionEntry<'blog'> | null): string {
+  if (!post) return '';
+  return typeof post.slug === 'string' ? post.slug : String(post.slug ?? '');
+}
 ---
 
 {(previousPost || nextPost) && (
@@ -34,7 +40,7 @@ function getPostImage(post: CollectionEntry<'blog'>): string {
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       {previousPost && (
         <a
-          href={`/blog/${previousPost.slug}`}
+          href={`/blog/${getSlug(previousPost)}`}
           class="group block bg-ink/5 rounded-lg overflow-hidden hover:bg-ink/10 transition-colors"
         >
           <div class="aspect-video relative overflow-hidden">
@@ -63,7 +69,7 @@ function getPostImage(post: CollectionEntry<'blog'>): string {
 
       {nextPost && (
         <a
-          href={`/blog/${nextPost.slug}`}
+          href={`/blog/${getSlug(nextPost)}`}
           class={`group block bg-ink/5 rounded-lg overflow-hidden hover:bg-ink/10 transition-colors ${!previousPost ? 'md:col-start-2' : ''}`}
         >
           <div class="aspect-video relative overflow-hidden">
