@@ -1,0 +1,153 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import Footer from '../../components/Footer.astro';
+import StructuredData from '../../components/StructuredData.astro';
+import ContentContainer from '../../components/ContentContainer.astro';
+import { getPublishedPosts, groupByTags } from '../../utils/collections';
+import { getTagDisplay, getTagDescription, getTagCategory, getCategoryDisplay, getAllCategories } from '../../utils/tags';
+
+const allPosts = await getCollection('blog');
+const publishedPosts = getPublishedPosts(allPosts);
+const tagsMap = groupByTags(publishedPosts);
+
+// Convert to array with counts and sort by count
+const tagsWithCounts = Array.from(tagsMap.entries())
+  .map(([tag, posts]) => ({
+    tag,
+    display: getTagDisplay(tag),
+    description: getTagDescription(tag),
+    category: getTagCategory(tag),
+    count: posts.length,
+  }))
+  .sort((a, b) => b.count - a.count);
+
+// Group tags by category
+const categoryOrder = ['game-system', 'faction', 'technique', 'hobby', 'content-type'];
+const tagsByCategory: Record<string, typeof tagsWithCounts> = {};
+const uncategorizedTags: typeof tagsWithCounts = [];
+
+for (const tagData of tagsWithCounts) {
+  if (tagData.category) {
+    if (!tagsByCategory[tagData.category]) {
+      tagsByCategory[tagData.category] = [];
+    }
+    tagsByCategory[tagData.category].push(tagData);
+  } else {
+    uncategorizedTags.push(tagData);
+  }
+}
+
+// Sort categories by defined order
+const sortedCategories = categoryOrder.filter(cat => tagsByCategory[cat]?.length > 0);
+
+// Total tag count
+const totalTags = tagsWithCounts.length;
+---
+
+<BaseLayout title="Tags - The Hobbinomicon" description="Browse all tags and topics across The Hobbinomicon">
+  <StructuredData
+    type="breadcrumb"
+    data={{
+      breadcrumbs: [
+        { name: 'Home', url: 'https://hobbinomicon.com/' },
+        { name: 'Tags', url: 'https://hobbinomicon.com/tags' },
+      ],
+    }}
+  />
+  <Header theme="light" />
+
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
+    <PageHeader
+      title="Tags"
+      description={`Browse ${totalTags} tags across all content`}
+      breadcrumbs={[
+        { label: "Tags", href: "/tags" }
+      ]}
+    />
+
+    <ContentContainer class="py-16">
+      <!-- Quick Stats -->
+      <div class="mb-12 flex flex-wrap gap-4 text-sm">
+        <span class="px-3 py-1 bg-ink/10 dark:bg-ink-dark/10 rounded-full text-ink dark:text-ink-dark">
+          {totalTags} tags
+        </span>
+        <span class="px-3 py-1 bg-ink/10 dark:bg-ink-dark/10 rounded-full text-ink dark:text-ink-dark">
+          {publishedPosts.length} posts
+        </span>
+      </div>
+
+      <!-- Tags by Category -->
+      {sortedCategories.map((category) => (
+        <section class="mb-12">
+          <h2 class="text-2xl md:text-3xl font-heading font-bold text-ink dark:text-ink-dark mb-6">
+            {getCategoryDisplay(category)}
+          </h2>
+          <div class="flex flex-wrap gap-3">
+            {tagsByCategory[category].map(({ tag, display, count }) => (
+              <a
+                href={`/tags/${tag}`}
+                class="group flex items-center gap-2 px-4 py-2 bg-ink/5 dark:bg-ink-dark/5 hover:bg-ink/10 dark:hover:bg-ink-dark/10 rounded-lg transition-colors"
+              >
+                <span class="text-ink dark:text-ink-dark group-hover:underline">{display}</span>
+                <span class="text-xs px-1.5 py-0.5 bg-ink/10 dark:bg-ink-dark/10 rounded-full text-ink/60 dark:text-ink-dark/60">
+                  {count}
+                </span>
+              </a>
+            ))}
+          </div>
+        </section>
+      ))}
+
+      <!-- Uncategorized Tags (if any) -->
+      {uncategorizedTags.length > 0 && (
+        <section class="mb-12">
+          <h2 class="text-2xl md:text-3xl font-heading font-bold text-ink dark:text-ink-dark mb-6">
+            Other Tags
+          </h2>
+          <div class="flex flex-wrap gap-3">
+            {uncategorizedTags.map(({ tag, display, count }) => (
+              <a
+                href={`/tags/${tag}`}
+                class="group flex items-center gap-2 px-4 py-2 bg-ink/5 dark:bg-ink-dark/5 hover:bg-ink/10 dark:hover:bg-ink-dark/10 rounded-lg transition-colors"
+              >
+                <span class="text-ink dark:text-ink-dark group-hover:underline">{display}</span>
+                <span class="text-xs px-1.5 py-0.5 bg-ink/10 dark:bg-ink-dark/10 rounded-full text-ink/60 dark:text-ink-dark/60">
+                  {count}
+                </span>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- All Tags Cloud (sorted by popularity) -->
+      <section class="mt-16 pt-12 border-t border-ink/10 dark:border-ink-dark/10">
+        <h2 class="text-2xl md:text-3xl font-heading font-bold text-ink dark:text-ink-dark mb-6">
+          All Tags by Popularity
+        </h2>
+        <div class="flex flex-wrap gap-2">
+          {tagsWithCounts.map(({ tag, display, count }) => {
+            // Scale font size based on post count (min 0.875rem, max 1.5rem)
+            const maxCount = tagsWithCounts[0]?.count || 1;
+            const scale = 0.875 + (count / maxCount) * 0.625;
+            return (
+              <a
+                href={`/tags/${tag}`}
+                class="px-3 py-1 hover:bg-ink/10 dark:hover:bg-ink-dark/10 rounded-lg text-ink dark:text-ink-dark hover:underline transition-colors"
+                style={`font-size: ${scale}rem`}
+              >
+                #{display}
+                <span class="text-ink/40 dark:text-ink-dark/40 text-xs ml-1">({count})</span>
+              </a>
+            );
+          })}
+        </div>
+      </section>
+    </ContentContainer>
+
+    <Footer />
+  </main>
+</BaseLayout>

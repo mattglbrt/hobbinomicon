@@ -3,6 +3,7 @@
 /**
  * Sync YouTube channel videos to blog posts
  * Fetches new videos and creates MDX files for vlogs
+ * Auto-generates tags from transcript using keyword matching
  */
 
 import fs from 'fs';
@@ -18,10 +19,57 @@ dotenv.config();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const CONTENT_DIR = path.join(__dirname, '../src/content/blog');
 const VLOGS_DIR = path.join(CONTENT_DIR, 'vlogs');
+const TAG_KEYWORDS_PATH = path.join(__dirname, '../src/data/tag-keywords.json');
 
 // Ensure vlogs directory exists
 if (!fs.existsSync(VLOGS_DIR)) {
   fs.mkdirSync(VLOGS_DIR, { recursive: true });
+}
+
+// Load tag keywords for auto-tagging
+let tagKeywords = {};
+try {
+  const tagKeywordsData = JSON.parse(fs.readFileSync(TAG_KEYWORDS_PATH, 'utf-8'));
+  tagKeywords = tagKeywordsData.keywords || {};
+} catch (error) {
+  console.warn('⚠ Could not load tag-keywords.json, auto-tagging disabled');
+}
+
+/**
+ * Extract tags from text using keyword matching
+ * @param {string} text - Text to analyze (title + description + transcript)
+ * @returns {string[]} Array of matched tag slugs
+ */
+function extractTagsFromText(text) {
+  if (!text || Object.keys(tagKeywords).length === 0) return [];
+
+  const normalizedText = text.toLowerCase();
+  const matchedTags = [];
+  const tagScores = {};
+
+  for (const [tag, keywords] of Object.entries(tagKeywords)) {
+    let score = 0;
+    for (const keyword of keywords) {
+      const keywordLower = keyword.toLowerCase();
+      // Count occurrences of each keyword
+      const regex = new RegExp(keywordLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+      const matches = normalizedText.match(regex);
+      if (matches) {
+        score += matches.length;
+      }
+    }
+    if (score > 0) {
+      tagScores[tag] = score;
+    }
+  }
+
+  // Sort by score and take top tags
+  const sortedTags = Object.entries(tagScores)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 7) // Max 7 tags
+    .map(([tag]) => tag);
+
+  return sortedTags;
 }
 
 /**
@@ -144,9 +192,10 @@ function createExcerpt(description) {
 /**
  * Generate MDX content for a video
  */
-function generateMdxContent(video, transcript) {
+function generateMdxContent(video, transcript, tags) {
   const { id, title, description, publishedAt } = video;
   const excerpt = createExcerpt(description);
+  const tagsArray = JSON.stringify(tags);
 
   let content = `---
 title: "${title.replace(/"/g, '\\"')}"
@@ -154,7 +203,7 @@ description: "${excerpt.replace(/"/g, '\\"')}"
 pubDate: ${publishedAt}
 category: "Vlogs"
 youtubeId: "${id}"
-tags: []
+tags: ${tagsArray}
 ---
 
 import YouTubeEmbed from '../../../components/YouTubeEmbed.astro';
@@ -176,7 +225,7 @@ ${description}
     content += `
 ## Transcript
 
-> ${transcript}
+${transcript}
 `;
   }
 
@@ -292,8 +341,17 @@ async function main() {
         console.log('   ⚠ No transcript available');
       }
 
+      // Extract tags from title, description, and transcript
+      const combinedText = [video.title, video.description, transcript || ''].join(' ');
+      const tags = extractTagsFromText(combinedText);
+      if (tags.length > 0) {
+        console.log(`   🏷  Auto-tags: ${tags.join(', ')}`);
+      } else {
+        console.log('   ⚠ No tags auto-detected');
+      }
+
       // Generate content
-      const mdxContent = generateMdxContent(video, transcript);
+      const mdxContent = generateMdxContent(video, transcript, tags);
 
       // Write file
       const slug = slugify(video.title);
@@ -325,8 +383,9 @@ async function main() {
   }
   console.log('\nNext steps:');
   console.log('1. Review generated posts in src/content/blog/vlogs/');
-  console.log('2. Add project associations if needed');
-  console.log('3. Run npm run build to download hero images');
+  console.log('2. Review and adjust auto-generated tags');
+  console.log('3. Add project associations if needed');
+  console.log('4. Run npm run build to download hero images');
 }
 
 main().catch(error => {

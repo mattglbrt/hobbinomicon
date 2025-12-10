@@ -8,6 +8,7 @@ import StructuredData from '../../components/StructuredData.astro';
 import ContentContainer from '../../components/ContentContainer.astro';
 import ImageCard from '../../components/ImageCard.astro';
 import { getPublishedPosts, groupByTags, sortByDate } from '../../utils/collections';
+import { getTagDisplay, getTagDescription } from '../../utils/tags';
 
 export async function getStaticPaths() {
   const allPosts = await getCollection('blog');
@@ -22,6 +23,10 @@ export async function getStaticPaths() {
 
 const { tag, posts } = Astro.props;
 
+// Get tag display name and description
+const tagDisplay = getTagDisplay(tag);
+const tagDescription = getTagDescription(tag);
+
 // Separate posts by category
 const characterPosts = posts.filter(post => post.data.category === 'Dramatis Personae');
 const chapterPosts = posts.filter(post => post.data.category === 'Campaign Chronicles');
@@ -34,14 +39,15 @@ const otherPosts = posts.filter(post =>
 const isCampaignTag = characterPosts.length > 0 && chapterPosts.length > 0;
 ---
 
-<BaseLayout title={`#${tag} - The Hobbinomicon`}>
+<BaseLayout title={`${tagDisplay} - The Hobbinomicon`} description={tagDescription}>
   <StructuredData
     type="breadcrumb"
     data={{
       breadcrumbs: [
         { name: 'Home', url: 'https://hobbinomicon.com/' },
         { name: 'Blog', url: 'https://hobbinomicon.com/blog' },
-        { name: `#${tag}`, url: `https://hobbinomicon.com/tags/${tag}` },
+        { name: 'Tags', url: 'https://hobbinomicon.com/tags' },
+        { name: tagDisplay, url: `https://hobbinomicon.com/tags/${tag}` },
       ],
     }}
   />
@@ -50,11 +56,14 @@ const isCampaignTag = characterPosts.length > 0 && chapterPosts.length > 0;
   <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
     <header class="bg-ink dark:bg-ink-dark text-white pt-36 md:pt-40 pb-16">
       <ContentContainer>
-        <a href="/blog" class="inline-block text-white/80 hover:text-white mb-4 transition-colors">
-          ← All Posts
+        <a href="/tags" class="inline-block text-white/80 hover:text-white mb-4 transition-colors">
+          ← All Tags
         </a>
-        <h1 class="text-5xl md:text-6xl font-heading font-bold">{isCampaignTag ? tag : `#${tag}`}</h1>
-        <p class="text-xl text-white/80 mt-4">{posts.length} {posts.length === 1 ? 'post' : 'posts'}</p>
+        <h1 class="text-5xl md:text-6xl font-heading font-bold">{isCampaignTag ? tagDisplay : `#${tagDisplay}`}</h1>
+        {tagDescription && (
+          <p class="text-xl text-white/90 mt-4 max-w-2xl">{tagDescription}</p>
+        )}
+        <p class="text-lg text-white/60 mt-2">{posts.length} {posts.length === 1 ? 'post' : 'posts'}</p>
       </ContentContainer>
     </header>
 

@@ -1,13 +1,24 @@
 ---
 /**
  * Search Modal Component
- * Client-side search with keyboard navigation and accessibility
+ * Client-side search with keyboard navigation, filters, and accessibility
  */
 import { getCollection } from 'astro:content';
-import { getPublishedPosts } from '../utils/collections';
+import { getPublishedPosts, groupByTags } from '../utils/collections';
+import { getTagDisplay } from '../utils/tags';
 
 const allPosts = await getCollection('blog');
 const publishedPosts = getPublishedPosts(allPosts);
+
+// Get unique categories
+const categories = [...new Set(publishedPosts.map(post => post.data.category))].sort();
+
+// Get top tags by usage count
+const tagsMap = groupByTags(publishedPosts);
+const topTags = Array.from(tagsMap.entries())
+  .sort((a, b) => b[1].length - a[1].length)
+  .slice(0, 8)
+  .map(([tag]) => ({ tag, display: getTagDisplay(tag) }));
 
 // Build search index
 const searchIndex = publishedPosts.map(post => ({
@@ -77,6 +88,22 @@ const searchIndex = publishedPosts.map(post => ({
     border-top: 1px solid rgba(255, 255, 255, 0.1);
   }
 
+  .filter-chip {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.15s ease;
+  }
+
+  .filter-chip:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .filter-chip.active {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
   /* Custom scrollbar for results */
   #search-results::-webkit-scrollbar {
     width: 6px;
@@ -108,10 +135,10 @@ const searchIndex = publishedPosts.map(post => ({
   <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" data-search-backdrop></div>
 
   <!-- Modal Content -->
-  <div class="relative flex items-start justify-center pt-[12vh] px-4">
+  <div class="relative flex items-start justify-center pt-[10vh] px-4">
     <div class="w-full max-w-2xl glass-modal rounded-2xl overflow-hidden">
       <!-- Search Header -->
-      <div class="p-4">
+      <div class="p-4 pb-2">
         <label for="search-input" id="search-modal-title" class="sr-only">Search posts</label>
         <div class="relative">
           <svg
@@ -135,18 +162,54 @@ const searchIndex = publishedPosts.map(post => ({
         </div>
       </div>
 
+      <!-- Filters -->
+      <div class="px-4 pb-3">
+        <!-- Category Filters -->
+        <div class="flex flex-wrap gap-2 mb-2">
+          <button
+            type="button"
+            class="filter-chip px-3 py-1 rounded-full text-xs text-white/80 active"
+            data-filter-category=""
+          >
+            All
+          </button>
+          {categories.map(category => (
+            <button
+              type="button"
+              class="filter-chip px-3 py-1 rounded-full text-xs text-white/80"
+              data-filter-category={category}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+
+        <!-- Tag Filters -->
+        <div class="flex flex-wrap gap-2">
+          {topTags.map(({ tag, display }) => (
+            <button
+              type="button"
+              class="filter-chip px-2.5 py-0.5 rounded-full text-xs text-white/60"
+              data-filter-tag={tag}
+            >
+              #{display}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <!-- Search Results -->
-      <div id="search-results" class="max-h-[55vh] overflow-y-auto">
+      <div id="search-results" class="max-h-[50vh] overflow-y-auto">
         <!-- Empty state -->
         <div id="search-empty" class="p-8 text-center">
           <p class="text-lg text-white/60">Type to search posts</p>
-          <p class="text-sm mt-2 text-white/60">Search by title, description, category, or tags</p>
+          <p class="text-sm mt-2 text-white/60">Or click filters above to browse</p>
         </div>
 
         <!-- No results state -->
         <div id="search-no-results" class="hidden p-8 text-center">
           <p class="text-lg text-white/60">No results found</p>
-          <p class="text-sm mt-2 text-white/60">Try different keywords</p>
+          <p class="text-sm mt-2 text-white/60">Try different keywords or filters</p>
         </div>
 
         <!-- Results list -->
@@ -182,8 +245,10 @@ const searchIndex = publishedPosts.map(post => ({
 </div>
 
 <!-- Pass search index to client -->
-<script define:vars={{ searchIndex }}>
+<script define:vars={{ searchIndex, categories, topTags }}>
   window.searchIndex = searchIndex;
+  window.searchCategories = categories;
+  window.searchTopTags = topTags;
 </script>
 
 <script is:inline>
@@ -202,11 +267,15 @@ const searchIndex = publishedPosts.map(post => ({
     const backdrop = document.querySelector('[data-search-backdrop]');
     const closeBtn = document.querySelector('[data-search-close]');
     const searchButtons = document.querySelectorAll('[data-search-trigger]');
+    const categoryFilters = document.querySelectorAll('[data-filter-category]');
+    const tagFilters = document.querySelectorAll('[data-filter-tag]');
 
     if (!modal || !input || !resultsList) return;
 
     let selectedIndex = -1;
     let results = [];
+    let activeCategory = '';
+    let activeTags = new Set();
 
     function openModal() {
       modal.classList.remove('hidden');
@@ -220,7 +289,19 @@ const searchIndex = publishedPosts.map(post => ({
       input.value = '';
       selectedIndex = -1;
       results = [];
+      activeCategory = '';
+      activeTags.clear();
+      resetFilters();
       showEmptyState();
+    }
+
+    function resetFilters() {
+      categoryFilters.forEach(function(btn) {
+        btn.classList.toggle('active', btn.dataset.filterCategory === '');
+      });
+      tagFilters.forEach(function(btn) {
+        btn.classList.remove('active');
+      });
     }
 
     function showEmptyState() {
@@ -242,19 +323,40 @@ const searchIndex = publishedPosts.map(post => ({
     }
 
     function search(query) {
-      if (!query.trim()) {
+      var searchIndex = window.searchIndex || [];
+      var terms = query.toLowerCase().split(/\s+/).filter(Boolean);
+      var hasQuery = terms.length > 0;
+      var hasFilters = activeCategory || activeTags.size > 0;
+
+      if (!hasQuery && !hasFilters) {
         showEmptyState();
         return;
       }
 
-      var searchIndex = window.searchIndex || [];
-      var terms = query.toLowerCase().split(/\s+/).filter(Boolean);
-
       results = searchIndex.filter(function(item) {
-        return terms.every(function(term) {
-          return item.searchText.includes(term);
-        });
-      }).slice(0, 10);
+        // Check category filter
+        if (activeCategory && item.category !== activeCategory) {
+          return false;
+        }
+
+        // Check tag filters (all selected tags must match)
+        if (activeTags.size > 0) {
+          var itemTags = item.tags.map(function(t) { return t.toLowerCase(); });
+          var allTagsMatch = Array.from(activeTags).every(function(tag) {
+            return itemTags.some(function(t) { return t === tag.toLowerCase(); });
+          });
+          if (!allTagsMatch) return false;
+        }
+
+        // Check search terms
+        if (hasQuery) {
+          return terms.every(function(term) {
+            return item.searchText.includes(term);
+          });
+        }
+
+        return true;
+      }).slice(0, 15);
 
       if (results.length === 0) {
         showNoResults();
@@ -270,14 +372,17 @@ const searchIndex = publishedPosts.map(post => ({
       resultsList.innerHTML = results.map(function(result, index) {
         var highlightedTitle = highlightTerms(result.title, terms);
         var highlightedDesc = highlightTerms(result.description, terms);
+        var tagsHtml = result.tags.slice(0, 3).map(function(tag) {
+          return '<span class="text-xs text-white/50">#' + escapeHtml(tag) + '</span>';
+        }).join(' ');
 
         return '<li role="option" id="search-result-' + index + '">' +
           '<a href="/blog/' + result.slug + '" class="block px-4 py-3 result-item search-result-link" data-index="' + index + '">' +
             '<div class="font-medium text-white/90 mb-1">' + highlightedTitle + '</div>' +
             '<div class="text-sm text-white/70 line-clamp-2">' + highlightedDesc + '</div>' +
-            '<div class="flex items-center gap-2 mt-2">' +
-              '<span class="text-xs px-2 py-0.5 glass-tag text-white/60 rounded-lg">' + result.category + '</span>' +
-              (result.tags.length > 0 ? '<span class="text-xs text-white/60">#' + result.tags[0] + '</span>' : '') +
+            '<div class="flex items-center gap-2 mt-2 flex-wrap">' +
+              '<span class="text-xs px-2 py-0.5 glass-tag text-white/60 rounded-lg">' + escapeHtml(result.category) + '</span>' +
+              tagsHtml +
             '</div>' +
           '</a>' +
         '</li>';
@@ -285,7 +390,7 @@ const searchIndex = publishedPosts.map(post => ({
     }
 
     function highlightTerms(text, terms) {
-      if (!text) return '';
+      if (!text || !terms.length) return escapeHtml(text || '');
       var result = escapeHtml(text);
       terms.forEach(function(term) {
         var regex = new RegExp('(' + escapeRegex(term) + ')', 'gi');
@@ -327,6 +432,32 @@ const searchIndex = publishedPosts.map(post => ({
         selected.scrollIntoView({ block: 'nearest' });
       }
     }
+
+    // Category filter click handlers
+    categoryFilters.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        activeCategory = btn.dataset.filterCategory;
+        categoryFilters.forEach(function(b) {
+          b.classList.toggle('active', b.dataset.filterCategory === activeCategory);
+        });
+        search(input.value);
+      });
+    });
+
+    // Tag filter click handlers
+    tagFilters.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var tag = btn.dataset.filterTag;
+        if (activeTags.has(tag)) {
+          activeTags.delete(tag);
+          btn.classList.remove('active');
+        } else {
+          activeTags.add(tag);
+          btn.classList.add('active');
+        }
+        search(input.value);
+      });
+    });
 
     // Event listeners
     searchButtons.forEach(function(btn) {
