@@ -1,11 +1,11 @@
 /* Self-hosted fonts for better Core Web Vitals */
 
-/* Besley - Heading font */
+/* Besley - Body font (using optional to prevent CLS from font swap) */
 @font-face {
   font-family: 'Besley';
   font-style: normal;
   font-weight: 400;
-  font-display: swap;
+  font-display: optional;
   src: url('/fonts/besley-regular.woff2') format('woff2');
 }
 
@@ -13,7 +13,7 @@
   font-family: 'Besley';
   font-style: normal;
   font-weight: 700;
-  font-display: swap;
+  font-display: optional;
   src: url('/fonts/besley-regular.woff2') format('woff2');
 }
 
@@ -21,7 +21,7 @@
   font-family: 'Besley';
   font-style: italic;
   font-weight: 400;
-  font-display: swap;
+  font-display: optional;
   src: url('/fonts/besley-italic.woff2') format('woff2');
 }
 
@@ -29,7 +29,7 @@
   font-family: 'Besley';
   font-style: italic;
   font-weight: 700;
-  font-display: swap;
+  font-display: optional;
   src: url('/fonts/besley-italic.woff2') format('woff2');
 }
 
