@@ -1,6 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import { getHeroImage } from '../utils/getHeroImage';
+import { getHeroImageUrl } from '../utils/getHeroImage';
 import { formatDateShort } from '../utils/formatDate';
 
 interface Props {
@@ -13,7 +13,7 @@ interface Props {
 const { previousPost, nextPost, projectName, projectSlug } = Astro.props;
 
 function getPostImage(post: CollectionEntry<'blog'>): string {
-  return getHeroImage(post.data.heroImage, post.data.youtubeId);
+  return getHeroImageUrl(post.data.heroImage, post.data.youtubeId);
 }
 
 // Helper to safely get slug as string
