@@ -1,0 +1,107 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import Footer from '../../components/Footer.astro';
+import ContentContainer from '../../components/ContentContainer.astro';
+import { getPublishedPosts } from '../../utils/collections';
+import { getPartyDisplay, getPartyDescription, getPartyCampaign, getPartyStatus, getAllParties } from '../../utils/parties';
+
+export async function getStaticPaths() {
+  const allPosts = await getCollection('blog');
+  const publishedPosts = getPublishedPosts(allPosts);
+  const parties = getAllParties();
+
+  return parties.map((party) => {
+    const partyMembers = publishedPosts.filter(
+      post => post.data.category === 'Dramatis Personae' && post.data.party === party
+    );
+
+    return {
+      params: { party },
+      props: {
+        party,
+        partyDisplay: getPartyDisplay(party),
+        partyDescription: getPartyDescription(party),
+        partyCampaign: getPartyCampaign(party),
+        partyStatus: getPartyStatus(party),
+        members: partyMembers,
+      },
+    };
+  });
+}
+
+const { party, partyDisplay, partyDescription, partyCampaign, partyStatus, members } = Astro.props;
+---
+
+<BaseLayout title={`${partyDisplay} - The Hobbinomicon`}>
+  <Header theme="light" />
+
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
+    <PageHeader
+      title={partyDisplay}
+      description={partyDescription}
+      breadcrumbs={[
+        { label: "Dramatis Personae", href: "/categories/dramatis-personae" },
+        { label: partyDisplay, href: `/parties/${party}` }
+      ]}
+    />
+
+    <ContentContainer class="py-16">
+      {/* Party Info */}
+      <div class="mb-12 flex flex-wrap gap-4 items-center">
+        {partyCampaign && (
+          <span class="px-4 py-2 bg-ink/10 dark:bg-ink-dark/10 rounded-full text-sm font-medium text-ink dark:text-ink-dark">
+            Campaign: {partyCampaign}
+          </span>
+        )}
+        {partyStatus && (
+          <span class={`px-4 py-2 rounded-full text-sm font-medium ${
+            partyStatus === 'active'
+              ? 'bg-green-500/20 text-green-700 dark:text-green-400'
+              : 'bg-gray-500/20 text-gray-700 dark:text-gray-400'
+          }`}>
+            {partyStatus.charAt(0).toUpperCase() + partyStatus.slice(1)}
+          </span>
+        )}
+      </div>
+
+      {/* Party Members */}
+      <h2 class="text-2xl md:text-3xl font-heading font-bold text-ink dark:text-ink-dark mb-8">
+        Party Members ({members.length})
+      </h2>
+
+      {members.length > 0 ? (
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+          {members.map((member) => (
+            <a
+              href={`/blog/${member.slug}`}
+              class="group relative aspect-[2/3] overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
+            >
+              <img
+                src={member.data.heroImage || '/images/placeholder.jpg'}
+                alt={member.data.heroImageAlt || member.data.title}
+                class="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                loading="lazy"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
+              <div class="absolute inset-0 flex flex-col items-center justify-end p-4">
+                <h3 class="text-lg md:text-xl font-heading font-bold text-white text-center drop-shadow-lg">
+                  {member.data.title}
+                </h3>
+                <p class="text-white/80 text-sm text-center mt-1 line-clamp-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  {member.data.description}
+                </p>
+              </div>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <p class="text-ink/70 dark:text-ink-dark/70">No members in this party yet.</p>
+      )}
+    </ContentContainer>
+
+    <Footer />
+  </main>
+</BaseLayout>

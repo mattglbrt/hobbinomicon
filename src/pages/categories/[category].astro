@@ -8,6 +8,7 @@ import Footer from '../../components/Footer.astro';
 import StructuredData from '../../components/StructuredData.astro';
 import ContentContainer from '../../components/ContentContainer.astro';
 import { getPublishedPosts, groupByCategory, sortByDate } from '../../utils/collections';
+import { getPartyDisplay, getPartyDescription, getAllParties } from '../../utils/parties';
 
 export async function getStaticPaths() {
   const allPosts = await getCollection('blog');
@@ -21,6 +22,36 @@ export async function getStaticPaths() {
 }
 
 const { category, posts } = Astro.props;
+
+// For Dramatis Personae category, group by party
+const isDramatisPersonae = category.toLowerCase() === 'dramatis personae';
+const partiesWithMembers = isDramatisPersonae
+  ? getAllParties().map(party => ({
+      party,
+      display: getPartyDisplay(party),
+      description: getPartyDescription(party),
+      members: posts.filter(post => post.data.party === party),
+    })).filter(p => p.members.length > 0)
+  : [];
+const unassignedCharacters = isDramatisPersonae
+  ? posts.filter(post => !post.data.party)
+  : [];
+
+// For Campaign Chronicles category, separate campaign hubs from episodes
+const isCampaignChronicles = category.toLowerCase() === 'campaign chronicles';
+const campaignHubs = isCampaignChronicles
+  ? posts.filter((post) => post.data.campaignType === 'hub')
+  : [];
+const campaignEpisodes = isCampaignChronicles
+  ? posts.filter((post) => post.data.campaignType === 'episode')
+      .sort((a, b) => {
+        // Sort by campaign name first, then by episode number
+        const campaignA = a.data.campaign || '';
+        const campaignB = b.data.campaign || '';
+        if (campaignA !== campaignB) return campaignA.localeCompare(campaignB);
+        return (a.data.episodeNumber || 0) - (b.data.episodeNumber || 0);
+      })
+  : [];
 
 // For Resources category, separate hubs from other content
 const isResourcesCategory = category.toLowerCase() === 'resources';
@@ -125,7 +156,124 @@ const gameFilters = hubPosts.map((hub) => {
         </div>
       )}
 
-      {!isResourcesCategory && (
+      {/* Dramatis Personae - Show by Party */}
+      {isDramatisPersonae && partiesWithMembers.length > 0 && (
+        <div class="space-y-16">
+          {partiesWithMembers.map((partyData) => (
+            <section>
+              <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl md:text-3xl font-heading font-bold text-ink dark:text-ink-dark">
+                  {partyData.display}
+                </h2>
+                <a
+                  href={`/parties/${partyData.party}`}
+                  class="text-sm font-medium text-ink/70 dark:text-ink-dark/70 hover:text-ink dark:hover:text-ink-dark transition-colors"
+                >
+                  View Party →
+                </a>
+              </div>
+              {partyData.description && (
+                <p class="text-ink/70 dark:text-ink-dark/70 text-lg mb-8 max-w-2xl">
+                  {partyData.description}
+                </p>
+              )}
+              <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                {partyData.members.map((member) => (
+                  <a
+                    href={`/blog/${member.slug}`}
+                    class="group relative aspect-[2/3] overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
+                  >
+                    <img
+                      src={member.data.heroImage || '/images/placeholder.jpg'}
+                      alt={member.data.heroImageAlt || member.data.title}
+                      class="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                    />
+                    <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
+                    <div class="absolute inset-0 flex flex-col items-center justify-end p-4">
+                      <h3 class="text-lg font-heading font-bold text-white text-center drop-shadow-lg">
+                        {member.data.title}
+                      </h3>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </section>
+          ))}
+
+          {/* Unassigned Characters */}
+          {unassignedCharacters.length > 0 && (
+            <section>
+              <h2 class="text-2xl md:text-3xl font-heading font-bold text-ink dark:text-ink-dark mb-8">
+                Other Characters
+              </h2>
+              <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                {unassignedCharacters.map((member) => (
+                  <a
+                    href={`/blog/${member.slug}`}
+                    class="group relative aspect-[2/3] overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
+                  >
+                    <img
+                      src={member.data.heroImage || '/images/placeholder.jpg'}
+                      alt={member.data.heroImageAlt || member.data.title}
+                      class="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                    />
+                    <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
+                    <div class="absolute inset-0 flex flex-col items-center justify-end p-4">
+                      <h3 class="text-lg font-heading font-bold text-white text-center drop-shadow-lg">
+                        {member.data.title}
+                      </h3>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
+      )}
+
+      {/* Campaign Chronicles - Show campaign hubs then episodes */}
+      {isCampaignChronicles && (
+        <div class="space-y-16">
+          {/* Campaign Hubs */}
+          {campaignHubs.length > 0 && (
+            <section>
+              <h2 class="text-2xl md:text-3xl font-heading font-bold text-ink dark:text-ink-dark mb-2">
+                Campaigns
+              </h2>
+              <p class="text-ink/70 dark:text-ink-dark/70 text-lg mb-8">
+                Ongoing adventures and their stories
+              </p>
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {campaignHubs.map((post) => (
+                  <PostCard post={post} showCategory={false} />
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Campaign Episodes */}
+          {campaignEpisodes.length > 0 && (
+            <section>
+              <h2 class="text-2xl md:text-3xl font-heading font-bold text-ink dark:text-ink-dark mb-2">
+                Episodes
+              </h2>
+              <p class="text-ink/70 dark:text-ink-dark/70 text-lg mb-8">
+                Individual sessions and chapters
+              </p>
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {campaignEpisodes.map((post) => (
+                  <PostCard post={post} showCategory={false} />
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
+      )}
+
+      {/* Default grid for other categories */}
+      {!isResourcesCategory && !isDramatisPersonae && !isCampaignChronicles && (
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {posts.map((post) => (
             <PostCard post={post} showCategory={false} />

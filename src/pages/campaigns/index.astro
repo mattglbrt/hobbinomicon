@@ -1,0 +1,250 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import Footer from '../../components/Footer.astro';
+import StructuredData from '../../components/StructuredData.astro';
+import ContentContainer from '../../components/ContentContainer.astro';
+import { getHeroImageUrl } from '../../utils/getHeroImage';
+import { getPartiesByCampaign, getPartyDisplay, getPartyDescription } from '../../utils/parties';
+import campaignsData from '../../data/campaigns.json';
+
+const allPosts = await getCollection('blog');
+const publishedPosts = allPosts.filter(p => !p.data.draft);
+
+// Get all campaign hubs
+const campaignHubs = publishedPosts.filter(p => p.data.campaignType === 'hub');
+
+// Build campaign data with episodes and parties
+const campaigns = Object.entries(campaignsData.campaigns).map(([slug, data]) => {
+  const hub = campaignHubs.find(p => p.data.campaign === data.display);
+  const episodes = publishedPosts
+    .filter(p => p.data.campaign === data.display && p.data.campaignType === 'episode')
+    .sort((a, b) => (a.data.episodeNumber || 0) - (b.data.episodeNumber || 0));
+
+  const parties = getPartiesByCampaign(data.display).map(partySlug => ({
+    slug: partySlug,
+    display: getPartyDisplay(partySlug),
+    description: getPartyDescription(partySlug),
+    members: publishedPosts.filter(
+      p => p.data.category === 'Dramatis Personae' && p.data.party === partySlug
+    ),
+  })).filter(p => p.members.length > 0);
+
+  return {
+    slug,
+    ...data,
+    hub,
+    episodes,
+    parties,
+    heroImage: hub?.data.heroImage,
+  };
+});
+
+// Separate active and inactive campaigns
+const activeCampaigns = campaigns.filter(c => c.status === 'active');
+const inactiveCampaigns = campaigns.filter(c => c.status !== 'active');
+---
+
+<BaseLayout title="Campaigns - The Hobbinomicon" description="Tabletop RPG campaigns, characters, and adventure logs">
+  <StructuredData
+    type="breadcrumb"
+    data={{
+      breadcrumbs: [
+        { name: 'Home', url: 'https://hobbinomicon.com/' },
+        { name: 'Campaigns', url: 'https://hobbinomicon.com/campaigns' },
+      ],
+    }}
+  />
+  <Header theme="light" />
+
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
+    <PageHeader
+      title="Campaigns"
+      description="Tabletop RPG adventures and the stories they tell"
+      breadcrumbs={[
+        { label: "Campaigns", href: "/campaigns" }
+      ]}
+    />
+
+    <ContentContainer class="py-16">
+      {activeCampaigns.length > 0 && (
+        <div class="space-y-16">
+          {activeCampaigns.map((campaign) => (
+            <section class="bg-ink/5 dark:bg-ink-dark/5 rounded-2xl overflow-hidden">
+              {/* Campaign Header */}
+              <div class="relative h-64 md:h-80">
+                {campaign.heroImage ? (
+                  <img
+                    src={campaign.heroImage}
+                    alt={campaign.display}
+                    class="absolute inset-0 w-full h-full object-cover"
+                  />
+                ) : (
+                  <div class="absolute inset-0 bg-gradient-to-br from-ink/20 to-ink/40 dark:from-ink-dark/20 dark:to-ink-dark/40"></div>
+                )}
+                <div class="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/40 to-transparent"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+                  <div class="flex items-center gap-3 mb-2">
+                    <span class="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-white text-sm">
+                      {campaign.game}
+                    </span>
+                    <span class="px-3 py-1 bg-green-500/20 backdrop-blur-sm rounded-full text-green-200 text-sm">
+                      Active
+                    </span>
+                  </div>
+                  <h2 class="text-3xl md:text-4xl font-heading font-bold text-white mb-2">
+                    {campaign.display}
+                  </h2>
+                  <p class="text-white/80 text-lg max-w-2xl">
+                    {campaign.description}
+                  </p>
+                  {campaign.hub && (
+                    <a
+                      href={`/blog/${campaign.hub.slug}`}
+                      class="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg text-white transition-colors"
+                    >
+                      View Campaign Hub
+                      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </a>
+                  )}
+                </div>
+              </div>
+
+              {/* Campaign Content */}
+              <div class="p-6 md:p-8 space-y-8">
+                {/* Parties Section */}
+                {campaign.parties.length > 0 && (
+                  <div>
+                    <h3 class="text-xl font-heading font-bold text-ink dark:text-ink-dark mb-4">
+                      Adventuring Parties
+                    </h3>
+                    <div class="space-y-6">
+                      {campaign.parties.map((party) => (
+                        <div class="bg-parchment dark:bg-parchment-dark rounded-xl p-4">
+                          <div class="flex items-center justify-between mb-3">
+                            <h4 class="font-heading font-bold text-ink dark:text-ink-dark">
+                              {party.display}
+                            </h4>
+                            <a
+                              href={`/parties/${party.slug}`}
+                              class="text-sm text-ink/70 dark:text-ink-dark/70 hover:text-ink dark:hover:text-ink-dark transition-colors"
+                            >
+                              View Party →
+                            </a>
+                          </div>
+                          {party.description && (
+                            <p class="text-sm text-ink/70 dark:text-ink-dark/70 mb-4">
+                              {party.description}
+                            </p>
+                          )}
+                          <div class="flex flex-wrap gap-3">
+                            {party.members.map((member) => (
+                              <a
+                                href={`/blog/${member.slug}`}
+                                class="group relative w-16 h-24 overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
+                              >
+                                <img
+                                  src={member.data.heroImage || '/images/placeholder.jpg'}
+                                  alt={member.data.title}
+                                  class="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                                  loading="lazy"
+                                />
+                                <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/30 to-transparent opacity-60 group-hover:opacity-80 transition-opacity"></div>
+                                <div class="absolute bottom-0 left-0 right-0 p-1">
+                                  <span class="text-[10px] font-medium text-white text-center block truncate">
+                                    {member.data.title}
+                                  </span>
+                                </div>
+                              </a>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Episodes Section */}
+                {campaign.episodes.length > 0 && (
+                  <div>
+                    <h3 class="text-xl font-heading font-bold text-ink dark:text-ink-dark mb-4">
+                      Chapters ({campaign.episodes.length})
+                    </h3>
+                    <div class="space-y-2">
+                      {campaign.episodes.map((episode) => (
+                        <a
+                          href={`/blog/${episode.slug}`}
+                          class="group flex items-center gap-4 p-3 bg-parchment dark:bg-parchment-dark hover:bg-ink/5 dark:hover:bg-ink-dark/5 rounded-lg transition-colors"
+                        >
+                          {episode.data.episodeNumber !== undefined && (
+                            <span class="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-ink/10 dark:bg-ink-dark/10 rounded-full text-ink dark:text-ink-dark text-sm font-bold">
+                              {episode.data.episodeNumber}
+                            </span>
+                          )}
+                          <div class="flex-grow min-w-0">
+                            <h4 class="font-medium text-ink dark:text-ink-dark group-hover:text-ink/80 dark:group-hover:text-ink-dark/80 truncate">
+                              {episode.data.title}
+                            </h4>
+                          </div>
+                          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-ink/40 dark:text-ink-dark/40 group-hover:text-ink dark:group-hover:text-ink-dark transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                          </svg>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Empty State */}
+                {campaign.parties.length === 0 && campaign.episodes.length === 0 && (
+                  <p class="text-ink/60 dark:text-ink-dark/60 italic">
+                    This campaign is just getting started. Check back soon for characters and chapters!
+                  </p>
+                )}
+              </div>
+            </section>
+          ))}
+        </div>
+      )}
+
+      {/* Inactive Campaigns */}
+      {inactiveCampaigns.length > 0 && (
+        <div class="mt-16">
+          <h2 class="text-2xl font-heading font-bold text-ink dark:text-ink-dark mb-6">
+            Past Campaigns
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {inactiveCampaigns.map((campaign) => (
+              <div class="bg-ink/5 dark:bg-ink-dark/5 rounded-xl p-6">
+                <span class="text-sm text-ink/60 dark:text-ink-dark/60 mb-2 block">
+                  {campaign.game}
+                </span>
+                <h3 class="text-xl font-heading font-bold text-ink dark:text-ink-dark mb-2">
+                  {campaign.display}
+                </h3>
+                <p class="text-ink/70 dark:text-ink-dark/70 text-sm">
+                  {campaign.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* No Campaigns State */}
+      {campaigns.length === 0 && (
+        <div class="text-center py-16">
+          <p class="text-ink/60 dark:text-ink-dark/60 text-lg">
+            No campaigns yet. Adventures are coming soon!
+          </p>
+        </div>
+      )}
+    </ContentContainer>
+
+    <Footer />
+  </main>
+</BaseLayout>

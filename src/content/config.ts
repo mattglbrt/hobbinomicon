@@ -19,8 +19,14 @@ const blog = defineCollection({
     projectOrder: z.number().optional(),
     hideRelatedPosts: z.boolean().default(false),
     campaign: z.string().optional(),
+    // Party the character currently belongs to (for Dramatis Personae)
+    party: z.string().optional(),
     // Resource type for categorizing resource pages
     resourceType: z.enum(['hub', 'guide', 'article', 'checklist']).optional(),
+    // Campaign type for categorizing campaign pages (hub = overview, episode = individual session)
+    campaignType: z.enum(['hub', 'episode']).optional(),
+    // Episode/chapter number for ordering campaign episodes
+    episodeNumber: z.number().optional(),
   }),
 });
 

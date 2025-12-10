@@ -22,6 +22,13 @@ interface ProjectNav {
   projectSlug: string;
 }
 
+interface CampaignParty {
+  slug: string;
+  display: string;
+  description?: string;
+  members: CollectionEntry<'blog'>[];
+}
+
 interface Props {
   title: string;
   description: string;
@@ -36,10 +43,14 @@ interface Props {
   relatedPosts?: CollectionEntry<'blog'>[];
   projectNavigation?: ProjectNav | null;
   campaign?: string;
+  campaignType?: 'hub' | 'episode';
+  campaignEpisodes?: CollectionEntry<'blog'>[];
+  campaignParties?: CampaignParty[];
   slug: string;
 }
 
-const { title, description, pubDate, updatedDate, heroImage, heroImageAlt, category, tags, youtubeId, readingTime, relatedPosts = [], projectNavigation = null, campaign, slug } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, heroImageAlt, category, tags, youtubeId, readingTime, relatedPosts = [], projectNavigation = null, campaign, campaignType, campaignEpisodes = [], campaignParties = [], slug } = Astro.props;
+const isCampaignHub = campaignType === 'hub';
 
 const displayImage = getHeroImage(heroImage, youtubeId);
 const displayImageUrl = getHeroImageUrl(heroImage, youtubeId);
@@ -327,8 +338,96 @@ const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
             />
           )}
 
-          <!-- Related Posts -->
-          {relatedPosts.length > 0 && (
+          <!-- Campaign Hub: Parties Section -->
+          {isCampaignHub && campaignParties.length > 0 && (
+            <section class="mt-16 pt-8 border-t border-ink/10 dark:border-ink-dark/10">
+              <h2 class="text-2xl md:text-3xl font-heading font-bold text-ink dark:text-ink-dark mb-8">
+                Adventuring Parties
+              </h2>
+              <div class="space-y-12">
+                {campaignParties.map((party) => (
+                  <div>
+                    <div class="flex items-center justify-between mb-4">
+                      <h3 class="text-xl font-heading font-bold text-ink dark:text-ink-dark">
+                        {party.display}
+                      </h3>
+                      <a
+                        href={`/parties/${party.slug}`}
+                        class="text-sm font-medium text-ink/70 dark:text-ink-dark/70 hover:text-ink dark:hover:text-ink-dark transition-colors"
+                      >
+                        View Party →
+                      </a>
+                    </div>
+                    {party.description && (
+                      <p class="text-ink/70 dark:text-ink-dark/70 mb-6">
+                        {party.description}
+                      </p>
+                    )}
+                    <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                      {party.members.map((member) => (
+                        <a
+                          href={`/blog/${member.slug}`}
+                          class="group relative aspect-[2/3] overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
+                        >
+                          <img
+                            src={member.data.heroImage || '/images/placeholder.jpg'}
+                            alt={member.data.heroImageAlt || member.data.title}
+                            class="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                            loading="lazy"
+                          />
+                          <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
+                          <div class="absolute inset-0 flex flex-col items-center justify-end p-2">
+                            <h4 class="text-sm font-heading font-bold text-white text-center drop-shadow-lg">
+                              {member.data.title}
+                            </h4>
+                          </div>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          <!-- Campaign Hub: Episodes Section -->
+          {isCampaignHub && campaignEpisodes.length > 0 && (
+            <section class="mt-16 pt-8 border-t border-ink/10 dark:border-ink-dark/10">
+              <h2 class="text-2xl md:text-3xl font-heading font-bold text-ink dark:text-ink-dark mb-6">
+                Chapters
+              </h2>
+              <div class="space-y-4">
+                {campaignEpisodes.map((episode) => (
+                  <a
+                    href={`/blog/${episode.slug}`}
+                    class="group block p-4 bg-ink/5 dark:bg-ink-dark/5 hover:bg-ink/10 dark:hover:bg-ink-dark/10 rounded-lg transition-colors"
+                  >
+                    <div class="flex items-center gap-4">
+                      {episode.data.episodeNumber !== undefined && (
+                        <span class="flex-shrink-0 w-10 h-10 flex items-center justify-center bg-ink/10 dark:bg-ink-dark/10 rounded-full text-ink dark:text-ink-dark font-bold">
+                          {episode.data.episodeNumber}
+                        </span>
+                      )}
+                      <div class="flex-grow">
+                        <h3 class="font-heading font-bold text-ink dark:text-ink-dark group-hover:text-ink/80 dark:group-hover:text-ink-dark/80 transition-colors">
+                          {episode.data.title}
+                        </h3>
+                        <p class="text-sm text-ink/70 dark:text-ink-dark/70 line-clamp-1">
+                          {episode.data.description}
+                        </p>
+                      </div>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-ink/40 dark:text-ink-dark/40 group-hover:text-ink dark:group-hover:text-ink-dark transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </section>
+          )}
+
+          <!-- Related Posts (only for non-campaign-hub posts) -->
+          {!isCampaignHub && relatedPosts.length > 0 && (
             <RelatedPosts posts={relatedPosts} />
           )}
 

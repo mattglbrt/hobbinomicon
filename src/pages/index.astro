@@ -105,6 +105,12 @@ const characterPosts = publishedPosts
   })
   .slice(0, 9);
 
+// Get most recent Campaign Chronicles post for hero section
+const campaignChroniclesPosts = sortedPosts
+  .filter(post => post.data.category === 'Campaign Chronicles');
+const latestCampaignPost = campaignChroniclesPosts[0];
+const campaignHeroImage = latestCampaignPost ? getHeroImage(latestCampaignPost.data.heroImage, latestCampaignPost.data.youtubeId) : null;
+
 // Get the most recent project with its posts for the featured section
 const featuredProject = projectsWithLatestPost[0];
 const featuredProjectPosts = featuredProject
@@ -243,9 +249,24 @@ const heroImageUrl = getHeroImageUrl(latestPost?.data.heroImage, latestPost?.dat
       </ContentContainer>
     </section>
 
-    <!-- Characters Section (hidden for now)
+    <!-- Campaign Chronicles Section -->
+    {latestCampaignPost && campaignHeroImage && (
+      <HeroSection
+        slug={latestCampaignPost.slug}
+        title={latestCampaignPost.data.title}
+        description={latestCampaignPost.data.description}
+        heroImage={campaignHeroImage}
+        heroImageAlt={latestCampaignPost.data.heroImageAlt}
+        category={latestCampaignPost.data.category}
+        pubDate={latestCampaignPost.data.pubDate}
+        tags={latestCampaignPost.data.tags}
+        badge="Campaign Chronicles"
+        size="medium"
+      />
+    )}
+
+    <!-- Dramatis Personae Section -->
     <CharacterSlider characters={characterPosts} />
-    -->
 
     <!-- YouTube CTA Section -->
     <YouTubeCTA />

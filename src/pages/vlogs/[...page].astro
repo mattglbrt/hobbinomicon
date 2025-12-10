@@ -1,0 +1,176 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import ContentContainer from '../../components/ContentContainer.astro';
+import Pagination from '../../components/Pagination.astro';
+import Footer from '../../components/Footer.astro';
+import StructuredData from '../../components/StructuredData.astro';
+import { getPublishedPosts } from '../../utils/collections';
+import { getHeroImageUrl } from '../../utils/getHeroImage';
+import { getTagDisplay } from '../../utils/tags';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const allPosts = await getCollection('blog');
+  const vlogPosts = getPublishedPosts(allPosts).filter(post => post.data.category === 'Vlogs');
+
+  // 12 posts per page
+  return paginate(vlogPosts, { pageSize: 12 });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+
+// Build pagination URLs
+const baseUrl = '/vlogs';
+const prevUrl = page.url.prev;
+const nextUrl = page.url.next;
+
+// Get all unique tags from vlogs for filtering
+const allPosts = await getCollection('blog');
+const vlogPosts = getPublishedPosts(allPosts).filter(post => post.data.category === 'Vlogs');
+const allTags = [...new Set(vlogPosts.flatMap(post => post.data.tags))].sort();
+
+// Group common tags for quick filters
+const popularTags = ['painting', 'tutorial', 'trench-crusade', 'warmachine', 'airbrushing', 'terrain', '3d-printing'];
+const quickFilterTags = popularTags.filter(tag => allTags.includes(tag));
+---
+
+<BaseLayout title={page.currentPage === 1 ? "Vlogs - The Hobbinomicon" : `Vlogs - Page ${page.currentPage} - The Hobbinomicon`} description="Hobby vlogs covering miniature painting, wargaming, and creative projects">
+  <StructuredData
+    type="breadcrumb"
+    data={{
+      breadcrumbs: [
+        { name: 'Home', url: 'https://hobbinomicon.com/' },
+        { name: 'Vlogs', url: 'https://hobbinomicon.com/vlogs' },
+      ],
+    }}
+  />
+  <Header theme="light" />
+
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
+    <PageHeader
+      title="Vlogs"
+      description={page.currentPage === 1
+        ? "Daily hobby updates, tutorials, and behind-the-scenes content"
+        : `Page ${page.currentPage} of ${page.lastPage}`}
+      breadcrumbs={[
+        { label: "Vlogs", href: "/vlogs" }
+      ]}
+    />
+
+    <!-- Quick Filter Tags -->
+    {quickFilterTags.length > 0 && (
+      <ContentContainer class="py-4">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="text-sm text-ink/60 dark:text-ink-dark/60 mr-2">Quick filters:</span>
+          {quickFilterTags.map((tag) => (
+            <a
+              href={`/tags/${tag}`}
+              class="px-3 py-1.5 text-sm bg-ink/5 dark:bg-ink-dark/5 hover:bg-ink/10 dark:hover:bg-ink-dark/10 text-ink dark:text-ink-dark rounded-full transition-colors"
+            >
+              {getTagDisplay(tag)}
+            </a>
+          ))}
+        </div>
+      </ContentContainer>
+    )}
+
+    <!-- Videos Grid -->
+    <ContentContainer class="py-8">
+      <!-- Post Count -->
+      <p class="text-ink/70 dark:text-ink-dark/70 text-sm mb-8">
+        Showing {page.start + 1}-{page.end + 1} of {page.total} videos
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {page.data.map((post) => {
+          const imageUrl = getHeroImageUrl(post.data.heroImage, post.data.youtubeId);
+          const hasVideo = !!post.data.youtubeId;
+          return (
+            <a
+              href={`/blog/${post.slug}`}
+              class="group block bg-white dark:bg-ink-dark/20 rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300"
+            >
+              {/* Thumbnail with play button overlay */}
+              <div class="relative aspect-video overflow-hidden">
+                <img
+                  src={imageUrl}
+                  alt={post.data.heroImageAlt || post.data.title}
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
+                />
+                {hasVideo && (
+                  <div class="absolute inset-0 flex items-center justify-center bg-ink/20 group-hover:bg-ink/30 transition-colors">
+                    <div class="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                      <svg class="w-8 h-8 text-ink ml-1" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z"/>
+                      </svg>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Content */}
+              <div class="p-4">
+                <h2 class="font-heading font-bold text-ink dark:text-ink-dark group-hover:text-ink/80 dark:group-hover:text-ink-dark/80 transition-colors line-clamp-2 mb-2">
+                  {post.data.title}
+                </h2>
+                <p class="text-sm text-ink/60 dark:text-ink-dark/60 line-clamp-2 mb-3">
+                  {post.data.description}
+                </p>
+                <div class="flex flex-wrap gap-1">
+                  {post.data.tags.slice(0, 3).map((tag) => (
+                    <span class="text-xs px-2 py-0.5 bg-ink/5 dark:bg-ink-dark/10 text-ink/70 dark:text-ink-dark/70 rounded">
+                      {getTagDisplay(tag)}
+                    </span>
+                  ))}
+                  {post.data.tags.length > 3 && (
+                    <span class="text-xs px-2 py-0.5 text-ink/50 dark:text-ink-dark/50">
+                      +{post.data.tags.length - 3}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </a>
+          );
+        })}
+      </div>
+
+      <!-- Pagination -->
+      <Pagination
+        currentPage={page.currentPage}
+        totalPages={page.lastPage}
+        baseUrl={baseUrl}
+        prevUrl={prevUrl}
+        nextUrl={nextUrl}
+      />
+    </ContentContainer>
+
+    <!-- YouTube CTA -->
+    <ContentContainer class="pb-16">
+      <div class="bg-gradient-to-r from-red-600 to-red-700 rounded-2xl p-8 text-center">
+        <h2 class="text-2xl md:text-3xl font-heading font-bold text-white mb-4">
+          Subscribe for More Content
+        </h2>
+        <p class="text-white/90 mb-6 max-w-xl mx-auto">
+          New videos every day covering miniature painting, hobby tutorials, and wargaming content.
+        </p>
+        <a
+          href="https://www.youtube.com/@theHobbinomicon?sub_confirmation=1"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 px-6 py-3 bg-white text-red-600 font-bold rounded-lg hover:bg-white/90 transition-colors"
+        >
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+          </svg>
+          Subscribe on YouTube
+        </a>
+      </div>
+    </ContentContainer>
+
+    <Footer />
+  </main>
+</BaseLayout>

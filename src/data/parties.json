@@ -1,0 +1,16 @@
+{
+  "parties": {
+    "ruhar-expedition": {
+      "display": "The Ruhar Expedition",
+      "description": "A group drawn together by fate in the Forest of Ruhar, each with their own reasons for venturing into its depths.",
+      "campaign": "Dolmenwood",
+      "status": "active"
+    },
+    "the-last-watch": {
+      "display": "The Last Watch",
+      "description": "Ancient elven hunters tracking cosmic threats across the world.",
+      "campaign": "Crown and Skull",
+      "status": "active"
+    }
+  }
+}

@@ -1,0 +1,149 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import Footer from '../../components/Footer.astro';
+import StructuredData from '../../components/StructuredData.astro';
+import ContentContainer from '../../components/ContentContainer.astro';
+import { getAllParties, getPartyDisplay, getPartyDescription, getPartyCampaign } from '../../utils/parties';
+
+const allPosts = await getCollection('blog');
+const publishedPosts = allPosts.filter(p => !p.data.draft);
+
+// Get all characters (Dramatis Personae)
+const allCharacters = publishedPosts.filter(p => p.data.category === 'Dramatis Personae');
+
+// Group characters by party
+const parties = getAllParties().map(partySlug => ({
+  slug: partySlug,
+  display: getPartyDisplay(partySlug),
+  description: getPartyDescription(partySlug),
+  campaign: getPartyCampaign(partySlug),
+  members: allCharacters.filter(c => c.data.party === partySlug),
+})).filter(p => p.members.length > 0);
+
+// Get unassigned characters
+const unassignedCharacters = allCharacters.filter(c => !c.data.party);
+
+const totalCharacters = allCharacters.length;
+---
+
+<BaseLayout title="Characters - The Hobbinomicon" description="Meet the heroes, villains, and everyone in between from our tabletop RPG campaigns">
+  <StructuredData
+    type="breadcrumb"
+    data={{
+      breadcrumbs: [
+        { name: 'Home', url: 'https://hobbinomicon.com/' },
+        { name: 'Characters', url: 'https://hobbinomicon.com/characters' },
+      ],
+    }}
+  />
+  <Header theme="light" />
+
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
+    <PageHeader
+      title="Dramatis Personae"
+      description={`${totalCharacters} characters from our campaigns`}
+      breadcrumbs={[
+        { label: "Characters", href: "/characters" }
+      ]}
+    />
+
+    <ContentContainer class="py-16">
+      {parties.length > 0 && (
+        <div class="space-y-16">
+          {parties.map((party) => (
+            <section>
+              <div class="flex flex-wrap items-center justify-between gap-4 mb-2">
+                <h2 class="text-2xl md:text-3xl font-heading font-bold text-ink dark:text-ink-dark">
+                  {party.display}
+                </h2>
+                <div class="flex items-center gap-3">
+                  {party.campaign && (
+                    <span class="text-sm text-ink/60 dark:text-ink-dark/60">
+                      {party.campaign}
+                    </span>
+                  )}
+                  <a
+                    href={`/parties/${party.slug}`}
+                    class="text-sm font-medium text-ink/70 dark:text-ink-dark/70 hover:text-ink dark:hover:text-ink-dark transition-colors"
+                  >
+                    View Party →
+                  </a>
+                </div>
+              </div>
+              {party.description && (
+                <p class="text-ink/70 dark:text-ink-dark/70 text-lg mb-8 max-w-3xl">
+                  {party.description}
+                </p>
+              )}
+              <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                {party.members.map((character) => (
+                  <a
+                    href={`/blog/${character.slug}`}
+                    class="group relative aspect-[2/3] overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
+                  >
+                    <img
+                      src={character.data.heroImage || '/images/placeholder.jpg'}
+                      alt={character.data.heroImageAlt || character.data.title}
+                      class="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                    />
+                    <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
+                    <div class="absolute inset-0 flex flex-col items-center justify-end p-4">
+                      <h3 class="text-lg font-heading font-bold text-white text-center drop-shadow-lg">
+                        {character.data.title}
+                      </h3>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+      )}
+
+      {/* Unassigned Characters */}
+      {unassignedCharacters.length > 0 && (
+        <section class={parties.length > 0 ? 'mt-16' : ''}>
+          <h2 class="text-2xl md:text-3xl font-heading font-bold text-ink dark:text-ink-dark mb-8">
+            Other Characters
+          </h2>
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+            {unassignedCharacters.map((character) => (
+              <a
+                href={`/blog/${character.slug}`}
+                class="group relative aspect-[2/3] overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
+              >
+                <img
+                  src={character.data.heroImage || '/images/placeholder.jpg'}
+                  alt={character.data.heroImageAlt || character.data.title}
+                  class="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
+                <div class="absolute inset-0 flex flex-col items-center justify-end p-4">
+                  <h3 class="text-lg font-heading font-bold text-white text-center drop-shadow-lg">
+                    {character.data.title}
+                  </h3>
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Empty State */}
+      {totalCharacters === 0 && (
+        <div class="text-center py-16">
+          <p class="text-ink/60 dark:text-ink-dark/60 text-lg">
+            No characters yet. Check back as our campaigns unfold!
+          </p>
+        </div>
+      )}
+    </ContentContainer>
+
+    <Footer />
+  </main>
+</BaseLayout>

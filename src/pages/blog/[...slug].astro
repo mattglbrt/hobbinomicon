@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import BlogLayout from '../../layouts/BlogLayout.astro';
 import { calculateReadingTime } from '../../utils/readingTime';
+import { getPartyDisplay, getPartyDescription, getPartiesByCampaign } from '../../utils/parties';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -19,9 +20,32 @@ const readingTime = calculateReadingTime(post.body);
 
 // Get all posts for related posts and project navigation
 const allPosts = await getCollection('blog');
+const publishedPosts = allPosts.filter(p => !p.data.draft);
 
-// Get related posts (same tags, excluding current post) unless hideRelatedPosts is set
-const relatedPosts = post.data.hideRelatedPosts ? [] : allPosts
+// Check if this is a campaign hub page
+const isCampaignHub = post.data.campaignType === 'hub' && post.data.campaign;
+
+// Get campaign episodes if this is a campaign hub
+const campaignEpisodes = isCampaignHub
+  ? publishedPosts
+      .filter(p => p.data.campaign === post.data.campaign && p.data.campaignType === 'episode')
+      .sort((a, b) => (a.data.episodeNumber || 0) - (b.data.episodeNumber || 0))
+  : [];
+
+// Get party members if this is a campaign hub
+const campaignParties = isCampaignHub
+  ? getPartiesByCampaign(post.data.campaign).map(partySlug => ({
+      slug: partySlug,
+      display: getPartyDisplay(partySlug),
+      description: getPartyDescription(partySlug),
+      members: publishedPosts.filter(
+        p => p.data.category === 'Dramatis Personae' && p.data.party === partySlug
+      ),
+    })).filter(p => p.members.length > 0)
+  : [];
+
+// Get related posts (same tags, excluding current post) unless hideRelatedPosts is set or it's a campaign hub
+const relatedPosts = (post.data.hideRelatedPosts || isCampaignHub) ? [] : allPosts
   .filter((p) =>
     p.slug !== post.slug &&
     !p.data.draft &&
@@ -59,6 +83,6 @@ if (post.data.project) {
 }
 ---
 
-<BlogLayout {...post.data} slug={post.slug} readingTime={readingTime} relatedPosts={relatedPosts} projectNavigation={projectNavigation}>
+<BlogLayout {...post.data} slug={post.slug} readingTime={readingTime} relatedPosts={relatedPosts} projectNavigation={projectNavigation} campaignEpisodes={campaignEpisodes} campaignParties={campaignParties}>
   <Content />
 </BlogLayout>
