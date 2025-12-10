@@ -13,8 +13,8 @@ export default {
         'ink-dark': '#F4ECD8',
       },
       fontFamily: {
-        'serif': ['Besley', 'Georgia', 'Garamond', 'serif'],
-        'heading': ['"IM Fell DW Pica"', 'Georgia', 'serif'],
+        'serif': ['Besley', '"Besley Fallback"', 'Georgia', 'Garamond', 'serif'],
+        'heading': ['"IM Fell DW Pica"', '"IM Fell Fallback"', 'Georgia', 'serif'],
       },
     },
   },

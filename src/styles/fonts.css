@@ -1,11 +1,24 @@
 /* Self-hosted fonts for better Core Web Vitals */
 
-/* Besley - Body font (using optional to prevent CLS from font swap) */
+/*
+ * Fallback font with adjusted metrics to match Besley
+ * This minimizes CLS when font-display: swap triggers
+ */
+@font-face {
+  font-family: 'Besley Fallback';
+  src: local('Georgia');
+  size-adjust: 105%;
+  ascent-override: 95%;
+  descent-override: 22%;
+  line-gap-override: 0%;
+}
+
+/* Besley - Body font */
 @font-face {
   font-family: 'Besley';
   font-style: normal;
   font-weight: 400;
-  font-display: optional;
+  font-display: swap;
   src: url('/fonts/besley-regular.woff2') format('woff2');
 }
 
@@ -13,7 +26,7 @@
   font-family: 'Besley';
   font-style: normal;
   font-weight: 700;
-  font-display: optional;
+  font-display: swap;
   src: url('/fonts/besley-regular.woff2') format('woff2');
 }
 
@@ -21,7 +34,7 @@
   font-family: 'Besley';
   font-style: italic;
   font-weight: 400;
-  font-display: optional;
+  font-display: swap;
   src: url('/fonts/besley-italic.woff2') format('woff2');
 }
 
@@ -29,8 +42,20 @@
   font-family: 'Besley';
   font-style: italic;
   font-weight: 700;
-  font-display: optional;
+  font-display: swap;
   src: url('/fonts/besley-italic.woff2') format('woff2');
+}
+
+/*
+ * Fallback font with adjusted metrics to match IM Fell DW Pica
+ */
+@font-face {
+  font-family: 'IM Fell Fallback';
+  src: local('Georgia');
+  size-adjust: 108%;
+  ascent-override: 90%;
+  descent-override: 25%;
+  line-gap-override: 0%;
 }
 
 /* IM Fell DW Pica - Heading font */
@@ -38,7 +63,7 @@
   font-family: 'IM Fell DW Pica';
   font-style: normal;
   font-weight: 400;
-  font-display: optional;
+  font-display: swap;
   src: url('/fonts/imfell-regular.woff2') format('woff2');
 }
 
@@ -46,6 +71,6 @@
   font-family: 'IM Fell DW Pica';
   font-style: italic;
   font-weight: 400;
-  font-display: optional;
+  font-display: swap;
   src: url('/fonts/imfell-italic.woff2') format('woff2');
 }
