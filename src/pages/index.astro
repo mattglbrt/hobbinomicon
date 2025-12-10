@@ -8,8 +8,13 @@ import FeaturedProjectSection from '../components/FeaturedProjectSection.astro';
 import CharacterSlider from '../components/CharacterSlider.astro';
 import YouTubeCTA from '../components/YouTubeCTA.astro';
 import Footer from '../components/Footer.astro';
+import ContentContainer from '../components/ContentContainer.astro';
+import PostCard from '../components/PostCard.astro';
+import ResourceThumbnail from '../components/ResourceThumbnail.astro';
+import ViewAllLink from '../components/ViewAllLink.astro';
 import { getHeroImage, getHeroImageUrl } from '../utils/getHeroImage';
 import { getPublishedPosts, sortByDate } from '../utils/collections';
+import { getTagDisplay } from '../utils/tags';
 
 // Get all blog posts and sort by date
 const allPosts = await getCollection('blog');
@@ -20,25 +25,16 @@ const sortedPosts = publishedPosts;
 const featuredPosts = sortedPosts.filter(post => post.data.featured);
 const latestPost = featuredPosts[0] || sortedPosts[0];
 
-// Define pinned resource slugs (in order of priority)
-const pinnedResourceSlugs = [
-  'resources/trench-crusade-resources',
-  'resources/warmachine-resources'
-];
-
-// Get all resource posts
+// Get all resource posts and separate hubs from individual resources
 const allResourcePosts = sortedPosts.filter(post => post.data.category === 'Resources');
 
-// Separate pinned posts from the rest
-const pinnedPosts = pinnedResourceSlugs
-  .map(slug => allResourcePosts.find(post => post.slug === slug))
-  .filter(Boolean);
+// Hub pages (resourceType: "hub") - these get full cards
+const resourceHubs = allResourcePosts.filter(post => post.data.resourceType === 'hub');
 
-const unpinnedResourcePosts = allResourcePosts
-  .filter(post => !pinnedResourceSlugs.includes(post.slug));
-
-// Combine: pinned first, then most recent unpinned posts
-const resourcePosts = [...pinnedPosts, ...unpinnedResourcePosts].slice(0, 6);
+// Individual resources (guides, articles, checklists) - these get thumbnails
+const individualResources = allResourcePosts
+  .filter(post => post.data.resourceType && post.data.resourceType !== 'hub')
+  .slice(0, 6);
 
 // Get all projects and their latest posts
 const allProjects = await getCollection('projects');
@@ -67,14 +63,37 @@ const projectsWithLatestPost = publishedProjects.map(project => {
 // Get recent posts excluding hero, resources, and featured project posts
 const excludedSlugs = new Set([
   latestPost.slug,
-  ...resourcePosts.map(p => p.slug),
+  ...resourceHubs.map(p => p.slug),
+  ...individualResources.map(p => p.slug),
   ...projectsWithLatestPost.map(p => p.latestPost.slug)
 ]);
 
-// Get recent vlog posts (posts with YouTube videos)
+// Get recent vlog posts (posts with YouTube videos) - only 3 for homepage
 const recentVlogs = sortedPosts
   .filter(post => !excludedSlugs.has(post.slug) && post.data.youtubeId)
+  .slice(0, 3);
+
+// Painting technique tags to filter by
+const paintingTags = ['painting', 'glazing', 'dry-brushing', 'airbrushing', 'contrast-paints', 'zenithal', 'blending', 'washes', 'nmm', 'edge-highlighting', 'preshading', 'speed-painting'];
+
+// Get painting tutorials - posts with painting-related tags
+const paintingTutorials = sortedPosts
+  .filter(post => !excludedSlugs.has(post.slug) &&
+    post.data.tags?.some(tag => paintingTags.includes(tag)))
   .slice(0, 6);
+
+// Hobby tags to filter by
+const hobbyTags = ['building', 'model-prep', '3d-printing', 'terrain', 'basing', 'priming', 'resin-casting', 'kitbashing', 'magnetizing'];
+
+// Get hobby posts - posts with hobby-related tags
+const hobbyPosts = sortedPosts
+  .filter(post => !excludedSlugs.has(post.slug) &&
+    !paintingTutorials.some(p => p.slug === post.slug) &&
+    post.data.tags?.some(tag => hobbyTags.includes(tag)))
+  .slice(0, 6);
+
+// Game system tags for the games section
+const gameSystemTags = ['warmachine', 'warhammer', 'trench-crusade', 'mage-knight', 'crown-and-skull', 'necromunda', 'dolmenwood', 'motley-crews'];
 
 // Get character posts sorted by most recently updated
 const characterPosts = publishedPosts
@@ -120,11 +139,37 @@ const heroImageUrl = getHeroImageUrl(latestPost?.data.heroImage, latestPost?.dat
     )}
 
     <!-- Resource Posts Section -->
-    <PostGridSection
-      title="Resources"
-      viewAllLink="/categories/resources"
-      posts={resourcePosts}
-    />
+    {(resourceHubs.length > 0 || individualResources.length > 0) && (
+      <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24">
+        <ContentContainer>
+          <div class="flex items-center justify-between mb-12">
+            <h2 class="text-4xl md:text-5xl font-heading font-bold text-ink dark:text-ink-dark">Resources</h2>
+            <ViewAllLink href="/categories/resources">View All →</ViewAllLink>
+          </div>
+
+          {/* Resource Hub Cards */}
+          {resourceHubs.length > 0 && (
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+              {resourceHubs.map((post) => (
+                <PostCard post={post} />
+              ))}
+            </div>
+          )}
+
+          {/* Individual Resource Thumbnails */}
+          {individualResources.length > 0 && (
+            <div>
+              <h3 class="text-xl font-heading font-semibold text-ink dark:text-ink-dark mb-6">Recent Guides & Articles</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {individualResources.map((post) => (
+                  <ResourceThumbnail post={post} />
+                ))}
+              </div>
+            </div>
+          )}
+        </ContentContainer>
+      </section>
+    )}
 
     <!-- Featured Project Section -->
     {featuredProject && featuredProjectPosts.length > 0 && (
@@ -138,9 +183,65 @@ const heroImageUrl = getHeroImageUrl(latestPost?.data.heroImage, latestPost?.dat
     <!-- Recent Vlogs Section -->
     <PostGridSection
       title="Recent Vlogs"
-      viewAllLink="/blog"
+      viewAllLink="/categories/vlogs"
       posts={recentVlogs}
     />
+
+    <!-- Painting Tutorials Section -->
+    {paintingTutorials.length > 0 && (
+      <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24">
+        <ContentContainer>
+          <div class="flex items-center justify-between mb-12">
+            <h2 class="text-4xl md:text-5xl font-heading font-bold text-ink dark:text-ink-dark">Painting Tutorials</h2>
+            <ViewAllLink href="/tags/painting">View All →</ViewAllLink>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {paintingTutorials.map((post) => (
+              <ResourceThumbnail post={post} />
+            ))}
+          </div>
+        </ContentContainer>
+      </section>
+    )}
+
+    <!-- Hobby Section -->
+    {hobbyPosts.length > 0 && (
+      <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24">
+        <ContentContainer>
+          <div class="flex items-center justify-between mb-12">
+            <h2 class="text-4xl md:text-5xl font-heading font-bold text-ink dark:text-ink-dark">Hobby</h2>
+            <ViewAllLink href="/tags/building">View All →</ViewAllLink>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {hobbyPosts.map((post) => (
+              <ResourceThumbnail post={post} />
+            ))}
+          </div>
+        </ContentContainer>
+      </section>
+    )}
+
+    <!-- Games Section -->
+    <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24">
+      <ContentContainer>
+        <div class="flex items-center justify-between mb-12">
+          <h2 class="text-4xl md:text-5xl font-heading font-bold text-ink dark:text-ink-dark">Games</h2>
+          <ViewAllLink href="/tags">Browse All Tags →</ViewAllLink>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {gameSystemTags.map((tag) => (
+            <a
+              href={`/tags/${tag}`}
+              class="group block p-6 bg-ink/5 dark:bg-ink-dark/5 rounded-xl border border-ink/10 dark:border-ink-dark/10 hover:bg-ink/10 dark:hover:bg-ink-dark/10 hover:border-ink/20 dark:hover:border-ink-dark/20 transition-all"
+            >
+              <span class="text-lg font-heading font-semibold text-ink dark:text-ink-dark group-hover:underline underline-offset-2">
+                {getTagDisplay(tag)}
+              </span>
+            </a>
+          ))}
+        </div>
+      </ContentContainer>
+    </section>
 
     <!-- Characters Section (hidden for now)
     <CharacterSlider characters={characterPosts} />

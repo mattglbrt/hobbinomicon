@@ -1,0 +1,106 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { getHeroImage, isImageMetadata } from '../utils/getHeroImage';
+import { getYouTubeFallbackHandler } from '../utils/youtubeImageFallback';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+  eager?: boolean;
+}
+
+const { post, eager = false } = Astro.props;
+
+const { slug, data } = post;
+const { title, description, heroImage, heroImageAlt, youtubeId } = data;
+
+const displayImage = getHeroImage(heroImage, youtubeId);
+const isOptimizedImage = isImageMetadata(displayImage);
+const isRemoteImage = !isOptimizedImage && typeof displayImage === 'string' && displayImage.startsWith('http');
+---
+
+<style>
+  .image-wrapper img {
+    animation: fadeIn 0.3s ease-in;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .image-loading {
+    backdrop-filter: blur(10px);
+    background: linear-gradient(to bottom, #e5d5c1, #d4c4b0);
+    transition: opacity 0.3s ease-out;
+  }
+
+  .image-loading.loaded {
+    opacity: 0;
+    pointer-events: none;
+  }
+</style>
+
+<article class="group flex gap-4">
+  <a href={`/blog/${slug}`} class="shrink-0 w-24 h-24 md:w-32 md:h-32">
+    <div class="relative overflow-hidden rounded-lg w-full h-full image-wrapper">
+      <div class="absolute inset-0 image-loading" data-placeholder></div>
+      {isOptimizedImage ? (
+        <Image
+          src={displayImage}
+          alt={heroImageAlt || title}
+          width={256}
+          height={256}
+          class="w-full h-full object-cover img-hover"
+          loading={eager ? 'eager' : 'lazy'}
+          decoding="async"
+          format="webp"
+          quality={75}
+          widths={[96, 128, 256]}
+          sizes="(max-width: 768px) 96px, 128px"
+          onload="this.closest('.image-wrapper').querySelector('[data-placeholder]').classList.add('loaded')"
+        />
+      ) : isRemoteImage ? (
+        <img
+          src={displayImage}
+          alt={heroImageAlt || title}
+          class="w-full h-full object-cover img-hover"
+          loading={eager ? 'eager' : 'lazy'}
+          decoding="async"
+          width="256"
+          height="256"
+          data-youtube-id={youtubeId}
+          onerror={getYouTubeFallbackHandler('id')}
+          onload="this.closest('.image-wrapper').querySelector('[data-placeholder]').classList.add('loaded')"
+        />
+      ) : (
+        <Image
+          src={displayImage}
+          alt={heroImageAlt || title}
+          width={256}
+          height={256}
+          class="w-full h-full object-cover img-hover"
+          loading={eager ? 'eager' : 'lazy'}
+          decoding="async"
+          format="webp"
+          quality={75}
+          widths={[96, 128, 256]}
+          sizes="(max-width: 768px) 96px, 128px"
+          onload="this.closest('.image-wrapper').querySelector('[data-placeholder]').classList.add('loaded')"
+        />
+      )}
+      <div class="absolute inset-0 bg-gradient-to-t from-ink/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+    </div>
+  </a>
+
+  <div class="flex-1 min-w-0">
+    <a href={`/blog/${slug}`} class="block">
+      <h3 class="text-lg font-heading font-bold text-ink dark:text-ink-dark mb-1 group-hover:underline underline-offset-2 transition-all line-clamp-2">
+        {title}
+      </h3>
+      <p class="text-sm text-ink/70 dark:text-ink-dark/70 line-clamp-2">
+        {description}
+      </p>
+    </a>
+  </div>
+</article>
