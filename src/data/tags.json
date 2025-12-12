@@ -325,6 +325,56 @@
       "display": "Buying & Selling",
       "description": "Tips and content about buying, selling, and trading miniatures.",
       "category": "content-type"
+    },
+    "tutorial": {
+      "display": "Tutorial",
+      "description": "Step-by-step guides and instructional content for painting and hobbying.",
+      "category": "content-type"
+    },
+    "vlog": {
+      "display": "Vlog",
+      "description": "Video blog content covering hobby progress, thoughts, and updates.",
+      "category": "content-type"
+    },
+    "resources": {
+      "display": "Resources",
+      "description": "Helpful resources, guides, and reference materials for hobbyists.",
+      "category": "content-type"
+    },
+    "campaign": {
+      "display": "Campaign",
+      "description": "Content related to ongoing tabletop RPG campaigns.",
+      "category": "content-type"
+    },
+    "rpg": {
+      "display": "RPG",
+      "description": "Tabletop role-playing game content and related topics.",
+      "category": "game-system"
+    },
+    "wargaming": {
+      "display": "Wargaming",
+      "description": "General tabletop wargaming content, strategy, and discussion.",
+      "category": "game-system"
+    },
+    "strategy": {
+      "display": "Strategy",
+      "description": "Tactical and strategic content for tabletop gaming.",
+      "category": "content-type"
+    },
+    "old-school-essentials": {
+      "display": "Old School Essentials",
+      "description": "Content about Old School Essentials, a streamlined OSR RPG system.",
+      "category": "game-system"
+    },
+    "dungeons-and-dragons": {
+      "display": "Dungeons and Dragons",
+      "description": "Content related to D&D and fantasy RPG gaming.",
+      "category": "game-system"
+    },
+    "fractured-isles": {
+      "display": "Fractured Isles",
+      "description": "Content set in the Fractured Isles homebrew campaign setting.",
+      "category": "game-system"
     }
   }
 }
