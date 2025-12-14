@@ -1,0 +1,137 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import HeroHeader from '../components/HeroHeader.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<BaseLayout
+  title="Buy / Sell / Trade - The Hobbinomicon"
+  description="My current buy, sell, and trade list for miniatures, wargaming supplies, and hobby items."
+>
+  <Header theme="light" />
+
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
+    <HeroHeader
+      title="Buy / Sell / Trade"
+      subtitle="My current hobby wishlist and items available."
+      backLink={{ href: "/about", text: "Back to About" }}
+    />
+
+    <!-- Main Content -->
+    <article class="max-w-4xl mx-auto px-6 py-16 md:py-24">
+      <!-- Want List Section -->
+      <section class="mb-16">
+        <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mb-8">
+          Want List
+        </h2>
+
+        <!-- Warmachine -->
+        <div class="mb-12">
+          <h3 class="text-2xl md:text-3xl font-heading font-bold text-ink dark:text-ink-dark mb-6 pb-2 border-b border-ink/20 dark:border-ink-dark/20">
+            Warmachine
+          </h3>
+
+          <!-- Khador 5th Division -->
+          <div class="mb-8">
+            <h4 class="text-xl font-heading font-semibold text-ink dark:text-ink-dark mb-4">
+              Khador 5th Division
+            </h4>
+            <ul class="space-y-2 text-ink/80 dark:text-ink-dark/80">
+              <li class="flex items-center gap-3">
+                <span class="w-5 h-5 border-2 border-ink/40 dark:border-ink-dark/40 rounded flex-shrink-0"></span>
+                <span>2x Extreme Juggernaut</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="w-5 h-5 border-2 border-ink/40 dark:border-ink-dark/40 rounded flex-shrink-0"></span>
+                <span>Victor</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="w-5 h-5 border-2 border-ink/40 dark:border-ink-dark/40 rounded flex-shrink-0"></span>
+                <span>Kovnik Apprentice Kratikoff</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="w-5 h-5 border-2 border-ink/40 dark:border-ink-dark/40 rounded flex-shrink-0"></span>
+                <span>Winter Guard Artillery Kapitan</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="w-5 h-5 border-2 border-ink/40 dark:border-ink-dark/40 rounded flex-shrink-0"></span>
+                <span>Assault Kommandos</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="w-5 h-5 border-2 border-ink/40 dark:border-ink-dark/40 rounded flex-shrink-0"></span>
+                <span>2x Kossite Woodsman (10 Total)</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="w-5 h-5 border-2 border-ink/40 dark:border-ink-dark/40 rounded flex-shrink-0"></span>
+                <span>4x Winterguard Infantry (20 Total)</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="w-5 h-5 border-2 border-ink/40 dark:border-ink-dark/40 rounded flex-shrink-0"></span>
+                <span>4x Winter Guard Rocketeers (12 Total)</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="w-5 h-5 border-2 border-ink/40 dark:border-ink-dark/40 rounded flex-shrink-0"></span>
+                <span>4x Winter Guard Infantry Officer & Standard</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Khador Armored Korps -->
+          <div class="mb-8">
+            <h4 class="text-xl font-heading font-semibold text-ink dark:text-ink-dark mb-4">
+              Khador Armored Korps
+            </h4>
+            <ul class="space-y-2 text-ink/80 dark:text-ink-dark/80">
+              <li class="flex items-center gap-3">
+                <span class="w-5 h-5 border-2 border-ink/40 dark:border-ink-dark/40 rounded flex-shrink-0"></span>
+                <span>Kommandant Sorscha Kratikoff</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="w-5 h-5 border-2 border-ink/40 dark:border-ink-dark/40 rounded flex-shrink-0"></span>
+                <span>Bulkhead</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Shadows of The Retribution -->
+          <div class="mb-8">
+            <h4 class="text-xl font-heading font-semibold text-ink dark:text-ink-dark mb-4">
+              Shadows of The Retribution
+            </h4>
+            <ul class="space-y-2 text-ink/80 dark:text-ink-dark/80">
+              <li class="flex items-center gap-3">
+                <span class="w-5 h-5 border-2 border-ink/40 dark:border-ink-dark/40 rounded flex-shrink-0"></span>
+                <span>2x House Ellowuyr Wardens (6 Total)</span>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+
+        <!-- Chainmail -->
+        <div class="mb-12">
+          <h3 class="text-2xl md:text-3xl font-heading font-bold text-ink dark:text-ink-dark mb-6 pb-2 border-b border-ink/20 dark:border-ink-dark/20">
+            Chainmail
+          </h3>
+          <p class="text-ink/80 dark:text-ink-dark/80">
+            Help me finish my Chainmail collection by selling or trading me your minis. Check out my <a href="/blog/resources/chainmail-miniatures-checklist" class="underline hover:text-ink/60 dark:hover:text-ink-dark/60 transition-colors">Chainmail Miniatures Checklist</a> to see what I'm looking for.
+          </p>
+        </div>
+
+        <!-- Mage Knight Metals -->
+        <div class="mb-12">
+          <h3 class="text-2xl md:text-3xl font-heading font-bold text-ink dark:text-ink-dark mb-6 pb-2 border-b border-ink/20 dark:border-ink-dark/20">
+            Mage Knight Metals
+          </h3>
+          <p class="text-ink/80 dark:text-ink-dark/80">
+            Help me finish my Mage Knight metals collection by selling or trading me your minis. Check out my <a href="/blog/resources/mageknight-metals-checklist" class="underline hover:text-ink/60 dark:hover:text-ink-dark/60 transition-colors">Mage Knight Metals Checklist</a> to see what I'm looking for.
+          </p>
+        </div>
+
+      </section>
+    </article>
+
+    <Footer />
+  </main>
+</BaseLayout>
