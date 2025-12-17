@@ -105,6 +105,11 @@ const characterPosts = publishedPosts
   })
   .slice(0, 9);
 
+// Get article posts (written blog posts without videos)
+const articlePosts = sortedPosts
+  .filter(post => post.data.category === 'Articles')
+  .slice(0, 6);
+
 // Get most recent Campaign Chronicles post for hero section
 const campaignChroniclesPosts = sortedPosts
   .filter(post => post.data.category === 'Campaign Chronicles');
@@ -192,6 +197,23 @@ const heroImageUrl = getHeroImageUrl(latestPost?.data.heroImage, latestPost?.dat
       viewAllLink="/categories/vlogs"
       posts={recentVlogs}
     />
+
+    <!-- Articles Section -->
+    {articlePosts.length > 0 && (
+      <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24">
+        <ContentContainer>
+          <div class="flex items-center justify-between mb-12">
+            <h2 class="text-4xl md:text-5xl font-heading font-bold text-ink dark:text-ink-dark">Articles</h2>
+            <ViewAllLink href="/categories/articles">View All →</ViewAllLink>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {articlePosts.map((post) => (
+              <ResourceThumbnail post={post} />
+            ))}
+          </div>
+        </ContentContainer>
+      </section>
+    )}
 
     <!-- Painting Tutorials Section -->
     {paintingTutorials.length > 0 && (
