@@ -133,7 +133,7 @@ const heroImageUrl = getHeroImageUrl(latestPost?.data.heroImage, latestPost?.dat
   <Header theme="dark" />
 
   <main id="main-content" class="min-h-screen">
-    <!-- Latest Post - Full Screen Hero -->
+    <!-- Featured Post - Full Screen Hero -->
     {latestPost && (
       <HeroSection
         slug={latestPost.slug}
@@ -144,7 +144,7 @@ const heroImageUrl = getHeroImageUrl(latestPost?.data.heroImage, latestPost?.dat
         category={latestPost.data.category}
         pubDate={latestPost.data.pubDate}
         tags={latestPost.data.tags}
-        badge="Latest Post"
+        badge="Featured Post"
         size="large"
       />
     )}
