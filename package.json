@@ -9,7 +9,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "download-heroes": "node scripts/download-hero-images.js"
+    "download-heroes": "node scripts/download-hero-images.js",
+    "fetch-comments": "node scripts/fetch-youtube-comments.js"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.11",
