@@ -68,10 +68,10 @@ const excludedSlugs = new Set([
   ...projectsWithLatestPost.map(p => p.latestPost.slug)
 ]);
 
-// Get Kingdom Death posts
+// Get Kingdom Death posts - latest episode for featured section
 const kingdomDeathPosts = sortedPosts
-  .filter(post => post.data.tags?.includes('kingdom-death'))
-  .slice(0, 4);
+  .filter(post => post.data.tags?.includes('kdm-hesychia') && post.data.youtubeId);
+const latestKDMPost = kingdomDeathPosts[0];
 
 // Get recent vlog posts (posts with YouTube videos) - only 3 for homepage, excluding Kingdom Death
 const recentVlogs = sortedPosts
