@@ -62,6 +62,16 @@
       "description": "Content about Dolmenwood, a fairy-tale inspired OSR setting with dark folklore themes.",
       "category": "game-system"
     },
+    "kingdom-death": {
+      "display": "Kingdom Death",
+      "description": "Content about Kingdom Death: Monster, the cooperative survival horror board game.",
+      "category": "game-system"
+    },
+    "kdm-hesychia": {
+      "display": "Hesychía Campaign",
+      "description": "Episodes from the Hesychía settlement campaign in Kingdom Death: Monster.",
+      "category": "faction"
+    },
 
     "menoth": {
       "display": "Menoth",

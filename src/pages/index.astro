@@ -68,9 +68,14 @@ const excludedSlugs = new Set([
   ...projectsWithLatestPost.map(p => p.latestPost.slug)
 ]);
 
-// Get recent vlog posts (posts with YouTube videos) - only 3 for homepage
+// Get Kingdom Death posts
+const kingdomDeathPosts = sortedPosts
+  .filter(post => post.data.tags?.includes('kingdom-death'))
+  .slice(0, 4);
+
+// Get recent vlog posts (posts with YouTube videos) - only 3 for homepage, excluding Kingdom Death
 const recentVlogs = sortedPosts
-  .filter(post => !excludedSlugs.has(post.slug) && post.data.youtubeId)
+  .filter(post => !excludedSlugs.has(post.slug) && post.data.youtubeId && !post.data.tags?.includes('kingdom-death'))
   .slice(0, 3);
 
 // Painting technique tags to filter by
@@ -93,7 +98,7 @@ const hobbyPosts = sortedPosts
   .slice(0, 6);
 
 // Game system tags for the games section
-const gameSystemTags = ['warmachine', 'warhammer', 'trench-crusade', 'mage-knight', 'crown-and-skull', 'necromunda', 'dolmenwood', 'motley-crews'];
+const gameSystemTags = ['warmachine', 'warhammer', 'trench-crusade', 'mage-knight', 'crown-and-skull', 'necromunda', 'dolmenwood', 'motley-crews', 'kingdom-death'];
 
 // Get character posts sorted by most recently updated
 const characterPosts = publishedPosts
@@ -197,6 +202,23 @@ const heroImageUrl = getHeroImageUrl(latestPost?.data.heroImage, latestPost?.dat
       viewAllLink="/categories/vlogs"
       posts={recentVlogs}
     />
+
+    <!-- Kingdom Death Section -->
+    {kingdomDeathPosts.length > 0 && (
+      <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24">
+        <ContentContainer>
+          <div class="flex items-center justify-between mb-12">
+            <h2 class="text-4xl md:text-5xl font-heading font-bold text-ink dark:text-ink-dark">Kingdom Death</h2>
+            <ViewAllLink href="/tags/kingdom-death">View All →</ViewAllLink>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {kingdomDeathPosts.map((post) => (
+              <ResourceThumbnail post={post} />
+            ))}
+          </div>
+        </ContentContainer>
+      </section>
+    )}
 
     <!-- Articles Section -->
     {articlePosts.length > 0 && (

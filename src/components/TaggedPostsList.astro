@@ -12,9 +12,10 @@ interface Props {
   excludeProjectPosts?: boolean;
   excludeHubs?: boolean;
   limit?: number;
+  sortOrder?: 'asc' | 'desc';
 }
 
-const { tag, excludeSelf, excludeCategory, excludeProjectPosts = false, excludeHubs = true, limit } = Astro.props;
+const { tag, excludeSelf, excludeCategory, excludeProjectPosts = false, excludeHubs = true, limit, sortOrder = 'desc' } = Astro.props;
 
 const allPosts = await getCollection('blog');
 let taggedPosts = allPosts
@@ -24,7 +25,9 @@ let taggedPosts = allPosts
   .filter(post => excludeProjectPosts ? !post.data.project : true)
   .filter(post => excludeHubs ? post.data.resourceType !== 'hub' : true)
   .filter(post => post.data.tags?.some(t => t.toLowerCase().includes(tag.toLowerCase())))
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+  .sort((a, b) => sortOrder === 'asc'
+    ? a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
+    : b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
 const totalCount = taggedPosts.length;
 const hasMore = limit ? totalCount > limit : false;

@@ -32,6 +32,12 @@ const campaigns = Object.entries(campaignsData.campaigns).map(([slug, data]) => 
     ),
   })).filter(p => p.members.length > 0);
 
+  // Find the most recent post date (from episodes or hub)
+  const allCampaignPosts = [...episodes, ...(hub ? [hub] : [])];
+  const latestPostDate = allCampaignPosts.length > 0
+    ? Math.max(...allCampaignPosts.map(p => p.data.pubDate.valueOf()))
+    : 0;
+
   return {
     slug,
     ...data,
@@ -39,12 +45,17 @@ const campaigns = Object.entries(campaignsData.campaigns).map(([slug, data]) => 
     episodes,
     parties,
     heroImage: hub?.data.heroImage,
+    latestPostDate,
   };
 });
 
-// Separate active and inactive campaigns
-const activeCampaigns = campaigns.filter(c => c.status === 'active');
-const inactiveCampaigns = campaigns.filter(c => c.status !== 'active');
+// Separate active and inactive campaigns, sorted by most recent post
+const activeCampaigns = campaigns
+  .filter(c => c.status === 'active')
+  .sort((a, b) => b.latestPostDate - a.latestPostDate);
+const inactiveCampaigns = campaigns
+  .filter(c => c.status !== 'active')
+  .sort((a, b) => b.latestPostDate - a.latestPostDate);
 ---
 
 <BaseLayout title="Campaigns - The Hobbinomicon" description="Tabletop RPG campaigns, characters, and adventure logs">
