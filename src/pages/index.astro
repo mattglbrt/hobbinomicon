@@ -31,9 +31,11 @@ const allResourcePosts = sortedPosts.filter(post => post.data.category === 'Reso
 // Hub pages (resourceType: "hub") - these get full cards
 const resourceHubs = allResourcePosts.filter(post => post.data.resourceType === 'hub');
 
-// Individual resources (guides, articles, checklists) - these get thumbnails
-const individualResources = allResourcePosts
-  .filter(post => post.data.resourceType && post.data.resourceType !== 'hub')
+// Individual resources (guides, articles, checklists) AND articles from Articles category - these get thumbnails
+const resourceItems = allResourcePosts.filter(post => post.data.resourceType && post.data.resourceType !== 'hub');
+const articleCategoryPosts = sortedPosts.filter(post => post.data.category === 'Articles');
+const individualResources = [...resourceItems, ...articleCategoryPosts]
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
   .slice(0, 6);
 
 // Get all projects and their latest posts
@@ -109,11 +111,6 @@ const characterPosts = publishedPosts
     return dateB - dateA;
   })
   .slice(0, 9);
-
-// Get article posts (written blog posts without videos)
-const articlePosts = sortedPosts
-  .filter(post => post.data.category === 'Articles')
-  .slice(0, 6);
 
 // Get most recent Campaign Chronicles post for hero section
 const campaignChroniclesPosts = sortedPosts
@@ -203,35 +200,92 @@ const heroImageUrl = getHeroImageUrl(latestPost?.data.heroImage, latestPost?.dat
       posts={recentVlogs}
     />
 
-    <!-- Kingdom Death Section -->
-    {kingdomDeathPosts.length > 0 && (
-      <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24">
-        <ContentContainer>
-          <div class="flex items-center justify-between mb-12">
-            <h2 class="text-4xl md:text-5xl font-heading font-bold text-ink dark:text-ink-dark">Kingdom Death</h2>
-            <ViewAllLink href="/tags/kingdom-death">View All →</ViewAllLink>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {kingdomDeathPosts.map((post) => (
-              <ResourceThumbnail post={post} />
-            ))}
-          </div>
-        </ContentContainer>
-      </section>
-    )}
+    <!-- Kingdom Death Campaign Callout -->
+    {latestKDMPost && (
+      <section class="bg-ink dark:bg-ink-dark py-16 md:py-24 relative overflow-hidden">
+        {/* Gradient overlay */}
+        <div class="absolute inset-0 bg-gradient-to-br from-ink/50 via-transparent to-red-900/20 dark:from-ink-dark/50 dark:to-red-900/30"></div>
 
-    <!-- Articles Section -->
-    {articlePosts.length > 0 && (
-      <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24">
-        <ContentContainer>
-          <div class="flex items-center justify-between mb-12">
-            <h2 class="text-4xl md:text-5xl font-heading font-bold text-ink dark:text-ink-dark">Articles</h2>
-            <ViewAllLink href="/categories/articles">View All →</ViewAllLink>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {articlePosts.map((post) => (
-              <ResourceThumbnail post={post} />
-            ))}
+        <ContentContainer class="relative z-10">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            {/* Video Thumbnail */}
+            <a href={`/blog/${latestKDMPost.slug}`} class="group block relative aspect-video rounded-xl overflow-hidden shadow-2xl">
+              <img
+                src={`https://img.youtube.com/vi/${latestKDMPost.data.youtubeId}/maxresdefault.jpg`}
+                alt={latestKDMPost.data.title}
+                class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent"></div>
+              {/* Play button */}
+              <div class="absolute inset-0 flex items-center justify-center">
+                <div class="w-20 h-20 bg-red-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                  <svg class="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z"/>
+                  </svg>
+                </div>
+              </div>
+              {/* Episode title */}
+              <div class="absolute bottom-0 left-0 right-0 p-4">
+                <span class="text-red-400 text-sm font-semibold uppercase tracking-wider">Latest Episode</span>
+                <h3 class="text-white text-xl font-heading font-bold mt-1 group-hover:text-red-300 transition-colors">
+                  {latestKDMPost.data.title}
+                </h3>
+              </div>
+            </a>
+
+            {/* Campaign Info */}
+            <div class="text-parchment dark:text-parchment-dark">
+              <h2 class="text-4xl md:text-5xl font-heading font-bold mb-4">
+                Kingdom Death: Monster
+              </h2>
+              <p class="text-parchment/80 dark:text-parchment-dark/80 text-lg mb-6">
+                Follow the settlement of <span class="text-red-400 font-semibold">Hesychia</span> as survivors struggle against the horrors of the Monster universe.
+              </p>
+
+              {/* Settlement Stats */}
+              <div class="grid grid-cols-4 gap-3 mb-8">
+                <div class="bg-parchment/10 dark:bg-parchment-dark/10 rounded-lg p-3 text-center">
+                  <div class="text-2xl font-bold text-parchment dark:text-parchment-dark">Year 2</div>
+                  <div class="text-xs text-parchment/60 dark:text-parchment-dark/60 uppercase tracking-wider">Lantern Year</div>
+                </div>
+                <div class="bg-parchment/10 dark:bg-parchment-dark/10 rounded-lg p-3 text-center">
+                  <div class="text-2xl font-bold text-parchment dark:text-parchment-dark">7</div>
+                  <div class="text-xs text-parchment/60 dark:text-parchment-dark/60 uppercase tracking-wider">Survivors</div>
+                </div>
+                <div class="bg-parchment/10 dark:bg-parchment-dark/10 rounded-lg p-3 text-center">
+                  <div class="text-2xl font-bold text-red-400">2</div>
+                  <div class="text-xs text-parchment/60 dark:text-parchment-dark/60 uppercase tracking-wider">Deaths</div>
+                </div>
+                <div class="bg-parchment/10 dark:bg-parchment-dark/10 rounded-lg p-3 text-center">
+                  <div class="text-2xl font-bold text-red-400">1</div>
+                  <div class="text-xs text-parchment/60 dark:text-parchment-dark/60 uppercase tracking-wider">Lost</div>
+                </div>
+              </div>
+
+              {/* CTAs */}
+              <div class="flex flex-col sm:flex-row gap-4">
+                <a
+                  href="https://www.youtube.com/playlist?list=PL_eOMhOeZbWV2neK_wPFPfUg3GUYZLv7o"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors"
+                >
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
+                  </svg>
+                  Watch From the Start
+                </a>
+                <a
+                  href="/blog/campaigns/kingdom-death/settlement-1"
+                  class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-parchment/10 hover:bg-parchment/20 dark:bg-parchment-dark/10 dark:hover:bg-parchment-dark/20 text-parchment dark:text-parchment-dark font-semibold rounded-lg transition-colors border border-parchment/20 dark:border-parchment-dark/20"
+                >
+                  View Campaign Details
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </a>
+              </div>
+            </div>
           </div>
         </ContentContainer>
       </section>
