@@ -3,7 +3,7 @@ import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
-import critters from 'astro-critters';
+import Inline from '@playform/inline';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -49,7 +49,7 @@ export default defineConfig({
   integrations: [
     tailwind(),
     mdx(),
-    critters(),
+    Inline(),
     sitemap({
       filter: (page) => {
         // Exclude low-value and private pages
