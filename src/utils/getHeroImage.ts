@@ -9,7 +9,7 @@ const heroImages = import.meta.glob<{ default: ImageMetadata }>(
 
 // Pre-import custom hero images from src/assets/images/
 const customImages = import.meta.glob<{ default: ImageMetadata }>(
-  '/src/assets/images/*.{jpg,jpeg,png,webp}',
+  '/src/assets/images/**/*.{jpg,jpeg,png,webp}',
   { eager: true }
 );
 
