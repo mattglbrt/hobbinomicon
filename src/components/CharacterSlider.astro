@@ -1,6 +1,8 @@
 ---
 import ContentContainer from './ContentContainer.astro';
 import ViewAllLink from './ViewAllLink.astro';
+import { Image } from 'astro:assets';
+import { getHeroImage, isImageMetadata } from '../utils/getHeroImage';
 
 interface Character {
   slug: string;
@@ -45,20 +47,34 @@ const {
         <!-- Left padding spacer for centering on large screens -->
         <div class="flex-shrink-0 w-[calc((100vw-80rem)/2)] hidden 2xl:block"></div>
 
-        {characters.map((character) => (
+        {characters.map((character) => {
+          const heroImg = getHeroImage(character.data.heroImage);
+          return (
           <a
             href={`/blog/${character.slug}`}
             class="character-card group flex-shrink-0 w-[calc((100vw-4rem)/2)] sm:w-[calc((100vw-5rem)/3)] md:w-[calc((100vw-6rem)/4)] lg:w-[calc((100vw-7rem)/5)] max-w-[280px] relative aspect-[2/3] overflow-hidden rounded-lg snap-start shadow-lg"
           >
-            <img
-              src={character.data.heroImage || '/images/placeholder.jpg'}
-              alt={character.data.heroImageAlt || character.data.title}
-              class="absolute inset-0 w-full h-full object-cover object-top img-hover-slow"
-              loading="lazy"
-              decoding="async"
-              width="280"
-              height="420"
-            />
+            {isImageMetadata(heroImg) ? (
+              <Image
+                src={heroImg}
+                alt={character.data.heroImageAlt || character.data.title}
+                class="absolute inset-0 w-full h-full object-cover object-top img-hover-slow"
+                loading="lazy"
+                decoding="async"
+                width={280}
+                height={420}
+              />
+            ) : (
+              <img
+                src={heroImg}
+                alt={character.data.heroImageAlt || character.data.title}
+                class="absolute inset-0 w-full h-full object-cover object-top img-hover-slow"
+                loading="lazy"
+                decoding="async"
+                width="280"
+                height="420"
+              />
+            )}
             <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-transparent opacity-40 group-hover:opacity-80 transition-opacity duration-500"></div>
             <div class="absolute inset-0 flex items-end justify-center p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
               <h3 class="text-lg md:text-xl font-heading font-bold text-white text-center drop-shadow-2xl">
@@ -66,7 +82,7 @@ const {
               </h3>
             </div>
           </a>
-        ))}
+        );})}
 
         <!-- Right padding spacer -->
         <div class="flex-shrink-0 w-6"></div>
