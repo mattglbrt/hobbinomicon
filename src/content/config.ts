@@ -22,7 +22,7 @@ const blog = defineCollection({
     // Party the character currently belongs to (for Dramatis Personae)
     party: z.string().optional(),
     // Resource type for categorizing resource pages
-    resourceType: z.enum(['hub', 'guide', 'article', 'checklist']).optional(),
+    resourceType: z.enum(['hub', 'guide', 'article', 'checklist', 'painting-references']).optional(),
     // Campaign type for categorizing campaign pages (hub = overview, episode = individual session, settlement = sub-campaign tracker)
     campaignType: z.enum(['hub', 'episode', 'settlement']).optional(),
     // Episode/chapter number for ordering campaign episodes
