@@ -8,6 +8,7 @@ import StructuredData from '../../components/StructuredData.astro';
 import ContentContainer from '../../components/ContentContainer.astro';
 import ImageCard from '../../components/ImageCard.astro';
 import { getPublishedPosts, groupByTags, sortByDate } from '../../utils/collections';
+import { getHeroImageUrl } from '../../utils/getHeroImage';
 import { getTagDisplay, getTagDescription } from '../../utils/tags';
 
 export async function getStaticPaths() {
@@ -79,7 +80,7 @@ const isCampaignTag = characterPosts.length > 0 && chapterPosts.length > 0;
                 {characterPosts.map((character) => (
                   <ImageCard
                     href={`/blog/${character.slug}`}
-                    image={character.data.heroImage || '/images/placeholder.jpg'}
+                    image={getHeroImageUrl(character.data.heroImage)}
                     imageAlt={character.data.heroImageAlt || character.data.title}
                     title={character.data.title}
                     aspectRatio="2/3"

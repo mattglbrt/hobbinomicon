@@ -5,7 +5,9 @@ import Header from '../../components/Header.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import Footer from '../../components/Footer.astro';
 import StructuredData from '../../components/StructuredData.astro';
+import { Image } from 'astro:assets';
 import ContentContainer from '../../components/ContentContainer.astro';
+import { getHeroImage, isImageMetadata } from '../../utils/getHeroImage';
 import { getAllParties, getPartyDisplay, getPartyDescription, getPartyCampaign } from '../../utils/parties';
 
 const allPosts = await getCollection('blog');
@@ -79,17 +81,31 @@ const totalCharacters = allCharacters.length;
                 </p>
               )}
               <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                {party.members.map((character) => (
+                {party.members.map((character) => {
+                  const charImg = getHeroImage(character.data.heroImage);
+                  const charIsOptimized = isImageMetadata(charImg);
+                  return (
                   <a
                     href={`/blog/${character.slug}`}
                     class="group relative aspect-[2/3] overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
                   >
-                    <img
-                      src={character.data.heroImage || '/images/placeholder.jpg'}
-                      alt={character.data.heroImageAlt || character.data.title}
-                      class="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
-                      loading="lazy"
-                    />
+                    {charIsOptimized ? (
+                      <Image
+                        src={charImg}
+                        alt={character.data.heroImageAlt || character.data.title}
+                        class="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                        width={280}
+                        height={420}
+                      />
+                    ) : (
+                      <img
+                        src={charImg}
+                        alt={character.data.heroImageAlt || character.data.title}
+                        class="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                      />
+                    )}
                     <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
                     <div class="absolute inset-0 flex flex-col items-center justify-end p-4">
                       <h3 class="text-lg font-heading font-bold text-white text-center drop-shadow-lg">
@@ -97,7 +113,8 @@ const totalCharacters = allCharacters.length;
                       </h3>
                     </div>
                   </a>
-                ))}
+                );
+                })}
               </div>
             </section>
           ))}
@@ -111,17 +128,31 @@ const totalCharacters = allCharacters.length;
             Other Characters
           </h2>
           <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-            {unassignedCharacters.map((character) => (
+            {unassignedCharacters.map((character) => {
+              const charImg = getHeroImage(character.data.heroImage);
+              const charIsOptimized = isImageMetadata(charImg);
+              return (
               <a
                 href={`/blog/${character.slug}`}
                 class="group relative aspect-[2/3] overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
               >
-                <img
-                  src={character.data.heroImage || '/images/placeholder.jpg'}
-                  alt={character.data.heroImageAlt || character.data.title}
-                  class="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
-                  loading="lazy"
-                />
+                {charIsOptimized ? (
+                  <Image
+                    src={charImg}
+                    alt={character.data.heroImageAlt || character.data.title}
+                    class="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                    width={280}
+                    height={420}
+                  />
+                ) : (
+                  <img
+                    src={charImg}
+                    alt={character.data.heroImageAlt || character.data.title}
+                    class="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                  />
+                )}
                 <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
                 <div class="absolute inset-0 flex flex-col items-center justify-end p-4">
                   <h3 class="text-lg font-heading font-bold text-white text-center drop-shadow-lg">
@@ -129,7 +160,8 @@ const totalCharacters = allCharacters.length;
                   </h3>
                 </div>
               </a>
-            ))}
+            );
+            })}
           </div>
         </section>
       )}

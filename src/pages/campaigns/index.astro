@@ -5,8 +5,9 @@ import Header from '../../components/Header.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import Footer from '../../components/Footer.astro';
 import StructuredData from '../../components/StructuredData.astro';
+import { Image } from 'astro:assets';
 import ContentContainer from '../../components/ContentContainer.astro';
-import { getHeroImageUrl } from '../../utils/getHeroImage';
+import { getHeroImage, getHeroImageUrl, isImageMetadata } from '../../utils/getHeroImage';
 import { getPartiesByCampaign, getPartyDisplay, getPartyDescription } from '../../utils/parties';
 import campaignsData from '../../data/campaigns.json';
 
@@ -82,16 +83,27 @@ const inactiveCampaigns = campaigns
     <ContentContainer class="py-16">
       {activeCampaigns.length > 0 && (
         <div class="space-y-16">
-          {activeCampaigns.map((campaign) => (
+          {activeCampaigns.map((campaign) => {
+            const campImg = campaign.heroImage ? getHeroImage(campaign.heroImage) : null;
+            const campIsOptimized = campImg ? isImageMetadata(campImg) : false;
+            return (
             <section class="bg-ink/5 dark:bg-ink-dark/5 rounded-2xl overflow-hidden">
               {/* Campaign Header */}
               <div class="relative h-64 md:h-80">
-                {campaign.heroImage ? (
-                  <img
-                    src={campaign.heroImage}
-                    alt={campaign.display}
-                    class="absolute inset-0 w-full h-full object-cover"
-                  />
+                {campImg && campIsOptimized ? (
+                    <Image
+                      src={campImg}
+                      alt={campaign.display}
+                      class="absolute inset-0 w-full h-full object-cover"
+                      width={1200}
+                      height={600}
+                    />
+                ) : campImg ? (
+                    <img
+                      src={campImg}
+                      alt={campaign.display}
+                      class="absolute inset-0 w-full h-full object-cover"
+                    />
                 ) : (
                   <div class="absolute inset-0 bg-gradient-to-br from-ink/20 to-ink/40 dark:from-ink-dark/20 dark:to-ink-dark/40"></div>
                 )}
@@ -153,17 +165,31 @@ const inactiveCampaigns = campaigns
                             </p>
                           )}
                           <div class="flex flex-wrap gap-3">
-                            {party.members.map((member) => (
+                            {party.members.map((member) => {
+                              const memberImg = getHeroImage(member.data.heroImage);
+                              const memberIsOptimized = isImageMetadata(memberImg);
+                              return (
                               <a
                                 href={`/blog/${member.slug}`}
                                 class="group relative w-16 h-24 overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
                               >
-                                <img
-                                  src={member.data.heroImage || '/images/placeholder.jpg'}
-                                  alt={member.data.title}
-                                  class="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
-                                  loading="lazy"
-                                />
+                                {memberIsOptimized ? (
+                                  <Image
+                                    src={memberImg}
+                                    alt={member.data.title}
+                                    class="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                                    loading="lazy"
+                                    width={64}
+                                    height={96}
+                                  />
+                                ) : (
+                                  <img
+                                    src={memberImg}
+                                    alt={member.data.title}
+                                    class="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                                    loading="lazy"
+                                  />
+                                )}
                                 <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/30 to-transparent opacity-60 group-hover:opacity-80 transition-opacity"></div>
                                 <div class="absolute bottom-0 left-0 right-0 p-1">
                                   <span class="text-[10px] font-medium text-white text-center block truncate">
@@ -171,7 +197,7 @@ const inactiveCampaigns = campaigns
                                   </span>
                                 </div>
                               </a>
-                            ))}
+                            );})}
                           </div>
                         </div>
                       ))}
@@ -218,7 +244,8 @@ const inactiveCampaigns = campaigns
                 )}
               </div>
             </section>
-          ))}
+          );
+          })}
         </div>
       )}
 

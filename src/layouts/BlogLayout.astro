@@ -370,17 +370,31 @@ const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
                       </p>
                     )}
                     <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                      {party.members.map((member) => (
+                      {party.members.map((member) => {
+                        const memberImg = getHeroImage(member.data.heroImage);
+                        const memberIsOptimized = isImageMetadata(memberImg);
+                        return (
                         <a
                           href={`/blog/${member.slug}`}
                           class="group relative aspect-[2/3] overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
                         >
-                          <img
-                            src={member.data.heroImage || '/images/placeholder.jpg'}
-                            alt={member.data.heroImageAlt || member.data.title}
-                            class="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
-                            loading="lazy"
-                          />
+                          {memberIsOptimized ? (
+                            <Image
+                              src={memberImg}
+                              alt={member.data.heroImageAlt || member.data.title}
+                              class="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                              loading="lazy"
+                              width={200}
+                              height={300}
+                            />
+                          ) : (
+                            <img
+                              src={memberImg}
+                              alt={member.data.heroImageAlt || member.data.title}
+                              class="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                              loading="lazy"
+                            />
+                          )}
                           <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
                           <div class="absolute inset-0 flex flex-col items-center justify-end p-2">
                             <h4 class="text-sm font-heading font-bold text-white text-center drop-shadow-lg">
@@ -388,7 +402,7 @@ const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
                             </h4>
                           </div>
                         </a>
-                      ))}
+                      );})}
                     </div>
                   </div>
                 ))}

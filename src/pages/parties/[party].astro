@@ -5,7 +5,9 @@ import Header from '../../components/Header.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import Footer from '../../components/Footer.astro';
 import ContentContainer from '../../components/ContentContainer.astro';
+import { Image } from 'astro:assets';
 import { getPublishedPosts } from '../../utils/collections';
+import { getHeroImage, isImageMetadata } from '../../utils/getHeroImage';
 import { getPartyDisplay, getPartyDescription, getPartyCampaign, getPartyStatus, getAllParties } from '../../utils/parties';
 
 export async function getStaticPaths() {
@@ -74,17 +76,31 @@ const { party, partyDisplay, partyDescription, partyCampaign, partyStatus, membe
 
       {members.length > 0 ? (
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-          {members.map((member) => (
+          {members.map((member) => {
+            const memberImg = getHeroImage(member.data.heroImage);
+            const memberIsOptimized = isImageMetadata(memberImg);
+            return (
             <a
               href={`/blog/${member.slug}`}
               class="group relative aspect-[2/3] overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
             >
-              <img
-                src={member.data.heroImage || '/images/placeholder.jpg'}
-                alt={member.data.heroImageAlt || member.data.title}
-                class="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
-                loading="lazy"
-              />
+              {memberIsOptimized ? (
+                <Image
+                  src={memberImg}
+                  alt={member.data.heroImageAlt || member.data.title}
+                  class="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
+                  width={280}
+                  height={420}
+                />
+              ) : (
+                <img
+                  src={memberImg}
+                  alt={member.data.heroImageAlt || member.data.title}
+                  class="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
+                />
+              )}
               <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
               <div class="absolute inset-0 flex flex-col items-center justify-end p-4">
                 <h3 class="text-lg md:text-xl font-heading font-bold text-white text-center drop-shadow-lg">
@@ -95,7 +111,7 @@ const { party, partyDisplay, partyDescription, partyCampaign, partyStatus, membe
                 </p>
               </div>
             </a>
-          ))}
+          );})}
         </div>
       ) : (
         <p class="text-ink/70 dark:text-ink-dark/70">No members in this party yet.</p>

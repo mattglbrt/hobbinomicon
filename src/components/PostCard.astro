@@ -87,7 +87,7 @@ const formattedDate = formatDateShort(pubDate);
 </style>
 
 <article class="group">
-  <a href={`/blog/${slug}`} class="block relative overflow-hidden rounded-lg aspect-[3/4] card-image">
+  <a href={`/blog/${slug}`} class="block relative overflow-hidden rounded-lg aspect-[4/3] card-image">
     <!-- Loading placeholder -->
     <div class="absolute inset-0 card-loading" data-placeholder></div>
 
@@ -96,14 +96,14 @@ const formattedDate = formatDateShort(pubDate);
       <Image
         src={displayImage}
         alt={heroImageAlt || title}
-        width={600}
-        height={800}
+        width={640}
+        height={480}
         class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
         loading={eager ? 'eager' : 'lazy'}
         decoding="async"
         format="webp"
         quality={65}
-        widths={[300, 400, 600]}
+        widths={[320, 480, 640]}
         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
         onload="this.closest('.card-image').querySelector('[data-placeholder]').classList.add('loaded')"
         transition:name={`hero-${slug}`}
@@ -118,8 +118,8 @@ const formattedDate = formatDateShort(pubDate);
           class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
           loading={eager ? 'eager' : 'lazy'}
           decoding="async"
-          width="600"
-          height="800"
+          width="640"
+          height="480"
           data-youtube-id={youtubeId}
           onerror={getYouTubeFallbackHandler('id')}
           onload="this.closest('.card-image').querySelector('[data-placeholder]').classList.add('loaded')"
@@ -129,14 +129,14 @@ const formattedDate = formatDateShort(pubDate);
       <Image
         src={displayImage}
         alt={heroImageAlt || title}
-        width={600}
-        height={800}
+        width={640}
+        height={480}
         class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
         loading={eager ? 'eager' : 'lazy'}
         decoding="async"
         format="webp"
         quality={65}
-        widths={[300, 400, 600]}
+        widths={[320, 480, 640]}
         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
         onload="this.closest('.card-image').querySelector('[data-placeholder]').classList.add('loaded')"
         transition:name={`hero-${slug}`}
