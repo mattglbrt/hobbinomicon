@@ -32,10 +32,13 @@ const {
   <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24 overflow-hidden">
     <ContentContainer>
       <div class="flex items-center justify-between mb-4">
-        <h2 class="text-4xl md:text-5xl font-heading font-bold text-ink dark:text-ink-dark">{title}</h2>
+        <div>
+          <span class="block text-sm font-heading uppercase tracking-[0.3em] text-ink/40 dark:text-ink-dark/40 mb-2">Characters</span>
+          <h2 class="text-5xl md:text-7xl font-display font-bold text-ink dark:text-ink-dark">{title}</h2>
+        </div>
         <ViewAllLink href={viewAllLink}>View All →</ViewAllLink>
       </div>
-      <p class="text-ink/70 dark:text-ink-dark/70 text-lg mb-12 max-w-2xl" set:html={description} />
+      <p class="text-ink/60 dark:text-ink-dark/60 text-base mb-12 max-w-2xl font-serif" set:html={description} />
     </ContentContainer>
 
     <!-- Horizontal Slider -->
@@ -52,7 +55,7 @@ const {
           return (
           <a
             href={`/blog/${character.slug}`}
-            class="character-card group flex-shrink-0 w-[calc((100vw-4rem)/2)] sm:w-[calc((100vw-5rem)/3)] md:w-[calc((100vw-6rem)/4)] lg:w-[calc((100vw-7rem)/5)] max-w-[280px] relative aspect-[2/3] overflow-hidden rounded-lg snap-start shadow-lg"
+            class="character-card group flex-shrink-0 w-[calc((100vw-4rem)/2)] sm:w-[calc((100vw-5rem)/3)] md:w-[calc((100vw-6rem)/4)] lg:w-[calc((100vw-7rem)/5)] max-w-[280px] relative aspect-[2/3] overflow-hidden rounded-lg snap-start shadow-lg transition-transform duration-300 hover:rotate-1 hover:-translate-y-1"
           >
             {isImageMetadata(heroImg) ? (
               <Image
@@ -77,7 +80,7 @@ const {
             )}
             <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-transparent opacity-40 group-hover:opacity-80 transition-opacity duration-500"></div>
             <div class="absolute inset-0 flex items-end justify-center p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-              <h3 class="text-lg md:text-xl font-heading font-bold text-white text-center drop-shadow-2xl">
+              <h3 class="text-lg md:text-xl font-display font-bold text-white text-center drop-shadow-2xl">
                 {character.data.title}
               </h3>
             </div>
@@ -110,6 +113,11 @@ const {
     <style>
       .character-slider::-webkit-scrollbar {
         display: none;
+      }
+
+      #character-slider {
+        -webkit-mask-image: linear-gradient(to right, transparent, black 3%, black 97%, transparent);
+        mask-image: linear-gradient(to right, transparent, black 3%, black 97%, transparent);
       }
     </style>
 

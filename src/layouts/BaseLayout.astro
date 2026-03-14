@@ -4,6 +4,8 @@ import RandomToad from '../components/RandomToad.astro';
 import SkipLink from '../components/SkipLink.astro';
 import StructuredData from '../components/StructuredData.astro';
 import SearchModal from '../components/SearchModal.astro';
+import GrainOverlay from '../components/GrainOverlay.astro';
+import Lightbox from '../components/Lightbox.astro';
 import '../styles/fonts.css';
 
 interface Props {
@@ -24,7 +26,7 @@ const canonicalURL = Astro.site
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" style="scroll-behavior: smooth;">
   <head>
     <!-- Dark mode initialization (must be first to prevent flash) -->
     <script is:inline>
@@ -60,8 +62,9 @@ const canonicalURL = Astro.site
     <!-- Slot for critical page-specific preloads (LCP images) - must be early in head -->
     <slot name="head" />
 
-    <!-- Preload critical heading font to prevent CLS from font swap -->
+    <!-- Preload critical fonts to prevent CLS from font swap -->
     <link rel="preload" href="/fonts/besley-regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/cinzel-decorative-regular.woff2" as="font" type="font/woff2" crossorigin />
 
     <!-- Critical font-face declarations (must be inline for LCP optimization) -->
     <style is:inline>
@@ -129,6 +132,30 @@ const canonicalURL = Astro.site
         }
       })();
     </script>
+
+    <!-- Cursor spotlight for dark sections -->
+    <style is:global>
+      .cursor-spotlight {
+        --mouse-x: 50%;
+        --mouse-y: 50%;
+      }
+
+      @media (hover: hover) and (pointer: fine) {
+        .cursor-spotlight::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: radial-gradient(
+            600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+            rgba(255, 255, 255, 0.04),
+            transparent 40%
+          );
+          pointer-events: none;
+          z-index: 1;
+          transition: opacity 0.3s ease;
+        }
+      }
+    </style>
 
     <!-- Print Stylesheet -->
     <style is:global>
@@ -283,9 +310,84 @@ const canonicalURL = Astro.site
     />
   </head>
   <body class="min-h-screen font-serif bg-parchment dark:bg-parchment-dark text-ink dark:text-ink-dark transition-colors duration-300">
+    <GrainOverlay />
     <SkipLink />
     <slot />
     <RandomToad />
     <SearchModal />
+    <Lightbox />
+
+    <!-- ScrollReveal: IntersectionObserver for scroll-triggered animations -->
+    <script is:inline>
+      (function() {
+        function initScrollReveal() {
+          var observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+              if (entry.isIntersecting) {
+                var delay = parseInt(entry.target.dataset.delay || '0', 10);
+                if (delay > 0) {
+                  setTimeout(function() { entry.target.classList.add('revealed'); }, delay);
+                } else {
+                  entry.target.classList.add('revealed');
+                }
+                observer.unobserve(entry.target);
+              }
+            });
+          }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+          document.querySelectorAll('[data-scroll-reveal]').forEach(function(el) {
+            observer.observe(el);
+          });
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', initScrollReveal);
+        } else {
+          initScrollReveal();
+        }
+        document.addEventListener('astro:after-swap', initScrollReveal);
+      })();
+    </script>
+
+    <!-- Cursor Spotlight: Radial glow on dark sections -->
+    <script is:inline>
+      (function() {
+        if ('ontouchstart' in window || navigator.maxTouchPoints > 0) return;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+        var ticking = false;
+        document.addEventListener('mousemove', function(e) {
+          if (!ticking) {
+            requestAnimationFrame(function() {
+              document.documentElement.style.setProperty('--mouse-x', e.clientX + 'px');
+              document.documentElement.style.setProperty('--mouse-y', e.clientY + 'px');
+              ticking = false;
+            });
+            ticking = true;
+          }
+        }, { passive: true });
+      })();
+    </script>
+
+    <!-- Parallax: Sets --scroll-y CSS variable for parallax effects -->
+    <script is:inline>
+      (function() {
+        var ticking = false;
+        var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var isMobile = window.matchMedia('(max-width: 768px)').matches;
+
+        if (!reducedMotion && !isMobile) {
+          window.addEventListener('scroll', function() {
+            if (!ticking) {
+              requestAnimationFrame(function() {
+                document.documentElement.style.setProperty('--scroll-y', String(window.scrollY));
+                ticking = false;
+              });
+              ticking = true;
+            }
+          }, { passive: true });
+        }
+      })();
+    </script>
   </body>
 </html>

@@ -9,6 +9,7 @@ import CharacterSlider from '../components/CharacterSlider.astro';
 import YouTubeCTA from '../components/YouTubeCTA.astro';
 import Footer from '../components/Footer.astro';
 import ContentContainer from '../components/ContentContainer.astro';
+import MasonryGrid from '../components/MasonryGrid.astro';
 import PostCard from '../components/PostCard.astro';
 import ResourceThumbnail from '../components/ResourceThumbnail.astro';
 import ViewAllLink from '../components/ViewAllLink.astro';
@@ -75,10 +76,10 @@ const kingdomDeathPosts = sortedPosts
   .filter(post => post.data.tags?.includes('kdm-hesychia') && post.data.youtubeId);
 const latestKDMPost = kingdomDeathPosts[0];
 
-// Get recent vlog posts (posts with YouTube videos) - only 3 for homepage, excluding Kingdom Death
+// Get recent vlog posts (posts with YouTube videos) - only 6 for homepage masonry, excluding Kingdom Death
 const recentVlogs = sortedPosts
   .filter(post => !excludedSlugs.has(post.slug) && post.data.youtubeId && !post.data.tags?.includes('kingdom-death'))
-  .slice(0, 3);
+  .slice(0, 6);
 
 // Painting technique tags to filter by
 const paintingTags = ['painting', 'glazing', 'dry-brushing', 'airbrushing', 'contrast-paints', 'zenithal', 'blending', 'washes', 'nmm', 'edge-highlighting', 'preshading', 'speed-painting'];
@@ -153,16 +154,19 @@ const heroImageUrl = getHeroImageUrl(latestPost?.data.heroImage, latestPost?.dat
 
     <!-- Resource Posts Section -->
     {(resourceHubs.length > 0 || individualResources.length > 0) && (
-      <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24">
+      <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24" data-scroll-reveal>
         <ContentContainer>
           <div class="flex items-center justify-between mb-12">
-            <h2 class="text-4xl md:text-5xl font-heading font-bold text-ink dark:text-ink-dark">Resources</h2>
+            <div>
+              <span class="block text-sm font-heading uppercase tracking-[0.3em] text-ink/40 dark:text-ink-dark/40 mb-2">Explore</span>
+              <h2 class="text-5xl md:text-7xl font-display font-bold text-ink dark:text-ink-dark">Resources</h2>
+            </div>
             <ViewAllLink href="/categories/resources">View All →</ViewAllLink>
           </div>
 
           {/* Resource Hub Cards */}
           {resourceHubs.length > 0 && (
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
               {resourceHubs.map((post) => (
                 <PostCard post={post} />
               ))}
@@ -172,8 +176,8 @@ const heroImageUrl = getHeroImageUrl(latestPost?.data.heroImage, latestPost?.dat
           {/* Individual Resource Thumbnails */}
           {individualResources.length > 0 && (
             <div>
-              <h3 class="text-xl font-heading font-semibold text-ink dark:text-ink-dark mb-6">Recent Guides & Articles</h3>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <h3 class="text-lg font-heading uppercase tracking-[0.15em] text-ink/50 dark:text-ink-dark/50 mb-6">Recent Guides & Articles</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {individualResources.map((post) => (
                   <ResourceThumbnail post={post} />
                 ))}
@@ -193,18 +197,21 @@ const heroImageUrl = getHeroImageUrl(latestPost?.data.heroImage, latestPost?.dat
       />
     )}
 
-    <!-- Recent Vlogs Section -->
+    <!-- Recent Vlogs Section (Masonry) -->
     <PostGridSection
       title="Recent Vlogs"
+      eyebrow="Watch"
       viewAllLink="/categories/vlogs"
       posts={recentVlogs}
+      layout="masonry"
     />
 
     <!-- Kingdom Death Campaign Callout -->
     {latestKDMPost && (
-      <section class="bg-ink dark:bg-ink-dark py-16 md:py-24 relative overflow-hidden">
-        {/* Gradient overlay */}
+      <section class="bg-ink dark:bg-ink-dark py-16 md:py-24 relative overflow-hidden" data-scroll-reveal>
+        {/* Gradient overlays */}
         <div class="absolute inset-0 bg-gradient-to-br from-ink/50 via-transparent to-red-900/20 dark:from-ink-dark/50 dark:to-red-900/30"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-ink/60 via-transparent to-transparent"></div>
 
         <ContentContainer class="relative z-10">
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
@@ -213,12 +220,13 @@ const heroImageUrl = getHeroImageUrl(latestPost?.data.heroImage, latestPost?.dat
               <img
                 src={`https://img.youtube.com/vi/${latestKDMPost.data.youtubeId}/maxresdefault.jpg`}
                 alt={latestKDMPost.data.title}
-                class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                loading="lazy"
               />
               <div class="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent"></div>
               {/* Play button */}
               <div class="absolute inset-0 flex items-center justify-center">
-                <div class="w-20 h-20 bg-red-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                <div class="w-20 h-20 bg-red-600/90 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg backdrop-blur-sm">
                   <svg class="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M8 5v14l11-7z"/>
                   </svg>
@@ -226,8 +234,8 @@ const heroImageUrl = getHeroImageUrl(latestPost?.data.heroImage, latestPost?.dat
               </div>
               {/* Episode title */}
               <div class="absolute bottom-0 left-0 right-0 p-4">
-                <span class="text-red-400 text-sm font-semibold uppercase tracking-wider">Latest Episode</span>
-                <h3 class="text-white text-xl font-heading font-bold mt-1 group-hover:text-red-300 transition-colors">
+                <span class="text-red-400 text-xs font-heading uppercase tracking-[0.2em]">Latest Episode</span>
+                <h3 class="text-white text-xl font-display font-bold mt-1 group-hover:text-red-300 transition-colors">
                   {latestKDMPost.data.title}
                 </h3>
               </div>
@@ -235,30 +243,31 @@ const heroImageUrl = getHeroImageUrl(latestPost?.data.heroImage, latestPost?.dat
 
             {/* Campaign Info */}
             <div class="text-parchment dark:text-parchment-dark">
-              <h2 class="text-4xl md:text-5xl font-heading font-bold mb-4">
-                Kingdom Death: Monster
+              <span class="block text-xs font-heading uppercase tracking-[0.3em] text-red-400/70 mb-2">Campaign</span>
+              <h2 class="text-4xl md:text-6xl font-display font-bold mb-4 leading-tight">
+                Kingdom Death
               </h2>
-              <p class="text-parchment/80 dark:text-parchment-dark/80 text-lg mb-6">
+              <p class="text-parchment/70 dark:text-parchment-dark/70 text-lg mb-6 font-serif">
                 Follow the settlement of <span class="text-red-400 font-semibold">Hesychia</span> as survivors struggle against the horrors of the Monster universe.
               </p>
 
               {/* Settlement Stats */}
               <div class="grid grid-cols-4 gap-3 mb-8">
-                <div class="bg-parchment/10 dark:bg-parchment-dark/10 rounded-lg p-3 text-center">
-                  <div class="text-2xl font-bold text-parchment dark:text-parchment-dark">Year 2</div>
-                  <div class="text-xs text-parchment/60 dark:text-parchment-dark/60 uppercase tracking-wider">Lantern Year</div>
+                <div class="bg-parchment/5 dark:bg-parchment-dark/5 rounded-lg p-3 text-center border border-parchment/10 dark:border-parchment-dark/10">
+                  <div class="text-2xl font-display font-bold text-parchment dark:text-parchment-dark">Year 2</div>
+                  <div class="text-[0.6rem] text-parchment/50 dark:text-parchment-dark/50 uppercase tracking-[0.2em]">Lantern Year</div>
                 </div>
-                <div class="bg-parchment/10 dark:bg-parchment-dark/10 rounded-lg p-3 text-center">
-                  <div class="text-2xl font-bold text-parchment dark:text-parchment-dark">7</div>
-                  <div class="text-xs text-parchment/60 dark:text-parchment-dark/60 uppercase tracking-wider">Survivors</div>
+                <div class="bg-parchment/5 dark:bg-parchment-dark/5 rounded-lg p-3 text-center border border-parchment/10 dark:border-parchment-dark/10">
+                  <div class="text-2xl font-display font-bold text-parchment dark:text-parchment-dark">7</div>
+                  <div class="text-[0.6rem] text-parchment/50 dark:text-parchment-dark/50 uppercase tracking-[0.2em]">Survivors</div>
                 </div>
-                <div class="bg-parchment/10 dark:bg-parchment-dark/10 rounded-lg p-3 text-center">
-                  <div class="text-2xl font-bold text-red-400">2</div>
-                  <div class="text-xs text-parchment/60 dark:text-parchment-dark/60 uppercase tracking-wider">Deaths</div>
+                <div class="bg-parchment/5 dark:bg-parchment-dark/5 rounded-lg p-3 text-center border border-parchment/10 dark:border-parchment-dark/10">
+                  <div class="text-2xl font-display font-bold text-red-400 drop-shadow-[0_0_8px_rgba(248,113,113,0.3)]">2</div>
+                  <div class="text-[0.6rem] text-parchment/50 dark:text-parchment-dark/50 uppercase tracking-[0.2em]">Deaths</div>
                 </div>
-                <div class="bg-parchment/10 dark:bg-parchment-dark/10 rounded-lg p-3 text-center">
-                  <div class="text-2xl font-bold text-red-400">1</div>
-                  <div class="text-xs text-parchment/60 dark:text-parchment-dark/60 uppercase tracking-wider">Lost</div>
+                <div class="bg-parchment/5 dark:bg-parchment-dark/5 rounded-lg p-3 text-center border border-parchment/10 dark:border-parchment-dark/10">
+                  <div class="text-2xl font-display font-bold text-red-400 drop-shadow-[0_0_8px_rgba(248,113,113,0.3)]">1</div>
+                  <div class="text-[0.6rem] text-parchment/50 dark:text-parchment-dark/50 uppercase tracking-[0.2em]">Lost</div>
                 </div>
               </div>
 
@@ -268,7 +277,7 @@ const heroImageUrl = getHeroImageUrl(latestPost?.data.heroImage, latestPost?.dat
                   href="https://www.youtube.com/playlist?list=PL_eOMhOeZbWV2neK_wPFPfUg3GUYZLv7o"
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors"
+                  class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-heading uppercase tracking-wider text-sm rounded-lg transition-colors"
                 >
                   <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
@@ -277,9 +286,9 @@ const heroImageUrl = getHeroImageUrl(latestPost?.data.heroImage, latestPost?.dat
                 </a>
                 <a
                   href="/blog/campaigns/kingdom-death/settlement-1"
-                  class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-parchment/10 hover:bg-parchment/20 dark:bg-parchment-dark/10 dark:hover:bg-parchment-dark/20 text-parchment dark:text-parchment-dark font-semibold rounded-lg transition-colors border border-parchment/20 dark:border-parchment-dark/20"
+                  class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-parchment/5 hover:bg-parchment/10 dark:bg-parchment-dark/5 dark:hover:bg-parchment-dark/10 text-parchment dark:text-parchment-dark font-heading uppercase tracking-wider text-sm rounded-lg transition-colors border border-parchment/15 dark:border-parchment-dark/15"
                 >
-                  View Campaign Details
+                  Campaign Details
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                   </svg>
@@ -291,54 +300,64 @@ const heroImageUrl = getHeroImageUrl(latestPost?.data.heroImage, latestPost?.dat
       </section>
     )}
 
-    <!-- Painting Tutorials Section -->
+    <!-- Painting Tutorials Section (Masonry) -->
     {paintingTutorials.length > 0 && (
-      <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24">
+      <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24" data-scroll-reveal>
         <ContentContainer>
           <div class="flex items-center justify-between mb-12">
-            <h2 class="text-4xl md:text-5xl font-heading font-bold text-ink dark:text-ink-dark">Painting Tutorials</h2>
+            <div>
+              <span class="block text-sm font-heading uppercase tracking-[0.3em] text-ink/40 dark:text-ink-dark/40 mb-2">Learn</span>
+              <h2 class="text-5xl md:text-7xl font-display font-bold text-ink dark:text-ink-dark">Painting</h2>
+            </div>
             <ViewAllLink href="/tags/painting">View All →</ViewAllLink>
           </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <MasonryGrid columns={3}>
             {paintingTutorials.map((post) => (
               <ResourceThumbnail post={post} />
             ))}
-          </div>
+          </MasonryGrid>
         </ContentContainer>
       </section>
     )}
 
     <!-- Hobby Section -->
     {hobbyPosts.length > 0 && (
-      <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24">
+      <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24" data-scroll-reveal>
         <ContentContainer>
           <div class="flex items-center justify-between mb-12">
-            <h2 class="text-4xl md:text-5xl font-heading font-bold text-ink dark:text-ink-dark">Hobby</h2>
+            <div>
+              <span class="block text-sm font-heading uppercase tracking-[0.3em] text-ink/40 dark:text-ink-dark/40 mb-2">Build</span>
+              <h2 class="text-5xl md:text-7xl font-display font-bold text-ink dark:text-ink-dark">Hobby</h2>
+            </div>
             <ViewAllLink href="/tags/building">View All →</ViewAllLink>
           </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <MasonryGrid columns={3}>
             {hobbyPosts.map((post) => (
               <ResourceThumbnail post={post} />
             ))}
-          </div>
+          </MasonryGrid>
         </ContentContainer>
       </section>
     )}
 
     <!-- Games Section -->
-    <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24">
+    <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24" data-scroll-reveal>
       <ContentContainer>
         <div class="flex items-center justify-between mb-12">
-          <h2 class="text-4xl md:text-5xl font-heading font-bold text-ink dark:text-ink-dark">Games</h2>
+          <div>
+            <span class="block text-sm font-heading uppercase tracking-[0.3em] text-ink/40 dark:text-ink-dark/40 mb-2">Play</span>
+            <h2 class="text-5xl md:text-7xl font-display font-bold text-ink dark:text-ink-dark">Games</h2>
+          </div>
           <ViewAllLink href="/tags">Browse All Tags →</ViewAllLink>
         </div>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {gameSystemTags.map((tag) => (
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {gameSystemTags.map((tag, index) => (
             <a
               href={`/tags/${tag}`}
-              class="group block p-6 bg-ink/5 dark:bg-ink-dark/5 rounded-xl border border-ink/10 dark:border-ink-dark/10 hover:bg-ink/10 dark:hover:bg-ink-dark/10 hover:border-ink/20 dark:hover:border-ink-dark/20 transition-all"
+              class={`group block p-6 md:p-8 bg-ink dark:bg-ink-dark rounded-xl overflow-hidden relative hover:scale-[1.02] transition-all duration-300 ${index === 0 ? 'md:col-span-2 md:row-span-2' : ''}`}
             >
-              <span class="text-lg font-heading font-semibold text-ink dark:text-ink-dark group-hover:underline underline-offset-2">
+              <div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <span class={`relative z-10 font-display font-bold text-parchment dark:text-parchment-dark ${index === 0 ? 'text-2xl md:text-4xl' : 'text-lg md:text-xl'}`}>
                 {getTagDisplay(tag)}
               </span>
             </a>

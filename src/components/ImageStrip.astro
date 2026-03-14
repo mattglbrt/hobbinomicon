@@ -1,0 +1,73 @@
+---
+import { Image } from 'astro:assets';
+import ContentContainer from './ContentContainer.astro';
+import { getHeroImage, isImageMetadata } from '../utils/getHeroImage';
+
+interface StripImage {
+  src: string;
+  alt: string;
+}
+
+interface Props {
+  images: StripImage[];
+  class?: string;
+}
+
+const { images, class: className = '' } = Astro.props;
+---
+
+{images.length > 0 && (
+  <div class={`relative overflow-hidden py-4 ${className}`} id="image-strip">
+    <div
+      class="image-strip flex gap-3 overflow-x-auto scroll-smooth px-6 pb-2 snap-x snap-mandatory"
+      style="scrollbar-width: none; -ms-overflow-style: none;"
+    >
+      {images.map((image) => {
+        const heroImg = getHeroImage(image.src);
+        return (
+          <div class="flex-shrink-0 w-[280px] md:w-[360px] aspect-[3/2] relative overflow-hidden rounded-lg snap-start shadow-md hover:shadow-xl transition-shadow duration-300">
+            {isImageMetadata(heroImg) ? (
+              <Image
+                src={heroImg}
+                alt={image.alt}
+                width={360}
+                height={240}
+                class="w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
+                format="webp"
+                quality={65}
+                data-lightbox
+                data-lightbox-group="image-strip"
+              />
+            ) : (
+              <img
+                src={heroImg}
+                alt={image.alt}
+                width="360"
+                height="240"
+                class="w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
+                data-lightbox
+                data-lightbox-group="image-strip"
+              />
+            )}
+          </div>
+        );
+      })}
+      <div class="flex-shrink-0 w-6"></div>
+    </div>
+
+    <style>
+      .image-strip::-webkit-scrollbar {
+        display: none;
+      }
+
+      #image-strip {
+        -webkit-mask-image: linear-gradient(to right, transparent, black 3%, black 97%, transparent);
+        mask-image: linear-gradient(to right, transparent, black 3%, black 97%, transparent);
+      }
+    </style>
+  </div>
+)}

@@ -15,12 +15,32 @@ export default {
       fontFamily: {
         'serif': ['Besley', '"Besley Fallback"', 'Georgia', 'Garamond', 'serif'],
         'heading': ['"IM Fell DW Pica"', '"IM Fell Fallback"', 'Georgia', 'serif'],
+        'display': ['"Cinzel Decorative"', '"Cinzel Decorative Fallback"', 'Georgia', 'serif'],
+      },
+      keyframes: {
+        'fade-up': {
+          '0%': { opacity: '0', transform: 'translateY(30px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        'fade-in': {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        'slide-in-right': {
+          '0%': { opacity: '0', transform: 'translateX(30px)' },
+          '100%': { opacity: '1', transform: 'translateX(0)' },
+        },
+      },
+      animation: {
+        'fade-up': 'fade-up 0.6s ease-out forwards',
+        'fade-in': 'fade-in 0.5s ease-out forwards',
+        'slide-in-right': 'slide-in-right 0.5s ease-out forwards',
       },
     },
   },
   plugins: [
     require('@tailwindcss/typography'),
-    plugin(function({ addComponents }) {
+    plugin(function({ addComponents, addUtilities }) {
       addComponents({
         // Common image hover effect - use with group class on parent
         '.img-hover': {
@@ -28,6 +48,18 @@ export default {
         },
         '.img-hover-slow': {
           '@apply transition-transform duration-500 group-hover:scale-105': {},
+        },
+      });
+      addUtilities({
+        // Scroll reveal - elements start hidden, animate in when .revealed is added
+        '[data-scroll-reveal]': {
+          opacity: '0',
+          transform: 'translateY(30px)',
+          transition: 'opacity 0.6s ease-out, transform 0.6s ease-out',
+        },
+        '[data-scroll-reveal].revealed': {
+          opacity: '1',
+          transform: 'translateY(0)',
         },
       });
     }),

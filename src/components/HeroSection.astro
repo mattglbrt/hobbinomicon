@@ -34,28 +34,30 @@ const {
 const formattedDate = formatDateLong(pubDate);
 
 const titleSize = size === 'large'
-  ? 'text-4xl md:text-6xl lg:text-7xl'
-  : 'text-4xl md:text-5xl lg:text-6xl';
+  ? 'text-5xl md:text-7xl lg:text-[8rem] xl:text-[10rem]'
+  : 'text-4xl md:text-6xl lg:text-7xl';
 
 const descriptionVisible = size === 'large';
 
 // Determine image type for rendering
 const isOptimizedImage = isImageMetadata(heroImage);
 const isRemoteImage = !isOptimizedImage && typeof heroImage === 'string' && heroImage.startsWith('http');
-const isEager = badge === 'Latest Post';
+const isEager = badge === 'Latest Post' || badge === 'Featured Post';
 ---
 
 <style>
   .hero-image-wrapper img {
-    animation: fadeIn 0.5s ease-in;
+    animation: heroFadeIn 0.8s ease-out;
   }
 
-  @keyframes fadeIn {
+  @keyframes heroFadeIn {
     from {
       opacity: 0;
+      transform: scale(1.05);
     }
     to {
       opacity: 1;
+      transform: scale(1);
     }
   }
 
@@ -63,115 +65,136 @@ const isEager = badge === 'Latest Post';
     backdrop-filter: blur(20px);
     background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
   }
+
+  .hero-parallax-img {
+    will-change: transform;
+    transform: translateY(calc(var(--scroll-y, 0) * 0.3px));
+  }
+
+  @media (prefers-reduced-motion: reduce), (max-width: 768px) {
+    .hero-parallax-img {
+      transform: none !important;
+    }
+  }
+
+  .hero-title {
+    line-height: 0.85;
+    letter-spacing: -0.02em;
+  }
 </style>
 
-<section class="relative h-screen overflow-hidden group pt-20 md:pt-24 hero-image-wrapper">
+<section class="relative h-screen overflow-hidden group hero-image-wrapper">
   <div class="absolute inset-0 hero-loading"></div>
-  {isOptimizedImage ? (
-    <!-- Optimized image from hero-cache (ImageMetadata) -->
-    <Image
-      src={heroImage}
-      alt={heroImageAlt || title}
-      width={1920}
-      height={1080}
-      class="absolute inset-0 w-full h-full object-cover img-hover-slow"
-      loading={isEager ? 'eager' : 'lazy'}
-      decoding={isEager ? 'sync' : 'async'}
-      format="webp"
-      quality={65}
-      widths={[640, 1024, 1920]}
-      sizes="100vw"
-    />
-  ) : isRemoteImage ? (
-    <!-- Remote image (YouTube fallback) -->
-    <picture>
-      <source
-        srcset={heroImage}
-        type="image/webp"
-        media="(min-width: 1024px)"
-      />
-      <img
+
+  <!-- Hero Image with Parallax -->
+  <div class="absolute inset-0 hero-parallax-img" style="top: -10%; bottom: -10%; height: 120%;">
+    {isOptimizedImage ? (
+      <Image
         src={heroImage}
         alt={heroImageAlt || title}
-        class="absolute inset-0 w-full h-full object-cover img-hover-slow"
+        width={1920}
+        height={1080}
+        class="w-full h-full object-cover img-hover-slow"
         loading={isEager ? 'eager' : 'lazy'}
-        fetchpriority={isEager ? 'high' : 'auto'}
         decoding={isEager ? 'sync' : 'async'}
-        width="1920"
-        height="1080"
-        data-youtube-url={heroImage.includes('youtube.com') ? heroImage : undefined}
-        onerror={getYouTubeFallbackHandler('url')}
+        format="webp"
+        quality={65}
+        widths={[640, 1024, 1920]}
+        sizes="100vw"
       />
-    </picture>
-  ) : (
-    <!-- Local public image (string path) -->
-    <Image
-      src={heroImage}
-      alt={heroImageAlt || title}
-      width={1920}
-      height={1080}
-      class="absolute inset-0 w-full h-full object-cover img-hover-slow"
-      loading={isEager ? 'eager' : 'lazy'}
-      decoding={isEager ? 'sync' : 'async'}
-      format="webp"
-      quality={65}
-      widths={[640, 1024, 1920]}
-      sizes="100vw"
-    />
-  )}
-  <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-transparent"></div>
+    ) : isRemoteImage ? (
+      <picture>
+        <source
+          srcset={heroImage}
+          type="image/webp"
+          media="(min-width: 1024px)"
+        />
+        <img
+          src={heroImage}
+          alt={heroImageAlt || title}
+          class="w-full h-full object-cover img-hover-slow"
+          loading={isEager ? 'eager' : 'lazy'}
+          fetchpriority={isEager ? 'high' : 'auto'}
+          decoding={isEager ? 'sync' : 'async'}
+          width="1920"
+          height="1080"
+          data-youtube-url={heroImage.includes('youtube.com') ? heroImage : undefined}
+          onerror={getYouTubeFallbackHandler('url')}
+        />
+      </picture>
+    ) : (
+      <Image
+        src={heroImage}
+        alt={heroImageAlt || title}
+        width={1920}
+        height={1080}
+        class="w-full h-full object-cover img-hover-slow"
+        loading={isEager ? 'eager' : 'lazy'}
+        decoding={isEager ? 'sync' : 'async'}
+        format="webp"
+        quality={65}
+        widths={[640, 1024, 1920]}
+        sizes="100vw"
+      />
+    )}
+  </div>
 
+  <!-- Multi-layer gradient overlay -->
+  <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-transparent"></div>
+  <div class="absolute inset-0 bg-gradient-to-br from-ink/30 via-transparent to-transparent"></div>
+
+  <!-- Content -->
   <div class="absolute bottom-0 left-0 right-0">
-    <div class="max-w-7xl mx-auto px-6 pb-24 md:pb-16">
+    <div class="max-w-7xl mx-auto px-6 pb-16 md:pb-20">
       <a
         href={`/blog/${slug}`}
-        class="block max-w-3xl group-hover:translate-x-2 transition-transform duration-300"
+        class="block group-hover:translate-x-1 transition-transform duration-500"
       >
-    {badge && (
-      <div class="mb-4">
-        <span class="inline-block px-4 py-2 bg-white/20 backdrop-blur-md text-white text-sm font-medium rounded-full">
-          {badge}
-        </span>
-      </div>
-    )}
-
-    <h2 class={`${titleSize} font-heading font-bold text-white mb-4 drop-shadow-2xl leading-tight`}>
-      {title}
-    </h2>
-
-    {descriptionVisible && (
-      <p class="text-lg md:text-xl text-white/90 mb-6 drop-shadow-lg font-serif">
-        {description}
-      </p>
-    )}
-
-    <div class="flex flex-wrap gap-4 items-center text-white/90 text-sm md:text-base">
-      <time datetime={pubDate.toISOString()}>
-        {formattedDate}
-      </time>
-      <span>•</span>
-      <span class="px-3 py-1 bg-white/20 backdrop-blur-sm rounded">
-        {category}
-      </span>
-      {tags.length > 0 && (
-        <>
-          <span>•</span>
-          <div class="flex gap-2">
-            {tags.slice(0, 3).map((tag) => (
-              <span class="text-white/80">#{tag}</span>
-            ))}
+        {badge && (
+          <div class="mb-6">
+            <span class="inline-block px-4 py-2 bg-white/10 backdrop-blur-md text-white/90 text-xs font-heading uppercase tracking-[0.2em] rounded-full border border-white/10">
+              {badge}
+            </span>
           </div>
-        </>
-      )}
-    </div>
+        )}
+
+        <h2 class={`${titleSize} font-display font-bold text-white mb-6 drop-shadow-2xl hero-title`}>
+          {title}
+        </h2>
+
+        {descriptionVisible && description && (
+          <p class="text-lg md:text-xl text-white/80 mb-8 drop-shadow-lg font-serif max-w-2xl">
+            {description}
+          </p>
+        )}
+
+        <div class="flex flex-wrap gap-4 items-center text-white/70 text-sm">
+          <time datetime={pubDate.toISOString()} class="font-heading tracking-wide">
+            {formattedDate}
+          </time>
+          <span class="text-white/30">/</span>
+          <span class="font-heading uppercase tracking-[0.15em] text-xs">
+            {category}
+          </span>
+          {tags.length > 0 && (
+            <>
+              <span class="text-white/30">/</span>
+              <div class="flex gap-3">
+                {tags.slice(0, 3).map((tag) => (
+                  <span class="text-white/50 text-xs font-heading tracking-wide">#{tag}</span>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
       </a>
     </div>
   </div>
 
-  {badge === 'Latest Post' && (
-    <div class="absolute bottom-8 right-8 text-white animate-bounce">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+  {badge === 'Featured Post' && (
+    <div class="absolute bottom-8 right-8 text-white/30 animate-bounce hidden md:block">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
       </svg>
     </div>
   )}

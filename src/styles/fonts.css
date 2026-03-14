@@ -58,6 +58,35 @@
   line-gap-override: 0%;
 }
 
+/*
+ * Fallback font with adjusted metrics to match Cinzel Decorative
+ */
+@font-face {
+  font-family: 'Cinzel Decorative Fallback';
+  src: local('Georgia');
+  size-adjust: 112%;
+  ascent-override: 88%;
+  descent-override: 22%;
+  line-gap-override: 0%;
+}
+
+/* Cinzel Decorative - Display font (section titles, oversized headings) */
+@font-face {
+  font-family: 'Cinzel Decorative';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/cinzel-decorative-regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Cinzel Decorative';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/cinzel-decorative-bold.woff2') format('woff2');
+}
+
 /* IM Fell DW Pica - Heading font */
 @font-face {
   font-family: 'IM Fell DW Pica';

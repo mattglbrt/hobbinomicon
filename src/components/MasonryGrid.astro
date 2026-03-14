@@ -1,0 +1,52 @@
+---
+// MasonryGrid - CSS columns-based masonry layout
+// Zero JavaScript, full browser support
+
+interface Props {
+  columns?: 2 | 3;
+  class?: string;
+}
+
+const { columns = 3, class: className = '' } = Astro.props;
+
+const colClass = columns === 2 ? 'masonry-2' : 'masonry-3';
+---
+
+<div class={`masonry-grid ${colClass} ${className}`}>
+  <slot />
+</div>
+
+<style>
+  .masonry-grid {
+    columns: 1;
+    column-gap: 1.5rem;
+  }
+
+  .masonry-grid > :global(*) {
+    break-inside: avoid;
+    margin-bottom: 1.5rem;
+  }
+
+  .masonry-2 {
+    columns: 1;
+  }
+
+  .masonry-3 {
+    columns: 1;
+  }
+
+  @media (min-width: 768px) {
+    .masonry-2 {
+      columns: 2;
+    }
+    .masonry-3 {
+      columns: 2;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .masonry-3 {
+      columns: 3;
+    }
+  }
+</style>

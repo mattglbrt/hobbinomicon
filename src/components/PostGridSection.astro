@@ -1,32 +1,65 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import PostCard from './PostCard.astro';
+import MasonryGrid from './MasonryGrid.astro';
 import ContentContainer from './ContentContainer.astro';
 import ViewAllLink from './ViewAllLink.astro';
 
 interface Props {
   title: string;
+  eyebrow?: string;
   viewAllLink: string;
   viewAllText?: string;
   posts: CollectionEntry<'blog'>[];
   eagerCount?: number;
+  layout?: 'grid' | 'masonry' | 'asymmetric';
 }
 
-const { title, viewAllLink, viewAllText = 'View All →', posts, eagerCount = 0 } = Astro.props;
+const {
+  title,
+  eyebrow,
+  viewAllLink,
+  viewAllText = 'View All →',
+  posts,
+  eagerCount = 0,
+  layout = 'grid'
+} = Astro.props;
 ---
 
 {posts.length > 0 && (
-  <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24">
+  <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24" data-scroll-reveal>
     <ContentContainer>
       <div class="flex items-center justify-between mb-12">
-        <h2 class="text-4xl md:text-5xl font-heading font-bold text-ink dark:text-ink-dark">{title}</h2>
+        <div>
+          {eyebrow && (
+            <span class="block text-sm font-heading uppercase tracking-[0.3em] text-ink/40 dark:text-ink-dark/40 mb-2">{eyebrow}</span>
+          )}
+          <h2 class="text-5xl md:text-7xl font-display font-bold text-ink dark:text-ink-dark">{title}</h2>
+        </div>
         <ViewAllLink href={viewAllLink}>{viewAllText}</ViewAllLink>
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {posts.map((post, index) => (
-          <PostCard post={post} eager={index < eagerCount} />
-        ))}
-      </div>
+
+      {layout === 'masonry' ? (
+        <MasonryGrid columns={3}>
+          {posts.map((post, index) => (
+            <PostCard post={post} eager={index < eagerCount} />
+          ))}
+        </MasonryGrid>
+      ) : layout === 'asymmetric' ? (
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {posts.map((post, index) => (
+            <div class={index === 0 ? 'md:col-span-2 md:row-span-2' : ''}>
+              <PostCard post={post} eager={index < eagerCount} />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {posts.map((post, index) => (
+            <PostCard post={post} eager={index < eagerCount} />
+          ))}
+        </div>
+      )}
     </ContentContainer>
   </section>
 )}
