@@ -82,24 +82,20 @@ const recentVlogs = sortedPosts
   .filter(post => !excludedSlugs.has(post.slug) && post.data.youtubeId && !post.data.tags?.includes('kingdom-death'))
   .slice(0, 6);
 
-// Painting technique tags to filter by
-const paintingTags = ['painting', 'glazing', 'dry-brushing', 'airbrushing', 'contrast-paints', 'zenithal', 'blending', 'washes', 'nmm', 'edge-highlighting', 'preshading', 'speed-painting'];
+// Techniques & Crafting - combined painting + hobby tags
+const techniquesTags = [
+  'painting', 'glazing', 'drybrushing', 'airbrushing', 'contrast-paints', 'zenithal',
+  'blending', 'washes', 'nmm', 'edge-highlighting', 'preshading', 'speed-painting',
+  'sculpting', '3d-printing', 'terrain', 'basing', 'priming', 'resin-casting',
+  'kitbashing', 'magnets', 'conversion', 'green-stuff', 'mold-making', 'scratch-building',
+  'batch-painting', 'skin-tones', 'weathering', 'oil-wash', 'freehand', 'color-recipes',
+];
 
-// Get painting tutorials - posts with painting-related tags
-const paintingTutorials = sortedPosts
+// Get techniques & crafting posts
+const techniquesPosts = sortedPosts
   .filter(post => !excludedSlugs.has(post.slug) &&
-    post.data.tags?.some(tag => paintingTags.includes(tag)))
-  .slice(0, 6);
-
-// Hobby tags to filter by
-const hobbyTags = ['building', 'model-prep', '3d-printing', 'terrain', 'basing', 'priming', 'resin-casting', 'kitbashing', 'magnetizing'];
-
-// Get hobby posts - posts with hobby-related tags
-const hobbyPosts = sortedPosts
-  .filter(post => !excludedSlugs.has(post.slug) &&
-    !paintingTutorials.some(p => p.slug === post.slug) &&
-    post.data.tags?.some(tag => hobbyTags.includes(tag)))
-  .slice(0, 6);
+    post.data.tags?.some(tag => techniquesTags.includes(tag)))
+  .slice(0, 9);
 
 // Game system tags for the games section
 const gameSystemTags = ['warmachine', 'warhammer', 'trench-crusade', 'mage-knight', 'crown-and-skull', 'necromunda', 'dolmenwood', 'motley-crews', 'kingdom-death'];
@@ -153,6 +149,38 @@ const heroImageUrl = getHeroImageUrl(latestPost?.data.heroImage, latestPost?.dat
       />
     )}
 
+    <!-- Recent Vlogs Section (Masonry) -->
+    <PostGridSection
+      title="Recent Vlogs"
+      eyebrow="Watch"
+      viewAllLink="/categories/vlogs"
+      posts={recentVlogs}
+      layout="masonry"
+    />
+
+    <!-- Newsletter — right after vlogs -->
+    <NewsletterSignup variant="section" />
+
+    <!-- Techniques & Crafting Section (combined painting + hobby) -->
+    {techniquesPosts.length > 0 && (
+      <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24" data-scroll-reveal>
+        <ContentContainer>
+          <div class="flex items-center justify-between mb-12">
+            <div>
+              <span class="block text-sm font-heading uppercase tracking-[0.3em] text-ink/40 dark:text-ink-dark/40 mb-2">Learn & Build</span>
+              <h2 class="text-5xl md:text-7xl font-display font-bold text-ink dark:text-ink-dark">Techniques & Crafting</h2>
+            </div>
+            <ViewAllLink href="/tags/painting">View All →</ViewAllLink>
+          </div>
+          <MasonryGrid columns={3}>
+            {techniquesPosts.map((post) => (
+              <ResourceThumbnail post={post} />
+            ))}
+          </MasonryGrid>
+        </ContentContainer>
+      </section>
+    )}
+
     <!-- Resource Posts Section -->
     {(resourceHubs.length > 0 || individualResources.length > 0) && (
       <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24" data-scroll-reveal>
@@ -188,24 +216,6 @@ const heroImageUrl = getHeroImageUrl(latestPost?.data.heroImage, latestPost?.dat
         </ContentContainer>
       </section>
     )}
-
-    <!-- Featured Project Section -->
-    {featuredProject && featuredProjectPosts.length > 0 && (
-      <FeaturedProjectSection
-        projectSlug={featuredProject.projectSlug}
-        project={featuredProject.project}
-        posts={featuredProjectPosts}
-      />
-    )}
-
-    <!-- Recent Vlogs Section (Masonry) -->
-    <PostGridSection
-      title="Recent Vlogs"
-      eyebrow="Watch"
-      viewAllLink="/categories/vlogs"
-      posts={recentVlogs}
-      layout="masonry"
-    />
 
     <!-- Kingdom Death Campaign Callout -->
     {latestKDMPost && (
@@ -301,46 +311,6 @@ const heroImageUrl = getHeroImageUrl(latestPost?.data.heroImage, latestPost?.dat
       </section>
     )}
 
-    <!-- Painting Tutorials Section (Masonry) -->
-    {paintingTutorials.length > 0 && (
-      <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24" data-scroll-reveal>
-        <ContentContainer>
-          <div class="flex items-center justify-between mb-12">
-            <div>
-              <span class="block text-sm font-heading uppercase tracking-[0.3em] text-ink/40 dark:text-ink-dark/40 mb-2">Learn</span>
-              <h2 class="text-5xl md:text-7xl font-display font-bold text-ink dark:text-ink-dark">Painting</h2>
-            </div>
-            <ViewAllLink href="/tags/painting">View All →</ViewAllLink>
-          </div>
-          <MasonryGrid columns={3}>
-            {paintingTutorials.map((post) => (
-              <ResourceThumbnail post={post} />
-            ))}
-          </MasonryGrid>
-        </ContentContainer>
-      </section>
-    )}
-
-    <!-- Hobby Section -->
-    {hobbyPosts.length > 0 && (
-      <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24" data-scroll-reveal>
-        <ContentContainer>
-          <div class="flex items-center justify-between mb-12">
-            <div>
-              <span class="block text-sm font-heading uppercase tracking-[0.3em] text-ink/40 dark:text-ink-dark/40 mb-2">Build</span>
-              <h2 class="text-5xl md:text-7xl font-display font-bold text-ink dark:text-ink-dark">Hobby</h2>
-            </div>
-            <ViewAllLink href="/tags/building">View All →</ViewAllLink>
-          </div>
-          <MasonryGrid columns={3}>
-            {hobbyPosts.map((post) => (
-              <ResourceThumbnail post={post} />
-            ))}
-          </MasonryGrid>
-        </ContentContainer>
-      </section>
-    )}
-
     <!-- Games Section -->
     <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24" data-scroll-reveal>
       <ContentContainer>
@@ -386,11 +356,17 @@ const heroImageUrl = getHeroImageUrl(latestPost?.data.heroImage, latestPost?.dat
     <!-- Dramatis Personae Section -->
     <CharacterSlider characters={characterPosts} />
 
+    <!-- Featured Project Section -->
+    {featuredProject && featuredProjectPosts.length > 0 && (
+      <FeaturedProjectSection
+        projectSlug={featuredProject.projectSlug}
+        project={featuredProject.project}
+        posts={featuredProjectPosts}
+      />
+    )}
+
     <!-- YouTube CTA Section -->
     <YouTubeCTA />
-
-    <!-- Newsletter Section -->
-    <NewsletterSignup variant="section" />
 
     <Footer />
   </main>
