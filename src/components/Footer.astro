@@ -1,5 +1,6 @@
 ---
 import ContentContainer from './ContentContainer.astro';
+import NewsletterSignup from './NewsletterSignup.astro';
 
 const currentYear = new Date().getFullYear();
 ---
@@ -35,7 +36,7 @@ const currentYear = new Date().getFullYear();
 <footer class="footer-glass text-white py-16">
   <ContentContainer>
     <!-- Main Footer Content -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-12 mb-12">
       <!-- Brand Section -->
       <div class="md:col-span-1">
         <a href="/" class="inline-block mb-4">
@@ -79,6 +80,11 @@ const currentYear = new Date().getFullYear();
           <a href="/terms-of-service" class="footer-link text-sm">Terms of Service</a>
           <a href="/ai-disclosure" class="footer-link text-sm">AI Disclosure</a>
         </nav>
+      </div>
+
+      <!-- Newsletter Section -->
+      <div>
+        <NewsletterSignup variant="inline" />
       </div>
 
       <!-- Connect Section -->

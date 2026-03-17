@@ -7,6 +7,7 @@ import PostGridSection from '../components/PostGridSection.astro';
 import FeaturedProjectSection from '../components/FeaturedProjectSection.astro';
 import CharacterSlider from '../components/CharacterSlider.astro';
 import YouTubeCTA from '../components/YouTubeCTA.astro';
+import NewsletterSignup from '../components/NewsletterSignup.astro';
 import Footer from '../components/Footer.astro';
 import ContentContainer from '../components/ContentContainer.astro';
 import MasonryGrid from '../components/MasonryGrid.astro';
@@ -387,6 +388,9 @@ const heroImageUrl = getHeroImageUrl(latestPost?.data.heroImage, latestPost?.dat
 
     <!-- YouTube CTA Section -->
     <YouTubeCTA />
+
+    <!-- Newsletter Section -->
+    <NewsletterSignup variant="section" />
 
     <Footer />
   </main>

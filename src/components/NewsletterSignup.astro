@@ -1,0 +1,119 @@
+---
+interface Props {
+  variant?: 'inline' | 'section';
+  class?: string;
+}
+
+const { variant = 'section', class: className = '' } = Astro.props;
+---
+
+{variant === 'section' ? (
+  <section class:list={['relative overflow-hidden', className]} data-scroll-reveal>
+    <div class="max-w-2xl mx-auto text-center px-6 py-20">
+      <p class="text-sm font-heading uppercase tracking-[0.3em] text-ink/50 dark:text-ink-dark/50 mb-4">
+        Stay in the loop
+      </p>
+      <h2 class="font-display text-4xl md:text-5xl lg:text-6xl text-ink dark:text-ink-dark mb-4">
+        Join the Newsletter
+      </h2>
+      <p class="text-ink/70 dark:text-ink-dark/70 text-lg mb-8 max-w-lg mx-auto">
+        Get notified about new tutorials, vlogs, and hobby content. No spam, unsubscribe anytime.
+      </p>
+      <form class="newsletter-form flex flex-col sm:flex-row gap-3 max-w-md mx-auto" data-newsletter-form>
+        <input
+          type="email"
+          name="email"
+          required
+          placeholder="your@email.com"
+          class="flex-1 px-4 py-3 rounded-lg bg-ink/5 dark:bg-ink-dark/10 border border-ink/10 dark:border-ink-dark/20 text-ink dark:text-ink-dark placeholder:text-ink/40 dark:placeholder:text-ink-dark/40 focus:outline-none focus:ring-2 focus:ring-ink/20 dark:focus:ring-ink-dark/30 transition-all"
+        />
+        <button
+          type="submit"
+          class="px-6 py-3 bg-ink dark:bg-ink-dark text-parchment dark:text-parchment-dark font-heading uppercase tracking-wider text-sm rounded-lg hover:bg-ink/90 dark:hover:bg-ink-dark/90 transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Subscribe
+        </button>
+      </form>
+      <p class="newsletter-message hidden mt-4 text-sm" data-newsletter-message></p>
+    </div>
+  </section>
+) : (
+  <div class:list={['newsletter-inline', className]}>
+    <p class="text-sm font-medium text-white/80 uppercase tracking-wider mb-4">
+      Newsletter
+    </p>
+    <p class="text-white/60 text-sm mb-4">
+      Hobby updates in your inbox. No spam.
+    </p>
+    <form class="newsletter-form flex flex-col gap-2" data-newsletter-form>
+      <input
+        type="email"
+        name="email"
+        required
+        placeholder="your@email.com"
+        class="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-white/40 text-sm focus:outline-none focus:ring-1 focus:ring-white/20 transition-all"
+      />
+      <button
+        type="submit"
+        class="px-4 py-2 bg-white/10 border border-white/10 text-white text-sm font-medium rounded-lg hover:bg-white/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        Subscribe
+      </button>
+    </form>
+    <p class="newsletter-message hidden mt-2 text-xs" data-newsletter-message></p>
+  </div>
+)}
+
+<script>
+  function initNewsletterForms() {
+    document.querySelectorAll('[data-newsletter-form]').forEach((form) => {
+      if (form.dataset.initialized) return;
+      form.dataset.initialized = 'true';
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formEl = e.target as HTMLFormElement;
+        const btn = formEl.querySelector('button') as HTMLButtonElement;
+        const msg = formEl.parentElement?.querySelector('[data-newsletter-message]') as HTMLElement;
+        const email = (formEl.querySelector('input[name="email"]') as HTMLInputElement).value;
+
+        btn.disabled = true;
+        btn.textContent = 'Subscribing...';
+
+        try {
+          const res = await fetch('/api/subscribe', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email }),
+          });
+
+          const data = await res.json();
+
+          if (msg) {
+            msg.classList.remove('hidden', 'text-red-500', 'text-green-600', 'dark:text-red-400', 'dark:text-green-400');
+            if (res.ok) {
+              msg.textContent = data.message || 'Successfully subscribed!';
+              msg.classList.add('text-green-600', 'dark:text-green-400');
+              formEl.reset();
+            } else {
+              msg.textContent = data.error || 'Something went wrong.';
+              msg.classList.add('text-red-500', 'dark:text-red-400');
+            }
+          }
+        } catch {
+          if (msg) {
+            msg.classList.remove('hidden', 'text-green-600', 'dark:text-green-400');
+            msg.classList.add('text-red-500', 'dark:text-red-400');
+            msg.textContent = 'Network error. Please try again.';
+          }
+        } finally {
+          btn.disabled = false;
+          btn.textContent = 'Subscribe';
+        }
+      });
+    });
+  }
+
+  initNewsletterForms();
+  document.addEventListener('astro:after-swap', initNewsletterForms);
+</script>
