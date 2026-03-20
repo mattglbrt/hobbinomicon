@@ -14,9 +14,10 @@
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.11",
+    "@astrojs/rss": "^4.0.17",
     "@astrojs/sitemap": "^3.6.0",
-    "astro": "^5.15.9",
-    "@playform/inline": "*"
+    "@playform/inline": "*",
+    "astro": "^5.15.9"
   },
   "devDependencies": {
     "@astrojs/tailwind": "^6.0.2",
