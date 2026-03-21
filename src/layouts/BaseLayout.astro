@@ -1,5 +1,5 @@
 ---
-import { ViewTransitions } from 'astro:transitions';
+import { ClientRouter } from 'astro:transitions';
 import RandomToad from '../components/RandomToad.astro';
 import SkipLink from '../components/SkipLink.astro';
 import StructuredData from '../components/StructuredData.astro';
@@ -109,7 +109,7 @@ const canonicalURL = Astro.site
     <meta property="twitter:creator" content="@hobbinomicon" />
 
     <title>{title}</title>
-    <ViewTransitions />
+    <ClientRouter fallback="none" />
 
     <!-- Google Analytics (deferred to avoid render blocking) -->
     <script is:inline>
