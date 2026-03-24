@@ -29,6 +29,12 @@ const canonicalURL = Astro.site
 <!doctype html>
 <html lang="en" style="scroll-behavior: smooth;">
   <head>
+    <!-- Ensure initial history entry exists before ClientRouter replaceState (fixes mobile back button) -->
+    <script is:inline>
+      if (!history.state) {
+        history.pushState({ _init: true }, '', location.href);
+      }
+    </script>
     <!-- Dark mode initialization (must be first to prevent flash) -->
     <script is:inline>
       (function() {
