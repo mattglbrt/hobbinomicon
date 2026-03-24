@@ -49,7 +49,7 @@ export default defineConfig({
   site: 'https://hobbinomicon.com',
   output: 'static',
   trailingSlash: 'always',
-  adapter: netlify(),
+  adapter: netlify({ imageCDN: false }),
   fonts: [
     {
       provider: fontProviders.local(),

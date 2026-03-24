@@ -128,8 +128,6 @@ const heroImageUrl = getHeroImageUrl(latestPost?.data.heroImage, latestPost?.dat
 ---
 
 <BaseLayout title="The Hobbinomicon">
-  {/* Preload LCP hero image */}
-  <link slot="head" rel="preload" as="image" href={heroImageUrl} fetchpriority="high" />
   <Header theme="dark" />
 
   <main id="main-content" class="min-h-screen">
