@@ -38,9 +38,12 @@ const otherPosts = posts.filter(post =>
 
 // Check if this is a campaign tag (has both characters and chapters)
 const isCampaignTag = characterPosts.length > 0 && chapterPosts.length > 0;
+
+// Social image from the first post
+const socialImage = posts[0] ? getHeroImageUrl(posts[0].data.heroImage, posts[0].data.youtubeId) : undefined;
 ---
 
-<BaseLayout title={`${tagDisplay} - The Hobbinomicon`} description={tagDescription}>
+<BaseLayout title={`${tagDisplay} - The Hobbinomicon`} description={tagDescription} image={socialImage}>
   <StructuredData
     type="breadcrumb"
     data={{

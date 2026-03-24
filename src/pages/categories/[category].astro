@@ -9,7 +9,7 @@ import Footer from '../../components/Footer.astro';
 import StructuredData from '../../components/StructuredData.astro';
 import ContentContainer from '../../components/ContentContainer.astro';
 import { getPublishedPosts, groupByCategory, sortByDate } from '../../utils/collections';
-import { getHeroImage, isImageMetadata } from '../../utils/getHeroImage';
+import { getHeroImage, getHeroImageUrl, isImageMetadata } from '../../utils/getHeroImage';
 import { getPartyDisplay, getPartyDescription, getAllParties } from '../../utils/parties';
 
 export async function getStaticPaths() {
@@ -75,9 +75,12 @@ const gameFilters = hubPosts.map((hub) => {
     tag: gameTag?.toLowerCase() || '',
   };
 }).filter((game) => game.tag);
+
+// Social image from the first post
+const socialImage = posts[0] ? getHeroImageUrl(posts[0].data.heroImage, posts[0].data.youtubeId) : undefined;
 ---
 
-<BaseLayout title={`${category} - The Hobbinomicon`}>
+<BaseLayout title={`${category} - The Hobbinomicon`} description={`${posts.length} ${posts.length === 1 ? 'post' : 'posts'} in ${category}`} image={socialImage}>
   <StructuredData
     type="breadcrumb"
     data={{

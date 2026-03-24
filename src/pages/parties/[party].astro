@@ -7,7 +7,7 @@ import Footer from '../../components/Footer.astro';
 import ContentContainer from '../../components/ContentContainer.astro';
 import { Image } from 'astro:assets';
 import { getPublishedPosts } from '../../utils/collections';
-import { getHeroImage, isImageMetadata } from '../../utils/getHeroImage';
+import { getHeroImage, getHeroImageUrl, isImageMetadata } from '../../utils/getHeroImage';
 import { getPartyDisplay, getPartyDescription, getPartyCampaign, getPartyStatus, getAllParties } from '../../utils/parties';
 
 export async function getStaticPaths() {
@@ -35,9 +35,12 @@ export async function getStaticPaths() {
 }
 
 const { party, partyDisplay, partyDescription, partyCampaign, partyStatus, members } = Astro.props;
+
+// Social image from the first party member
+const socialImage = members[0] ? getHeroImageUrl(members[0].data.heroImage) : undefined;
 ---
 
-<BaseLayout title={`${partyDisplay} - The Hobbinomicon`}>
+<BaseLayout title={`${partyDisplay} - The Hobbinomicon`} description={partyDescription} image={socialImage}>
   <Header theme="light" />
 
   <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">

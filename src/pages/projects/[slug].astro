@@ -8,7 +8,7 @@ import BackToTop from '../../components/BackToTop.astro';
 import StructuredData from '../../components/StructuredData.astro';
 import ContentContainer from '../../components/ContentContainer.astro';
 import { getPublishedPosts, sortByDate } from '../../utils/collections';
-import { getHeroImage } from '../../utils/getHeroImage';
+import { getHeroImage, getHeroImageUrl } from '../../utils/getHeroImage';
 import ProseContent from '../../components/ProseContent.astro';
 
 export async function getStaticPaths() {
@@ -47,10 +47,11 @@ const projectSlug = Astro.params.slug;
 // Get the latest post's hero image for the header
 const latestPost = sortByDate(posts)[0];
 const heroImage = latestPost ? getHeroImage(latestPost.data.heroImage, latestPost.data.youtubeId) : null;
+const heroImageUrl = latestPost ? getHeroImageUrl(latestPost.data.heroImage, latestPost.data.youtubeId) : undefined;
 const heroImageAlt = latestPost?.data.heroImageAlt || project.data.title;
 ---
 
-<BaseLayout title={`${project.data.title} - The Hobbinomicon`} description={project.data.description}>
+<BaseLayout title={`${project.data.title} - The Hobbinomicon`} description={project.data.description} image={heroImageUrl}>
   <StructuredData
     type="breadcrumb"
     data={{
