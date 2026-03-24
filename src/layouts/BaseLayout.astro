@@ -56,6 +56,14 @@ const canonicalURL = Astro.site
         document.addEventListener('astro:after-swap', applyDarkMode);
       })();
     </script>
+    <!-- Fix: Chrome mobile back gesture conflicts with View Transitions -->
+    <script is:inline>
+      if (/Mobi|Android/i.test(navigator.userAgent)) {
+        window.addEventListener('popstate', function() {
+          location.reload();
+        }, { capture: true, once: false });
+      }
+    </script>
     <meta charset="UTF-8" />
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width" />
@@ -100,7 +108,7 @@ const canonicalURL = Astro.site
     <meta property="twitter:creator" content="@hobbinomicon" />
 
     <title>{title}</title>
-    <!-- <ClientRouter fallback="none" /> -->
+    <ClientRouter fallback="none" />
 
     <!-- Google Analytics (deferred to avoid render blocking) -->
     <script is:inline>
@@ -380,43 +388,5 @@ const canonicalURL = Astro.site
         }
       })();
     </script>
-  <!-- TEMPORARY DEBUG: Remove after fixing back button -->
-  <div id="nav-debug" data-astro-transition-persist="nav-debug" style="position:fixed;bottom:0;left:0;right:0;background:#000;color:#0f0;font-family:monospace;font-size:11px;padding:8px;z-index:9999;max-height:30vh;overflow-y:auto;"></div>
-  <script is:inline>
-  (function() {
-    if (window._navDebugInit) return;
-    window._navDebugInit = true;
-    window._navLog = window._navLog || [];
-    var el = document.getElementById('nav-debug');
-    function addLog(msg) {
-      window._navLog.push(new Date().toLocaleTimeString() + ' ' + msg);
-      if (window._navLog.length > 30) window._navLog.shift();
-      var d = document.getElementById('nav-debug');
-      if (d) d.innerHTML = window._navLog.join('<br>');
-    }
-    window._navAddLog = addLog;
-    addLog('INIT url=' + location.pathname + ' state=' + JSON.stringify(history.state) + ' histLen=' + history.length);
-
-    var origPush = history.pushState;
-    history.pushState = function() {
-      addLog('PUSH url=' + (arguments[2] || '') + ' state=' + JSON.stringify(arguments[0]));
-      return origPush.apply(this, arguments);
-    };
-    var origReplace = history.replaceState;
-    history.replaceState = function() {
-      addLog('REPLACE url=' + (arguments[2] || '') + ' state=' + JSON.stringify(arguments[0]));
-      return origReplace.apply(this, arguments);
-    };
-    window.addEventListener('popstate', function(e) {
-      addLog('POPSTATE url=' + location.pathname + ' state=' + JSON.stringify(e.state));
-    });
-    document.addEventListener('astro:before-preparation', function(e) {
-      addLog('ASTRO:PREP to=' + e.to + ' histLen=' + history.length);
-    });
-    document.addEventListener('astro:after-swap', function() {
-      addLog('ASTRO:SWAP url=' + location.pathname + ' histLen=' + history.length);
-    });
-  })();
-  </script>
   </body>
 </html>
