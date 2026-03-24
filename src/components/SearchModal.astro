@@ -244,12 +244,7 @@ const searchIndex = publishedPosts.map(post => ({
   </div>
 </div>
 
-<!-- Pass search index to client -->
-<script define:vars={{ searchIndex, categories, topTags }}>
-  window.searchIndex = searchIndex;
-  window.searchCategories = categories;
-  window.searchTopTags = topTags;
-</script>
+<!-- Search index loaded on demand when modal opens -->
 
 <script is:inline>
 (function() {
@@ -277,9 +272,21 @@ const searchIndex = publishedPosts.map(post => ({
     let activeCategory = '';
     let activeTags = new Set();
 
+    var searchDataLoaded = false;
+    function loadSearchData() {
+      if (searchDataLoaded) return Promise.resolve();
+      return fetch('/search-index.json').then(function(r) { return r.json(); }).then(function(data) {
+        window.searchIndex = data.searchIndex;
+        window.searchCategories = data.categories;
+        window.searchTopTags = data.topTags;
+        searchDataLoaded = true;
+      });
+    }
+
     function openModal() {
       modal.classList.remove('hidden');
       document.body.style.overflow = 'hidden';
+      loadSearchData();
       setTimeout(function() { input.focus(); }, 50);
     }
 
