@@ -1,5 +1,4 @@
 ---
-import { ClientRouter } from 'astro:transitions';
 import RandomToad from '../components/RandomToad.astro';
 import SkipLink from '../components/SkipLink.astro';
 import StructuredData from '../components/StructuredData.astro';
@@ -56,14 +55,6 @@ const canonicalURL = Astro.site
         document.addEventListener('astro:after-swap', applyDarkMode);
       })();
     </script>
-    <!-- Fix: Chrome mobile back gesture conflicts with ClientRouter popstate handler -->
-    <script is:inline>
-      if (/Mobi|Android/i.test(navigator.userAgent)) {
-        window.addEventListener('popstate', function(e) {
-          e.stopImmediatePropagation();
-        }, true);
-      }
-    </script>
     <meta charset="UTF-8" />
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width" />
@@ -109,7 +100,6 @@ const canonicalURL = Astro.site
     <meta property="twitter:creator" content="@hobbinomicon" />
 
     <title>{title}</title>
-    <ClientRouter fallback="none" />
 
     <!-- Google Analytics (delayed until after page load to avoid blocking LCP) -->
     <script is:inline>
