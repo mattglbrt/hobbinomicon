@@ -14,9 +14,9 @@ export default {
         'ink-dark': '#F4ECD8',
       },
       fontFamily: {
-        'serif': ['Besley', '"Besley Fallback"', 'Georgia', 'Garamond', 'serif'],
-        'heading': ['"IM Fell DW Pica"', '"IM Fell Fallback"', 'Georgia', 'serif'],
-        'display': ['"Cinzel Decorative"', '"Cinzel Decorative Fallback"', 'Georgia', 'serif'],
+        'serif': ['var(--font-besley)', 'Georgia', 'Garamond', 'serif'],
+        'heading': ['var(--font-imfell)', 'Georgia', 'serif'],
+        'display': ['var(--font-cinzel)', 'Georgia', 'serif'],
       },
       keyframes: {
         'fade-up': {

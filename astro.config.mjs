@@ -1,5 +1,5 @@
 // @ts-check
-import { defineConfig } from 'astro/config';
+import { defineConfig, fontProviders } from 'astro/config';
 import netlify from '@astrojs/netlify';
 import mdx from '@astrojs/mdx';
 import { remarkReadingTime } from './src/utils/remarkReadingTime.ts';
@@ -49,6 +49,46 @@ export default defineConfig({
   site: 'https://hobbinomicon.com',
   output: 'static',
   adapter: netlify(),
+  fonts: [
+    {
+      provider: fontProviders.local(),
+      name: 'Besley',
+      cssVariable: '--font-besley',
+      options: {
+        variants: [
+          { weight: 400, style: 'normal', src: ['./src/assets/fonts/besley-regular.woff2'] },
+          { weight: 700, style: 'normal', src: ['./src/assets/fonts/besley-regular.woff2'] },
+          { weight: 400, style: 'italic', src: ['./src/assets/fonts/besley-italic.woff2'] },
+          { weight: 700, style: 'italic', src: ['./src/assets/fonts/besley-italic.woff2'] },
+        ],
+      },
+    },
+    {
+      provider: fontProviders.local(),
+      name: 'IM Fell DW Pica',
+      cssVariable: '--font-imfell',
+      options: {
+        variants: [
+          { weight: 400, style: 'normal', src: ['./src/assets/fonts/imfell-regular.woff2'] },
+          { weight: 400, style: 'italic', src: ['./src/assets/fonts/imfell-italic.woff2'] },
+        ],
+      },
+    },
+    {
+      provider: fontProviders.local(),
+      name: 'Cinzel Decorative',
+      cssVariable: '--font-cinzel',
+      options: {
+        variants: [
+          { weight: 400, style: 'normal', src: ['./src/assets/fonts/cinzel-decorative-regular.woff2'] },
+          { weight: 700, style: 'normal', src: ['./src/assets/fonts/cinzel-decorative-bold.woff2'] },
+        ],
+      },
+    },
+  ],
+  image: {
+    layout: 'constrained',
+  },
   markdown: {
     remarkPlugins: [remarkReadingTime],
   },

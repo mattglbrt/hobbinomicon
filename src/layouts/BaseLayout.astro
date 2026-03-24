@@ -6,8 +6,8 @@ import StructuredData from '../components/StructuredData.astro';
 import SearchModal from '../components/SearchModal.astro';
 import GrainOverlay from '../components/GrainOverlay.astro';
 import Lightbox from '../components/Lightbox.astro';
+import { Font } from 'astro:assets';
 import '../styles/global.css';
-import '../styles/fonts.css';
 
 interface Props {
   title: string;
@@ -63,20 +63,10 @@ const canonicalURL = Astro.site
     <!-- Slot for critical page-specific preloads (LCP images) - must be early in head -->
     <slot name="head" />
 
-    <!-- Preload critical fonts to prevent CLS from font swap -->
-    <link rel="preload" href="/fonts/besley-regular.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/cinzel-decorative-regular.woff2" as="font" type="font/woff2" crossorigin />
-
-    <!-- Critical font-face declarations (must be inline for LCP optimization) -->
-    <style is:inline>
-      @font-face {
-        font-family: 'IM Fell DW Pica';
-        font-style: normal;
-        font-weight: 400;
-        font-display: optional;
-        src: url('/fonts/imfell-regular.woff2') format('woff2');
-      }
-    </style>
+    <!-- Astro Fonts API handles preloading and font-face declarations -->
+    <Font cssVariable="--font-besley" />
+    <Font cssVariable="--font-imfell" />
+    <Font cssVariable="--font-cinzel" />
 
     <!-- Preconnect to YouTube for hero images -->
     <link rel="preconnect" href="https://img.youtube.com" crossorigin />
