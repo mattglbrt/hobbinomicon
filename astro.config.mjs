@@ -55,7 +55,7 @@ export default defineConfig({
       provider: fontProviders.local(),
       name: 'Besley',
       cssVariable: '--font-besley',
-      display: 'swap',
+      display: 'optional',
       options: {
         variants: [
           { weight: 400, style: 'normal', src: ['./src/assets/fonts/besley-regular.woff2'] },
