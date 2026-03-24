@@ -29,12 +29,6 @@ const canonicalURL = Astro.site
 <!doctype html>
 <html lang="en" style="scroll-behavior: smooth;">
   <head>
-    <!-- Ensure initial history entry exists before ClientRouter replaceState (fixes mobile back button) -->
-    <script is:inline>
-      if (!history.state) {
-        history.pushState({ _init: true }, '', location.href);
-      }
-    </script>
     <!-- Dark mode initialization (must be first to prevent flash) -->
     <script is:inline>
       (function() {
@@ -386,5 +380,41 @@ const canonicalURL = Astro.site
         }
       })();
     </script>
+  <!-- TEMPORARY DEBUG: Remove after fixing back button -->
+  <div id="nav-debug" style="position:fixed;bottom:0;left:0;right:0;background:#000;color:#0f0;font-family:monospace;font-size:11px;padding:8px;z-index:9999;max-height:30vh;overflow-y:auto;"></div>
+  <script is:inline>
+  (function() {
+    var log = [];
+    var el = document.getElementById('nav-debug');
+    function addLog(msg) {
+      log.push(new Date().toLocaleTimeString() + ' ' + msg);
+      if (log.length > 20) log.shift();
+      if (el) el.innerHTML = log.join('<br>');
+    }
+    addLog('INIT url=' + location.pathname + ' state=' + JSON.stringify(history.state) + ' len=' + history.length);
+
+    // Track all history changes
+    var origPush = history.pushState;
+    history.pushState = function() {
+      addLog('PUSH url=' + arguments[2] + ' state=' + JSON.stringify(arguments[0]));
+      return origPush.apply(this, arguments);
+    };
+    var origReplace = history.replaceState;
+    history.replaceState = function() {
+      addLog('REPLACE url=' + arguments[2] + ' state=' + JSON.stringify(arguments[0]));
+      return origReplace.apply(this, arguments);
+    };
+    window.addEventListener('popstate', function(e) {
+      addLog('POPSTATE url=' + location.pathname + ' state=' + JSON.stringify(e.state));
+    });
+    // Astro navigation events
+    document.addEventListener('astro:before-preparation', function(e) {
+      addLog('ASTRO:PREP to=' + e.to);
+    });
+    document.addEventListener('astro:after-swap', function() {
+      addLog('ASTRO:SWAP url=' + location.pathname);
+    });
+  })();
+  </script>
   </body>
 </html>
