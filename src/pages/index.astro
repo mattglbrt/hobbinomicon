@@ -125,9 +125,27 @@ const featuredProjectPosts = featuredProject
 // Get hero image for component and URL for preloading
 const heroImage = getHeroImage(latestPost?.data.heroImage, latestPost?.data.youtubeId);
 const heroImageUrl = getHeroImageUrl(latestPost?.data.heroImage, latestPost?.data.youtubeId);
+
+// Generate preload-compatible srcset for the hero LCP image
+import { getImage } from 'astro:assets';
+import { isImageMetadata } from '../utils/getHeroImage';
+let heroPreloadSrcset = '';
+let heroPreloadSrc = '';
+if (heroImage && isImageMetadata(heroImage)) {
+  const sizes = [640, 1024, 1280];
+  const srcsetParts = await Promise.all(sizes.map(async (w) => {
+    const img = await getImage({ src: heroImage, width: w, height: Math.round(w * 9/16), format: 'webp', quality: 50 });
+    return `${img.src} ${w}w`;
+  }));
+  heroPreloadSrcset = srcsetParts.join(', ');
+  heroPreloadSrc = srcsetParts[0].split(' ')[0];
+}
 ---
 
 <BaseLayout title="The Hobbinomicon">
+  {heroPreloadSrcset && (
+    <link slot="head" rel="preload" as="image" imagesrcset={heroPreloadSrcset} imagesizes="100vw" fetchpriority="high" />
+  )}
   <Header theme="dark" />
 
   <main id="main-content" class="min-h-screen">

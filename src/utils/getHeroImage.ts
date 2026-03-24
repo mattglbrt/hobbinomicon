@@ -54,7 +54,7 @@ export function getHeroImage(heroImage?: string, youtubeId?: string): string | I
   }
 
   // Fallback placeholder image
-  return '/images/placeholder.jpg';
+  return '/images/placeholder.webp';
 }
 
 /**
