@@ -1,0 +1,98 @@
+/* Self-hosted fonts — all optional to prevent layout shift */
+
+/* Fallback font with adjusted metrics to match Besley */
+@font-face {
+  font-family: 'Besley Fallback';
+  src: local('Georgia');
+  size-adjust: 105%;
+  ascent-override: 95%;
+  descent-override: 22%;
+  line-gap-override: 0%;
+}
+
+/* Besley - Body font */
+@font-face {
+  font-family: 'Besley';
+  font-style: normal;
+  font-weight: 400;
+  font-display: optional;
+  src: url('/fonts/besley-regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Besley';
+  font-style: normal;
+  font-weight: 700;
+  font-display: optional;
+  src: url('/fonts/besley-regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Besley';
+  font-style: italic;
+  font-weight: 400;
+  font-display: optional;
+  src: url('/fonts/besley-italic.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Besley';
+  font-style: italic;
+  font-weight: 700;
+  font-display: optional;
+  src: url('/fonts/besley-italic.woff2') format('woff2');
+}
+
+/* Fallback font with adjusted metrics to match IM Fell DW Pica */
+@font-face {
+  font-family: 'IM Fell Fallback';
+  src: local('Georgia');
+  size-adjust: 108%;
+  ascent-override: 90%;
+  descent-override: 25%;
+  line-gap-override: 0%;
+}
+
+/* IM Fell DW Pica - Heading font */
+@font-face {
+  font-family: 'IM Fell DW Pica';
+  font-style: normal;
+  font-weight: 400;
+  font-display: optional;
+  src: url('/fonts/imfell-regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'IM Fell DW Pica';
+  font-style: italic;
+  font-weight: 400;
+  font-display: optional;
+  src: url('/fonts/imfell-italic.woff2') format('woff2');
+}
+
+/* Fallback font with adjusted metrics to match Cinzel Decorative */
+@font-face {
+  font-family: 'Cinzel Decorative Fallback';
+  src: local('Georgia');
+  size-adjust: 112%;
+  ascent-override: 88%;
+  descent-override: 22%;
+  line-gap-override: 0%;
+}
+
+/* Cinzel Decorative - Display font */
+@font-face {
+  font-family: 'Cinzel Decorative';
+  font-style: normal;
+  font-weight: 400;
+  font-display: optional;
+  src: url('/fonts/cinzel-decorative-regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Cinzel Decorative';
+  font-style: normal;
+  font-weight: 700;
+  font-display: optional;
+  src: url('/fonts/cinzel-decorative-bold.woff2') format('woff2');
+}

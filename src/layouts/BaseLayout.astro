@@ -5,8 +5,8 @@ import StructuredData from '../components/StructuredData.astro';
 import SearchModal from '../components/SearchModal.astro';
 import GrainOverlay from '../components/GrainOverlay.astro';
 import Lightbox from '../components/Lightbox.astro';
-import { Font } from 'astro:assets';
 import '../styles/global.css';
+import '../styles/fonts.css';
 
 interface Props {
   title: string;
@@ -59,15 +59,8 @@ const canonicalURL = Astro.site
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width" />
 
-    <!-- Critical body font - must load before LCP -->
-    <Font cssVariable="--font-besley" />
-
     <!-- Slot for critical page-specific preloads (LCP images) - must be early in head -->
     <slot name="head" />
-
-    <!-- Non-critical fonts (display: optional - won't cause layout shift) -->
-    <Font cssVariable="--font-imfell" />
-    <Font cssVariable="--font-cinzel" />
 
     <!-- DNS prefetch for YouTube thumbnails used further down the page -->
     <link rel="dns-prefetch" href="https://img.youtube.com" />
