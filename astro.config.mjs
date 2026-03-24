@@ -48,6 +48,7 @@ const blogPostDates = getBlogPostDates();
 export default defineConfig({
   site: 'https://hobbinomicon.com',
   output: 'static',
+  trailingSlash: 'always',
   adapter: netlify(),
   fonts: [
     {
