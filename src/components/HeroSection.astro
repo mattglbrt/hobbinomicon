@@ -96,9 +96,10 @@ const isEager = badge === 'Latest Post' || badge === 'Featured Post';
         height={1080}
         class="w-full h-full object-cover img-hover-slow"
         loading={isEager ? 'eager' : 'lazy'}
+        fetchpriority={isEager ? 'high' : 'auto'}
         decoding={isEager ? 'sync' : 'async'}
         format="webp"
-        quality={65}
+        quality={50}
         widths={[640, 1024, 1920]}
         sizes="100vw"
       />
@@ -130,9 +131,10 @@ const isEager = badge === 'Latest Post' || badge === 'Featured Post';
         height={1080}
         class="w-full h-full object-cover img-hover-slow"
         loading={isEager ? 'eager' : 'lazy'}
+        fetchpriority={isEager ? 'high' : 'auto'}
         decoding={isEager ? 'sync' : 'async'}
         format="webp"
-        quality={65}
+        quality={50}
         widths={[640, 1024, 1920]}
         sizes="100vw"
       />

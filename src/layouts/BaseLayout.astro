@@ -68,16 +68,17 @@ const canonicalURL = Astro.site
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width" />
 
+    <!-- Critical body font - must load before LCP -->
+    <Font cssVariable="--font-besley" />
+
     <!-- Slot for critical page-specific preloads (LCP images) - must be early in head -->
     <slot name="head" />
 
-    <!-- Astro Fonts API handles preloading and font-face declarations -->
-    <Font cssVariable="--font-besley" />
+    <!-- Non-critical fonts (display: optional - won't cause layout shift) -->
     <Font cssVariable="--font-imfell" />
     <Font cssVariable="--font-cinzel" />
 
-    <!-- Preconnect to YouTube for hero images -->
-    <link rel="preconnect" href="https://img.youtube.com" crossorigin />
+    <!-- DNS prefetch for YouTube thumbnails used further down the page -->
     <link rel="dns-prefetch" href="https://img.youtube.com" />
 
     <!-- Favicons -->
@@ -110,7 +111,7 @@ const canonicalURL = Astro.site
     <title>{title}</title>
     <ClientRouter fallback="none" />
 
-    <!-- Google Analytics (deferred to avoid render blocking) -->
+    <!-- Google Analytics (delayed until after page load to avoid blocking LCP) -->
     <script is:inline>
       (function() {
         function loadGA() {
@@ -124,11 +125,9 @@ const canonicalURL = Astro.site
           gtag('js', new Date());
           gtag('config', 'G-990EP8N5XW');
         }
-        if ('requestIdleCallback' in window) {
-          requestIdleCallback(loadGA);
-        } else {
-          setTimeout(loadGA, 2000);
-        }
+        window.addEventListener('load', function() {
+          setTimeout(loadGA, 3000);
+        });
       })();
     </script>
 
