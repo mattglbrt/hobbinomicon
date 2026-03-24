@@ -134,7 +134,7 @@ let heroPreloadSrc = '';
 if (heroImage && isImageMetadata(heroImage)) {
   const sizes = [640, 1024, 1280];
   const srcsetParts = await Promise.all(sizes.map(async (w) => {
-    const img = await getImage({ src: heroImage, width: w, height: Math.round(w * 9/16), format: 'webp', quality: 50 });
+    const img = await getImage({ src: heroImage, width: w, height: Math.round(w * 9/16), format: 'webp', quality: 35 });
     return `${img.src} ${w}w`;
   }));
   heroPreloadSrcset = srcsetParts.join(', ');

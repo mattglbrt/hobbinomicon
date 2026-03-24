@@ -57,7 +57,7 @@ const isRemoteImage = !isOptimizedImage && typeof displayImage === 'string' && d
         loading={eager ? 'eager' : 'lazy'}
         decoding="async"
         format="webp"
-        quality={65}
+        quality={50}
         widths={[320, 480, 640]}
         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
         onload="this.closest('.resource-image').querySelector('[data-placeholder]').classList.add('loaded')"
@@ -85,7 +85,7 @@ const isRemoteImage = !isOptimizedImage && typeof displayImage === 'string' && d
         loading={eager ? 'eager' : 'lazy'}
         decoding="async"
         format="webp"
-        quality={65}
+        quality={50}
         widths={[320, 480, 640]}
         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
         onload="this.closest('.resource-image').querySelector('[data-placeholder]').classList.add('loaded')"

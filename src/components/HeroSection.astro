@@ -83,7 +83,7 @@ const isEager = badge === 'Latest Post' || badge === 'Featured Post';
   }
 </style>
 
-<section class="relative h-screen overflow-hidden group hero-image-wrapper">
+<section class="relative overflow-hidden group hero-image-wrapper" style="height: 100svh;">
   <div class="absolute inset-0 hero-loading"></div>
 
   <!-- Hero Image with Parallax -->
@@ -99,7 +99,7 @@ const isEager = badge === 'Latest Post' || badge === 'Featured Post';
         fetchpriority={isEager ? 'high' : 'auto'}
         decoding={isEager ? 'sync' : 'async'}
         format="webp"
-        quality={50}
+        quality={35}
         widths={[640, 1024, 1920]}
         sizes="100vw"
       />
@@ -134,7 +134,7 @@ const isEager = badge === 'Latest Post' || badge === 'Featured Post';
         fetchpriority={isEager ? 'high' : 'auto'}
         decoding={isEager ? 'sync' : 'async'}
         format="webp"
-        quality={50}
+        quality={35}
         widths={[640, 1024, 1920]}
         sizes="100vw"
       />
