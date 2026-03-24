@@ -55,6 +55,7 @@ export default defineConfig({
       provider: fontProviders.local(),
       name: 'Besley',
       cssVariable: '--font-besley',
+      display: 'swap',
       options: {
         variants: [
           { weight: 400, style: 'normal', src: ['./src/assets/fonts/besley-regular.woff2'] },
@@ -68,6 +69,7 @@ export default defineConfig({
       provider: fontProviders.local(),
       name: 'IM Fell DW Pica',
       cssVariable: '--font-imfell',
+      display: 'optional',
       options: {
         variants: [
           { weight: 400, style: 'normal', src: ['./src/assets/fonts/imfell-regular.woff2'] },
@@ -79,6 +81,7 @@ export default defineConfig({
       provider: fontProviders.local(),
       name: 'Cinzel Decorative',
       cssVariable: '--font-cinzel',
+      display: 'optional',
       options: {
         variants: [
           { weight: 400, style: 'normal', src: ['./src/assets/fonts/cinzel-decorative-regular.woff2'] },
