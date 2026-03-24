@@ -25,12 +25,12 @@ if (limit) {
 const projectImages = new Map<string, string>();
 for (const project of gameProjects) {
   const projectPosts = allPosts
-    .filter(post => !post.data.draft && post.data.project === project.slug)
+    .filter(post => !post.data.draft && post.data.project === project.id)
     .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
   if (projectPosts.length > 0) {
     const latestPost = projectPosts[0];
-    projectImages.set(project.slug, getHeroImageUrl(latestPost.data.heroImage, latestPost.data.youtubeId));
+    projectImages.set(project.id, getHeroImageUrl(latestPost.data.heroImage, latestPost.data.youtubeId));
   }
 }
 ---
@@ -38,9 +38,9 @@ for (const project of gameProjects) {
 {gameProjects.length > 0 ? (
   <div class="not-prose grid gap-6 my-8">
     {gameProjects.map(project => {
-      const heroImage = projectImages.get(project.slug);
+      const heroImage = projectImages.get(project.id);
       return (
-        <a href={`/projects/${project.slug}`}
+        <a href={`/projects/${project.id}`}
            class="block bg-ink/5 dark:bg-ink-dark/10 hover:bg-ink/10 dark:hover:bg-ink-dark/20 border-l-4 border-ink/30 dark:border-ink-dark/30 hover:border-ink dark:hover:border-ink-dark transition-all rounded-r-lg overflow-hidden group">
           {heroImage && (
             <div class="w-full aspect-video overflow-hidden">

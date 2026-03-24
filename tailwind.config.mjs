@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 import plugin from 'tailwindcss/plugin';
+import typography from '@tailwindcss/typography';
 
 export default {
   content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
@@ -39,7 +40,7 @@ export default {
     },
   },
   plugins: [
-    require('@tailwindcss/typography'),
+    typography,
     plugin(function({ addComponents, addUtilities }) {
       addComponents({
         // Common image hover effect - use with group class on parent

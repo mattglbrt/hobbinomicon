@@ -46,7 +46,7 @@ const publishedProjects = allProjects.filter(project => !project.data.draft);
 
 // For each project, get the latest post
 const projectsWithLatestPost = publishedProjects.map(project => {
-  const projectSlug = project.id.replace(/\.[^/.]+$/, '');
+  const projectSlug = project.id;
   const projectPosts = sortByDate(sortedPosts.filter(post => post.data.project === projectSlug));
   const latestProjectPost = projectPosts[0];
 
@@ -66,10 +66,10 @@ const projectsWithLatestPost = publishedProjects.map(project => {
 
 // Get recent posts excluding hero, resources, and featured project posts
 const excludedSlugs = new Set([
-  latestPost.slug,
-  ...resourceHubs.map(p => p.slug),
-  ...individualResources.map(p => p.slug),
-  ...projectsWithLatestPost.map(p => p.latestPost.slug)
+  latestPost.id,
+  ...resourceHubs.map(p => p.id),
+  ...individualResources.map(p => p.id),
+  ...projectsWithLatestPost.map(p => p.latestPost.id)
 ]);
 
 // Get Kingdom Death posts - latest episode for featured section
@@ -79,7 +79,7 @@ const latestKDMPost = kingdomDeathPosts[0];
 
 // Get recent vlog posts (posts with YouTube videos) - only 6 for homepage masonry, excluding Kingdom Death
 const recentVlogs = sortedPosts
-  .filter(post => !excludedSlugs.has(post.slug) && post.data.youtubeId && !post.data.tags?.includes('kingdom-death'))
+  .filter(post => !excludedSlugs.has(post.id) && post.data.youtubeId && !post.data.tags?.includes('kingdom-death'))
   .slice(0, 6);
 
 // Techniques & Crafting - combined painting + hobby tags
@@ -93,7 +93,7 @@ const techniquesTags = [
 
 // Get techniques & crafting posts
 const techniquesPosts = sortedPosts
-  .filter(post => !excludedSlugs.has(post.slug) &&
+  .filter(post => !excludedSlugs.has(post.id) &&
     post.data.tags?.some(tag => techniquesTags.includes(tag)))
   .slice(0, 9);
 
@@ -136,7 +136,7 @@ const heroImageUrl = getHeroImageUrl(latestPost?.data.heroImage, latestPost?.dat
     <!-- Featured Post - Full Screen Hero -->
     {latestPost && (
       <HeroSection
-        slug={latestPost.slug}
+        slug={latestPost.id}
         title={latestPost.data.title}
         description={latestPost.data.description}
         heroImage={heroImage}
@@ -227,7 +227,7 @@ const heroImageUrl = getHeroImageUrl(latestPost?.data.heroImage, latestPost?.dat
         <ContentContainer class="relative z-10">
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             {/* Video Thumbnail */}
-            <a href={`/blog/${latestKDMPost.slug}`} class="group block relative aspect-video rounded-xl overflow-hidden shadow-2xl">
+            <a href={`/blog/${latestKDMPost.id}`} class="group block relative aspect-video rounded-xl overflow-hidden shadow-2xl">
               <img
                 src={`https://img.youtube.com/vi/${latestKDMPost.data.youtubeId}/maxresdefault.jpg`}
                 alt={latestKDMPost.data.title}
@@ -340,7 +340,7 @@ const heroImageUrl = getHeroImageUrl(latestPost?.data.heroImage, latestPost?.dat
     <!-- Campaign Chronicles Section -->
     {latestCampaignPost && campaignHeroImage && (
       <HeroSection
-        slug={latestCampaignPost.slug}
+        slug={latestCampaignPost.id}
         title={latestCampaignPost.data.title}
         description={latestCampaignPost.data.description}
         heroImage={campaignHeroImage}

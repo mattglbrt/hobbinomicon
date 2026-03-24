@@ -1,8 +1,8 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import netlify from '@astrojs/netlify';
-import tailwind from '@astrojs/tailwind';
 import mdx from '@astrojs/mdx';
+import { remarkReadingTime } from './src/utils/remarkReadingTime.ts';
 import sitemap from '@astrojs/sitemap';
 import Inline from '@playform/inline';
 import fs from 'node:fs';
@@ -49,8 +49,10 @@ export default defineConfig({
   site: 'https://hobbinomicon.com',
   output: 'static',
   adapter: netlify(),
+  markdown: {
+    remarkPlugins: [remarkReadingTime],
+  },
   integrations: [
-    tailwind(),
     mdx(),
     Inline(),
     sitemap({

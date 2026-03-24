@@ -86,7 +86,7 @@ const totalCharacters = allCharacters.length;
                   const charIsOptimized = isImageMetadata(charImg);
                   return (
                   <a
-                    href={`/blog/${character.slug}`}
+                    href={`/blog/${character.id}`}
                     class="group relative aspect-[2/3] overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
                   >
                     {charIsOptimized ? (
@@ -133,7 +133,7 @@ const totalCharacters = allCharacters.length;
               const charIsOptimized = isImageMetadata(charImg);
               return (
               <a
-                href={`/blog/${character.slug}`}
+                href={`/blog/${character.id}`}
                 class="group relative aspect-[2/3] overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
               >
                 {charIsOptimized ? (

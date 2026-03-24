@@ -5,7 +5,7 @@ import { Image } from 'astro:assets';
 import { getHeroImage, isImageMetadata } from '../utils/getHeroImage';
 
 interface Character {
-  slug: string;
+  id: string;
   data: {
     title: string;
     heroImage?: string;
@@ -54,7 +54,7 @@ const {
           const heroImg = getHeroImage(character.data.heroImage);
           return (
           <a
-            href={`/blog/${character.slug}`}
+            href={`/blog/${character.id}`}
             class="character-card group flex-shrink-0 w-[calc((100vw-4rem)/2)] sm:w-[calc((100vw-5rem)/3)] md:w-[calc((100vw-6rem)/4)] lg:w-[calc((100vw-7rem)/5)] max-w-[280px] relative aspect-[2/3] overflow-hidden rounded-lg snap-start shadow-lg transition-transform duration-300 hover:rotate-1 hover:-translate-y-1"
           >
             {isImageMetadata(heroImg) ? (

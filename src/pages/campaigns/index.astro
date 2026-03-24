@@ -125,7 +125,7 @@ const inactiveCampaigns = campaigns
                   </p>
                   {campaign.hub && (
                     <a
-                      href={`/blog/${campaign.hub.slug}`}
+                      href={`/blog/${campaign.hub.id}`}
                       class="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg text-white transition-colors"
                     >
                       View Campaign Hub
@@ -170,7 +170,7 @@ const inactiveCampaigns = campaigns
                               const memberIsOptimized = isImageMetadata(memberImg);
                               return (
                               <a
-                                href={`/blog/${member.slug}`}
+                                href={`/blog/${member.id}`}
                                 class="group relative w-16 h-24 overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
                               >
                                 {memberIsOptimized ? (
@@ -214,7 +214,7 @@ const inactiveCampaigns = campaigns
                     <div class="space-y-2">
                       {campaign.episodes.map((episode) => (
                         <a
-                          href={`/blog/${episode.slug}`}
+                          href={`/blog/${episode.id}`}
                           class="group flex items-center gap-4 p-3 bg-parchment dark:bg-parchment-dark hover:bg-ink/5 dark:hover:bg-ink-dark/5 rounded-lg transition-colors"
                         >
                           {episode.data.episodeNumber !== undefined && (

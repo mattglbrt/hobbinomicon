@@ -19,7 +19,7 @@ function getPostImage(post: CollectionEntry<'blog'>): string {
 // Helper to safely get slug as string
 function getSlug(post: CollectionEntry<'blog'> | null): string {
   if (!post) return '';
-  return typeof post.slug === 'string' ? post.slug : String(post.slug ?? '');
+  return typeof post.id === 'string' ? post.id : String(post.id ?? '');
 }
 ---
 

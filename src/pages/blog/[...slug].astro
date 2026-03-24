@@ -1,22 +1,21 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import BlogLayout from '../../layouts/BlogLayout.astro';
-import { calculateReadingTime } from '../../utils/readingTime';
 import { getPartyDisplay, getPartyDescription, getPartiesByCampaign } from '../../utils/parties';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
   return posts.map((post) => ({
-    params: { slug: post.slug },
+    params: { slug: post.id },
     props: post,
   }));
 }
 
 const post = Astro.props;
-const { Content } = await post.render();
+const { Content, remarkPluginFrontmatter } = await render(post);
 
-// Calculate reading time from post body
-const readingTime = calculateReadingTime(post.body);
+// Reading time injected by remark plugin
+const readingTime = remarkPluginFrontmatter?.readingTime ?? 1;
 
 // Get all posts for related posts and project navigation
 const allPosts = await getCollection('blog');
@@ -47,7 +46,7 @@ const campaignParties = isCampaignHub
 // Get related posts (same tags, excluding current post) unless hideRelatedPosts is set or it's a campaign hub
 const relatedPosts = (post.data.hideRelatedPosts || isCampaignHub) ? [] : allPosts
   .filter((p) =>
-    p.slug !== post.slug &&
+    p.id !== post.id &&
     !p.data.draft &&
     p.data.tags.some((tag) => post.data.tags.includes(tag))
   )
@@ -66,12 +65,12 @@ if (post.data.project) {
     .filter((p) => p.data.project === post.data.project && !p.data.draft)
     .sort((a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf()); // Sort by date ascending (oldest first)
 
-  const currentIndex = projectPosts.findIndex((p) => p.slug === post.slug);
+  const currentIndex = projectPosts.findIndex((p) => p.id === post.id);
 
   if (currentIndex !== -1) {
     // Get project info
     const projects = await getCollection('projects');
-    const project = projects.find((p) => p.slug === post.data.project);
+    const project = projects.find((p) => p.id === post.data.project);
 
     projectNavigation = {
       previousPost: currentIndex > 0 ? projectPosts[currentIndex - 1] : null,
@@ -83,6 +82,6 @@ if (post.data.project) {
 }
 ---
 
-<BlogLayout {...post.data} slug={post.slug} readingTime={readingTime} relatedPosts={relatedPosts} projectNavigation={projectNavigation} campaignEpisodes={campaignEpisodes} campaignParties={campaignParties}>
+<BlogLayout {...post.data} slug={post.id} readingTime={readingTime} relatedPosts={relatedPosts} projectNavigation={projectNavigation} campaignEpisodes={campaignEpisodes} campaignParties={campaignParties}>
   <Content />
 </BlogLayout>

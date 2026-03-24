@@ -18,7 +18,7 @@ const publishedProjects = allProjects.filter(project => !project.data.draft);
 // For each project, get the latest post's hero image and post count
 const projectsWithMeta = publishedProjects.map(project => {
   // Strip file extension from project.id for matching
-  const projectSlug = project.id.replace(/\.[^/.]+$/, '');
+  const projectSlug = project.id;
   const projectPosts = allPosts
     .filter(post => post.data.project === projectSlug && !post.data.draft)
     .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());

@@ -22,7 +22,7 @@ const topTags = Array.from(tagsMap.entries())
 
 // Build search index
 const searchIndex = publishedPosts.map(post => ({
-  slug: post.slug,
+  slug: post.id,
   title: post.data.title,
   description: post.data.description,
   category: post.data.category,

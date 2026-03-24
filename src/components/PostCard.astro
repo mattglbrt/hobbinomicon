@@ -42,7 +42,7 @@ type Props = CommonProps & (IndividualProps | PostObjectProps);
 const props = Astro.props;
 
 // Extract values from either post object or individual props
-const rawSlug = props.post?.slug ?? props.slug;
+const rawSlug = props.post?.id ?? props.slug;
 const slug = typeof rawSlug === 'string' ? rawSlug : String(rawSlug ?? '');
 const title = props.post?.data.title ?? props.title!;
 const description = props.post?.data.description ?? props.description!;

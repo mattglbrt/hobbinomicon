@@ -5,7 +5,7 @@ import ContentContainer from './ContentContainer.astro';
 import ListCard from './ListCard.astro';
 
 interface Post {
-  slug: string;
+  id: string;
   data: {
     title: string;
     description: string;
@@ -61,7 +61,7 @@ const recentPosts = posts.slice(1, 4);
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
       <!-- Featured Post (Large) -->
       <a
-        href={`/blog/${featuredPost.slug}`}
+        href={`/blog/${featuredPost.id}`}
         class="group relative aspect-[4/3] overflow-hidden rounded-lg"
       >
         <img
@@ -92,7 +92,7 @@ const recentPosts = posts.slice(1, 4);
         <div class="flex flex-col gap-4">
           {recentPosts.map((post) => (
             <ListCard
-              href={`/blog/${post.slug}`}
+              href={`/blog/${post.id}`}
               image={getHeroImageUrl(post.data.heroImage, post.data.youtubeId)}
               imageAlt={post.data.heroImageAlt || post.data.title}
               title={post.data.title}

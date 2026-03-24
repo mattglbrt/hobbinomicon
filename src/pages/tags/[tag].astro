@@ -79,7 +79,7 @@ const isCampaignTag = characterPosts.length > 0 && chapterPosts.length > 0;
               <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
                 {characterPosts.map((character) => (
                   <ImageCard
-                    href={`/blog/${character.slug}`}
+                    href={`/blog/${character.id}`}
                     image={getHeroImageUrl(character.data.heroImage)}
                     imageAlt={character.data.heroImageAlt || character.data.title}
                     title={character.data.title}
@@ -98,7 +98,7 @@ const isCampaignTag = characterPosts.length > 0 && chapterPosts.length > 0;
               <div class="space-y-4">
                 {sortByDate(chapterPosts, 'asc').map((chapter, index) => (
                   <a
-                    href={`/blog/${chapter.slug}`}
+                    href={`/blog/${chapter.id}`}
                     class="group flex items-center gap-6 p-4 bg-ink/5 dark:bg-ink-dark/5 hover:bg-ink/10 dark:hover:bg-ink-dark/10 rounded-lg transition-colors"
                   >
                     <div class="flex-shrink-0 w-12 h-12 flex items-center justify-center bg-ink dark:bg-ink-dark text-white rounded-full font-heading font-bold text-lg">

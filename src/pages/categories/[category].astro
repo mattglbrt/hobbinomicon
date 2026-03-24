@@ -185,7 +185,7 @@ const gameFilters = hubPosts.map((hub) => {
                   const memberIsOptimized = isImageMetadata(memberImg);
                   return (
                   <a
-                    href={`/blog/${member.slug}`}
+                    href={`/blog/${member.id}`}
                     class="group relative aspect-[2/3] overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
                   >
                     {memberIsOptimized ? (
@@ -229,7 +229,7 @@ const gameFilters = hubPosts.map((hub) => {
                   const memberIsOptimized = isImageMetadata(memberImg);
                   return (
                   <a
-                    href={`/blog/${member.slug}`}
+                    href={`/blog/${member.id}`}
                     class="group relative aspect-[2/3] overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
                   >
                     {memberIsOptimized ? (
