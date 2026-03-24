@@ -56,11 +56,12 @@ const canonicalURL = Astro.site
         document.addEventListener('astro:after-swap', applyDarkMode);
       })();
     </script>
-    <!-- Disable View Transitions on mobile — Chrome mobile back gesture conflicts with ClientRouter -->
+    <!-- Fix: Chrome mobile back gesture conflicts with ClientRouter popstate handler -->
     <script is:inline>
       if (/Mobi|Android/i.test(navigator.userAgent)) {
-        var vtMeta = document.querySelector('meta[name="astro-view-transitions-enabled"]');
-        if (vtMeta) vtMeta.remove();
+        window.addEventListener('popstate', function(e) {
+          e.stopImmediatePropagation();
+        }, true);
       }
     </script>
     <meta charset="UTF-8" />
