@@ -50,6 +50,8 @@ const hasSlot = Astro.slots.has('default');
           class="absolute inset-0 w-full h-full object-cover object-top img-hover"
           loading="lazy"
           decoding="async"
+          width="640"
+          height="360"
         />
       ) : fallbackLetter ? (
         <div class="w-full h-full bg-ink/20 dark:bg-ink-dark/20 flex items-center justify-center">
@@ -94,6 +96,8 @@ const hasSlot = Astro.slots.has('default');
           class="w-full h-full object-cover img-hover"
           loading="lazy"
           decoding="async"
+          width="640"
+          height="360"
         />
       </div>
     ) : fallbackIcon ? (
