@@ -3,9 +3,9 @@ export const prerender = false;
 import type { APIRoute } from 'astro';
 
 export const POST: APIRoute = async ({ request }) => {
-  const MAILGUN_API_KEY = import.meta.env.MAILGUN_API_KEY;
-  const MAILGUN_DOMAIN = import.meta.env.MAILGUN_DOMAIN;
-  const MAILGUN_LIST = import.meta.env.MAILGUN_LIST;
+  const MAILGUN_API_KEY = process.env.MAILGUN_API_KEY;
+  const MAILGUN_DOMAIN = process.env.MAILGUN_DOMAIN;
+  const MAILGUN_LIST = process.env.MAILGUN_LIST;
 
   if (!MAILGUN_API_KEY || !MAILGUN_DOMAIN || !MAILGUN_LIST) {
     return new Response(
