@@ -25,7 +25,7 @@ const totalVideos = allPosts.filter(post => post.data.youtubeId).length;
 // Calculate days since content creation started (September 11, 2025 EST)
 const startDate = new Date('2025-09-11T00:00:00-05:00');
 const now = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }));
-const daysSinceStart = Math.floor((now.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+const daysSinceStart = Math.floor((now.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
 ---
 
 <BaseLayout
