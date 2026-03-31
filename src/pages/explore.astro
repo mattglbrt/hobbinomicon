@@ -7,12 +7,31 @@ import Footer from '../components/Footer.astro';
 import StructuredData from '../components/StructuredData.astro';
 import ContentContainer from '../components/ContentContainer.astro';
 import ImageCard from '../components/ImageCard.astro';
-import { getCategoriesWithCounts, getPublishedPosts, groupByTags } from '../utils/collections';
+import ResourceThumbnail from '../components/ResourceThumbnail.astro';
+import { getCategoriesWithCounts, getPublishedPosts, groupByTags, sortByDate } from '../utils/collections';
 import { getHeroImageUrl } from '../utils/getHeroImage';
 import { getTagDisplay, getTagCategory, getCategoryDisplay } from '../utils/tags';
 
 const allPosts = await getCollection('blog');
 const publishedPosts = getPublishedPosts(allPosts);
+
+// Recent posts for the strip
+const recentPosts = publishedPosts.slice(0, 6);
+
+// Video count
+const totalVideos = publishedPosts.filter(p => p.data.youtubeId).length;
+
+// Projects
+const allProjects = await getCollection('projects');
+const publishedProjects = allProjects.filter(p => !p.data.draft);
+const projectsWithActivity = publishedProjects.map(project => {
+  const projectPosts = sortByDate(publishedPosts.filter(p => p.data.project === project.id));
+  return { project, postCount: projectPosts.length, latestPost: projectPosts[0] };
+}).filter(p => p.postCount > 0).sort((a, b) => {
+  const dateA = a.latestPost?.data.pubDate.valueOf() || 0;
+  const dateB = b.latestPost?.data.pubDate.valueOf() || 0;
+  return dateB - dateA;
+});
 
 // Categories with counts and images
 const categories = getCategoriesWithCounts(allPosts).map(({ name, count, posts }) => {
@@ -66,81 +85,162 @@ const totalTags = tagsWithCounts.length;
   <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
     <PageHeader
       title="Explore"
-      description={`${categories.length} categories and ${totalTags} tags across ${publishedPosts.length} posts`}
+      description="Hobbying from the deep end of the dungeon"
       breadcrumbs={[
         { label: "Explore", href: "/explore" }
       ]}
     />
 
-    <!-- Categories Section -->
-    <ContentContainer class="pt-16 pb-8">
-      <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mb-8">
-        Categories
-      </h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {categories.map(({ name, count, latestPost, categoryImage }) => (
-          <ImageCard
-            href={`/categories/${name.toLowerCase().replace(/\s+/g, '-')}`}
-            image={categoryImage}
-            imageAlt={latestPost.data.heroImageAlt || name}
-            title={name}
-            subtitle={`${count} ${count === 1 ? 'post' : 'posts'}`}
-            fallbackLetter={name.charAt(0)}
-            aspectRatio="16/9"
-            variant="overlay"
-          />
+    <!-- Quick Stats + Search -->
+    <ContentContainer class="pt-12 pb-4">
+      <div class="flex flex-wrap items-center gap-3 mb-8">
+        <span class="px-4 py-2 bg-ink/5 dark:bg-ink-dark/5 rounded-full text-sm text-ink dark:text-ink-dark font-medium">
+          {publishedPosts.length} posts
+        </span>
+        <span class="px-4 py-2 bg-ink/5 dark:bg-ink-dark/5 rounded-full text-sm text-ink dark:text-ink-dark font-medium">
+          {totalVideos} videos
+        </span>
+        <span class="px-4 py-2 bg-ink/5 dark:bg-ink-dark/5 rounded-full text-sm text-ink dark:text-ink-dark font-medium">
+          {projectsWithActivity.length} projects
+        </span>
+        <span class="px-4 py-2 bg-ink/5 dark:bg-ink-dark/5 rounded-full text-sm text-ink dark:text-ink-dark font-medium">
+          {totalTags} tags
+        </span>
+        <button
+          type="button"
+          class="ml-auto flex items-center gap-2 px-4 py-2 bg-ink/5 dark:bg-ink-dark/5 hover:bg-ink/10 dark:hover:bg-ink-dark/10 rounded-full text-sm text-ink/70 dark:text-ink-dark/70 transition-colors cursor-pointer"
+          data-search-trigger
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          Search posts...
+          <kbd class="hidden sm:inline-block px-1.5 py-0.5 text-xs bg-ink/10 dark:bg-ink-dark/10 rounded text-ink/50 dark:text-ink-dark/50 ml-1">⌘K</kbd>
+        </button>
+      </div>
+    </ContentContainer>
+
+    <!-- Recent Posts Strip -->
+    <ContentContainer class="pb-16">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl md:text-3xl font-heading font-bold text-ink dark:text-ink-dark">
+          Recent
+        </h2>
+        <a href="/blog" class="text-sm text-ink/60 dark:text-ink-dark/60 hover:text-ink dark:hover:text-ink-dark transition-colors">
+          View all posts →
+        </a>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        {recentPosts.map((post) => (
+          <ResourceThumbnail post={post} />
         ))}
       </div>
     </ContentContainer>
 
-    <!-- Tags Section -->
+    <!-- Categories Section -->
     <section class="bg-ink/[0.03] dark:bg-ink-dark/[0.03]">
       <ContentContainer class="py-16">
         <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mb-8">
+          Categories
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {categories.map(({ name, count, latestPost, categoryImage }) => (
+            <ImageCard
+              href={`/categories/${name.toLowerCase().replace(/\s+/g, '-')}`}
+              image={categoryImage}
+              imageAlt={latestPost.data.heroImageAlt || name}
+              title={name}
+              subtitle={`${count} ${count === 1 ? 'post' : 'posts'}`}
+              fallbackLetter={name.charAt(0)}
+              aspectRatio="16/9"
+              variant="overlay"
+            />
+          ))}
+        </div>
+      </ContentContainer>
+    </section>
+
+    <!-- Projects Section -->
+    {projectsWithActivity.length > 0 && (
+      <ContentContainer class="py-16">
+        <div class="flex items-center justify-between mb-8">
+          <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark">
+            Projects
+          </h2>
+          <a href="/projects" class="text-sm text-ink/60 dark:text-ink-dark/60 hover:text-ink dark:hover:text-ink-dark transition-colors">
+            View all →
+          </a>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {projectsWithActivity.map(({ project, postCount, latestPost }) => {
+            const projectImage = latestPost ? getHeroImageUrl(latestPost.data.heroImage, latestPost.data.youtubeId) : null;
+            return (
+              <ImageCard
+                href={`/projects/${project.id}`}
+                image={projectImage}
+                imageAlt={project.data.title}
+                title={project.data.title}
+                subtitle={`${postCount} ${postCount === 1 ? 'post' : 'posts'}${project.data.game ? ` · ${project.data.game}` : ''}`}
+                fallbackLetter={project.data.title.charAt(0)}
+                aspectRatio="16/9"
+                variant="overlay"
+              />
+            );
+          })}
+        </div>
+      </ContentContainer>
+    )}
+
+    <!-- Tags Section -->
+    <section class="bg-ink/[0.03] dark:bg-ink-dark/[0.03]">
+      <ContentContainer class="py-16">
+        <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mb-10">
           Tags
         </h2>
 
-        {sortedCategories.map((category) => (
-          <section class="mb-10">
-            <h3 class="text-xl md:text-2xl font-heading font-bold text-ink dark:text-ink-dark mb-4">
-              {getCategoryDisplay(category)}
-            </h3>
-            <div class="flex flex-wrap gap-3">
-              {tagsByCategory[category].map(({ tag, display, count }) => (
-                <a
-                  href={`/tags/${tag}`}
-                  class="group flex items-center gap-2 px-4 py-2 bg-ink/5 dark:bg-ink-dark/5 hover:bg-ink/10 dark:hover:bg-ink-dark/10 rounded-lg transition-colors"
-                >
-                  <span class="text-ink dark:text-ink-dark group-hover:underline">{display}</span>
-                  <span class="text-xs px-1.5 py-0.5 bg-ink/10 dark:bg-ink-dark/10 rounded-full text-ink/60 dark:text-ink-dark/60">
-                    {count}
-                  </span>
-                </a>
-              ))}
-            </div>
-          </section>
-        ))}
+        <div class="space-y-12">
+          {sortedCategories.map((category) => (
+            <section>
+              <h3 class="text-lg font-heading uppercase tracking-[0.15em] text-ink/50 dark:text-ink-dark/50 mb-4">
+                {getCategoryDisplay(category)}
+              </h3>
+              <div class="flex flex-wrap gap-2">
+                {tagsByCategory[category].map(({ tag, display, count }) => (
+                  <a
+                    href={`/tags/${tag}`}
+                    class="group flex items-center gap-2 px-4 py-2 bg-parchment dark:bg-parchment-dark hover:bg-ink/10 dark:hover:bg-ink-dark/10 rounded-lg transition-colors shadow-sm"
+                  >
+                    <span class="text-ink dark:text-ink-dark group-hover:underline">{display}</span>
+                    <span class="text-xs px-1.5 py-0.5 bg-ink/10 dark:bg-ink-dark/10 rounded-full text-ink/60 dark:text-ink-dark/60">
+                      {count}
+                    </span>
+                  </a>
+                ))}
+              </div>
+            </section>
+          ))}
 
-        {uncategorizedTags.length > 0 && (
-          <section class="mb-10">
-            <h3 class="text-xl md:text-2xl font-heading font-bold text-ink dark:text-ink-dark mb-4">
-              Other Tags
-            </h3>
-            <div class="flex flex-wrap gap-3">
-              {uncategorizedTags.map(({ tag, display, count }) => (
-                <a
-                  href={`/tags/${tag}`}
-                  class="group flex items-center gap-2 px-4 py-2 bg-ink/5 dark:bg-ink-dark/5 hover:bg-ink/10 dark:hover:bg-ink-dark/10 rounded-lg transition-colors"
-                >
-                  <span class="text-ink dark:text-ink-dark group-hover:underline">{display}</span>
-                  <span class="text-xs px-1.5 py-0.5 bg-ink/10 dark:bg-ink-dark/10 rounded-full text-ink/60 dark:text-ink-dark/60">
-                    {count}
-                  </span>
-                </a>
-              ))}
-            </div>
-          </section>
-        )}
+          {uncategorizedTags.length > 0 && (
+            <section>
+              <h3 class="text-lg font-heading uppercase tracking-[0.15em] text-ink/50 dark:text-ink-dark/50 mb-4">
+                Other
+              </h3>
+              <div class="flex flex-wrap gap-2">
+                {uncategorizedTags.map(({ tag, display, count }) => (
+                  <a
+                    href={`/tags/${tag}`}
+                    class="group flex items-center gap-2 px-4 py-2 bg-parchment dark:bg-parchment-dark hover:bg-ink/10 dark:hover:bg-ink-dark/10 rounded-lg transition-colors shadow-sm"
+                  >
+                    <span class="text-ink dark:text-ink-dark group-hover:underline">{display}</span>
+                    <span class="text-xs px-1.5 py-0.5 bg-ink/10 dark:bg-ink-dark/10 rounded-full text-ink/60 dark:text-ink-dark/60">
+                      {count}
+                    </span>
+                  </a>
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
       </ContentContainer>
     </section>
 
