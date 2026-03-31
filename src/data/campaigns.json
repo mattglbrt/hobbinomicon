@@ -4,13 +4,13 @@
       "display": "Dolmenwood",
       "description": "A dark fairy tale campaign where a strange convergence leads unlikely heroes to an unexpected destination.",
       "game": "Old School Essentials",
-      "status": "active"
+      "status": "inactive"
     },
     "kingdom-death": {
       "display": "Kingdom Death",
       "description": "A solo campaign following the settlement of Hesychía as survivors struggle against the horrors of the Monster universe.",
       "game": "Kingdom Death: Monster",
-      "status": "active"
+      "status": "inactive"
     }
   }
 }

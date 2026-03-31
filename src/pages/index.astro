@@ -5,7 +5,6 @@ import Header from '../components/Header.astro';
 import HeroSection from '../components/HeroSection.astro';
 import PostGridSection from '../components/PostGridSection.astro';
 import FeaturedProjectSection from '../components/FeaturedProjectSection.astro';
-import CharacterSlider from '../components/CharacterSlider.astro';
 import YouTubeCTA from '../components/YouTubeCTA.astro';
 import NewsletterSignup from '../components/NewsletterSignup.astro';
 import Footer from '../components/Footer.astro';
@@ -72,14 +71,9 @@ const excludedSlugs = new Set([
   ...projectsWithLatestPost.map(p => p.latestPost.id)
 ]);
 
-// Get Kingdom Death posts - latest episode for featured section
-const kingdomDeathPosts = sortedPosts
-  .filter(post => post.data.tags?.includes('kdm-hesychia') && post.data.youtubeId);
-const latestKDMPost = kingdomDeathPosts[0];
-
-// Get recent vlog posts (posts with YouTube videos) - only 6 for homepage masonry, excluding Kingdom Death
+// Get recent vlog posts (posts with YouTube videos) - only 6 for homepage masonry
 const recentVlogs = sortedPosts
-  .filter(post => !excludedSlugs.has(post.id) && post.data.youtubeId && !post.data.tags?.includes('kingdom-death'))
+  .filter(post => !excludedSlugs.has(post.id) && post.data.youtubeId)
   .slice(0, 6);
 
 // Techniques & Crafting - combined painting + hobby tags
@@ -97,24 +91,14 @@ const techniquesPosts = sortedPosts
     post.data.tags?.some(tag => techniquesTags.includes(tag)))
   .slice(0, 9);
 
-// Game system tags for the games section
-const gameSystemTags = ['warmachine', 'warhammer', 'trench-crusade', 'mage-knight', 'crown-and-skull', 'necromunda', 'dolmenwood', 'motley-crews', 'kingdom-death'];
-
-// Get character posts sorted by most recently updated
-const characterPosts = publishedPosts
-  .filter(post => post.data.category === 'Dramatis Personae')
-  .sort((a, b) => {
-    const dateA = (a.data.updatedDate || a.data.pubDate).valueOf();
-    const dateB = (b.data.updatedDate || b.data.pubDate).valueOf();
-    return dateB - dateA;
-  })
-  .slice(0, 9);
-
-// Get most recent Campaign Chronicles post for hero section
-const campaignChroniclesPosts = sortedPosts
-  .filter(post => post.data.category === 'Campaign Chronicles');
-const latestCampaignPost = campaignChroniclesPosts[0];
-const campaignHeroImage = latestCampaignPost ? getHeroImage(latestCampaignPost.data.heroImage, latestCampaignPost.data.youtubeId) : null;
+// Game system tags for the games section — sorted by post count, most popular first
+const gameSystemTagSlugs = ['warmachine', 'warhammer', 'trench-crusade', 'mage-knight', 'necromunda', 'dolmenwood', 'motley-crews', 'kingdom-death'];
+const gameSystemTags = gameSystemTagSlugs.map(tag => {
+  const posts = sortedPosts.filter(p => p.data.tags?.includes(tag));
+  const postWithImage = posts.find(p => p.data.heroImage || p.data.youtubeId);
+  const imageUrl = postWithImage ? getHeroImageUrl(postWithImage.data.heroImage, postWithImage.data.youtubeId) : null;
+  return { tag, count: posts.length, imageUrl };
+}).sort((a, b) => b.count - a.count);
 
 // Get the most recent project with its posts for the featured section
 const featuredProject = projectsWithLatestPost[0];
@@ -172,14 +156,12 @@ if (heroImage && isImageMetadata(heroImage)) {
       viewAllLink="/categories/vlogs"
       posts={recentVlogs}
       layout="masonry"
+      mobileLimit={3}
     />
-
-    <!-- Newsletter — right after vlogs -->
-    <NewsletterSignup variant="section" />
 
     <!-- Techniques & Crafting Section (combined painting + hobby) -->
     {techniquesPosts.length > 0 && (
-      <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24" data-scroll-reveal>
+      <section class="bg-ink/[0.03] dark:bg-ink-dark/[0.03] py-16 md:py-24" data-scroll-reveal>
         <ContentContainer>
           <div class="flex items-center justify-between mb-12">
             <div>
@@ -189,8 +171,10 @@ if (heroImage && isImageMetadata(heroImage)) {
             <ViewAllLink href="/tags/painting">View All →</ViewAllLink>
           </div>
           <MasonryGrid columns={3}>
-            {techniquesPosts.map((post) => (
-              <ResourceThumbnail post={post} />
+            {techniquesPosts.map((post, index) => (
+              <div class={index >= 4 ? 'hidden md:block' : ''}>
+                <ResourceThumbnail post={post} />
+              </div>
             ))}
           </MasonryGrid>
         </ContentContainer>
@@ -233,102 +217,8 @@ if (heroImage && isImageMetadata(heroImage)) {
       </section>
     )}
 
-    <!-- Kingdom Death Campaign Callout -->
-    {latestKDMPost && (
-      <section class="bg-ink dark:bg-ink-dark py-16 md:py-24 relative overflow-hidden" data-scroll-reveal>
-        {/* Gradient overlays */}
-        <div class="absolute inset-0 bg-gradient-to-br from-ink/50 via-transparent to-red-900/20 dark:from-ink-dark/50 dark:to-red-900/30"></div>
-        <div class="absolute inset-0 bg-gradient-to-r from-ink/60 via-transparent to-transparent"></div>
-
-        <ContentContainer class="relative z-10">
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-            {/* Video Thumbnail */}
-            <a href={`/blog/${latestKDMPost.id}`} class="group block relative aspect-video rounded-xl overflow-hidden shadow-2xl">
-              <img
-                src={`https://img.youtube.com/vi/${latestKDMPost.data.youtubeId}/maxresdefault.jpg`}
-                alt={latestKDMPost.data.title}
-                class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                loading="lazy"
-              />
-              <div class="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent"></div>
-              {/* Play button */}
-              <div class="absolute inset-0 flex items-center justify-center">
-                <div class="w-20 h-20 bg-red-600/90 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg backdrop-blur-sm">
-                  <svg class="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M8 5v14l11-7z"/>
-                  </svg>
-                </div>
-              </div>
-              {/* Episode title */}
-              <div class="absolute bottom-0 left-0 right-0 p-4">
-                <span class="text-red-400 text-xs font-heading uppercase tracking-[0.2em]">Latest Episode</span>
-                <h3 class="text-white text-xl font-display font-bold mt-1 group-hover:text-red-300 transition-colors">
-                  {latestKDMPost.data.title}
-                </h3>
-              </div>
-            </a>
-
-            {/* Campaign Info */}
-            <div class="text-parchment dark:text-parchment-dark">
-              <span class="block text-xs font-heading uppercase tracking-[0.3em] text-red-400/70 mb-2">Campaign</span>
-              <h2 class="text-4xl md:text-6xl font-display font-bold mb-4 leading-tight">
-                Kingdom Death
-              </h2>
-              <p class="text-parchment/70 dark:text-parchment-dark/70 text-lg mb-6 font-serif">
-                Follow the settlement of <span class="text-red-400 font-semibold">Hesychia</span> as survivors struggle against the horrors of the Monster universe.
-              </p>
-
-              {/* Settlement Stats */}
-              <div class="grid grid-cols-4 gap-3 mb-8">
-                <div class="bg-parchment/5 dark:bg-parchment-dark/5 rounded-lg p-3 text-center border border-parchment/10 dark:border-parchment-dark/10">
-                  <div class="text-2xl font-display font-bold text-parchment dark:text-parchment-dark">Year 2</div>
-                  <div class="text-[0.6rem] text-parchment/50 dark:text-parchment-dark/50 uppercase tracking-[0.2em]">Lantern Year</div>
-                </div>
-                <div class="bg-parchment/5 dark:bg-parchment-dark/5 rounded-lg p-3 text-center border border-parchment/10 dark:border-parchment-dark/10">
-                  <div class="text-2xl font-display font-bold text-parchment dark:text-parchment-dark">7</div>
-                  <div class="text-[0.6rem] text-parchment/50 dark:text-parchment-dark/50 uppercase tracking-[0.2em]">Survivors</div>
-                </div>
-                <div class="bg-parchment/5 dark:bg-parchment-dark/5 rounded-lg p-3 text-center border border-parchment/10 dark:border-parchment-dark/10">
-                  <div class="text-2xl font-display font-bold text-red-400 drop-shadow-[0_0_8px_rgba(248,113,113,0.3)]">2</div>
-                  <div class="text-[0.6rem] text-parchment/50 dark:text-parchment-dark/50 uppercase tracking-[0.2em]">Deaths</div>
-                </div>
-                <div class="bg-parchment/5 dark:bg-parchment-dark/5 rounded-lg p-3 text-center border border-parchment/10 dark:border-parchment-dark/10">
-                  <div class="text-2xl font-display font-bold text-red-400 drop-shadow-[0_0_8px_rgba(248,113,113,0.3)]">1</div>
-                  <div class="text-[0.6rem] text-parchment/50 dark:text-parchment-dark/50 uppercase tracking-[0.2em]">Lost</div>
-                </div>
-              </div>
-
-              {/* CTAs */}
-              <div class="flex flex-col sm:flex-row gap-4">
-                <a
-                  href="https://www.youtube.com/playlist?list=PL_eOMhOeZbWV2neK_wPFPfUg3GUYZLv7o"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-heading uppercase tracking-wider text-sm rounded-lg transition-colors"
-                >
-                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
-                  </svg>
-                  Watch From the Start
-                </a>
-                <a
-                  href="/blog/campaigns/kingdom-death/settlement-1"
-                  class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-parchment/5 hover:bg-parchment/10 dark:bg-parchment-dark/5 dark:hover:bg-parchment-dark/10 text-parchment dark:text-parchment-dark font-heading uppercase tracking-wider text-sm rounded-lg transition-colors border border-parchment/15 dark:border-parchment-dark/15"
-                >
-                  Campaign Details
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                  </svg>
-                </a>
-              </div>
-            </div>
-          </div>
-        </ContentContainer>
-      </section>
-    )}
-
     <!-- Games Section -->
-    <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24" data-scroll-reveal>
+    <section class="bg-ink/[0.03] dark:bg-ink-dark/[0.03] py-16 md:py-24" data-scroll-reveal>
       <ContentContainer>
         <div class="flex items-center justify-between mb-12">
           <div>
@@ -338,39 +228,36 @@ if (heroImage && isImageMetadata(heroImage)) {
           <ViewAllLink href="/tags">Browse All Tags →</ViewAllLink>
         </div>
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {gameSystemTags.map((tag, index) => (
+          {gameSystemTags.map((game, index) => (
             <a
-              href={`/tags/${tag}`}
-              class={`group block p-6 md:p-8 bg-ink dark:bg-ink-dark rounded-xl overflow-hidden relative hover:scale-[1.02] transition-all duration-300 ${index === 0 ? 'md:col-span-2 md:row-span-2' : ''}`}
+              href={`/tags/${game.tag}`}
+              class={`group block rounded-xl overflow-hidden relative hover:scale-[1.02] transition-all duration-300 ${index === 0 ? 'md:col-span-2 md:row-span-2' : ''}`}
             >
-              <div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <span class={`relative z-10 font-display font-bold text-parchment dark:text-parchment-dark ${index === 0 ? 'text-2xl md:text-4xl' : 'text-lg md:text-xl'}`}>
-                {getTagDisplay(tag)}
-              </span>
+              {game.imageUrl ? (
+                <img
+                  src={game.imageUrl}
+                  alt={getTagDisplay(game.tag)}
+                  class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  loading="lazy"
+                />
+              ) : null}
+              <div class={`absolute inset-0 ${game.imageUrl ? 'bg-ink/70 group-hover:bg-ink/60' : 'bg-ink dark:bg-ink-dark'} transition-colors duration-300`}></div>
+              <div class={`relative z-10 p-6 md:p-8 flex flex-col justify-end ${index === 0 ? 'min-h-[200px] md:min-h-[280px]' : 'min-h-[100px] md:min-h-[120px]'}`}>
+                <span class={`font-display font-bold text-parchment dark:text-parchment-dark ${index === 0 ? 'text-2xl md:text-4xl' : 'text-lg md:text-xl'}`}>
+                  {getTagDisplay(game.tag)}
+                </span>
+                <span class={`text-parchment/60 dark:text-parchment-dark/60 mt-1 ${index === 0 ? 'text-sm' : 'text-xs'}`}>
+                  {game.count} {game.count === 1 ? 'post' : 'posts'}
+                </span>
+              </div>
             </a>
           ))}
         </div>
       </ContentContainer>
     </section>
 
-    <!-- Campaign Chronicles Section -->
-    {latestCampaignPost && campaignHeroImage && (
-      <HeroSection
-        slug={latestCampaignPost.id}
-        title={latestCampaignPost.data.title}
-        description={latestCampaignPost.data.description}
-        heroImage={campaignHeroImage}
-        heroImageAlt={latestCampaignPost.data.heroImageAlt}
-        category={latestCampaignPost.data.category}
-        pubDate={latestCampaignPost.data.pubDate}
-        tags={latestCampaignPost.data.tags}
-        badge="Campaign Chronicles"
-        size="medium"
-      />
-    )}
-
-    <!-- Dramatis Personae Section -->
-    <CharacterSlider characters={characterPosts} />
+    <!-- Newsletter — after content sections, before campaign/characters -->
+    <NewsletterSignup variant="section" />
 
     <!-- Featured Project Section -->
     {featuredProject && featuredProjectPosts.length > 0 && (

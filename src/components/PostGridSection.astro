@@ -13,6 +13,8 @@ interface Props {
   posts: CollectionEntry<'blog'>[];
   eagerCount?: number;
   layout?: 'grid' | 'masonry' | 'asymmetric';
+  class?: string;
+  mobileLimit?: number;
 }
 
 const {
@@ -22,12 +24,14 @@ const {
   viewAllText = 'View All →',
   posts,
   eagerCount = 0,
-  layout = 'grid'
+  layout = 'grid',
+  class: className,
+  mobileLimit,
 } = Astro.props;
 ---
 
 {posts.length > 0 && (
-  <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24" data-scroll-reveal>
+  <section class:list={["bg-parchment dark:bg-parchment-dark py-16 md:py-24", className]} data-scroll-reveal>
     <ContentContainer>
       <div class="flex items-center justify-between mb-12">
         <div>
@@ -42,13 +46,15 @@ const {
       {layout === 'masonry' ? (
         <MasonryGrid columns={3}>
           {posts.map((post, index) => (
-            <PostCard post={post} eager={index < eagerCount} />
+            <div class={mobileLimit && index >= mobileLimit ? 'hidden md:block' : ''}>
+              <PostCard post={post} eager={index < eagerCount} />
+            </div>
           ))}
         </MasonryGrid>
       ) : layout === 'asymmetric' ? (
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           {posts.map((post, index) => (
-            <div class={index === 0 ? 'md:col-span-2 md:row-span-2' : ''}>
+            <div class:list={[index === 0 ? 'md:col-span-2 md:row-span-2' : '', mobileLimit && index >= mobileLimit ? 'hidden md:block' : '']}>
               <PostCard post={post} eager={index < eagerCount} />
             </div>
           ))}
@@ -56,7 +62,9 @@ const {
       ) : (
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {posts.map((post, index) => (
-            <PostCard post={post} eager={index < eagerCount} />
+            <div class={mobileLimit && index >= mobileLimit ? 'hidden md:block' : ''}>
+              <PostCard post={post} eager={index < eagerCount} />
+            </div>
           ))}
         </div>
       )}

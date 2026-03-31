@@ -44,19 +44,36 @@ const campaignParties = isCampaignHub
   : [];
 
 // Get related posts (same tags, excluding current post) unless hideRelatedPosts is set or it's a campaign hub
-const relatedPosts = (post.data.hideRelatedPosts || isCampaignHub) ? [] : allPosts
-  .filter((p) =>
-    p.id !== post.id &&
-    !p.data.draft &&
-    p.data.tags.some((tag) => post.data.tags.includes(tag))
-  )
-  .sort((a, b) => {
-    // Sort by number of matching tags
-    const aMatches = a.data.tags.filter((tag) => post.data.tags.includes(tag)).length;
-    const bMatches = b.data.tags.filter((tag) => post.data.tags.includes(tag)).length;
-    return bMatches - aMatches;
-  })
-  .slice(0, 4);
+let relatedPosts: typeof allPosts = [];
+if (!post.data.hideRelatedPosts && !isCampaignHub) {
+  // Try tag-based matching first
+  relatedPosts = allPosts
+    .filter((p) =>
+      p.id !== post.id &&
+      !p.data.draft &&
+      p.data.tags.some((tag) => post.data.tags.includes(tag))
+    )
+    .sort((a, b) => {
+      const aMatches = a.data.tags.filter((tag) => post.data.tags.includes(tag)).length;
+      const bMatches = b.data.tags.filter((tag) => post.data.tags.includes(tag)).length;
+      return bMatches - aMatches;
+    })
+    .slice(0, 4);
+
+  // Fall back to latest from same category if tag matches are sparse
+  if (relatedPosts.length < 2) {
+    const categoryFallbacks = allPosts
+      .filter((p) =>
+        p.id !== post.id &&
+        !p.data.draft &&
+        p.data.category === post.data.category &&
+        !relatedPosts.some(rp => rp.id === p.id)
+      )
+      .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+      .slice(0, 4 - relatedPosts.length);
+    relatedPosts = [...relatedPosts, ...categoryFallbacks];
+  }
+}
 
 // Get project navigation (previous/next posts in the same project)
 let projectNavigation = null;

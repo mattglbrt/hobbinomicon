@@ -1,0 +1,149 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import PageHeader from '../components/PageHeader.astro';
+import Footer from '../components/Footer.astro';
+import StructuredData from '../components/StructuredData.astro';
+import ContentContainer from '../components/ContentContainer.astro';
+import ImageCard from '../components/ImageCard.astro';
+import { getCategoriesWithCounts, getPublishedPosts, groupByTags } from '../utils/collections';
+import { getHeroImageUrl } from '../utils/getHeroImage';
+import { getTagDisplay, getTagCategory, getCategoryDisplay } from '../utils/tags';
+
+const allPosts = await getCollection('blog');
+const publishedPosts = getPublishedPosts(allPosts);
+
+// Categories with counts and images
+const categories = getCategoriesWithCounts(allPosts).map(({ name, count, posts }) => {
+  const postWithImage = posts.find(post => post.data.heroImage || post.data.youtubeId) || posts[0];
+  const categoryImage = postWithImage ? getHeroImageUrl(postWithImage.data.heroImage, postWithImage.data.youtubeId) : null;
+  return { name, count, latestPost: postWithImage, categoryImage };
+});
+
+// Tags grouped by category
+const tagsMap = groupByTags(publishedPosts);
+const tagsWithCounts = Array.from(tagsMap.entries())
+  .map(([tag, posts]) => ({
+    tag,
+    display: getTagDisplay(tag),
+    category: getTagCategory(tag),
+    count: posts.length,
+  }))
+  .sort((a, b) => b.count - a.count);
+
+const categoryOrder = ['game-system', 'faction', 'technique', 'hobby', 'content-type'];
+const tagsByCategory: Record<string, typeof tagsWithCounts> = {};
+const uncategorizedTags: typeof tagsWithCounts = [];
+
+for (const tagData of tagsWithCounts) {
+  if (tagData.category) {
+    if (!tagsByCategory[tagData.category]) {
+      tagsByCategory[tagData.category] = [];
+    }
+    tagsByCategory[tagData.category].push(tagData);
+  } else {
+    uncategorizedTags.push(tagData);
+  }
+}
+
+const sortedCategories = categoryOrder.filter(cat => tagsByCategory[cat]?.length > 0);
+const totalTags = tagsWithCounts.length;
+---
+
+<BaseLayout title="Explore - The Hobbinomicon" description="Browse all categories, tags, and topics across The Hobbinomicon">
+  <StructuredData
+    type="breadcrumb"
+    data={{
+      breadcrumbs: [
+        { name: 'Home', url: 'https://hobbinomicon.com/' },
+        { name: 'Explore', url: 'https://hobbinomicon.com/explore' },
+      ],
+    }}
+  />
+  <Header theme="light" />
+
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
+    <PageHeader
+      title="Explore"
+      description={`${categories.length} categories and ${totalTags} tags across ${publishedPosts.length} posts`}
+      breadcrumbs={[
+        { label: "Explore", href: "/explore" }
+      ]}
+    />
+
+    <!-- Categories Section -->
+    <ContentContainer class="pt-16 pb-8">
+      <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mb-8">
+        Categories
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {categories.map(({ name, count, latestPost, categoryImage }) => (
+          <ImageCard
+            href={`/categories/${name.toLowerCase().replace(/\s+/g, '-')}`}
+            image={categoryImage}
+            imageAlt={latestPost.data.heroImageAlt || name}
+            title={name}
+            subtitle={`${count} ${count === 1 ? 'post' : 'posts'}`}
+            fallbackLetter={name.charAt(0)}
+            aspectRatio="16/9"
+            variant="overlay"
+          />
+        ))}
+      </div>
+    </ContentContainer>
+
+    <!-- Tags Section -->
+    <section class="bg-ink/[0.03] dark:bg-ink-dark/[0.03]">
+      <ContentContainer class="py-16">
+        <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mb-8">
+          Tags
+        </h2>
+
+        {sortedCategories.map((category) => (
+          <section class="mb-10">
+            <h3 class="text-xl md:text-2xl font-heading font-bold text-ink dark:text-ink-dark mb-4">
+              {getCategoryDisplay(category)}
+            </h3>
+            <div class="flex flex-wrap gap-3">
+              {tagsByCategory[category].map(({ tag, display, count }) => (
+                <a
+                  href={`/tags/${tag}`}
+                  class="group flex items-center gap-2 px-4 py-2 bg-ink/5 dark:bg-ink-dark/5 hover:bg-ink/10 dark:hover:bg-ink-dark/10 rounded-lg transition-colors"
+                >
+                  <span class="text-ink dark:text-ink-dark group-hover:underline">{display}</span>
+                  <span class="text-xs px-1.5 py-0.5 bg-ink/10 dark:bg-ink-dark/10 rounded-full text-ink/60 dark:text-ink-dark/60">
+                    {count}
+                  </span>
+                </a>
+              ))}
+            </div>
+          </section>
+        ))}
+
+        {uncategorizedTags.length > 0 && (
+          <section class="mb-10">
+            <h3 class="text-xl md:text-2xl font-heading font-bold text-ink dark:text-ink-dark mb-4">
+              Other Tags
+            </h3>
+            <div class="flex flex-wrap gap-3">
+              {uncategorizedTags.map(({ tag, display, count }) => (
+                <a
+                  href={`/tags/${tag}`}
+                  class="group flex items-center gap-2 px-4 py-2 bg-ink/5 dark:bg-ink-dark/5 hover:bg-ink/10 dark:hover:bg-ink-dark/10 rounded-lg transition-colors"
+                >
+                  <span class="text-ink dark:text-ink-dark group-hover:underline">{display}</span>
+                  <span class="text-xs px-1.5 py-0.5 bg-ink/10 dark:bg-ink-dark/10 rounded-full text-ink/60 dark:text-ink-dark/60">
+                    {count}
+                  </span>
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
+      </ContentContainer>
+    </section>
+
+    <Footer />
+  </main>
+</BaseLayout>
