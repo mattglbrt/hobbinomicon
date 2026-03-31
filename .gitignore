@@ -34,8 +34,14 @@ pnpm-debug.log*
 # Local Netlify folder
 .netlify/
 
-# Transcriptor (separate repo, local tool)
-transcriptor/
+# YouTube OAuth credentials & tokens
+credentials/
+youtube_tokens.json
+client_secret*.json
+descriptions_pushed.json
+
+# Descriptions (generated, not source-controlled)
+descriptions/
 
 # Cloudflare Workers
 comments-api/node_modules/

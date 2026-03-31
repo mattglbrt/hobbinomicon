@@ -10,7 +10,9 @@
     "preview": "astro preview",
     "astro": "astro",
     "download-heroes": "node scripts/download-hero-images.js",
-    "fetch-comments": "node scripts/fetch-youtube-comments.js"
+    "fetch-comments": "node scripts/fetch-youtube-comments.js",
+    "push-descriptions": "node scripts/push-descriptions.cjs",
+    "youtube-auth": "node scripts/youtube-auth.cjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^5.0.2",
@@ -19,6 +21,7 @@
     "@astrojs/sitemap": "^3.7.1",
     "@playform/inline": "^0.1.4",
     "astro": "^6.0.8",
+    "googleapis": "^171.4.0",
     "mdast-util-to-string": "^4.0.0"
   },
   "devDependencies": {
