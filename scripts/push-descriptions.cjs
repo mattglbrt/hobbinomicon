@@ -161,7 +161,7 @@ function buildUpdateList(pushLog) {
     if (SINGLE_VIDEO && videoId !== SINGLE_VIDEO) continue;
 
     // Find corresponding description file — try multiple naming patterns
-    const descFiles = fs.existsSync(DESCRIPTIONS_DIR) ? fs.readdirSync(DESCRIPTIONS_DIR) : [];
+    const descFiles = fs.existsSync(DESCRIPTIONS_DIR) ? fs.readdirSync(DESCRIPTIONS_DIR).filter(f => fs.statSync(path.join(DESCRIPTIONS_DIR, f)).isFile()) : [];
     const descFile = descFiles.find(f => {
       const content = fs.readFileSync(path.join(DESCRIPTIONS_DIR, f), 'utf-8');
       // Match by video ID being referenced, or by similar naming
