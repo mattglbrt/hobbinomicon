@@ -12,6 +12,7 @@
     "download-heroes": "node scripts/download-hero-images.js",
     "fetch-comments": "node scripts/fetch-youtube-comments.js",
     "fetch-playlist": "node scripts/fetch-playlist-transcripts.js",
+    "tag-audit": "node scripts/tag-audit.js",
     "push-descriptions": "node scripts/push-descriptions.cjs",
     "youtube-auth": "node scripts/youtube-auth.cjs"
   },
