@@ -9,120 +9,76 @@ import YouTubeCTA from '../components/YouTubeCTA.astro';
 import NewsletterSignup from '../components/NewsletterSignup.astro';
 import Footer from '../components/Footer.astro';
 import ContentContainer from '../components/ContentContainer.astro';
-import MasonryGrid from '../components/MasonryGrid.astro';
-import PostCard from '../components/PostCard.astro';
-import ResourceThumbnail from '../components/ResourceThumbnail.astro';
+import ImageCard from '../components/ImageCard.astro';
 import ViewAllLink from '../components/ViewAllLink.astro';
-import { getHeroImage, getHeroImageUrl } from '../utils/getHeroImage';
+import { getHeroImage, isImageMetadata } from '../utils/getHeroImage';
 import { getPublishedPosts, sortByDate } from '../utils/collections';
-import { getTagDisplay } from '../utils/tags';
+import { formatDateLong } from '../utils/formatDate';
 
-// Get all blog posts and sort by date
+// ─── Hero + Latest Vlogs ────────────────────────────────────────────
 const allPosts = await getCollection('blog');
 const publishedPosts = getPublishedPosts(allPosts);
-const sortedPosts = publishedPosts;
 
-// Get the most recent featured post for hero, or fall back to latest post
-const featuredPosts = sortedPosts.filter(post => post.data.featured);
-const latestPost = featuredPosts[0] || sortedPosts[0];
+const featuredPosts = publishedPosts.filter((p) => p.data.featured);
+const latestPost = featuredPosts[0] || publishedPosts[0];
 
-// Get all resource posts and separate hubs from individual resources
-const allResourcePosts = sortedPosts.filter(post => post.data.category === 'Resources');
-
-// Hub pages (resourceType: "hub") - these get full cards
-const resourceHubs = allResourcePosts.filter(post => post.data.resourceType === 'hub');
-
-// Individual resources (guides, articles, checklists) AND articles from Articles category - these get thumbnails
-const resourceItems = allResourcePosts.filter(post => post.data.resourceType && post.data.resourceType !== 'hub');
-const articleCategoryPosts = sortedPosts.filter(post => post.data.category === 'Articles');
-const individualResources = [...resourceItems, ...articleCategoryPosts]
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+const recentVlogs = publishedPosts
+  .filter((p) => p.id !== latestPost?.id && p.data.youtubeId)
   .slice(0, 6);
 
-// Get all projects and their latest posts
-const allProjects = await getCollection('projects');
-const publishedProjects = allProjects.filter(project => !project.data.draft);
+// ─── News ───────────────────────────────────────────────────────────
+const allNews = await getCollection('news', ({ data }) => !data.draft);
+const recentNews = sortByDate(allNews).slice(0, 5);
+const newsKindLabels: Record<string, string> = {
+  kickstarter: 'Kickstarter',
+  release: 'Release',
+  errata: 'Errata',
+  announcement: 'Announcement',
+  interview: 'Interview',
+  community: 'Community',
+  other: 'News',
+};
 
-// For each project, get the latest post
-const projectsWithLatestPost = publishedProjects.map(project => {
-  const projectSlug = project.id;
-  const projectPosts = sortByDate(sortedPosts.filter(post => post.data.project === projectSlug));
-  const latestProjectPost = projectPosts[0];
-
-  return {
-    project,
-    projectSlug,
-    latestPost: latestProjectPost,
-    latestPostDate: latestProjectPost?.data.pubDate,
-  };
-}).filter(p => p.latestPost)
+// ─── Directory ──────────────────────────────────────────────────────
+const allGames = await getCollection('games', ({ data }) => !data.draft);
+const featuredGames = [...allGames]
   .sort((a, b) => {
-    const dateA = a.latestPostDate?.valueOf() || 0;
-    const dateB = b.latestPostDate?.valueOf() || 0;
-    return dateB - dateA;
+    // Indie tier first, then by most recently updated/published
+    if (a.data.tier !== b.data.tier) return a.data.tier === 'indie' ? -1 : 1;
+    const aDate = (a.data.updatedDate || a.data.pubDate).valueOf();
+    const bDate = (b.data.updatedDate || b.data.pubDate).valueOf();
+    return bDate - aDate;
   })
-  .slice(0, 5);
-
-// Get recent posts excluding hero, resources, and featured project posts
-const excludedSlugs = new Set([
-  latestPost.id,
-  ...resourceHubs.map(p => p.id),
-  ...individualResources.map(p => p.id),
-  ...projectsWithLatestPost.map(p => p.latestPost.id)
-]);
-
-// Get recent vlog posts (posts with YouTube videos) - only 6 for homepage masonry
-const recentVlogs = sortedPosts
-  .filter(post => !excludedSlugs.has(post.id) && post.data.youtubeId)
   .slice(0, 6);
 
-// Techniques & Crafting - combined painting + hobby tags
-const techniquesTags = [
-  'painting', 'glazing', 'drybrushing', 'airbrushing', 'contrast-paints', 'zenithal',
-  'blending', 'washes', 'nmm', 'edge-highlighting', 'preshading', 'speed-painting',
-  'sculpting', '3d-printing', 'terrain', 'basing', 'priming', 'resin-casting',
-  'kitbashing', 'magnets', 'conversion', 'green-stuff', 'mold-making', 'scratch-building',
-  'batch-painting', 'skin-tones', 'weathering', 'oil-wash', 'freehand', 'color-recipes',
-];
+// ─── From the Dungeon (Featured Project) ───────────────────────────
+const allProjects = await getCollection('projects');
+const publishedProjects = allProjects.filter((p) => !p.data.draft);
+const projectsWithLatestPost = publishedProjects
+  .map((project) => {
+    const projectPosts = sortByDate(publishedPosts.filter((post) => post.data.project === project.id));
+    return { project, projectSlug: project.id, latestPost: projectPosts[0] };
+  })
+  .filter((p) => p.latestPost)
+  .sort((a, b) => (b.latestPost?.data.pubDate.valueOf() || 0) - (a.latestPost?.data.pubDate.valueOf() || 0));
 
-// Get techniques & crafting posts
-const techniquesPosts = sortedPosts
-  .filter(post => !excludedSlugs.has(post.id) &&
-    post.data.tags?.some(tag => techniquesTags.includes(tag)))
-  .slice(0, 9);
-
-// Game system tags for the games section — sorted by post count, most popular first
-const gameSystemTagSlugs = ['warmachine', 'warhammer', 'trench-crusade', 'mage-knight', 'necromunda', 'dolmenwood', 'motley-crews', 'kingdom-death'];
-const gameSystemTags = gameSystemTagSlugs.map(tag => {
-  const posts = sortedPosts.filter(p => p.data.tags?.includes(tag));
-  const postWithImage = posts.find(p => p.data.heroImage || p.data.youtubeId);
-  const imageUrl = postWithImage ? getHeroImageUrl(postWithImage.data.heroImage, postWithImage.data.youtubeId) : null;
-  return { tag, count: posts.length, imageUrl };
-}).sort((a, b) => b.count - a.count);
-
-// Get the most recent project with its posts for the featured section
 const featuredProject = projectsWithLatestPost[0];
 const featuredProjectPosts = featuredProject
-  ? sortByDate(sortedPosts.filter(post => post.data.project === featuredProject.projectSlug)).slice(0, 4)
+  ? sortByDate(publishedPosts.filter((post) => post.data.project === featuredProject.projectSlug)).slice(0, 4)
   : [];
 
-// Get hero image for component and URL for preloading
+// ─── Hero LCP preload ───────────────────────────────────────────────
 const heroImage = getHeroImage(latestPost?.data.heroImage, latestPost?.data.youtubeId);
-const heroImageUrl = getHeroImageUrl(latestPost?.data.heroImage, latestPost?.data.youtubeId);
 
-// Generate preload-compatible srcset for the hero LCP image
 import { getImage } from 'astro:assets';
-import { isImageMetadata } from '../utils/getHeroImage';
 let heroPreloadSrcset = '';
-let heroPreloadSrc = '';
 if (heroImage && isImageMetadata(heroImage)) {
   const sizes = [640, 1024, 1280];
   const srcsetParts = await Promise.all(sizes.map(async (w) => {
-    const img = await getImage({ src: heroImage, width: w, height: Math.round(w * 9/16), format: 'webp', quality: 35 });
+    const img = await getImage({ src: heroImage, width: w, height: Math.round(w * 9 / 16), format: 'webp', quality: 35 });
     return `${img.src} ${w}w`;
   }));
   heroPreloadSrcset = srcsetParts.join(', ');
-  heroPreloadSrc = srcsetParts[0].split(' ')[0];
 }
 ---
 
@@ -133,7 +89,7 @@ if (heroImage && isImageMetadata(heroImage)) {
   <Header theme="dark" />
 
   <main id="main-content" class="min-h-screen">
-    <!-- Featured Post - Full Screen Hero -->
+    <!-- 1. Hero — featured / latest big thing -->
     {latestPost && (
       <HeroSection
         slug={latestPost.id}
@@ -149,117 +105,82 @@ if (heroImage && isImageMetadata(heroImage)) {
       />
     )}
 
-    <!-- Recent Vlogs Section (Masonry) -->
+    <!-- 2. Latest Vlogs -->
     <PostGridSection
-      title="Recent Vlogs"
+      title="Latest Vlogs"
       eyebrow="Watch"
-      viewAllLink="/categories/vlogs"
+      viewAllLink="/vlogs"
       posts={recentVlogs}
       layout="masonry"
       mobileLimit={3}
     />
 
-    <!-- Techniques & Crafting Section (combined painting + hobby) -->
-    {techniquesPosts.length > 0 && (
+    <!-- 3. What's New in Indie Wargaming -->
+    {recentNews.length > 0 && (
       <section class="bg-ink/[0.03] dark:bg-ink-dark/[0.03] py-16 md:py-24" data-scroll-reveal>
         <ContentContainer>
           <div class="flex items-center justify-between mb-12">
             <div>
-              <span class="block text-sm font-heading uppercase tracking-[0.3em] text-ink/40 dark:text-ink-dark/40 mb-2">Learn & Build</span>
-              <h2 class="text-5xl md:text-7xl font-display font-bold text-ink dark:text-ink-dark">Techniques & Crafting</h2>
+              <span class="block text-sm font-heading uppercase tracking-[0.3em] text-ink/40 dark:text-ink-dark/40 mb-2">The Pulse</span>
+              <h2 class="text-5xl md:text-7xl font-display font-bold text-ink dark:text-ink-dark">What's New in Indie Wargaming</h2>
             </div>
-            <ViewAllLink href="/tags/painting">View All →</ViewAllLink>
+            <ViewAllLink href="/news">All News →</ViewAllLink>
           </div>
-          <MasonryGrid columns={3}>
-            {techniquesPosts.map((post, index) => (
-              <div class={index >= 4 ? 'hidden md:block' : ''}>
-                <ResourceThumbnail post={post} />
-              </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-5xl">
+            {recentNews.map((item) => (
+              <a href={`/news/${item.id}`} class="group block p-6 bg-parchment dark:bg-parchment-dark hover:bg-ink/5 dark:hover:bg-ink-dark/10 rounded-lg shadow-sm transition-colors">
+                <div class="flex items-center gap-3 mb-2">
+                  <span class="text-xs font-heading uppercase tracking-[0.2em] px-2 py-1 bg-ink/10 dark:bg-ink-dark/10 text-ink dark:text-ink-dark rounded">
+                    {newsKindLabels[item.data.kind]}
+                  </span>
+                  <time datetime={item.data.pubDate.toISOString()} class="text-xs text-ink/60 dark:text-ink-dark/60">
+                    {formatDateLong(item.data.pubDate)}
+                  </time>
+                </div>
+                <h3 class="text-lg md:text-xl font-heading font-bold text-ink dark:text-ink-dark group-hover:underline mb-2">
+                  {item.data.title}
+                </h3>
+                <p class="text-sm text-ink/70 dark:text-ink-dark/70 line-clamp-2">{item.data.description}</p>
+              </a>
             ))}
-          </MasonryGrid>
+          </div>
         </ContentContainer>
       </section>
     )}
 
-    <!-- Resource Posts Section -->
-    {(resourceHubs.length > 0 || individualResources.length > 0) && (
+    <!-- 4. Newsletter CTA -->
+    <NewsletterSignup variant="section" />
+
+    <!-- 5. Browse the Directory -->
+    {featuredGames.length > 0 && (
       <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24" data-scroll-reveal>
         <ContentContainer>
           <div class="flex items-center justify-between mb-12">
             <div>
-              <span class="block text-sm font-heading uppercase tracking-[0.3em] text-ink/40 dark:text-ink-dark/40 mb-2">Explore</span>
-              <h2 class="text-5xl md:text-7xl font-display font-bold text-ink dark:text-ink-dark">Resources</h2>
+              <span class="block text-sm font-heading uppercase tracking-[0.3em] text-ink/40 dark:text-ink-dark/40 mb-2">Discover</span>
+              <h2 class="text-5xl md:text-7xl font-display font-bold text-ink dark:text-ink-dark">Browse the Directory</h2>
             </div>
-            <ViewAllLink href="/categories/resources">View All →</ViewAllLink>
+            <ViewAllLink href="/games">All Games →</ViewAllLink>
           </div>
-
-          {/* Resource Hub Cards */}
-          {resourceHubs.length > 0 && (
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-              {resourceHubs.map((post) => (
-                <PostCard post={post} />
-              ))}
-            </div>
-          )}
-
-          {/* Individual Resource Thumbnails */}
-          {individualResources.length > 0 && (
-            <div>
-              <h3 class="text-lg font-heading uppercase tracking-[0.15em] text-ink/50 dark:text-ink-dark/50 mb-6">Recent Guides & Articles</h3>
-              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {individualResources.map((post) => (
-                  <ResourceThumbnail post={post} />
-                ))}
-              </div>
-            </div>
-          )}
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {featuredGames.map((game) => (
+              <ImageCard
+                href={`/games/${game.id}`}
+                image={game.data.heroImage}
+                imageAlt={game.data.heroImageAlt || game.data.title}
+                title={game.data.title}
+                subtitle={game.data.description}
+                fallbackLetter={game.data.title.charAt(0)}
+                aspectRatio="16/9"
+                variant="overlay"
+              />
+            ))}
+          </div>
         </ContentContainer>
       </section>
     )}
 
-    <!-- Games Section -->
-    <section class="bg-ink/[0.03] dark:bg-ink-dark/[0.03] py-16 md:py-24" data-scroll-reveal>
-      <ContentContainer>
-        <div class="flex items-center justify-between mb-12">
-          <div>
-            <span class="block text-sm font-heading uppercase tracking-[0.3em] text-ink/40 dark:text-ink-dark/40 mb-2">Play</span>
-            <h2 class="text-5xl md:text-7xl font-display font-bold text-ink dark:text-ink-dark">Games</h2>
-          </div>
-          <ViewAllLink href="/tags">Browse All Tags →</ViewAllLink>
-        </div>
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {gameSystemTags.map((game, index) => (
-            <a
-              href={`/tags/${game.tag}`}
-              class={`group block rounded-xl overflow-hidden relative hover:scale-[1.02] transition-all duration-300 ${index === 0 ? 'md:col-span-2 md:row-span-2' : ''}`}
-            >
-              {game.imageUrl ? (
-                <img
-                  src={game.imageUrl}
-                  alt={getTagDisplay(game.tag)}
-                  class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                  loading="lazy"
-                />
-              ) : null}
-              <div class={`absolute inset-0 ${game.imageUrl ? 'bg-ink/70 group-hover:bg-ink/60' : 'bg-ink dark:bg-ink-dark'} transition-colors duration-300`}></div>
-              <div class={`relative z-10 p-6 md:p-8 flex flex-col justify-end ${index === 0 ? 'min-h-[200px] md:min-h-[280px]' : 'min-h-[100px] md:min-h-[120px]'}`}>
-                <span class={`font-display font-bold text-parchment dark:text-parchment-dark ${index === 0 ? 'text-2xl md:text-4xl' : 'text-lg md:text-xl'}`}>
-                  {getTagDisplay(game.tag)}
-                </span>
-                <span class={`text-parchment/60 dark:text-parchment-dark/60 mt-1 ${index === 0 ? 'text-sm' : 'text-xs'}`}>
-                  {game.count} {game.count === 1 ? 'post' : 'posts'}
-                </span>
-              </div>
-            </a>
-          ))}
-        </div>
-      </ContentContainer>
-    </section>
-
-    <!-- Newsletter -->
-    <NewsletterSignup variant="section" />
-
-    <!-- Featured Project Section -->
+    <!-- 6. From the Dungeon (Featured Project) -->
     {featuredProject && featuredProjectPosts.length > 0 && (
       <FeaturedProjectSection
         projectSlug={featuredProject.projectSlug}
@@ -268,7 +189,7 @@ if (heroImage && isImageMetadata(heroImage)) {
       />
     )}
 
-    <!-- YouTube CTA Section -->
+    <!-- 7. YouTube CTA -->
     <YouTubeCTA />
 
     <Footer />
