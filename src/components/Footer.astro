@@ -33,6 +33,11 @@ const currentYear = new Date().getFullYear();
   }
 </style>
 
+<!-- Tailwind safelist: classes used only in bracket-named [slug].astro pages
+     are sometimes missed by the content scanner. Static references here
+     guarantee they survive the build. -->
+<div class="hidden lg:col-span-2 lg:col-span-3" aria-hidden="true"></div>
+
 <footer class="footer-glass text-white py-16">
   <ContentContainer>
     <!-- Main Footer Content -->

@@ -57,6 +57,13 @@ const referenceLinks = [
   { label: 'Kickstarter', url: game.data.kickstarterUrl },
 ].filter((l): l is { label: string; url: string } => Boolean(l.url));
 
+const hasReferenceCard = Boolean(studio) || designers.length > 0 || referenceLinks.length > 0;
+const hasSidebar =
+  hasReferenceCard ||
+  game.data.podcasts.length > 0 ||
+  game.data.creators.length > 0 ||
+  relatedGames.length > 0;
+
 const statusLabel: Record<string, string> = {
   active: 'Active',
   oop: 'Out of Print',
@@ -126,8 +133,8 @@ const statusLabel: Record<string, string> = {
           </p>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          <div class="lg:col-span-2">
+        <div class={hasSidebar ? 'grid grid-cols-1 lg:grid-cols-3 gap-12' : 'max-w-3xl'}>
+          <div class={hasSidebar ? 'lg:col-span-2' : ''}>
             {game.data.verdict && (
               <blockquote class="not-prose mb-12 p-6 bg-ink/5 dark:bg-ink-dark/5 border-l-4 border-ink dark:border-ink-dark rounded-r-lg">
                 <p class="text-lg md:text-xl font-serif italic text-ink dark:text-ink-dark">
@@ -144,7 +151,9 @@ const statusLabel: Record<string, string> = {
             </ProseContent>
           </div>
 
+          {hasSidebar && (
           <aside class="space-y-8">
+            {hasReferenceCard && (
             <div class="bg-ink/5 dark:bg-ink-dark/5 p-6 rounded-lg">
               <h2 class="text-sm font-heading uppercase tracking-[0.2em] text-ink/60 dark:text-ink-dark/60 mb-4">
                 Reference
@@ -190,6 +199,7 @@ const statusLabel: Record<string, string> = {
                 )}
               </dl>
             </div>
+            )}
 
             {game.data.podcasts.length > 0 && (
               <div class="bg-ink/5 dark:bg-ink-dark/5 p-6 rounded-lg">
@@ -242,6 +252,7 @@ const statusLabel: Record<string, string> = {
               </div>
             )}
           </aside>
+          )}
         </div>
 
         {gameNews.length > 0 && (
