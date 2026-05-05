@@ -1,0 +1,193 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import ContentContainer from '../../components/ContentContainer.astro';
+import ProseContent from '../../components/ProseContent.astro';
+import ImageCard from '../../components/ImageCard.astro';
+import StructuredData from '../../components/StructuredData.astro';
+import { formatDateLong } from '../../utils/formatDate';
+import { sortByDate } from '../../utils/collections';
+
+export async function getStaticPaths() {
+  const studios = await getCollection('studios', ({ data }) => !data.draft);
+  return studios.map((studio) => ({
+    params: { slug: studio.id },
+    props: { studio },
+  }));
+}
+
+const { studio } = Astro.props;
+const { Content } = await render(studio);
+
+// Reverse-lookups: games published by this studio, people affiliated with this studio
+const allGames = await getCollection('games', ({ data }) => !data.draft);
+const studioGames = allGames
+  .filter((g) => g.data.studio?.id === studio.id)
+  .sort((a, b) => a.data.title.localeCompare(b.data.title));
+
+const allPeople = await getCollection('people', ({ data }) => !data.draft);
+const studioPeople = allPeople
+  .filter((p) => p.data.studios.some((ref) => ref.id === studio.id))
+  .sort((a, b) => a.data.name.localeCompare(b.data.name));
+
+// News tagged to this studio
+const allNews = await getCollection('news', ({ data }) => !data.draft);
+const studioNews = sortByDate(
+  allNews.filter((n) => n.data.relatedStudio?.id === studio.id)
+).slice(0, 6);
+
+const referenceLinks = [
+  { label: 'Official Site', url: studio.data.officialUrl },
+  { label: 'Buy', url: studio.data.storeUrl },
+  { label: 'Discord', url: studio.data.discordUrl },
+  { label: 'Kickstarter', url: studio.data.kickstarterUrl },
+  { label: 'Twitter', url: studio.data.twitterUrl },
+  { label: 'Instagram', url: studio.data.instagramUrl },
+  { label: 'YouTube', url: studio.data.youtubeUrl },
+  { label: 'Patreon', url: studio.data.patreonUrl },
+].filter((l): l is { label: string; url: string } => Boolean(l.url));
+---
+
+<BaseLayout
+  title={`${studio.data.name} — The Hobbinomicon`}
+  description={studio.data.description}
+  image={studio.data.heroImage}
+>
+  <StructuredData
+    type="breadcrumb"
+    data={{
+      breadcrumbs: [
+        { name: 'Home', url: 'https://hobbinomicon.com/' },
+        { name: 'Studios', url: 'https://hobbinomicon.com/studios' },
+        { name: studio.data.name, url: `https://hobbinomicon.com/studios/${studio.id}` },
+      ],
+    }}
+  />
+  <Header theme="light" />
+
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
+    <article class="pt-32">
+      <ContentContainer class="py-16">
+        <header class="mb-12">
+          <a href="/studios" class="inline-block text-ink/60 dark:text-ink-dark/60 hover:text-ink dark:hover:text-ink-dark text-sm mb-4 transition-colors">
+            ← Studios
+          </a>
+          <h1 class="text-5xl md:text-7xl font-display font-bold text-ink dark:text-ink-dark mb-6">
+            {studio.data.name}
+          </h1>
+          <p class="text-xl md:text-2xl text-ink/80 dark:text-ink-dark/80 font-serif italic max-w-3xl border-l-4 border-ink/30 dark:border-ink-dark/30 pl-6">
+            {studio.data.description}
+          </p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          <div class="lg:col-span-2">
+            <ProseContent>
+              <Content />
+            </ProseContent>
+          </div>
+
+          <aside class="space-y-8">
+            <div class="bg-ink/5 dark:bg-ink-dark/5 p-6 rounded-lg">
+              <h2 class="text-sm font-heading uppercase tracking-[0.2em] text-ink/60 dark:text-ink-dark/60 mb-4">
+                Reference
+              </h2>
+              <dl class="space-y-3 text-sm">
+                {studio.data.founded && (
+                  <div>
+                    <dt class="text-ink/60 dark:text-ink-dark/60">Founded</dt>
+                    <dd class="text-ink dark:text-ink-dark font-medium">{studio.data.founded}</dd>
+                  </div>
+                )}
+                {studio.data.headquarters && (
+                  <div>
+                    <dt class="text-ink/60 dark:text-ink-dark/60">Headquarters</dt>
+                    <dd class="text-ink dark:text-ink-dark font-medium">{studio.data.headquarters}</dd>
+                  </div>
+                )}
+                {referenceLinks.length > 0 && (
+                  <div class="pt-3 border-t border-ink/10 dark:border-ink-dark/10">
+                    <dt class="text-ink/60 dark:text-ink-dark/60 mb-2">Links</dt>
+                    <dd class="flex flex-col gap-1">
+                      {referenceLinks.map((link) => (
+                        <a href={link.url} target="_blank" rel="noopener noreferrer" class="text-ink dark:text-ink-dark hover:underline">
+                          {link.label} →
+                        </a>
+                      ))}
+                    </dd>
+                  </div>
+                )}
+              </dl>
+            </div>
+
+            {studioPeople.length > 0 && (
+              <div class="bg-ink/5 dark:bg-ink-dark/5 p-6 rounded-lg">
+                <h2 class="text-sm font-heading uppercase tracking-[0.2em] text-ink/60 dark:text-ink-dark/60 mb-4">
+                  People
+                </h2>
+                <ul class="space-y-2 text-sm">
+                  {studioPeople.map((p) => (
+                    <li>
+                      <a href={`/people/${p.id}`} class="text-ink dark:text-ink-dark hover:underline font-medium">
+                        {p.data.name} →
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </aside>
+        </div>
+
+        {studioGames.length > 0 && (
+          <section class="mt-20 pt-12 border-t border-ink/10 dark:border-ink-dark/10">
+            <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mb-8">
+              Games
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {studioGames.map((g) => (
+                <ImageCard
+                  href={`/games/${g.id}`}
+                  image={g.data.heroImage}
+                  imageAlt={g.data.heroImageAlt || g.data.title}
+                  title={g.data.title}
+                  subtitle={g.data.description}
+                  fallbackLetter={g.data.title.charAt(0)}
+                  aspectRatio="16/9"
+                  variant="overlay"
+                />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {studioNews.length > 0 && (
+          <section class="mt-20 pt-12 border-t border-ink/10 dark:border-ink-dark/10">
+            <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mb-8">
+              News
+            </h2>
+            <div class="space-y-4">
+              {studioNews.map((n) => (
+                <a href={`/news/${n.id}`} class="group block p-6 bg-ink/5 dark:bg-ink-dark/5 hover:bg-ink/10 dark:hover:bg-ink-dark/10 rounded-lg transition-colors">
+                  <div class="flex items-baseline justify-between gap-4 mb-2">
+                    <h3 class="text-lg font-heading font-bold text-ink dark:text-ink-dark group-hover:underline">
+                      {n.data.title}
+                    </h3>
+                    <time datetime={n.data.pubDate.toISOString()} class="text-xs text-ink/60 dark:text-ink-dark/60 whitespace-nowrap">
+                      {formatDateLong(n.data.pubDate)}
+                    </time>
+                  </div>
+                  <p class="text-sm text-ink/70 dark:text-ink-dark/70 line-clamp-2">{n.data.description}</p>
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
+      </ContentContainer>
+    </article>
+
+    <Footer />
+  </main>
+</BaseLayout>

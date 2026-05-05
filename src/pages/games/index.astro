@@ -1,0 +1,105 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import ContentContainer from '../../components/ContentContainer.astro';
+import ImageCard from '../../components/ImageCard.astro';
+import StructuredData from '../../components/StructuredData.astro';
+
+const allGames = await getCollection('games', ({ data }) => !data.draft);
+const indieGames = allGames.filter(g => g.data.tier === 'indie').sort((a, b) => a.data.title.localeCompare(b.data.title));
+const bigGames = allGames.filter(g => g.data.tier === 'big').sort((a, b) => a.data.title.localeCompare(b.data.title));
+---
+
+<BaseLayout
+  title="Games — The Hobbinomicon"
+  description="A directory of indie wargames, GW Specialist Games, classic Warhammer editions, and standalone miniature lines."
+>
+  <StructuredData
+    type="breadcrumb"
+    data={{
+      breadcrumbs: [
+        { name: 'Home', url: 'https://hobbinomicon.com/' },
+        { name: 'Games', url: 'https://hobbinomicon.com/games' },
+      ],
+    }}
+  />
+  <Header theme="light" />
+
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
+    <PageHeader
+      title="Games"
+      description="A directory of indie wargames, GW Specialist Games, classic Warhammer editions, and the standalone miniature lines worth knowing about."
+      breadcrumbs={[{ label: 'Games', href: '/games' }]}
+    />
+
+    <ContentContainer class="py-16">
+      {allGames.length === 0 ? (
+        <div class="max-w-2xl mx-auto text-center py-16">
+          <h2 class="text-2xl md:text-3xl font-heading font-bold text-ink dark:text-ink-dark mb-4">
+            The directory is being built
+          </h2>
+          <p class="text-ink/70 dark:text-ink-dark/70 text-lg">
+            Game pages, studio profiles, and indie news are all on the way. Check back soon — or subscribe to the newsletter to hear when the first entries land.
+          </p>
+        </div>
+      ) : (
+        <>
+          {indieGames.length > 0 && (
+            <section class="mb-16">
+              <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mb-2">
+                Indie & Specialist
+              </h2>
+              <p class="text-ink/70 dark:text-ink-dark/70 text-lg mb-8">
+                Small-press games, GW Specialist Games, and classic editions worth playing.
+              </p>
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {indieGames.map((game) => (
+                  <ImageCard
+                    href={`/games/${game.id}`}
+                    image={game.data.heroImage}
+                    imageAlt={game.data.heroImageAlt || game.data.title}
+                    title={game.data.title}
+                    subtitle={game.data.description}
+                    fallbackLetter={game.data.title.charAt(0)}
+                    aspectRatio="16/9"
+                    variant="overlay"
+                  />
+                ))}
+              </div>
+            </section>
+          )}
+
+          {bigGames.length > 0 && (
+            <section>
+              <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mb-2">
+                Big Games
+              </h2>
+              <p class="text-ink/70 dark:text-ink-dark/70 text-lg mb-8">
+                The mainstream wargames I cover for the entry-level audience.
+              </p>
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {bigGames.map((game) => (
+                  <ImageCard
+                    href={`/games/${game.id}`}
+                    image={game.data.heroImage}
+                    imageAlt={game.data.heroImageAlt || game.data.title}
+                    title={game.data.title}
+                    subtitle={game.data.description}
+                    fallbackLetter={game.data.title.charAt(0)}
+                    aspectRatio="16/9"
+                    variant="overlay"
+                  />
+                ))}
+              </div>
+            </section>
+          )}
+        </>
+      )}
+    </ContentContainer>
+
+    <Footer />
+  </main>
+</BaseLayout>

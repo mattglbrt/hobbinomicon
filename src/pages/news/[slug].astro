@@ -1,0 +1,140 @@
+---
+import { getCollection, getEntry, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import ContentContainer from '../../components/ContentContainer.astro';
+import ProseContent from '../../components/ProseContent.astro';
+import StructuredData from '../../components/StructuredData.astro';
+import { formatDateLong } from '../../utils/formatDate';
+
+export async function getStaticPaths() {
+  const news = await getCollection('news', ({ data }) => !data.draft);
+  return news.map((item) => ({
+    params: { slug: item.id },
+    props: { item },
+  }));
+}
+
+const { item } = Astro.props;
+const { Content } = await render(item);
+
+const relatedGame = item.data.relatedGame ? await getEntry(item.data.relatedGame) : null;
+const relatedStudio = item.data.relatedStudio ? await getEntry(item.data.relatedStudio) : null;
+const relatedPerson = item.data.relatedPerson ? await getEntry(item.data.relatedPerson) : null;
+
+const kindLabels: Record<string, string> = {
+  kickstarter: 'Kickstarter',
+  release: 'Release',
+  errata: 'Errata',
+  announcement: 'Announcement',
+  interview: 'Interview',
+  community: 'Community',
+  other: 'News',
+};
+---
+
+<BaseLayout
+  title={`${item.data.title} — The Hobbinomicon`}
+  description={item.data.description}
+  image={item.data.heroImage}
+>
+  <StructuredData
+    type="breadcrumb"
+    data={{
+      breadcrumbs: [
+        { name: 'Home', url: 'https://hobbinomicon.com/' },
+        { name: 'News', url: 'https://hobbinomicon.com/news' },
+        { name: item.data.title, url: `https://hobbinomicon.com/news/${item.id}` },
+      ],
+    }}
+  />
+  <Header theme={item.data.heroImage ? 'dark' : 'light'} />
+
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
+    {item.data.heroImage && (
+      <div class="relative h-[40vh] md:h-[50vh] overflow-hidden">
+        <img
+          src={item.data.heroImage}
+          alt={item.data.heroImageAlt || item.data.title}
+          class="w-full h-full object-cover"
+          loading="eager"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-parchment dark:from-parchment-dark via-ink/40 to-transparent"></div>
+      </div>
+    )}
+
+    <article class={item.data.heroImage ? '-mt-32 relative z-10' : 'pt-32'}>
+      <ContentContainer class="py-12">
+        <div class="max-w-3xl mx-auto">
+          <a href="/news" class="inline-block text-ink/60 dark:text-ink-dark/60 hover:text-ink dark:hover:text-ink-dark text-sm mb-4 transition-colors">
+            ← News
+          </a>
+          <div class="flex items-center gap-3 mb-4">
+            <span class="text-xs font-heading uppercase tracking-[0.2em] px-2 py-1 bg-ink/10 dark:bg-ink-dark/10 text-ink dark:text-ink-dark rounded">
+              {kindLabels[item.data.kind]}
+            </span>
+            <time datetime={item.data.pubDate.toISOString()} class="text-xs text-ink/60 dark:text-ink-dark/60">
+              {formatDateLong(item.data.pubDate)}
+            </time>
+          </div>
+          <h1 class="text-4xl md:text-6xl font-display font-bold text-ink dark:text-ink-dark mb-6 leading-tight">
+            {item.data.title}
+          </h1>
+          <p class="text-xl text-ink/80 dark:text-ink-dark/80 font-serif italic mb-8 border-l-4 border-ink/30 dark:border-ink-dark/30 pl-6">
+            {item.data.description}
+          </p>
+
+          <ProseContent>
+            <Content />
+          </ProseContent>
+
+          {item.data.source !== 'authored' && item.data.sourceUrl && (
+            <div class="mt-12 p-4 bg-ink/5 dark:bg-ink-dark/5 rounded-lg text-sm">
+              <span class="text-ink/60 dark:text-ink-dark/60">
+                {item.data.source === 'rss' ? 'Via RSS' : 'Via'}
+                {item.data.sourceName ? ` ${item.data.sourceName}` : ''} —
+              </span>
+              <a href={item.data.sourceUrl} target="_blank" rel="noopener noreferrer" class="text-ink dark:text-ink-dark font-medium hover:underline ml-1">
+                Read original →
+              </a>
+            </div>
+          )}
+
+          {(relatedGame || relatedStudio || relatedPerson) && (
+            <div class="mt-12 pt-8 border-t border-ink/10 dark:border-ink-dark/10">
+              <h2 class="text-sm font-heading uppercase tracking-[0.2em] text-ink/60 dark:text-ink-dark/60 mb-3">
+                Related
+              </h2>
+              <ul class="space-y-1 text-sm">
+                {relatedGame && (
+                  <li>
+                    <a href={`/games/${relatedGame.id}`} class="text-ink dark:text-ink-dark hover:underline font-medium">
+                      Game: {relatedGame.data.title} →
+                    </a>
+                  </li>
+                )}
+                {relatedStudio && (
+                  <li>
+                    <a href={`/studios/${relatedStudio.id}`} class="text-ink dark:text-ink-dark hover:underline font-medium">
+                      Studio: {relatedStudio.data.name} →
+                    </a>
+                  </li>
+                )}
+                {relatedPerson && (
+                  <li>
+                    <a href={`/people/${relatedPerson.id}`} class="text-ink dark:text-ink-dark hover:underline font-medium">
+                      Person: {relatedPerson.data.name} →
+                    </a>
+                  </li>
+                )}
+              </ul>
+            </div>
+          )}
+        </div>
+      </ContentContainer>
+    </article>
+
+    <Footer />
+  </main>
+</BaseLayout>

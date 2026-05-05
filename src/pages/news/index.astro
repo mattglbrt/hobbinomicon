@@ -1,0 +1,81 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import ContentContainer from '../../components/ContentContainer.astro';
+import StructuredData from '../../components/StructuredData.astro';
+import { sortByDate } from '../../utils/collections';
+import { formatDateLong } from '../../utils/formatDate';
+
+const news = sortByDate(await getCollection('news', ({ data }) => !data.draft));
+
+const kindLabels: Record<string, string> = {
+  kickstarter: 'Kickstarter',
+  release: 'Release',
+  errata: 'Errata',
+  announcement: 'Announcement',
+  interview: 'Interview',
+  community: 'Community',
+  other: 'News',
+};
+---
+
+<BaseLayout
+  title="News — The Hobbinomicon"
+  description="Indie wargames news — Kickstarter launches, releases, errata, interviews, and community happenings."
+>
+  <StructuredData
+    type="breadcrumb"
+    data={{
+      breadcrumbs: [
+        { name: 'Home', url: 'https://hobbinomicon.com/' },
+        { name: 'News', url: 'https://hobbinomicon.com/news' },
+      ],
+    }}
+  />
+  <Header theme="light" />
+
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
+    <PageHeader
+      title="News"
+      description="What's launching, releasing, and worth knowing in the indie wargame world."
+      breadcrumbs={[{ label: 'News', href: '/news' }]}
+    />
+
+    <ContentContainer class="py-16">
+      {news.length === 0 ? (
+        <div class="max-w-2xl mx-auto text-center py-16">
+          <h2 class="text-2xl md:text-3xl font-heading font-bold text-ink dark:text-ink-dark mb-4">
+            The news pulse is starting
+          </h2>
+          <p class="text-ink/70 dark:text-ink-dark/70 text-lg">
+            Indie wargame news — written and curated — is coming soon. Subscribe to the newsletter to get it in your inbox.
+          </p>
+        </div>
+      ) : (
+        <div class="max-w-3xl mx-auto space-y-6">
+          {news.map((item) => (
+            <a href={`/news/${item.id}`} class="group block p-6 bg-ink/5 dark:bg-ink-dark/5 hover:bg-ink/10 dark:hover:bg-ink-dark/10 rounded-lg transition-colors">
+              <div class="flex items-center gap-3 mb-3">
+                <span class="text-xs font-heading uppercase tracking-[0.2em] px-2 py-1 bg-ink/10 dark:bg-ink-dark/10 text-ink dark:text-ink-dark rounded">
+                  {kindLabels[item.data.kind]}
+                </span>
+                <time datetime={item.data.pubDate.toISOString()} class="text-xs text-ink/60 dark:text-ink-dark/60">
+                  {formatDateLong(item.data.pubDate)}
+                </time>
+              </div>
+              <h2 class="text-2xl font-heading font-bold text-ink dark:text-ink-dark group-hover:underline mb-2">
+                {item.data.title}
+              </h2>
+              <p class="text-ink/70 dark:text-ink-dark/70">{item.data.description}</p>
+            </a>
+          ))}
+        </div>
+      )}
+    </ContentContainer>
+
+    <Footer />
+  </main>
+</BaseLayout>

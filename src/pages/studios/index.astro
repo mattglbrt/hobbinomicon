@@ -1,0 +1,67 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import ContentContainer from '../../components/ContentContainer.astro';
+import ImageCard from '../../components/ImageCard.astro';
+import StructuredData from '../../components/StructuredData.astro';
+
+const studios = (await getCollection('studios', ({ data }) => !data.draft))
+  .sort((a, b) => a.data.name.localeCompare(b.data.name));
+---
+
+<BaseLayout
+  title="Studios — The Hobbinomicon"
+  description="Game publishers, mini sculptors, and the studios making the indie wargame scene."
+>
+  <StructuredData
+    type="breadcrumb"
+    data={{
+      breadcrumbs: [
+        { name: 'Home', url: 'https://hobbinomicon.com/' },
+        { name: 'Studios', url: 'https://hobbinomicon.com/studios' },
+      ],
+    }}
+  />
+  <Header theme="light" />
+
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
+    <PageHeader
+      title="Studios"
+      description="Game publishers, mini sculptors, and the people making the indie wargame scene."
+      breadcrumbs={[{ label: 'Studios', href: '/studios' }]}
+    />
+
+    <ContentContainer class="py-16">
+      {studios.length === 0 ? (
+        <div class="max-w-2xl mx-auto text-center py-16">
+          <h2 class="text-2xl md:text-3xl font-heading font-bold text-ink dark:text-ink-dark mb-4">
+            Studios are being added
+          </h2>
+          <p class="text-ink/70 dark:text-ink-dark/70 text-lg">
+            Profiles for game publishers and standalone miniature studios are on the way.
+          </p>
+        </div>
+      ) : (
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {studios.map((studio) => (
+            <ImageCard
+              href={`/studios/${studio.id}`}
+              image={studio.data.heroImage}
+              imageAlt={studio.data.heroImageAlt || studio.data.name}
+              title={studio.data.name}
+              subtitle={studio.data.description}
+              fallbackLetter={studio.data.name.charAt(0)}
+              aspectRatio="16/9"
+              variant="overlay"
+            />
+          ))}
+        </div>
+      )}
+    </ContentContainer>
+
+    <Footer />
+  </main>
+</BaseLayout>

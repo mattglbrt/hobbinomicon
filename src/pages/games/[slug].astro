@@ -1,0 +1,285 @@
+---
+import { getCollection, getEntry, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import ContentContainer from '../../components/ContentContainer.astro';
+import ProseContent from '../../components/ProseContent.astro';
+import PostCard from '../../components/PostCard.astro';
+import StructuredData from '../../components/StructuredData.astro';
+import { formatDateLong } from '../../utils/formatDate';
+import { getPublishedPosts, sortByDate } from '../../utils/collections';
+
+export async function getStaticPaths() {
+  const games = await getCollection('games', ({ data }) => !data.draft);
+  return games.map((game) => ({
+    params: { slug: game.id },
+    props: { game },
+  }));
+}
+
+const { game } = Astro.props;
+const { Content } = await render(game);
+
+// Resolve studio + designers
+const studio = game.data.studio ? await getEntry(game.data.studio) : null;
+const designers = await Promise.all(
+  game.data.designers.map((ref) => getEntry(ref))
+);
+
+// Resolve related games
+const relatedGames = await Promise.all(
+  game.data.relatedGames.map((ref) => getEntry(ref))
+);
+
+// Living feed: blog posts auto-mapped via tags
+const allBlog = await getCollection('blog');
+const publishedBlog = getPublishedPosts(allBlog);
+const matchingPosts = game.data.tags.length > 0
+  ? publishedBlog.filter((post) =>
+      post.data.tags?.some((tag) => game.data.tags.includes(tag))
+    ).slice(0, 6)
+  : [];
+
+// News tagged to this game
+const allNews = await getCollection('news', ({ data }) => !data.draft);
+const gameNews = sortByDate(
+  allNews.filter((n) => n.data.relatedGame?.id === game.id)
+).slice(0, 6);
+
+// Reference card link list — flatten to array of {label, url}
+const referenceLinks = [
+  { label: 'Official Site', url: game.data.officialUrl },
+  { label: 'Buy', url: game.data.storeUrl },
+  { label: 'Rules', url: game.data.rulesUrl },
+  { label: 'Discord', url: game.data.discordUrl },
+  { label: 'Subreddit', url: game.data.subredditUrl },
+  { label: 'Kickstarter', url: game.data.kickstarterUrl },
+].filter((l): l is { label: string; url: string } => Boolean(l.url));
+
+const statusLabel: Record<string, string> = {
+  active: 'Active',
+  oop: 'Out of Print',
+  kickstarter: 'On Kickstarter',
+  announced: 'Announced',
+};
+---
+
+<BaseLayout
+  title={`${game.data.title} — The Hobbinomicon`}
+  description={game.data.description}
+  image={game.data.heroImage}
+>
+  <StructuredData
+    type="breadcrumb"
+    data={{
+      breadcrumbs: [
+        { name: 'Home', url: 'https://hobbinomicon.com/' },
+        { name: 'Games', url: 'https://hobbinomicon.com/games' },
+        { name: game.data.title, url: `https://hobbinomicon.com/games/${game.id}` },
+      ],
+    }}
+  />
+  <Header theme={game.data.heroImage ? 'dark' : 'light'} />
+
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
+    {game.data.heroImage ? (
+      <div class="relative h-[50vh] md:h-[60vh] overflow-hidden">
+        <img
+          src={game.data.heroImage}
+          alt={game.data.heroImageAlt || game.data.title}
+          class="w-full h-full object-cover object-center"
+          loading="eager"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-parchment dark:from-parchment-dark via-ink/40 to-transparent"></div>
+      </div>
+    ) : (
+      <div class="pt-32"></div>
+    )}
+
+    <article class={game.data.heroImage ? '-mt-32 relative z-10' : ''}>
+      <ContentContainer>
+        <header class="mb-12">
+          <div class="flex flex-wrap gap-3 mb-6">
+            <span class="px-3 py-1 bg-ink/10 dark:bg-ink-dark/10 text-ink dark:text-ink-dark text-xs font-heading uppercase tracking-[0.2em] rounded-full">
+              {game.data.tier === 'indie' ? 'Indie' : 'Big Game'}
+            </span>
+            <span class="px-3 py-1 bg-ink/10 dark:bg-ink-dark/10 text-ink dark:text-ink-dark text-xs font-heading uppercase tracking-[0.2em] rounded-full">
+              {statusLabel[game.data.status]}
+            </span>
+            {game.data.currentEdition && (
+              <span class="px-3 py-1 bg-ink/10 dark:bg-ink-dark/10 text-ink dark:text-ink-dark text-xs font-heading uppercase tracking-[0.2em] rounded-full">
+                {game.data.currentEdition}
+              </span>
+            )}
+            {game.data.releaseYear && (
+              <span class="px-3 py-1 bg-ink/10 dark:bg-ink-dark/10 text-ink dark:text-ink-dark text-xs font-heading uppercase tracking-[0.2em] rounded-full">
+                {game.data.releaseYear}
+              </span>
+            )}
+          </div>
+          <h1 class="text-5xl md:text-7xl font-display font-bold text-ink dark:text-ink-dark mb-6 leading-tight">
+            {game.data.title}
+          </h1>
+          <p class="text-xl md:text-2xl text-ink/80 dark:text-ink-dark/80 font-serif italic max-w-3xl border-l-4 border-ink/30 dark:border-ink-dark/30 pl-6">
+            {game.data.description}
+          </p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          <div class="lg:col-span-2">
+            {game.data.verdict && (
+              <blockquote class="not-prose mb-12 p-6 bg-ink/5 dark:bg-ink-dark/5 border-l-4 border-ink dark:border-ink-dark rounded-r-lg">
+                <p class="text-lg md:text-xl font-serif italic text-ink dark:text-ink-dark">
+                  "{game.data.verdict}"
+                </p>
+                <footer class="mt-3 text-sm text-ink/60 dark:text-ink-dark/60 font-heading uppercase tracking-wider">
+                  — The Hobbinomicon Take
+                </footer>
+              </blockquote>
+            )}
+
+            <ProseContent>
+              <Content />
+            </ProseContent>
+          </div>
+
+          <aside class="space-y-8">
+            <div class="bg-ink/5 dark:bg-ink-dark/5 p-6 rounded-lg">
+              <h2 class="text-sm font-heading uppercase tracking-[0.2em] text-ink/60 dark:text-ink-dark/60 mb-4">
+                Reference
+              </h2>
+              <dl class="space-y-3 text-sm">
+                {studio && (
+                  <div>
+                    <dt class="text-ink/60 dark:text-ink-dark/60">Publisher</dt>
+                    <dd class="text-ink dark:text-ink-dark font-medium">
+                      <a href={`/studios/${studio.id}`} class="hover:underline">{studio.data.name}</a>
+                    </dd>
+                  </div>
+                )}
+                {designers.length > 0 && (
+                  <div>
+                    <dt class="text-ink/60 dark:text-ink-dark/60">{designers.length === 1 ? 'Designer' : 'Designers'}</dt>
+                    <dd class="text-ink dark:text-ink-dark font-medium">
+                      {designers.map((d, i) => (
+                        <>
+                          <a href={`/people/${d.id}`} class="hover:underline">{d.data.name}</a>
+                          {i < designers.length - 1 && <span>, </span>}
+                        </>
+                      ))}
+                    </dd>
+                  </div>
+                )}
+                {referenceLinks.length > 0 && (
+                  <div class="pt-3 border-t border-ink/10 dark:border-ink-dark/10">
+                    <dt class="text-ink/60 dark:text-ink-dark/60 mb-2">Links</dt>
+                    <dd class="flex flex-col gap-1">
+                      {referenceLinks.map((link) => (
+                        <a
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="text-ink dark:text-ink-dark hover:underline"
+                        >
+                          {link.label} →
+                        </a>
+                      ))}
+                    </dd>
+                  </div>
+                )}
+              </dl>
+            </div>
+
+            {game.data.podcasts.length > 0 && (
+              <div class="bg-ink/5 dark:bg-ink-dark/5 p-6 rounded-lg">
+                <h2 class="text-sm font-heading uppercase tracking-[0.2em] text-ink/60 dark:text-ink-dark/60 mb-4">
+                  Podcasts
+                </h2>
+                <ul class="space-y-2 text-sm">
+                  {game.data.podcasts.map((p) => (
+                    <li>
+                      <a href={p.url} target="_blank" rel="noopener noreferrer" class="text-ink dark:text-ink-dark hover:underline">
+                        {p.name} →
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {game.data.creators.length > 0 && (
+              <div class="bg-ink/5 dark:bg-ink-dark/5 p-6 rounded-lg">
+                <h2 class="text-sm font-heading uppercase tracking-[0.2em] text-ink/60 dark:text-ink-dark/60 mb-4">
+                  Content Creators
+                </h2>
+                <ul class="space-y-2 text-sm">
+                  {game.data.creators.map((c) => (
+                    <li>
+                      <a href={c.url} target="_blank" rel="noopener noreferrer" class="text-ink dark:text-ink-dark hover:underline">
+                        {c.name} →
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {relatedGames.length > 0 && (
+              <div class="bg-ink/5 dark:bg-ink-dark/5 p-6 rounded-lg">
+                <h2 class="text-sm font-heading uppercase tracking-[0.2em] text-ink/60 dark:text-ink-dark/60 mb-4">
+                  If you like this, try
+                </h2>
+                <ul class="space-y-2 text-sm">
+                  {relatedGames.map((rg) => (
+                    <li>
+                      <a href={`/games/${rg.id}`} class="text-ink dark:text-ink-dark hover:underline font-medium">
+                        {rg.data.title} →
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </aside>
+        </div>
+
+        {gameNews.length > 0 && (
+          <section class="mt-20 pt-12 border-t border-ink/10 dark:border-ink-dark/10">
+            <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mb-8">
+              News
+            </h2>
+            <div class="space-y-4">
+              {gameNews.map((n) => (
+                <a href={`/news/${n.id}`} class="group block p-6 bg-ink/5 dark:bg-ink-dark/5 hover:bg-ink/10 dark:hover:bg-ink-dark/10 rounded-lg transition-colors">
+                  <div class="flex items-baseline justify-between gap-4 mb-2">
+                    <h3 class="text-lg font-heading font-bold text-ink dark:text-ink-dark group-hover:underline">
+                      {n.data.title}
+                    </h3>
+                    <time datetime={n.data.pubDate.toISOString()} class="text-xs text-ink/60 dark:text-ink-dark/60 whitespace-nowrap">
+                      {formatDateLong(n.data.pubDate)}
+                    </time>
+                  </div>
+                  <p class="text-sm text-ink/70 dark:text-ink-dark/70 line-clamp-2">{n.data.description}</p>
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {matchingPosts.length > 0 && (
+          <section class="mt-20 pt-12 border-t border-ink/10 dark:border-ink-dark/10">
+            <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mb-8">
+              From the Hobbinomicon
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {matchingPosts.map((post) => <PostCard post={post} />)}
+            </div>
+          </section>
+        )}
+      </ContentContainer>
+    </article>
+
+    <Footer />
+  </main>
+</BaseLayout>

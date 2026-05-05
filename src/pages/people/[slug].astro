@@ -1,0 +1,207 @@
+---
+import { getCollection, getEntry, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import ContentContainer from '../../components/ContentContainer.astro';
+import ProseContent from '../../components/ProseContent.astro';
+import ImageCard from '../../components/ImageCard.astro';
+import StructuredData from '../../components/StructuredData.astro';
+import { formatDateLong } from '../../utils/formatDate';
+import { sortByDate } from '../../utils/collections';
+
+export async function getStaticPaths() {
+  const people = await getCollection('people', ({ data }) => !data.draft);
+  return people.map((person) => ({
+    params: { slug: person.id },
+    props: { person },
+  }));
+}
+
+const { person } = Astro.props;
+const { Content } = await render(person);
+
+// Affiliated studios (forward-lookup from frontmatter)
+const studios = await Promise.all(
+  person.data.studios.map((ref) => getEntry(ref))
+);
+
+// Reverse-lookup: games where this person is a designer
+const allGames = await getCollection('games', ({ data }) => !data.draft);
+const designedGames = allGames
+  .filter((g) => g.data.designers.some((ref) => ref.id === person.id))
+  .sort((a, b) => a.data.title.localeCompare(b.data.title));
+
+// News mentioning this person
+const allNews = await getCollection('news', ({ data }) => !data.draft);
+const personNews = sortByDate(
+  allNews.filter((n) => n.data.relatedPerson?.id === person.id)
+).slice(0, 6);
+
+const referenceLinks = [
+  { label: 'Website', url: person.data.websiteUrl },
+  { label: 'Twitter', url: person.data.twitterUrl },
+  { label: 'Bluesky', url: person.data.blueskyUrl },
+  { label: 'Instagram', url: person.data.instagramUrl },
+  { label: 'YouTube', url: person.data.youtubeUrl },
+  { label: 'Twitch', url: person.data.twitchUrl },
+  { label: 'Patreon', url: person.data.patreonUrl },
+].filter((l): l is { label: string; url: string } => Boolean(l.url));
+
+const roleLabels: Record<string, string> = {
+  designer: 'Designer',
+  sculptor: 'Sculptor',
+  painter: 'Painter',
+  podcaster: 'Podcaster',
+  creator: 'Content Creator',
+  writer: 'Writer',
+  streamer: 'Streamer',
+};
+---
+
+<BaseLayout
+  title={`${person.data.name} — The Hobbinomicon`}
+  description={person.data.bio}
+  image={person.data.heroImage}
+>
+  <StructuredData
+    type="breadcrumb"
+    data={{
+      breadcrumbs: [
+        { name: 'Home', url: 'https://hobbinomicon.com/' },
+        { name: 'People', url: 'https://hobbinomicon.com/people' },
+        { name: person.data.name, url: `https://hobbinomicon.com/people/${person.id}` },
+      ],
+    }}
+  />
+  <Header theme="light" />
+
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
+    <article class="pt-32">
+      <ContentContainer class="py-16">
+        <a href="/people" class="inline-block text-ink/60 dark:text-ink-dark/60 hover:text-ink dark:hover:text-ink-dark text-sm mb-4 transition-colors">
+          ← People
+        </a>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
+          {person.data.heroImage && (
+            <div class="md:col-span-1">
+              <img
+                src={person.data.heroImage}
+                alt={person.data.heroImageAlt || person.data.name}
+                class="w-full aspect-[2/3] object-cover object-top rounded-lg shadow-lg"
+              />
+            </div>
+          )}
+          <div class={person.data.heroImage ? 'md:col-span-2' : 'md:col-span-3'}>
+            <h1 class="text-5xl md:text-7xl font-display font-bold text-ink dark:text-ink-dark mb-4">
+              {person.data.name}
+            </h1>
+            {person.data.roles.length > 0 && (
+              <div class="flex flex-wrap gap-2 mb-6">
+                {person.data.roles.map((r) => (
+                  <span class="px-3 py-1 bg-ink/10 dark:bg-ink-dark/10 text-ink dark:text-ink-dark text-xs font-heading uppercase tracking-[0.2em] rounded-full">
+                    {roleLabels[r]}
+                  </span>
+                ))}
+              </div>
+            )}
+            <p class="text-lg md:text-xl text-ink/80 dark:text-ink-dark/80 font-serif">
+              {person.data.bio}
+            </p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          <div class="lg:col-span-2">
+            <ProseContent>
+              <Content />
+            </ProseContent>
+          </div>
+
+          <aside class="space-y-8">
+            {referenceLinks.length > 0 && (
+              <div class="bg-ink/5 dark:bg-ink-dark/5 p-6 rounded-lg">
+                <h2 class="text-sm font-heading uppercase tracking-[0.2em] text-ink/60 dark:text-ink-dark/60 mb-4">
+                  Find them
+                </h2>
+                <ul class="space-y-2 text-sm">
+                  {referenceLinks.map((link) => (
+                    <li>
+                      <a href={link.url} target="_blank" rel="noopener noreferrer" class="text-ink dark:text-ink-dark hover:underline font-medium">
+                        {link.label} →
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {studios.length > 0 && (
+              <div class="bg-ink/5 dark:bg-ink-dark/5 p-6 rounded-lg">
+                <h2 class="text-sm font-heading uppercase tracking-[0.2em] text-ink/60 dark:text-ink-dark/60 mb-4">
+                  Studios
+                </h2>
+                <ul class="space-y-2 text-sm">
+                  {studios.map((s) => (
+                    <li>
+                      <a href={`/studios/${s.id}`} class="text-ink dark:text-ink-dark hover:underline font-medium">
+                        {s.data.name} →
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </aside>
+        </div>
+
+        {designedGames.length > 0 && (
+          <section class="mt-20 pt-12 border-t border-ink/10 dark:border-ink-dark/10">
+            <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mb-8">
+              Games
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {designedGames.map((g) => (
+                <ImageCard
+                  href={`/games/${g.id}`}
+                  image={g.data.heroImage}
+                  imageAlt={g.data.heroImageAlt || g.data.title}
+                  title={g.data.title}
+                  subtitle={g.data.description}
+                  fallbackLetter={g.data.title.charAt(0)}
+                  aspectRatio="16/9"
+                  variant="overlay"
+                />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {personNews.length > 0 && (
+          <section class="mt-20 pt-12 border-t border-ink/10 dark:border-ink-dark/10">
+            <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mb-8">
+              News & Mentions
+            </h2>
+            <div class="space-y-4">
+              {personNews.map((n) => (
+                <a href={`/news/${n.id}`} class="group block p-6 bg-ink/5 dark:bg-ink-dark/5 hover:bg-ink/10 dark:hover:bg-ink-dark/10 rounded-lg transition-colors">
+                  <div class="flex items-baseline justify-between gap-4 mb-2">
+                    <h3 class="text-lg font-heading font-bold text-ink dark:text-ink-dark group-hover:underline">
+                      {n.data.title}
+                    </h3>
+                    <time datetime={n.data.pubDate.toISOString()} class="text-xs text-ink/60 dark:text-ink-dark/60 whitespace-nowrap">
+                      {formatDateLong(n.data.pubDate)}
+                    </time>
+                  </div>
+                  <p class="text-sm text-ink/70 dark:text-ink-dark/70 line-clamp-2">{n.data.description}</p>
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
+      </ContentContainer>
+    </article>
+
+    <Footer />
+  </main>
+</BaseLayout>
