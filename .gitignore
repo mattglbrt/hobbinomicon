@@ -42,7 +42,6 @@ descriptions_pushed.json
 
 # Descriptions (generated, not source-controlled)
 descriptions/
-
 # Cloudflare Workers
 comments-api/node_modules/
 comments-api/.wrangler/

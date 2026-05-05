@@ -385,6 +385,16 @@
       "display": "Fractured Isles",
       "description": "Content set in the Fractured Isles homebrew campaign setting.",
       "category": "game-system"
+    },
+    "kal-arath": {
+      "display": "Kal Arath",
+      "description": "Content about Kal Arath, a sword-and-sandal solo OSR RPG inspired by Conan the Cimmerian.",
+      "category": "game-system"
+    },
+    "prima-materia": {
+      "display": "Prima Materia",
+      "description": "Content using the Prima Materia oracle dice by Manalone and Dice Nest — an alchemical-symbol storytelling system.",
+      "category": "game-system"
     }
   }
 }
