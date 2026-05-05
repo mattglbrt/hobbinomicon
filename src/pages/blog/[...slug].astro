@@ -1,7 +1,6 @@
 ---
 import { getCollection, render } from 'astro:content';
 import BlogLayout from '../../layouts/BlogLayout.astro';
-import { getPartyDisplay, getPartyDescription, getPartiesByCampaign } from '../../utils/parties';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -19,33 +18,10 @@ const readingTime = remarkPluginFrontmatter?.readingTime ?? 1;
 
 // Get all posts for related posts and project navigation
 const allPosts = await getCollection('blog');
-const publishedPosts = allPosts.filter(p => !p.data.draft);
 
-// Check if this is a campaign hub page
-const isCampaignHub = post.data.campaignType === 'hub' && post.data.campaign;
-
-// Get campaign episodes if this is a campaign hub
-const campaignEpisodes = isCampaignHub
-  ? publishedPosts
-      .filter(p => p.data.campaign === post.data.campaign && p.data.campaignType === 'episode')
-      .sort((a, b) => (a.data.episodeNumber || 0) - (b.data.episodeNumber || 0))
-  : [];
-
-// Get party members if this is a campaign hub
-const campaignParties = isCampaignHub
-  ? getPartiesByCampaign(post.data.campaign).map(partySlug => ({
-      slug: partySlug,
-      display: getPartyDisplay(partySlug),
-      description: getPartyDescription(partySlug),
-      members: publishedPosts.filter(
-        p => p.data.category === 'Dramatis Personae' && p.data.party === partySlug
-      ),
-    })).filter(p => p.members.length > 0)
-  : [];
-
-// Get related posts (same tags, excluding current post) unless hideRelatedPosts is set or it's a campaign hub
+// Get related posts (same tags, excluding current post) unless hideRelatedPosts is set
 let relatedPosts: typeof allPosts = [];
-if (!post.data.hideRelatedPosts && !isCampaignHub) {
+if (!post.data.hideRelatedPosts) {
   // Try tag-based matching first
   relatedPosts = allPosts
     .filter((p) =>
@@ -99,6 +75,6 @@ if (post.data.project) {
 }
 ---
 
-<BlogLayout {...post.data} slug={post.id} readingTime={readingTime} relatedPosts={relatedPosts} projectNavigation={projectNavigation} campaignEpisodes={campaignEpisodes} campaignParties={campaignParties}>
+<BlogLayout {...post.data} slug={post.id} readingTime={readingTime} relatedPosts={relatedPosts} projectNavigation={projectNavigation}>
   <Content />
 </BlogLayout>

@@ -22,13 +22,6 @@ interface ProjectNav {
   projectSlug: string;
 }
 
-interface CampaignParty {
-  slug: string;
-  display: string;
-  description?: string;
-  members: CollectionEntry<'blog'>[];
-}
-
 interface Props {
   title: string;
   description: string;
@@ -42,15 +35,10 @@ interface Props {
   readingTime?: number;
   relatedPosts?: CollectionEntry<'blog'>[];
   projectNavigation?: ProjectNav | null;
-  campaign?: string;
-  campaignType?: 'hub' | 'episode';
-  campaignEpisodes?: CollectionEntry<'blog'>[];
-  campaignParties?: CampaignParty[];
   slug: string;
 }
 
-const { title, description, pubDate, updatedDate, heroImage, heroImageAlt, category, tags, youtubeId, readingTime, relatedPosts = [], projectNavigation = null, campaign, campaignType, campaignEpisodes = [], campaignParties = [], slug } = Astro.props;
-const isCampaignHub = campaignType === 'hub';
+const { title, description, pubDate, updatedDate, heroImage, heroImageAlt, category, tags, youtubeId, readingTime, relatedPosts = [], projectNavigation = null, slug } = Astro.props;
 
 const displayImage = getHeroImage(heroImage, youtubeId);
 const displayImageUrl = getHeroImageUrl(heroImage, youtubeId);
@@ -59,7 +47,6 @@ const isRemoteImage = !isOptimizedImage && typeof displayImage === 'string' && d
 
 const formattedDate = formatDateLong(pubDate);
 const formattedUpdatedDate = updatedDate ? formatDateLong(updatedDate) : null;
-const isCharacterPost = category === 'Dramatis Personae';
 
 // Build full image URL for structured data
 const imageUrl = displayImageUrl.startsWith('http')
@@ -104,125 +91,7 @@ const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
   />
   <Header />
   <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
-    {isCharacterPost ? (
-      <!-- Character Post Layout -->
-      <div class="pt-24 md:pt-32">
-        <article class="max-w-6xl mx-auto px-6 py-12 md:py-16">
-          <!-- Title -->
-          <h1 class="text-4xl md:text-6xl lg:text-7xl font-heading font-bold text-ink dark:text-ink-dark mb-4">
-            {title}
-          </h1>
-          <div class="flex flex-wrap gap-4 text-ink/70 dark:text-ink-dark/70 text-sm md:text-base mb-4">
-            <time datetime={pubDate.toISOString()}>{formattedDate}</time>
-            {readingTime && (
-              <>
-                <span>•</span>
-                <span>{formatReadingTime(readingTime)}</span>
-              </>
-            )}
-            <span>•</span>
-            <span class="px-3 py-1 bg-ink/10 dark:bg-ink-dark/10 rounded">{category}</span>
-          </div>
-
-          <!-- Campaign Link -->
-          {campaign && (
-            <div class="mb-8">
-              <a
-                href={`/tags/${campaign}`}
-                class="inline-flex items-center gap-2 px-4 py-2 bg-ink/10 dark:bg-ink-dark/10 hover:bg-ink/20 dark:hover:bg-ink-dark/20 text-ink dark:text-ink-dark rounded-lg transition-colors"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                </svg>
-                <span class="font-medium">Campaign: {campaign}</span>
-              </a>
-            </div>
-          )}
-
-          <!-- Tags -->
-          {tags.length > 0 && (
-            <div class="flex flex-wrap gap-2 mb-8">
-              {tags.map((tag) => (
-                <a
-                  href={`/tags/${tag}`}
-                  class="text-sm px-3 py-1 bg-ink/5 dark:bg-ink-dark/5 hover:bg-ink/20 dark:hover:bg-ink-dark/20 text-ink dark:text-ink-dark rounded-full transition-colors"
-                >
-                  #{tag}
-                </a>
-              ))}
-            </div>
-          )}
-
-          <!-- Two Column Layout: Image + Content -->
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-            <!-- Character Image -->
-            <div class="relative">
-              <div class="sticky top-24">
-                {isRemoteImage ? (
-                  <img
-                    src={displayImage}
-                    alt={heroImageAlt || title}
-                    class="w-full rounded-lg shadow-2xl object-cover object-top"
-                    width="800"
-                    height="1200"
-                    data-youtube-id={youtubeId}
-                    onerror={getYouTubeFallbackHandler('id')}
-                  />
-                ) : (
-                  <Image
-                    src={displayImage}
-                    alt={heroImageAlt || title}
-                    width={800}
-                    height={1200}
-                    class="w-full rounded-lg shadow-2xl object-cover object-top"
-                  />
-                )}
-              </div>
-            </div>
-
-            <!-- Content -->
-            <div>
-              <!-- Description -->
-              <p class="text-xl md:text-2xl text-ink/80 dark:text-ink-dark/80 font-serif italic mb-8 leading-relaxed border-l-4 border-ink/30 dark:border-ink-dark/30 pl-6">
-                {description}
-              </p>
-
-              <!-- Blog Content -->
-              <ProseContent variant="compact">
-                <slot />
-              </ProseContent>
-
-              <!-- Updated Date -->
-              {formattedUpdatedDate && (
-                <p class="text-sm text-ink/70 italic mt-12 pt-8 border-t border-ink/10">
-                  Last updated: {formattedUpdatedDate}
-                </p>
-              )}
-
-              <!-- Project Navigation (Previous/Next in series) -->
-              {projectNavigation && (
-                <ProjectNavigation
-                  previousPost={projectNavigation.previousPost}
-                  nextPost={projectNavigation.nextPost}
-                  projectName={projectNavigation.projectName}
-                  projectSlug={projectNavigation.projectSlug}
-                />
-              )}
-
-              <!-- Related Posts -->
-              {relatedPosts.length > 0 && (
-                <RelatedPosts posts={relatedPosts} />
-              )}
-
-              <!-- Comments -->
-              <Comments postSlug={slug} />
-            </div>
-          </div>
-        </article>
-      </div>
-    ) : (
-      <!-- Standard Blog Post Layout -->
-      <>
+    <!-- Standard Blog Post Layout -->
         <!-- Reading Progress Bar -->
         <div class="reading-progress fixed top-0 left-0 h-[3px] bg-gradient-to-r from-ink/80 via-ink to-ink/80 dark:from-parchment-dark/80 dark:via-parchment-dark dark:to-parchment-dark/80 z-50 transition-none" style="width: 0%;"></div>
 
@@ -344,118 +213,14 @@ const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
             />
           )}
 
-          <!-- Campaign Hub: Parties Section -->
-          {isCampaignHub && campaignParties.length > 0 && (
-            <section class="mt-16 pt-8 border-t border-ink/10 dark:border-ink-dark/10">
-              <h2 class="text-2xl md:text-3xl font-heading font-bold text-ink dark:text-ink-dark mb-8">
-                Adventuring Parties
-              </h2>
-              <div class="space-y-12">
-                {campaignParties.map((party) => (
-                  <div>
-                    <div class="flex items-center justify-between mb-4">
-                      <h3 class="text-xl font-heading font-bold text-ink dark:text-ink-dark">
-                        {party.display}
-                      </h3>
-                      <a
-                        href={`/parties/${party.slug}`}
-                        class="text-sm font-medium text-ink/70 dark:text-ink-dark/70 hover:text-ink dark:hover:text-ink-dark transition-colors"
-                      >
-                        View Party →
-                      </a>
-                    </div>
-                    {party.description && (
-                      <p class="text-ink/70 dark:text-ink-dark/70 mb-6">
-                        {party.description}
-                      </p>
-                    )}
-                    <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                      {party.members.map((member) => {
-                        const memberImg = getHeroImage(member.data.heroImage);
-                        const memberIsOptimized = isImageMetadata(memberImg);
-                        return (
-                        <a
-                          href={`/blog/${member.id}`}
-                          class="group relative aspect-[2/3] overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
-                        >
-                          {memberIsOptimized ? (
-                            <Image
-                              src={memberImg}
-                              alt={member.data.heroImageAlt || member.data.title}
-                              class="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
-                              loading="lazy"
-                              width={200}
-                              height={300}
-                            />
-                          ) : (
-                            <img
-                              src={memberImg}
-                              alt={member.data.heroImageAlt || member.data.title}
-                              class="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
-                              loading="lazy"
-                            />
-                          )}
-                          <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
-                          <div class="absolute inset-0 flex flex-col items-center justify-end p-2">
-                            <h4 class="text-sm font-heading font-bold text-white text-center drop-shadow-lg">
-                              {member.data.title}
-                            </h4>
-                          </div>
-                        </a>
-                      );})}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
-
-          <!-- Campaign Hub: Episodes Section -->
-          {isCampaignHub && campaignEpisodes.length > 0 && (
-            <section class="mt-16 pt-8 border-t border-ink/10 dark:border-ink-dark/10">
-              <h2 class="text-2xl md:text-3xl font-heading font-bold text-ink dark:text-ink-dark mb-6">
-                Chapters
-              </h2>
-              <div class="space-y-4">
-                {campaignEpisodes.map((episode) => (
-                  <a
-                    href={`/blog/${episode.id}`}
-                    class="group block p-4 bg-ink/5 dark:bg-ink-dark/5 hover:bg-ink/10 dark:hover:bg-ink-dark/10 rounded-lg transition-colors"
-                  >
-                    <div class="flex items-center gap-4">
-                      {episode.data.episodeNumber !== undefined && (
-                        <span class="flex-shrink-0 w-10 h-10 flex items-center justify-center bg-ink/10 dark:bg-ink-dark/10 rounded-full text-ink dark:text-ink-dark font-bold">
-                          {episode.data.episodeNumber}
-                        </span>
-                      )}
-                      <div class="flex-grow">
-                        <h3 class="font-heading font-bold text-ink dark:text-ink-dark group-hover:text-ink/80 dark:group-hover:text-ink-dark/80 transition-colors">
-                          {episode.data.title}
-                        </h3>
-                        <p class="text-sm text-ink/70 dark:text-ink-dark/70 line-clamp-1">
-                          {episode.data.description}
-                        </p>
-                      </div>
-                      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-ink/40 dark:text-ink-dark/40 group-hover:text-ink dark:group-hover:text-ink-dark transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                      </svg>
-                    </div>
-                  </a>
-                ))}
-              </div>
-            </section>
-          )}
-
-          <!-- Related Posts (only for non-campaign-hub posts) -->
-          {!isCampaignHub && relatedPosts.length > 0 && (
+          <!-- Related Posts -->
+          {relatedPosts.length > 0 && (
             <RelatedPosts posts={relatedPosts} />
           )}
 
           <!-- Comments -->
           <Comments postSlug={slug} />
         </article>
-      </>
-    )}
 
     <!-- Back to Top Button -->
     <BackToTop />

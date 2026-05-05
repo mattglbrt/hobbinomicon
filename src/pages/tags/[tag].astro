@@ -6,7 +6,6 @@ import PostCard from '../../components/PostCard.astro';
 import Footer from '../../components/Footer.astro';
 import StructuredData from '../../components/StructuredData.astro';
 import ContentContainer from '../../components/ContentContainer.astro';
-import ImageCard from '../../components/ImageCard.astro';
 import { getPublishedPosts, groupByTags, sortByDate } from '../../utils/collections';
 import { getHeroImageUrl } from '../../utils/getHeroImage';
 import { getTagDisplay, getTagDescription } from '../../utils/tags';
@@ -27,17 +26,6 @@ const { tag, posts } = Astro.props;
 // Get tag display name and description
 const tagDisplay = getTagDisplay(tag);
 const tagDescription = getTagDescription(tag);
-
-// Separate posts by category
-const characterPosts = posts.filter(post => post.data.category === 'Dramatis Personae');
-const chapterPosts = posts.filter(post => post.data.category === 'Campaign Chronicles');
-const otherPosts = posts.filter(post =>
-  post.data.category !== 'Dramatis Personae' &&
-  post.data.category !== 'Campaign Chronicles'
-);
-
-// Check if this is a campaign tag (has both characters and chapters)
-const isCampaignTag = characterPosts.length > 0 && chapterPosts.length > 0;
 
 // Social image from the first post
 const socialImage = posts[0] ? getHeroImageUrl(posts[0].data.heroImage, posts[0].data.youtubeId) : undefined;
@@ -63,7 +51,7 @@ const socialImage = posts[0] ? getHeroImageUrl(posts[0].data.heroImage, posts[0]
         <a href="/tags" class="inline-block text-white/80 hover:text-white mb-4 transition-colors">
           ← All Tags
         </a>
-        <h1 class="text-5xl md:text-6xl font-heading font-bold">{isCampaignTag ? tagDisplay : `#${tagDisplay}`}</h1>
+        <h1 class="text-5xl md:text-6xl font-heading font-bold">#{tagDisplay}</h1>
         {tagDescription && (
           <p class="text-xl text-white/90 mt-4 max-w-2xl">{tagDescription}</p>
         )}
@@ -72,80 +60,11 @@ const socialImage = posts[0] ? getHeroImageUrl(posts[0].data.heroImage, posts[0]
     </header>
 
     <ContentContainer class="py-16">
-      {isCampaignTag ? (
-        <!-- Campaign Layout with Characters and Chapters -->
-        <>
-          <!-- Characters Section -->
-          {characterPosts.length > 0 && (
-            <section class="mb-16">
-              <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mb-8">Characters</h2>
-              <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-                {characterPosts.map((character) => (
-                  <ImageCard
-                    href={`/blog/${character.id}`}
-                    image={getHeroImageUrl(character.data.heroImage)}
-                    imageAlt={character.data.heroImageAlt || character.data.title}
-                    title={character.data.title}
-                    aspectRatio="2/3"
-                    variant="overlay"
-                  />
-                ))}
-              </div>
-            </section>
-          )}
-
-          <!-- Chapters Section -->
-          {chapterPosts.length > 0 && (
-            <section class="mb-16">
-              <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mb-8">Chapters</h2>
-              <div class="space-y-4">
-                {sortByDate(chapterPosts, 'asc').map((chapter, index) => (
-                  <a
-                    href={`/blog/${chapter.id}`}
-                    class="group flex items-center gap-6 p-4 bg-ink/5 dark:bg-ink-dark/5 hover:bg-ink/10 dark:hover:bg-ink-dark/10 rounded-lg transition-colors"
-                  >
-                    <div class="flex-shrink-0 w-12 h-12 flex items-center justify-center bg-ink dark:bg-ink-dark text-white rounded-full font-heading font-bold text-lg">
-                      {index + 1}
-                    </div>
-                    <div class="flex-grow min-w-0">
-                      <h3 class="text-lg md:text-xl font-heading font-bold text-ink dark:text-ink-dark group-hover:underline truncate">
-                        {chapter.data.title}
-                      </h3>
-                      <p class="text-ink/70 dark:text-ink-dark/70 text-sm mt-1 line-clamp-1">
-                        {chapter.data.description}
-                      </p>
-                    </div>
-                    <div class="flex-shrink-0 text-ink/40 dark:text-ink-dark/40 group-hover:text-ink dark:group-hover:text-ink-dark transition-colors">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                      </svg>
-                    </div>
-                  </a>
-                ))}
-              </div>
-            </section>
-          )}
-
-          <!-- Other Posts Section -->
-          {otherPosts.length > 0 && (
-            <section>
-              <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mb-8">Related Posts</h2>
-              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {otherPosts.map((post) => (
-                  <PostCard post={post} />
-                ))}
-              </div>
-            </section>
-          )}
-        </>
-      ) : (
-        <!-- Standard Tag Layout -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {posts.map((post) => (
-            <PostCard post={post} />
-          ))}
-        </div>
-      )}
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {posts.map((post) => (
+          <PostCard post={post} />
+        ))}
+      </div>
     </ContentContainer>
 
     <Footer />
