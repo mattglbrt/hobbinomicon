@@ -1,7 +1,12 @@
 ---
 /**
  * Search Modal Component
- * Client-side search with keyboard navigation, filters, and accessibility
+ * Client-side search with keyboard navigation, filters, and accessibility.
+ * Indexes blog posts, projects, games, studios, people, and news.
+ *
+ * The search data itself is fetched at runtime from /search-index.json.
+ * This frontmatter only renders the SSR filter chips, so it must mirror
+ * the categories logic in src/pages/search-index.json.ts.
  */
 import { getCollection } from 'astro:content';
 import { getPublishedPosts, groupByTags } from '../utils/collections';
@@ -10,31 +15,32 @@ import { getTagDisplay } from '../utils/tags';
 const allPosts = await getCollection('blog');
 const publishedPosts = getPublishedPosts(allPosts);
 
-// Get unique categories
-const categories = [...new Set(publishedPosts.map(post => post.data.category))].sort();
+const allProjects = await getCollection('projects');
+const publishedProjects = allProjects.filter((p) => !p.data.draft);
 
-// Get top tags by usage count
+const games = await getCollection('games', ({ data }) => !data.draft);
+const studios = await getCollection('studios', ({ data }) => !data.draft);
+const people = await getCollection('people', ({ data }) => !data.draft);
+const news = await getCollection('news', ({ data }) => !data.draft);
+
+// Filter chip labels: directory pillars first, then blog categories.
+const blogCategories = [...new Set(publishedPosts.map((post) => post.data.category))].sort();
+const directoryCategories = [
+  games.length ? 'Games' : null,
+  news.length ? 'Indie News' : null,
+  studios.length ? 'Studios' : null,
+  people.length ? 'People' : null,
+  publishedProjects.length ? 'Projects' : null,
+].filter((c): c is string => Boolean(c));
+const categories = [...new Set([...directoryCategories, ...blogCategories])];
+
+// Top tags by blog usage (densest source). Per-item tags from games/news still
+// participate in filtering when their result row surfaces them as chips.
 const tagsMap = groupByTags(publishedPosts);
 const topTags = Array.from(tagsMap.entries())
   .sort((a, b) => b[1].length - a[1].length)
   .slice(0, 8)
   .map(([tag]) => ({ tag, display: getTagDisplay(tag) }));
-
-// Build search index
-const searchIndex = publishedPosts.map(post => ({
-  slug: post.id,
-  title: post.data.title,
-  description: post.data.description,
-  category: post.data.category,
-  tags: post.data.tags,
-  // Create searchable text combining all fields
-  searchText: [
-    post.data.title,
-    post.data.description,
-    post.data.category,
-    ...post.data.tags
-  ].join(' ').toLowerCase()
-}));
 ---
 
 <style>
@@ -139,7 +145,7 @@ const searchIndex = publishedPosts.map(post => ({
     <div class="w-full max-w-2xl glass-modal rounded-2xl overflow-hidden">
       <!-- Search Header -->
       <div class="p-4 pb-2">
-        <label for="search-input" id="search-modal-title" class="sr-only">Search posts</label>
+        <label for="search-input" id="search-modal-title" class="sr-only">Search the Hobbinomicon</label>
         <div class="relative">
           <svg
             class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/60"
@@ -153,7 +159,7 @@ const searchIndex = publishedPosts.map(post => ({
             type="text"
             id="search-input"
             class="w-full pl-12 pr-20 py-3.5 glass-input rounded-xl text-white text-base focus:outline-none"
-            placeholder="Search posts..."
+            placeholder="Search games, vlogs, news, studios, people..."
             autocomplete="off"
             autocapitalize="off"
             spellcheck="false"
@@ -202,7 +208,7 @@ const searchIndex = publishedPosts.map(post => ({
       <div id="search-results" class="max-h-[50vh] overflow-y-auto">
         <!-- Empty state -->
         <div id="search-empty" class="p-8 text-center">
-          <p class="text-lg text-white/60">Type to search posts</p>
+          <p class="text-lg text-white/60">Type to search</p>
           <p class="text-sm mt-2 text-white/60">Or click filters above to browse</p>
         </div>
 
