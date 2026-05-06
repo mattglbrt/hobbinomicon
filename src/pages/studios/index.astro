@@ -38,10 +38,10 @@ const studios = (await getCollection('studios', ({ data }) => !data.draft))
       {studios.length === 0 ? (
         <div class="max-w-2xl mx-auto text-center py-16">
           <h2 class="text-2xl md:text-3xl font-heading font-bold text-ink dark:text-ink-dark mb-4">
-            Studios are being added
+            No studios yet
           </h2>
           <p class="text-ink/70 dark:text-ink-dark/70 text-lg">
-            Profiles for game publishers and standalone miniature studios are on the way.
+            Publisher and small-press profiles incoming. Hold tight.
           </p>
         </div>
       ) : (
