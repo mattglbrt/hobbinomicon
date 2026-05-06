@@ -42,6 +42,10 @@ descriptions_pushed.json
 
 # Descriptions (generated, not source-controlled)
 descriptions/
+
+# Tag audit working files
+tag-audit.csv
+tag-rename*.json
 # Cloudflare Workers
 comments-api/node_modules/
 comments-api/.wrangler/
