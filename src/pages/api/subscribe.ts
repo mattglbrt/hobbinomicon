@@ -51,7 +51,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     if (response.ok) {
       return new Response(
-        JSON.stringify({ message: 'Successfully subscribed! Welcome aboard.' }),
+        JSON.stringify({ message: "You're in. See you in the dungeon." }),
         { status: 200, headers: { 'Content-Type': 'application/json' } }
       );
     }
@@ -61,18 +61,18 @@ export const POST: APIRoute = async ({ request }) => {
     // Mailgun returns 400 with "Address already exists" for duplicates
     if (response.status === 400 && data.message?.includes('already exists')) {
       return new Response(
-        JSON.stringify({ message: "You're already subscribed!" }),
+        JSON.stringify({ message: "Already in. Stay strong." }),
         { status: 200, headers: { 'Content-Type': 'application/json' } }
       );
     }
 
     return new Response(
-      JSON.stringify({ error: 'Could not subscribe. Please try again later.' }),
+      JSON.stringify({ error: 'Could not subscribe. Try again later.' }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
   } catch {
     return new Response(
-      JSON.stringify({ error: 'Could not subscribe. Please try again later.' }),
+      JSON.stringify({ error: 'Could not subscribe. Try again later.' }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
   }

@@ -11,13 +11,13 @@ const { variant = 'section', class: className = '' } = Astro.props;
   <section class:list={['relative overflow-hidden', className]} data-scroll-reveal>
     <div class="max-w-2xl mx-auto text-center px-6 py-20">
       <p class="text-sm font-heading uppercase tracking-[0.3em] text-ink/50 dark:text-ink-dark/50 mb-4">
-        Stay in the loop
+        Dispatch from the deep
       </p>
       <h2 class="font-display text-4xl md:text-5xl lg:text-6xl text-ink dark:text-ink-dark mb-4">
-        The Monthly Recap
+        The Monthly Slam
       </h2>
       <p class="text-ink/70 dark:text-ink-dark/70 text-lg mb-8 max-w-lg mx-auto">
-        Once a month, get the best vlogs, tutorials, and posts delivered straight to your inbox. No spam, unsubscribe anytime.
+        Indie wargame news, painting deep cuts, Kickstarters worth your gold, and whatever weird thing showed up in the mail. Once a month-ish. Niche of the niche, no spam, no apologies.
       </p>
       <form class="newsletter-form flex flex-col sm:flex-row gap-3 max-w-md mx-auto" data-newsletter-form>
         <input
@@ -31,7 +31,7 @@ const { variant = 'section', class: className = '' } = Astro.props;
           type="submit"
           class="px-6 py-3 bg-ink dark:bg-ink-dark text-parchment dark:text-parchment-dark font-heading uppercase tracking-wider text-sm rounded-lg hover:bg-ink/90 dark:hover:bg-ink-dark/90 transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Subscribe
+          Send it
         </button>
       </form>
       <p class="newsletter-message hidden mt-4 text-sm" data-newsletter-message></p>
@@ -40,10 +40,10 @@ const { variant = 'section', class: className = '' } = Astro.props;
 ) : (
   <div class:list={['newsletter-inline', className]}>
     <p class="text-sm font-medium text-white/80 uppercase tracking-wider mb-4">
-      Newsletter
+      The Monthly Slam
     </p>
     <p class="text-white/60 text-sm mb-4">
-      Hobby updates in your inbox. No spam.
+      Indie wargame news, monthly. Niche of the niche, no spam.
     </p>
     <form class="newsletter-form flex flex-col gap-2" data-newsletter-form>
       <input
@@ -57,7 +57,7 @@ const { variant = 'section', class: className = '' } = Astro.props;
         type="submit"
         class="px-4 py-2 bg-white/10 border border-white/10 text-white text-sm font-medium rounded-lg hover:bg-white/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        Subscribe
+        Send it
       </button>
     </form>
     <p class="newsletter-message hidden mt-2 text-xs" data-newsletter-message></p>
@@ -78,7 +78,7 @@ const { variant = 'section', class: className = '' } = Astro.props;
         const email = (formEl.querySelector('input[name="email"]') as HTMLInputElement).value;
 
         btn.disabled = true;
-        btn.textContent = 'Subscribing...';
+        btn.textContent = 'Sending...';
 
         try {
           const res = await fetch('/api/subscribe', {
@@ -108,7 +108,7 @@ const { variant = 'section', class: className = '' } = Astro.props;
           }
         } finally {
           btn.disabled = false;
-          btn.textContent = 'Subscribe';
+          btn.textContent = 'Send it';
         }
       });
     });
