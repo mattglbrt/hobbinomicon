@@ -1,0 +1,33 @@
+---
+/**
+ * GameSpecs Component
+ * Compact inline pills — label + value on one line per pill, flex-wrap so
+ * they take 1 row on desktop and 2-3 rows on mobile rather than a tall grid.
+ */
+interface Spec {
+  label: string;
+  value: string;
+}
+
+interface Props {
+  specs: Spec[];
+}
+
+const { specs } = Astro.props;
+---
+
+<div class="not-prose flex flex-wrap gap-2 my-8" role="list">
+  {specs.map((s) => (
+    <span
+      role="listitem"
+      class="inline-flex items-center gap-2 px-3 py-1.5 bg-ink/[0.05] dark:bg-ink-dark/10 border border-ink/10 dark:border-ink-dark/15 rounded-full text-sm whitespace-nowrap"
+    >
+      <span class="text-[10px] font-heading uppercase tracking-[0.18em] text-ink/55 dark:text-ink-dark/55">
+        {s.label}
+      </span>
+      <span class="font-medium text-ink dark:text-ink-dark">
+        {s.value}
+      </span>
+    </span>
+  ))}
+</div>

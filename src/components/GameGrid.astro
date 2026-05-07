@@ -3,8 +3,18 @@
  * GameGrid Component
  * Renders a responsive grid of game cards with an empty state.
  * Used by /games index pages (format filters, solo, graveyard).
+ *
+ * Card image preference order:
+ *   1. thumbnailImage (custom card art, sized 16:9)
+ *   2. heroImage      (full-bleed hero, falls back if no thumbnail)
+ *   3. fallbackLetter (game's first letter on a neutral background)
+ *
+ * Logo is intentionally NOT a card-image fallback — logos look bad as 16:9
+ * full-bleed thumbnails. Logos surface inline next to the title on the detail
+ * page instead.
  */
 import ImageCard from './ImageCard.astro';
+import { getHeroImage } from '../utils/getHeroImage';
 import type { CollectionEntry } from 'astro:content';
 
 interface Props {
@@ -31,18 +41,26 @@ const {
   </div>
 ) : (
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    {games.map((game) => (
-      <ImageCard
-        href={`/games/${game.id}/`}
-        image={game.data.heroImage}
-        imageAlt={game.data.heroImageAlt || game.data.title}
-        title={game.data.title}
-        subtitle={game.data.description}
-        badge={game.data.status === 'oop' ? 'Out of Print' : undefined}
-        fallbackLetter={game.data.title.charAt(0)}
-        aspectRatio="16/9"
-        variant="overlay"
-      />
-    ))}
+    {games.map((game) => {
+      const cardImage = game.data.thumbnailImage || game.data.heroImage;
+      const resolvedImage = cardImage ? getHeroImage(cardImage) : null;
+      const resolvedLogo = game.data.logo ? getHeroImage(game.data.logo) : null;
+      const cardAlt = game.data.thumbnailImageAlt || game.data.heroImageAlt || game.data.title;
+      return (
+        <ImageCard
+          href={`/games/${game.id}/`}
+          image={resolvedImage}
+          imageAlt={cardAlt}
+          title={game.data.title}
+          subtitle={game.data.description}
+          badge={game.data.status === 'oop' ? 'Out of Print' : undefined}
+          logoOverlay={resolvedLogo}
+          fallbackLetter={game.data.title.charAt(0)}
+          aspectRatio="16/9"
+          variant="overlay"
+          subtitleOnHover
+        />
+      );
+    })}
   </div>
 )}

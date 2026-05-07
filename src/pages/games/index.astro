@@ -32,7 +32,7 @@ const soloCount = allGames.filter((g) => g.data.solo === true && g.data.status !
 ---
 
 <BaseLayout
-  title="Games — The Hobbinomicon"
+  title="Games | The Hobbinomicon"
   description="A directory of indie wargames, GW Specialist Games, classic Warhammer editions, and standalone miniature lines. Browse by format."
 >
   <StructuredData
@@ -54,26 +54,6 @@ const soloCount = allGames.filter((g) => g.data.solo === true && g.data.status !
     />
 
     <ContentContainer class="py-16 space-y-20">
-      <!-- TTRPGs -->
-      <section>
-        <div class="flex items-baseline justify-between mb-2 gap-4">
-          <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark">
-            <a href="/games/ttrpgs/" class="hover:underline underline-offset-4">TTRPGs</a>
-          </h2>
-          <a href="/games/ttrpgs/" class="text-ink/70 dark:text-ink-dark/70 hover:text-ink dark:hover:text-ink-dark text-sm font-medium whitespace-nowrap">
-            View all →
-          </a>
-        </div>
-        <p class="text-ink/70 dark:text-ink-dark/70 text-lg mb-8">
-          Tabletop RPGs — narrative, OSR, PbtA, and the weirder corners.
-        </p>
-        <GameGrid
-          games={ttrpgs}
-          emptyTitle="Nothing here yet"
-          emptyMessage="TTRPGs are coming. The first batch is in the roadmap."
-        />
-      </section>
-
       <!-- Skirmish -->
       <section>
         <div class="flex items-baseline justify-between mb-2 gap-4">
@@ -111,6 +91,26 @@ const soloCount = allGames.filter((g) => g.data.solo === true && g.data.status !
           games={massBattle}
           emptyTitle="Nothing here yet"
           emptyMessage="Mass-battle coverage is coming."
+        />
+      </section>
+
+      <!-- TTRPGs -->
+      <section>
+        <div class="flex items-baseline justify-between mb-2 gap-4">
+          <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark">
+            <a href="/games/ttrpgs/" class="hover:underline underline-offset-4">TTRPGs</a>
+          </h2>
+          <a href="/games/ttrpgs/" class="text-ink/70 dark:text-ink-dark/70 hover:text-ink dark:hover:text-ink-dark text-sm font-medium whitespace-nowrap">
+            View all →
+          </a>
+        </div>
+        <p class="text-ink/70 dark:text-ink-dark/70 text-lg mb-8">
+          Tabletop RPGs. Narrative, OSR, PbtA, and the weirder corners.
+        </p>
+        <GameGrid
+          games={ttrpgs}
+          emptyTitle="Nothing here yet"
+          emptyMessage="TTRPGs are coming. The first batch is in the roadmap."
         />
       </section>
 

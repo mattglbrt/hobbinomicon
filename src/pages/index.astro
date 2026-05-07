@@ -166,18 +166,26 @@ if (heroImage && isImageMetadata(heroImage)) {
             <ViewAllLink href="/games/">All Games →</ViewAllLink>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredGames.map((game) => (
-              <ImageCard
-                href={`/games/${game.id}/`}
-                image={game.data.heroImage}
-                imageAlt={game.data.heroImageAlt || game.data.title}
-                title={game.data.title}
-                subtitle={game.data.description}
-                fallbackLetter={game.data.title.charAt(0)}
-                aspectRatio="16/9"
-                variant="overlay"
-              />
-            ))}
+            {featuredGames.map((game) => {
+              const cardImage = game.data.thumbnailImage || game.data.heroImage;
+              const resolvedImage = cardImage ? getHeroImage(cardImage) : null;
+              const resolvedLogo = game.data.logo ? getHeroImage(game.data.logo) : null;
+              const cardAlt = game.data.thumbnailImageAlt || game.data.heroImageAlt || game.data.title;
+              return (
+                <ImageCard
+                  href={`/games/${game.id}/`}
+                  image={resolvedImage}
+                  imageAlt={cardAlt}
+                  title={game.data.title}
+                  subtitle={game.data.description}
+                  logoOverlay={resolvedLogo}
+                  fallbackLetter={game.data.title.charAt(0)}
+                  aspectRatio="16/9"
+                  variant="overlay"
+                  subtitleOnHover
+                />
+              );
+            })}
           </div>
         </ContentContainer>
       </section>

@@ -57,6 +57,10 @@ const games = defineCollection({
     updatedDate: z.coerce.date().optional(),
     heroImage: z.string().optional(),
     heroImageAlt: z.string().optional(),
+    thumbnailImage: z.string().optional(),
+    thumbnailImageAlt: z.string().optional(),
+    logo: z.string().optional(),
+    logoAlt: z.string().optional(),
     draft: z.boolean().default(false),
 
     // Identity
@@ -65,9 +69,18 @@ const games = defineCollection({
     currentEdition: z.string().optional(),
     releaseYear: z.number().optional(),
 
+    // Quick specs (rendered as pill row at top of game page)
+    playerCount: z.string().optional(),
+    modelCount: z.string().optional(),
+    boardSize: z.string().optional(),
+    pointsScale: z.string().optional(),
+    gameLength: z.string().optional(),
+    costToStart: z.string().optional(),
+
     // Categorization
     format: z.enum(['ttrpg', 'skirmish', 'mass-battle', 'boardgame']),
     solo: z.boolean().default(false),
+    miniatureAgnostic: z.boolean().default(false),
     tier: z.enum(['indie', 'big']),
     status: z.enum(['active', 'oop', 'kickstarter', 'announced']).default('active'),
     tags: z.array(z.string()).default([]),

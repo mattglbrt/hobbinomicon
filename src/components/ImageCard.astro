@@ -1,15 +1,23 @@
 ---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { isImageMetadata } from '../utils/getHeroImage';
+
 interface Props {
   href: string;
-  image?: string | null;
+  image?: string | ImageMetadata | null;
   imageAlt?: string;
   title: string;
   subtitle?: string;
   badge?: string;
+  /** Optional logo to layer centered on top of the image (overlay variant only) */
+  logoOverlay?: string | ImageMetadata | null;
   fallbackIcon?: string;
   fallbackLetter?: string;
   aspectRatio?: '16/9' | '4/3' | '2/3' | 'video' | 'square';
   variant?: 'overlay' | 'stacked';
+  /** Hide subtitle by default; reveal on hover (overlay variant only) */
+  subtitleOnHover?: boolean;
   class?: string;
 }
 
@@ -20,12 +28,17 @@ const {
   title,
   subtitle,
   badge,
+  logoOverlay,
   fallbackIcon,
   fallbackLetter,
   aspectRatio = '16/9',
   variant = 'overlay',
+  subtitleOnHover = false,
   class: className = '',
 } = Astro.props;
+
+const imageIsOptimized = image && isImageMetadata(image);
+const logoOverlayIsOptimized = logoOverlay && isImageMetadata(logoOverlay);
 
 const aspectClasses: Record<string, string> = {
   '16/9': 'aspect-[16/9]',
@@ -45,7 +58,21 @@ const hasSlot = Astro.slots.has('default');
     class:list={['group block', className]}
   >
     <div class:list={['relative overflow-hidden rounded-lg shadow-lg', aspectClasses[aspectRatio]]}>
-      {image ? (
+      {imageIsOptimized ? (
+        <Image
+          src={image}
+          alt={imageAlt || title}
+          class="absolute inset-0 w-full h-full object-cover object-top img-hover"
+          loading="lazy"
+          decoding="async"
+          format="webp"
+          quality={70}
+          width={640}
+          height={360}
+          widths={[400, 640]}
+          sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+        />
+      ) : image ? (
         <img
           src={image}
           alt={imageAlt || title}
@@ -65,25 +92,63 @@ const hasSlot = Astro.slots.has('default');
         </div>
       ) : null}
       <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-transparent"></div>
+      {logoOverlay && (
+        <div class="absolute inset-0 flex items-center justify-center p-6 pointer-events-none">
+          {logoOverlayIsOptimized ? (
+            <Image
+              src={logoOverlay}
+              alt=""
+              class="max-w-[70%] max-h-[60%] w-auto h-auto object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]"
+              loading="lazy"
+              decoding="async"
+              format="webp"
+              quality={80}
+              widths={[200, 400]}
+              sizes="50vw"
+            />
+          ) : (
+            <img
+              src={logoOverlay}
+              alt=""
+              class="max-w-[70%] max-h-[60%] w-auto h-auto object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]"
+              loading="lazy"
+              decoding="async"
+            />
+          )}
+        </div>
+      )}
       {badge && (
         <span class="absolute top-3 right-3 px-2.5 py-1 bg-ink/80 backdrop-blur-md text-white/90 text-[10px] font-heading uppercase tracking-[0.15em] rounded-full border border-white/20">
           {badge}
         </span>
       )}
-      <div class="absolute bottom-0 left-0 right-0 p-4 md:p-6">
-        {hasSlot ? (
-          <slot />
-        ) : (
-          <>
-            <h3 class="text-lg md:text-xl lg:text-2xl font-heading font-bold text-white drop-shadow-lg">
-              {title}
-            </h3>
-            {subtitle && (
-              <p class="text-white/80 mt-1 text-sm md:text-base">{subtitle}</p>
-            )}
-          </>
-        )}
-      </div>
+      {logoOverlay ? (
+        <span class="sr-only">{title}{subtitle ? `. ${subtitle}` : ''}</span>
+      ) : (
+        <div class="absolute bottom-0 left-0 right-0 p-4 md:p-6">
+          {hasSlot ? (
+            <slot />
+          ) : (
+            <>
+              {subtitle && (
+                <p
+                  class:list={[
+                    'text-white/80 text-sm md:text-base',
+                    subtitleOnHover
+                      ? 'opacity-0 max-h-0 mb-0 group-hover:opacity-100 group-hover:max-h-32 group-hover:mb-2 overflow-hidden transition-all duration-300 ease-out'
+                      : 'mb-2',
+                  ]}
+                >
+                  {subtitle}
+                </p>
+              )}
+              <h3 class="text-lg md:text-xl lg:text-2xl font-heading font-bold text-white drop-shadow-lg">
+                {title}
+              </h3>
+            </>
+          )}
+        </div>
+      )}
     </div>
   </a>
 ) : (
@@ -95,7 +160,23 @@ const hasSlot = Astro.slots.has('default');
       className
     ]}
   >
-    {image ? (
+    {imageIsOptimized ? (
+      <div class:list={['overflow-hidden', aspectClasses[aspectRatio]]}>
+        <Image
+          src={image}
+          alt={imageAlt || title}
+          class="w-full h-full object-cover img-hover"
+          loading="lazy"
+          decoding="async"
+          format="webp"
+          quality={70}
+          width={640}
+          height={360}
+          widths={[400, 640]}
+          sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+        />
+      </div>
+    ) : image ? (
       <div class:list={['overflow-hidden', aspectClasses[aspectRatio]]}>
         <img
           src={image}
