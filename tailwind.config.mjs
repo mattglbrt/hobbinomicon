@@ -14,9 +14,10 @@ export default {
         'ink-dark': '#F4ECD8',
       },
       fontFamily: {
-        'serif': ['Besley', '"Besley Fallback"', 'Georgia', 'Garamond', 'serif'],
-        'heading': ['"IM Fell DW Pica"', '"IM Fell Fallback"', 'Georgia', 'serif'],
-        'display': ['"Cinzel Decorative"', '"Cinzel Decorative Fallback"', 'Georgia', 'serif'],
+        'serif':   ['"Sorts Mill Goudy"', '"EB Garamond Variable"', 'Georgia', '"Times New Roman"', 'serif'],
+        'heading': ['"Sorts Mill Goudy"', '"EB Garamond Variable"', 'Georgia', 'serif'],
+        'display': ['"Sorts Mill Goudy"', '"EB Garamond Variable"', 'Georgia', 'serif'],
+        'sans':    ['"Inter Variable"', 'ui-sans-serif', 'system-ui', '-apple-system', '"Segoe UI"', 'sans-serif'],
       },
       keyframes: {
         'fade-up': {
