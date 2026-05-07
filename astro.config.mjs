@@ -8,41 +8,45 @@ import Inline from '@playform/inline';
 import fs from 'node:fs';
 import path from 'node:path';
 
-// Build a map of blog post slugs to their lastmod dates
-function getBlogPostDates() {
+// Build a map of URL paths to their lastmod dates by walking content collections
+function getCollectionDates() {
   const dates = new Map();
-  const blogDir = './src/content/blog';
 
-  function processDir(dir, pathPrefix = '') {
+  function processDir(dir, urlPrefix) {
     if (!fs.existsSync(dir)) return;
 
     const entries = fs.readdirSync(dir, { withFileTypes: true });
     for (const entry of entries) {
       const fullPath = path.join(dir, entry.name);
       if (entry.isDirectory()) {
-        processDir(fullPath, pathPrefix + entry.name + '/');
+        processDir(fullPath, urlPrefix + entry.name + '/');
       } else if (entry.name.endsWith('.mdx') || entry.name.endsWith('.md')) {
         const content = fs.readFileSync(fullPath, 'utf-8');
 
-        // Extract dates from frontmatter
-        const updatedMatch = content.match(/updatedDate:\s*(\d{4}-\d{2}-\d{2})/);
-        const pubMatch = content.match(/pubDate:\s*(\d{4}-\d{2}-\d{2})/);
+        const updatedMatch = content.match(/updatedDate:\s*['"]?(\d{4}-\d{2}-\d{2})/);
+        const pubMatch = content.match(/pubDate:\s*['"]?(\d{4}-\d{2}-\d{2})/);
 
         const date = updatedMatch?.[1] || pubMatch?.[1];
         if (date) {
-          // Build the slug from file path
-          const slug = pathPrefix + entry.name.replace(/\.mdx?$/, '');
-          dates.set(slug, new Date(date));
+          // Strip /index suffix to match Astro 6 slug behavior
+          const slug = (urlPrefix + entry.name.replace(/\.mdx?$/, '')).replace(/\/index$/, '');
+          dates.set(`/${slug}/`, new Date(date));
         }
       }
     }
   }
 
-  processDir(blogDir);
+  processDir('./src/content/blog', 'blog/');
+  processDir('./src/content/games', 'games/');
+  processDir('./src/content/studios', 'studios/');
+  processDir('./src/content/people', 'people/');
+  processDir('./src/content/news', 'news/');
+  processDir('./src/content/projects', 'projects/');
+
   return dates;
 }
 
-const blogPostDates = getBlogPostDates();
+const contentDates = getCollectionDates();
 
 // https://astro.build/config
 export default defineConfig({
@@ -73,20 +77,15 @@ export default defineConfig({
         return !excludePatterns.some(pattern => page.includes(pattern));
       },
       serialize: (item) => {
-        // Extract slug from URL for blog posts
-        const blogMatch = item.url.match(/\/blog\/(.+)\/$/);
-        if (blogMatch) {
-          const slug = blogMatch[1];
-          const postDate = blogPostDates.get(slug);
-          if (postDate) {
-            return {
-              ...item,
-              lastmod: postDate.toISOString(),
-            };
-          }
+        // Match the URL pathname against the content date map
+        const url = new URL(item.url);
+        const date = contentDates.get(url.pathname);
+        if (date) {
+          return {
+            ...item,
+            lastmod: date.toISOString(),
+          };
         }
-
-        // For non-blog pages, don't include lastmod (optional)
         return item;
       },
     }),

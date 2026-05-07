@@ -32,7 +32,10 @@ const prevUrl = page.url.prev;
 const nextUrl = page.url.next;
 ---
 
-<BaseLayout title={page.currentPage === 1 ? "Blog - The Hobbinomicon" : `Blog - Page ${page.currentPage} - The Hobbinomicon`}>
+<BaseLayout
+  title={page.currentPage === 1 ? "Blog - The Hobbinomicon" : `Blog - Page ${page.currentPage} - The Hobbinomicon`}
+  description="Vlogs, articles, and field notes from The Hobbinomicon — miniature painting, indie wargames, and hobby projects, with the receipts."
+>
   <StructuredData
     type="breadcrumb"
     data={{
