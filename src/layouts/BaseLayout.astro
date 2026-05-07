@@ -90,6 +90,15 @@ const canonicalURL = Astro.site
     <link rel="canonical" href={canonicalURL} />
     <meta name="generator" content={Astro.generator} />
 
+    <!-- Critical: metric-matched fallback fonts inlined here so they're available
+         during initial render. Using set:html bypasses Astro's CSS pipeline
+         (which was moving these to the deferred bundle and re-introducing CLS). -->
+    <Fragment set:html={`<style>
+      @font-face{font-family:'Sorts Mill Goudy Fallback';src:local('Georgia');size-adjust:108%;ascent-override:92%;descent-override:22%;line-gap-override:0%}
+      @font-face{font-family:'EB Garamond Fallback';src:local('Georgia');size-adjust:105%;ascent-override:92%;descent-override:23%;line-gap-override:0%}
+      @font-face{font-family:'Inter Fallback';src:local('Helvetica Neue'),local('Arial');size-adjust:100%;ascent-override:90%;descent-override:22%;line-gap-override:0%}
+    </style>`} />
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content={ogType} />
     <meta property="og:url" content={Astro.url} />
