@@ -38,6 +38,11 @@ const kindLabels: Record<string, string> = {
   title={`${item.data.title} — The Hobbinomicon`}
   description={item.data.description}
   image={item.data.heroImage}
+  ogType="article"
+  publishedTime={item.data.pubDate}
+  modifiedTime={item.data.updatedDate}
+  author="Hobbinomicon"
+  section={kindLabels[item.data.kind]}
 >
   <StructuredData
     type="breadcrumb"

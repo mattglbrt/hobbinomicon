@@ -42,6 +42,7 @@ const { title, description, pubDate, updatedDate, heroImage, heroImageAlt, categ
 
 const displayImage = getHeroImage(heroImage, youtubeId);
 const displayImageUrl = getHeroImageUrl(heroImage, youtubeId);
+const hasRealHero = Boolean(heroImage) || Boolean(youtubeId);
 const isOptimizedImage = isImageMetadata(displayImage);
 const isRemoteImage = !isOptimizedImage && typeof displayImage === 'string' && displayImage.startsWith('http');
 
@@ -60,7 +61,17 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site || Astro.url).toStri
 const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout
+  title={title}
+  description={description}
+  image={hasRealHero ? displayImageUrl : undefined}
+  ogType="article"
+  publishedTime={pubDate}
+  modifiedTime={updatedDate}
+  author="Hobbinomicon"
+  tags={tags}
+  section={category}
+>
   <!-- BlogPosting Structured Data -->
   <StructuredData
     type="blogPosting"
