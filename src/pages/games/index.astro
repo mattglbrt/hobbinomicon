@@ -9,8 +9,10 @@ import ImageCard from '../../components/ImageCard.astro';
 import StructuredData from '../../components/StructuredData.astro';
 
 const allGames = await getCollection('games', ({ data }) => !data.draft);
-const indieGames = allGames.filter(g => g.data.tier === 'indie').sort((a, b) => a.data.title.localeCompare(b.data.title));
-const bigGames = allGames.filter(g => g.data.tier === 'big').sort((a, b) => a.data.title.localeCompare(b.data.title));
+const byTitle = (a, b) => a.data.title.localeCompare(b.data.title);
+const graveyardGames = allGames.filter(g => g.data.status === 'oop').sort(byTitle);
+const indieGames = allGames.filter(g => g.data.status !== 'oop' && g.data.tier === 'indie').sort(byTitle);
+const bigGames = allGames.filter(g => g.data.status !== 'oop' && g.data.tier === 'big').sort(byTitle);
 ---
 
 <BaseLayout
@@ -73,7 +75,7 @@ const bigGames = allGames.filter(g => g.data.tier === 'big').sort((a, b) => a.da
           )}
 
           {bigGames.length > 0 && (
-            <section>
+            <section class="mb-16">
               <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mb-2">
                 Big Games
               </h2>
@@ -82,6 +84,31 @@ const bigGames = allGames.filter(g => g.data.tier === 'big').sort((a, b) => a.da
               </p>
               <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {bigGames.map((game) => (
+                  <ImageCard
+                    href={`/games/${game.id}/`}
+                    image={game.data.heroImage}
+                    imageAlt={game.data.heroImageAlt || game.data.title}
+                    title={game.data.title}
+                    subtitle={game.data.description}
+                    fallbackLetter={game.data.title.charAt(0)}
+                    aspectRatio="16/9"
+                    variant="overlay"
+                  />
+                ))}
+              </div>
+            </section>
+          )}
+
+          {graveyardGames.length > 0 && (
+            <section>
+              <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mb-2">
+                The Graveyard
+              </h2>
+              <p class="text-ink/70 dark:text-ink-dark/70 text-lg mb-8 max-w-3xl">
+                Officially out of print. Still on the table somewhere. The communities keeping these dead games alive deserve their flowers.
+              </p>
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {graveyardGames.map((game) => (
                   <ImageCard
                     href={`/games/${game.id}/`}
                     image={game.data.heroImage}
