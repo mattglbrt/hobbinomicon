@@ -49,7 +49,7 @@ const categories = getCategoriesWithCounts(allPosts).map(({ name, count, posts }
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         {categories.map(({ name, count, latestPost, categoryImage }) => (
           <ImageCard
-            href={`/categories/${name.toLowerCase().replace(/\s+/g, '-')}`}
+            href={`/categories/${name.toLowerCase().replace(/\s+/g, '-')}/`}
             image={categoryImage}
             imageAlt={latestPost.data.heroImageAlt || name}
             title={name}

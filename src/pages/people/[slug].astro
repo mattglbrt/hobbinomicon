@@ -167,7 +167,7 @@ const roleLabels: Record<string, string> = {
                 <ul class="space-y-2 text-sm">
                   {studios.map((s) => (
                     <li>
-                      <a href={`/studios/${s.id}`} class="text-ink dark:text-ink-dark hover:underline font-medium">
+                      <a href={`/studios/${s.id}/`} class="text-ink dark:text-ink-dark hover:underline font-medium">
                         {s.data.name} →
                       </a>
                     </li>
@@ -186,7 +186,7 @@ const roleLabels: Record<string, string> = {
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {designedGames.map((g) => (
                 <ImageCard
-                  href={`/games/${g.id}`}
+                  href={`/games/${g.id}/`}
                   image={g.data.heroImage}
                   imageAlt={g.data.heroImageAlt || g.data.title}
                   title={g.data.title}
@@ -207,7 +207,7 @@ const roleLabels: Record<string, string> = {
             </h2>
             <div class="space-y-4">
               {personNews.map((n) => (
-                <a href={`/news/${n.id}`} class="group block p-6 bg-ink/5 dark:bg-ink-dark/5 hover:bg-ink/10 dark:hover:bg-ink-dark/10 rounded-lg transition-colors">
+                <a href={`/news/${n.id}/`} class="group block p-6 bg-ink/5 dark:bg-ink-dark/5 hover:bg-ink/10 dark:hover:bg-ink-dark/10 rounded-lg transition-colors">
                   <div class="flex items-baseline justify-between gap-4 mb-2">
                     <h3 class="text-lg font-heading font-bold text-ink dark:text-ink-dark group-hover:underline">
                       {n.data.title}

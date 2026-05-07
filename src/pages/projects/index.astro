@@ -70,7 +70,7 @@ const projectsWithMeta = publishedProjects.map(project => {
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {projectsWithMeta.map((project) => (
             <ImageCard
-              href={`/projects/${project.projectSlug}`}
+              href={`/projects/${project.projectSlug}/`}
               image={project.heroImage}
               imageAlt={project.heroImageAlt}
               title={project.data.title}

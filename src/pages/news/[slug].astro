@@ -128,21 +128,21 @@ const kindLabels: Record<string, string> = {
               <ul class="space-y-1 text-sm">
                 {relatedGame && (
                   <li>
-                    <a href={`/games/${relatedGame.id}`} class="text-ink dark:text-ink-dark hover:underline font-medium">
+                    <a href={`/games/${relatedGame.id}/`} class="text-ink dark:text-ink-dark hover:underline font-medium">
                       Game: {relatedGame.data.title} →
                     </a>
                   </li>
                 )}
                 {relatedStudio && (
                   <li>
-                    <a href={`/studios/${relatedStudio.id}`} class="text-ink dark:text-ink-dark hover:underline font-medium">
+                    <a href={`/studios/${relatedStudio.id}/`} class="text-ink dark:text-ink-dark hover:underline font-medium">
                       Studio: {relatedStudio.data.name} →
                     </a>
                   </li>
                 )}
                 {relatedPerson && (
                   <li>
-                    <a href={`/people/${relatedPerson.id}`} class="text-ink dark:text-ink-dark hover:underline font-medium">
+                    <a href={`/people/${relatedPerson.id}/`} class="text-ink dark:text-ink-dark hover:underline font-medium">
                       Person: {relatedPerson.data.name} →
                     </a>
                   </li>

@@ -48,7 +48,7 @@ const people = (await getCollection('people', ({ data }) => !data.draft))
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
           {people.map((person) => (
             <ImageCard
-              href={`/people/${person.id}`}
+              href={`/people/${person.id}/`}
               image={person.data.heroImage}
               imageAlt={person.data.heroImageAlt || person.data.name}
               title={person.data.name}

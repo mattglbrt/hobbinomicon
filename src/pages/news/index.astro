@@ -57,7 +57,7 @@ const kindLabels: Record<string, string> = {
       ) : (
         <div class="max-w-3xl mx-auto space-y-6">
           {news.map((item) => (
-            <a href={`/news/${item.id}`} class="group block p-6 bg-ink/5 dark:bg-ink-dark/5 hover:bg-ink/10 dark:hover:bg-ink-dark/10 rounded-lg transition-colors">
+            <a href={`/news/${item.id}/`} class="group block p-6 bg-ink/5 dark:bg-ink-dark/5 hover:bg-ink/10 dark:hover:bg-ink-dark/10 rounded-lg transition-colors">
               <div class="flex items-center gap-3 mb-3">
                 <span class="text-xs font-heading uppercase tracking-[0.2em] px-2 py-1 bg-ink/10 dark:bg-ink-dark/10 text-ink dark:text-ink-dark rounded">
                   {kindLabels[item.data.kind]}

@@ -67,7 +67,7 @@ const quickFilterTags = popularTags.filter(tag => allTags.includes(tag));
           <span class="text-sm text-ink/60 dark:text-ink-dark/60 mr-2">Quick filters:</span>
           {quickFilterTags.map((tag) => (
             <a
-              href={`/tags/${tag}`}
+              href={`/tags/${tag}/`}
               class="px-3 py-1.5 text-sm bg-ink/5 dark:bg-ink-dark/5 hover:bg-ink/10 dark:hover:bg-ink-dark/10 text-ink dark:text-ink-dark rounded-full transition-colors"
             >
               {getTagDisplay(tag)}
@@ -90,7 +90,7 @@ const quickFilterTags = popularTags.filter(tag => allTags.includes(tag));
           const hasVideo = !!post.data.youtubeId;
           return (
             <a
-              href={`/blog/${post.id}`}
+              href={`/blog/${post.id}/`}
               class="group block bg-white dark:bg-ink-dark/20 rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300"
             >
               {/* Thumbnail with play button overlay */}

@@ -68,7 +68,7 @@ const socialImage = posts[0] ? getHeroImageUrl(posts[0].data.heroImage, posts[0]
       description={`${posts.length} ${posts.length === 1 ? 'post' : 'posts'}`}
       breadcrumbs={[
         { label: "Categories", href: "/categories" },
-        { label: category, href: `/categories/${category.toLowerCase().replace(/\s+/g, '-')}` }
+        { label: category, href: `/categories/${category.toLowerCase().replace(/\s+/g, '-')}/` }
       ]}
     />
 

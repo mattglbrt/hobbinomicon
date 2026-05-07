@@ -30,7 +30,7 @@ function getSlug(post: CollectionEntry<'blog'> | null): string {
         More from this project
       </h3>
       <a
-        href={`/projects/${projectSlug}`}
+        href={`/projects/${projectSlug}/`}
         class="text-sm text-ink/70 hover:text-ink transition-colors"
       >
         View all {projectName} posts →
@@ -40,7 +40,7 @@ function getSlug(post: CollectionEntry<'blog'> | null): string {
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       {previousPost && (
         <a
-          href={`/blog/${getSlug(previousPost)}`}
+          href={`/blog/${getSlug(previousPost)}/`}
           class="group block bg-ink/5 rounded-lg overflow-hidden hover:bg-ink/10 transition-colors"
         >
           <div class="aspect-video relative overflow-hidden">
@@ -69,7 +69,7 @@ function getSlug(post: CollectionEntry<'blog'> | null): string {
 
       {nextPost && (
         <a
-          href={`/blog/${getSlug(nextPost)}`}
+          href={`/blog/${getSlug(nextPost)}/`}
           class={`group block bg-ink/5 rounded-lg overflow-hidden hover:bg-ink/10 transition-colors ${!previousPost ? 'md:col-start-2' : ''}`}
         >
           <div class="aspect-video relative overflow-hidden">

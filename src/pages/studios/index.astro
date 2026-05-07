@@ -48,7 +48,7 @@ const studios = (await getCollection('studios', ({ data }) => !data.draft))
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {studios.map((studio) => (
             <ImageCard
-              href={`/studios/${studio.id}`}
+              href={`/studios/${studio.id}/`}
               image={studio.data.heroImage}
               imageAlt={studio.data.heroImageAlt || studio.data.name}
               title={studio.data.name}

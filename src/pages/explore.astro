@@ -146,7 +146,7 @@ const totalTags = tagsWithCounts.length;
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {categories.map(({ name, count, latestPost, categoryImage }) => (
             <ImageCard
-              href={`/categories/${name.toLowerCase().replace(/\s+/g, '-')}`}
+              href={`/categories/${name.toLowerCase().replace(/\s+/g, '-')}/`}
               image={categoryImage}
               imageAlt={latestPost.data.heroImageAlt || name}
               title={name}
@@ -176,7 +176,7 @@ const totalTags = tagsWithCounts.length;
             const projectImage = latestPost ? getHeroImageUrl(latestPost.data.heroImage, latestPost.data.youtubeId) : null;
             return (
               <ImageCard
-                href={`/projects/${project.id}`}
+                href={`/projects/${project.id}/`}
                 image={projectImage}
                 imageAlt={project.data.title}
                 title={project.data.title}
@@ -207,7 +207,7 @@ const totalTags = tagsWithCounts.length;
               <div class="flex flex-wrap gap-2">
                 {tagsByCategory[category].map(({ tag, display, count }) => (
                   <a
-                    href={`/tags/${tag}`}
+                    href={`/tags/${tag}/`}
                     class="group flex items-center gap-2 px-4 py-2 bg-parchment dark:bg-parchment-dark hover:bg-ink/10 dark:hover:bg-ink-dark/10 rounded-lg transition-colors shadow-sm"
                   >
                     <span class="text-ink dark:text-ink-dark group-hover:underline">{display}</span>
@@ -228,7 +228,7 @@ const totalTags = tagsWithCounts.length;
               <div class="flex flex-wrap gap-2">
                 {uncategorizedTags.map(({ tag, display, count }) => (
                   <a
-                    href={`/tags/${tag}`}
+                    href={`/tags/${tag}/`}
                     class="group flex items-center gap-2 px-4 py-2 bg-parchment dark:bg-parchment-dark hover:bg-ink/10 dark:hover:bg-ink-dark/10 rounded-lg transition-colors shadow-sm"
                   >
                     <span class="text-ink dark:text-ink-dark group-hover:underline">{display}</span>

@@ -58,7 +58,7 @@ const bigGames = allGames.filter(g => g.data.tier === 'big').sort((a, b) => a.da
               <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {indieGames.map((game) => (
                   <ImageCard
-                    href={`/games/${game.id}`}
+                    href={`/games/${game.id}/`}
                     image={game.data.heroImage}
                     imageAlt={game.data.heroImageAlt || game.data.title}
                     title={game.data.title}
@@ -83,7 +83,7 @@ const bigGames = allGames.filter(g => g.data.tier === 'big').sort((a, b) => a.da
               <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {bigGames.map((game) => (
                   <ImageCard
-                    href={`/games/${game.id}`}
+                    href={`/games/${game.id}/`}
                     image={game.data.heroImage}
                     imageAlt={game.data.heroImageAlt || game.data.title}
                     title={game.data.title}

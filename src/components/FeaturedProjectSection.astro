@@ -50,7 +50,7 @@ const recentPosts = posts.slice(1, 4);
   <ContentContainer>
     <div class="flex items-center justify-between mb-4">
       <h2 class="text-4xl md:text-5xl font-heading font-bold text-white">Current Project</h2>
-      <a href={`/projects/${projectSlug}`} class="text-white hover:underline underline-offset-4 transition-all">
+      <a href={`/projects/${projectSlug}/`} class="text-white hover:underline underline-offset-4 transition-all">
         View Project →
       </a>
     </div>
@@ -61,7 +61,7 @@ const recentPosts = posts.slice(1, 4);
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
       <!-- Featured Post (Large) -->
       <a
-        href={`/blog/${featuredPost.id}`}
+        href={`/blog/${featuredPost.id}/`}
         class="group relative aspect-[4/3] overflow-hidden rounded-lg"
       >
         <img
@@ -92,7 +92,7 @@ const recentPosts = posts.slice(1, 4);
         <div class="flex flex-col gap-4">
           {recentPosts.map((post) => (
             <ListCard
-              href={`/blog/${post.id}`}
+              href={`/blog/${post.id}/`}
               image={getHeroImageUrl(post.data.heroImage, post.data.youtubeId)}
               imageAlt={post.data.heroImageAlt || post.data.title}
               title={post.data.title}

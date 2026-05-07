@@ -42,7 +42,7 @@ if (limit) {
     <div class="grid gap-4">
       {taggedPosts.map(post => (
         <ListCard
-          href={`/blog/${post.id}`}
+          href={`/blog/${post.id}/`}
           image={getHeroImageUrl(post.data.heroImage, post.data.youtubeId)}
           imageAlt={post.data.title}
           title={post.data.title}
@@ -54,7 +54,7 @@ if (limit) {
     </div>
     {hasMore && (
       <div class="mt-6 text-center">
-        <ViewAllLink href={`/tags/${tag}`} variant="button">
+        <ViewAllLink href={`/tags/${tag}/`} variant="button">
           View all {totalCount} posts
         </ViewAllLink>
       </div>

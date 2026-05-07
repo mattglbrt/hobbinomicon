@@ -40,7 +40,7 @@ for (const project of gameProjects) {
     {gameProjects.map(project => {
       const heroImage = projectImages.get(project.id);
       return (
-        <a href={`/projects/${project.id}`}
+        <a href={`/projects/${project.id}/`}
            class="block bg-ink/5 dark:bg-ink-dark/10 hover:bg-ink/10 dark:hover:bg-ink-dark/20 border-l-4 border-ink/30 dark:border-ink-dark/30 hover:border-ink dark:hover:border-ink-dark transition-all rounded-r-lg overflow-hidden group">
           {heroImage && (
             <div class="w-full aspect-video overflow-hidden">

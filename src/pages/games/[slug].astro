@@ -184,7 +184,7 @@ const statusLabel: Record<string, string> = {
                   <div>
                     <dt class="text-ink/60 dark:text-ink-dark/60">Publisher</dt>
                     <dd class="text-ink dark:text-ink-dark font-medium">
-                      <a href={`/studios/${studio.id}`} class="hover:underline">{studio.data.name}</a>
+                      <a href={`/studios/${studio.id}/`} class="hover:underline">{studio.data.name}</a>
                     </dd>
                   </div>
                 )}
@@ -194,7 +194,7 @@ const statusLabel: Record<string, string> = {
                     <dd class="text-ink dark:text-ink-dark font-medium">
                       {designers.map((d, i) => (
                         <>
-                          <a href={`/people/${d.id}`} class="hover:underline">{d.data.name}</a>
+                          <a href={`/people/${d.id}/`} class="hover:underline">{d.data.name}</a>
                           {i < designers.length - 1 && <span>, </span>}
                         </>
                       ))}
@@ -264,7 +264,7 @@ const statusLabel: Record<string, string> = {
                 <ul class="space-y-2 text-sm">
                   {relatedGames.map((rg) => (
                     <li>
-                      <a href={`/games/${rg.id}`} class="text-ink dark:text-ink-dark hover:underline font-medium">
+                      <a href={`/games/${rg.id}/`} class="text-ink dark:text-ink-dark hover:underline font-medium">
                         {rg.data.title} →
                       </a>
                     </li>
@@ -283,7 +283,7 @@ const statusLabel: Record<string, string> = {
             </h2>
             <div class="space-y-4">
               {gameNews.map((n) => (
-                <a href={`/news/${n.id}`} class="group block p-6 bg-ink/5 dark:bg-ink-dark/5 hover:bg-ink/10 dark:hover:bg-ink-dark/10 rounded-lg transition-colors">
+                <a href={`/news/${n.id}/`} class="group block p-6 bg-ink/5 dark:bg-ink-dark/5 hover:bg-ink/10 dark:hover:bg-ink-dark/10 rounded-lg transition-colors">
                   <div class="flex items-baseline justify-between gap-4 mb-2">
                     <h3 class="text-lg font-heading font-bold text-ink dark:text-ink-dark group-hover:underline">
                       {n.data.title}
