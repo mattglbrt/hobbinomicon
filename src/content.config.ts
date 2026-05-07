@@ -66,6 +66,8 @@ const games = defineCollection({
     releaseYear: z.number().optional(),
 
     // Categorization
+    format: z.enum(['ttrpg', 'skirmish', 'mass-battle', 'boardgame']),
+    solo: z.boolean().default(false),
     tier: z.enum(['indie', 'big']),
     status: z.enum(['active', 'oop', 'kickstarter', 'announced']).default('active'),
     tags: z.array(z.string()).default([]),
