@@ -1,0 +1,47 @@
+---
+/**
+ * GameGrid Component
+ * Renders a responsive grid of game cards with an empty state.
+ * Used by /games index pages (format filters, solo, graveyard).
+ */
+import ImageCard from './ImageCard.astro';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  games: CollectionEntry<'games'>[];
+  emptyTitle?: string;
+  emptyMessage?: string;
+}
+
+const {
+  games,
+  emptyTitle = 'Nothing here yet',
+  emptyMessage = 'Check back as we fill out the directory.',
+} = Astro.props;
+---
+
+{games.length === 0 ? (
+  <div class="max-w-2xl mx-auto text-center py-16">
+    <h2 class="text-2xl md:text-3xl font-heading font-bold text-ink dark:text-ink-dark mb-4">
+      {emptyTitle}
+    </h2>
+    <p class="text-ink/70 dark:text-ink-dark/70 text-lg">
+      {emptyMessage}
+    </p>
+  </div>
+) : (
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {games.map((game) => (
+      <ImageCard
+        href={`/games/${game.id}/`}
+        image={game.data.heroImage}
+        imageAlt={game.data.heroImageAlt || game.data.title}
+        title={game.data.title}
+        subtitle={game.data.description}
+        fallbackLetter={game.data.title.charAt(0)}
+        aspectRatio="16/9"
+        variant="overlay"
+      />
+    ))}
+  </div>
+)}

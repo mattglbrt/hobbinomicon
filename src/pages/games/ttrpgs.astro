@@ -1,0 +1,53 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import ContentContainer from '../../components/ContentContainer.astro';
+import GameGrid from '../../components/GameGrid.astro';
+import StructuredData from '../../components/StructuredData.astro';
+
+const allGames = await getCollection('games', ({ data }) => !data.draft);
+const games = allGames
+  .filter((g) => g.data.format === 'ttrpg' && g.data.status !== 'oop')
+  .sort((a, b) => a.data.title.localeCompare(b.data.title));
+---
+
+<BaseLayout
+  title="TTRPGs — The Hobbinomicon"
+  description="Tabletop RPGs covered on the site — narrative, OSR, PbtA, solo modes, and everything in between."
+>
+  <StructuredData
+    type="breadcrumb"
+    data={{
+      breadcrumbs: [
+        { name: 'Home', url: 'https://hobbinomicon.com/' },
+        { name: 'Games', url: 'https://hobbinomicon.com/games/' },
+        { name: 'TTRPGs', url: 'https://hobbinomicon.com/games/ttrpgs/' },
+      ],
+    }}
+  />
+  <Header theme="light" />
+
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
+    <PageHeader
+      title="TTRPGs"
+      description="Tabletop RPGs covered on the site — narrative, OSR, PbtA, and the weirder corners of the hobby."
+      breadcrumbs={[
+        { label: 'Games', href: '/games' },
+        { label: 'TTRPGs', href: '/games/ttrpgs' },
+      ]}
+    />
+
+    <ContentContainer class="py-16">
+      <GameGrid
+        games={games}
+        emptyTitle="No TTRPGs yet"
+        emptyMessage="Working on it. The first batch will land soon."
+      />
+    </ContentContainer>
+
+    <Footer />
+  </main>
+</BaseLayout>

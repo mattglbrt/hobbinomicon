@@ -1,0 +1,53 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import ContentContainer from '../../components/ContentContainer.astro';
+import GameGrid from '../../components/GameGrid.astro';
+import StructuredData from '../../components/StructuredData.astro';
+
+const allGames = await getCollection('games', ({ data }) => !data.draft);
+const games = allGames
+  .filter((g) => g.data.solo === true && g.data.status !== 'oop')
+  .sort((a, b) => a.data.title.localeCompare(b.data.title));
+---
+
+<BaseLayout
+  title="Solo-Friendly Games — The Hobbinomicon"
+  description="Games on the site that work without an opponent — solo TTRPG modes, official solo wargame rules, and games designed for one."
+>
+  <StructuredData
+    type="breadcrumb"
+    data={{
+      breadcrumbs: [
+        { name: 'Home', url: 'https://hobbinomicon.com/' },
+        { name: 'Games', url: 'https://hobbinomicon.com/games/' },
+        { name: 'Solo', url: 'https://hobbinomicon.com/games/solo/' },
+      ],
+    }}
+  />
+  <Header theme="light" />
+
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
+    <PageHeader
+      title="Solo-Friendly Games"
+      description="Games on the site that work without an opponent — solo TTRPG modes, official solo wargame rules, and games designed for one."
+      breadcrumbs={[
+        { label: 'Games', href: '/games' },
+        { label: 'Solo', href: '/games/solo' },
+      ]}
+    />
+
+    <ContentContainer class="py-16">
+      <GameGrid
+        games={games}
+        emptyTitle="No solo games tagged yet"
+        emptyMessage="Cross-listed from the rest of the directory. Check back as we flag the games with solo modes."
+      />
+    </ContentContainer>
+
+    <Footer />
+  </main>
+</BaseLayout>

@@ -1,0 +1,53 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import ContentContainer from '../../components/ContentContainer.astro';
+import GameGrid from '../../components/GameGrid.astro';
+import StructuredData from '../../components/StructuredData.astro';
+
+const allGames = await getCollection('games', ({ data }) => !data.draft);
+const games = allGames
+  .filter((g) => g.data.format === 'skirmish' && g.data.status !== 'oop')
+  .sort((a, b) => a.data.title.localeCompare(b.data.title));
+---
+
+<BaseLayout
+  title="Skirmish Games — The Hobbinomicon"
+  description="Small-warband miniature games — usually 5 to 15 models a side, narrative-friendly, low buy-in."
+>
+  <StructuredData
+    type="breadcrumb"
+    data={{
+      breadcrumbs: [
+        { name: 'Home', url: 'https://hobbinomicon.com/' },
+        { name: 'Games', url: 'https://hobbinomicon.com/games/' },
+        { name: 'Skirmish', url: 'https://hobbinomicon.com/games/skirmish/' },
+      ],
+    }}
+  />
+  <Header theme="light" />
+
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
+    <PageHeader
+      title="Skirmish Games"
+      description="Small-warband miniature games — usually 5 to 15 models a side, narrative-friendly, low buy-in."
+      breadcrumbs={[
+        { label: 'Games', href: '/games' },
+        { label: 'Skirmish', href: '/games/skirmish' },
+      ]}
+    />
+
+    <ContentContainer class="py-16">
+      <GameGrid
+        games={games}
+        emptyTitle="No skirmish games yet"
+        emptyMessage="Working on it. The first batch will land soon."
+      />
+    </ContentContainer>
+
+    <Footer />
+  </main>
+</BaseLayout>

@@ -1,0 +1,53 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import ContentContainer from '../../components/ContentContainer.astro';
+import GameGrid from '../../components/GameGrid.astro';
+import StructuredData from '../../components/StructuredData.astro';
+
+const allGames = await getCollection('games', ({ data }) => !data.draft);
+const games = allGames
+  .filter((g) => g.data.status === 'oop')
+  .sort((a, b) => a.data.title.localeCompare(b.data.title));
+---
+
+<BaseLayout
+  title="The Graveyard — The Hobbinomicon"
+  description="Officially out of print. Still on the table somewhere. The communities keeping these dead games alive deserve their flowers."
+>
+  <StructuredData
+    type="breadcrumb"
+    data={{
+      breadcrumbs: [
+        { name: 'Home', url: 'https://hobbinomicon.com/' },
+        { name: 'Games', url: 'https://hobbinomicon.com/games/' },
+        { name: 'The Graveyard', url: 'https://hobbinomicon.com/games/graveyard/' },
+      ],
+    }}
+  />
+  <Header theme="light" />
+
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
+    <PageHeader
+      title="The Graveyard"
+      description="Officially out of print. Still on the table somewhere. The communities keeping these dead games alive deserve their flowers."
+      breadcrumbs={[
+        { label: 'Games', href: '/games' },
+        { label: 'The Graveyard', href: '/games/graveyard' },
+      ]}
+    />
+
+    <ContentContainer class="py-16">
+      <GameGrid
+        games={games}
+        emptyTitle="The graveyard is empty"
+        emptyMessage="No out-of-print games on the site yet. They'll join their ancestors in time."
+      />
+    </ContentContainer>
+
+    <Footer />
+  </main>
+</BaseLayout>

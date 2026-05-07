@@ -5,26 +5,42 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import ContentContainer from '../../components/ContentContainer.astro';
-import ImageCard from '../../components/ImageCard.astro';
+import GameGrid from '../../components/GameGrid.astro';
 import StructuredData from '../../components/StructuredData.astro';
 
 const allGames = await getCollection('games', ({ data }) => !data.draft);
 const byTitle = (a, b) => a.data.title.localeCompare(b.data.title);
-const graveyardGames = allGames.filter(g => g.data.status === 'oop').sort(byTitle);
-const indieGames = allGames.filter(g => g.data.status !== 'oop' && g.data.tier === 'indie').sort(byTitle);
-const bigGames = allGames.filter(g => g.data.status !== 'oop' && g.data.tier === 'big').sort(byTitle);
+
+const ttrpgs = allGames
+  .filter((g) => g.data.format === 'ttrpg' && g.data.status !== 'oop')
+  .sort(byTitle)
+  .slice(0, 6);
+const skirmish = allGames
+  .filter((g) => g.data.format === 'skirmish' && g.data.status !== 'oop')
+  .sort(byTitle)
+  .slice(0, 6);
+const massBattle = allGames
+  .filter((g) => g.data.format === 'mass-battle' && g.data.status !== 'oop')
+  .sort(byTitle)
+  .slice(0, 6);
+const graveyard = allGames
+  .filter((g) => g.data.status === 'oop')
+  .sort(byTitle)
+  .slice(0, 6);
+
+const soloCount = allGames.filter((g) => g.data.solo === true && g.data.status !== 'oop').length;
 ---
 
 <BaseLayout
   title="Games — The Hobbinomicon"
-  description="A directory of indie wargames, GW Specialist Games, classic Warhammer editions, and standalone miniature lines."
+  description="A directory of indie wargames, GW Specialist Games, classic Warhammer editions, and standalone miniature lines. Browse by format."
 >
   <StructuredData
     type="breadcrumb"
     data={{
       breadcrumbs: [
         { name: 'Home', url: 'https://hobbinomicon.com/' },
-        { name: 'Games', url: 'https://hobbinomicon.com/games' },
+        { name: 'Games', url: 'https://hobbinomicon.com/games/' },
       ],
     }}
   />
@@ -33,97 +49,99 @@ const bigGames = allGames.filter(g => g.data.status !== 'oop' && g.data.tier ===
   <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
     <PageHeader
       title="Games"
-      description="A directory of indie wargames, GW Specialist Games, classic Warhammer editions, and the standalone miniature lines worth knowing about."
+      description="A directory of indie wargames, GW Specialist Games, classic editions, and the standalone miniature lines worth knowing about. Browse by format below."
       breadcrumbs={[{ label: 'Games', href: '/games' }]}
     />
 
-    <ContentContainer class="py-16">
-      {allGames.length === 0 ? (
-        <div class="max-w-2xl mx-auto text-center py-16">
-          <h2 class="text-2xl md:text-3xl font-heading font-bold text-ink dark:text-ink-dark mb-4">
-            The vault is empty
+    <ContentContainer class="py-16 space-y-20">
+      <!-- TTRPGs -->
+      <section>
+        <div class="flex items-baseline justify-between mb-2 gap-4">
+          <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark">
+            <a href="/games/ttrpgs/" class="hover:underline underline-offset-4">TTRPGs</a>
           </h2>
-          <p class="text-ink/70 dark:text-ink-dark/70 text-lg">
-            Loading it up with indie wargames, GW Specialist Games, classic Warhammer editions, and the standalone mini lines keeping the niche alive. Drop your email below for first-drop alerts.
-          </p>
+          <a href="/games/ttrpgs/" class="text-ink/70 dark:text-ink-dark/70 hover:text-ink dark:hover:text-ink-dark text-sm font-medium whitespace-nowrap">
+            View all →
+          </a>
         </div>
-      ) : (
-        <>
-          {indieGames.length > 0 && (
-            <section class="mb-16">
-              <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mb-2">
-                Indie & Specialist
-              </h2>
-              <p class="text-ink/70 dark:text-ink-dark/70 text-lg mb-8">
-                Small-press games, GW Specialist Games, and classic editions worth playing.
-              </p>
-              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {indieGames.map((game) => (
-                  <ImageCard
-                    href={`/games/${game.id}/`}
-                    image={game.data.heroImage}
-                    imageAlt={game.data.heroImageAlt || game.data.title}
-                    title={game.data.title}
-                    subtitle={game.data.description}
-                    fallbackLetter={game.data.title.charAt(0)}
-                    aspectRatio="16/9"
-                    variant="overlay"
-                  />
-                ))}
-              </div>
-            </section>
-          )}
+        <p class="text-ink/70 dark:text-ink-dark/70 text-lg mb-8">
+          Tabletop RPGs — narrative, OSR, PbtA, and the weirder corners.
+        </p>
+        <GameGrid
+          games={ttrpgs}
+          emptyTitle="Nothing here yet"
+          emptyMessage="TTRPGs are coming. The first batch is in the roadmap."
+        />
+      </section>
 
-          {bigGames.length > 0 && (
-            <section class="mb-16">
-              <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mb-2">
-                Big Games
-              </h2>
-              <p class="text-ink/70 dark:text-ink-dark/70 text-lg mb-8">
-                The mainstream wargames I cover for the entry-level audience.
-              </p>
-              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {bigGames.map((game) => (
-                  <ImageCard
-                    href={`/games/${game.id}/`}
-                    image={game.data.heroImage}
-                    imageAlt={game.data.heroImageAlt || game.data.title}
-                    title={game.data.title}
-                    subtitle={game.data.description}
-                    fallbackLetter={game.data.title.charAt(0)}
-                    aspectRatio="16/9"
-                    variant="overlay"
-                  />
-                ))}
-              </div>
-            </section>
-          )}
+      <!-- Skirmish -->
+      <section>
+        <div class="flex items-baseline justify-between mb-2 gap-4">
+          <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark">
+            <a href="/games/skirmish/" class="hover:underline underline-offset-4">Skirmish</a>
+          </h2>
+          <a href="/games/skirmish/" class="text-ink/70 dark:text-ink-dark/70 hover:text-ink dark:hover:text-ink-dark text-sm font-medium whitespace-nowrap">
+            View all →
+          </a>
+        </div>
+        <p class="text-ink/70 dark:text-ink-dark/70 text-lg mb-8">
+          Small-warband miniature games. Low buy-in, narrative-friendly, easy to start.
+        </p>
+        <GameGrid
+          games={skirmish}
+          emptyTitle="Nothing here yet"
+          emptyMessage="Skirmish games are coming. Working through the list."
+        />
+      </section>
 
-          {graveyardGames.length > 0 && (
-            <section>
-              <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mb-2">
-                The Graveyard
-              </h2>
-              <p class="text-ink/70 dark:text-ink-dark/70 text-lg mb-8 max-w-3xl">
-                Officially out of print. Still on the table somewhere. The communities keeping these dead games alive deserve their flowers.
-              </p>
-              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {graveyardGames.map((game) => (
-                  <ImageCard
-                    href={`/games/${game.id}/`}
-                    image={game.data.heroImage}
-                    imageAlt={game.data.heroImageAlt || game.data.title}
-                    title={game.data.title}
-                    subtitle={game.data.description}
-                    fallbackLetter={game.data.title.charAt(0)}
-                    aspectRatio="16/9"
-                    variant="overlay"
-                  />
-                ))}
-              </div>
-            </section>
-          )}
-        </>
+      <!-- Mass-Battle -->
+      <section>
+        <div class="flex items-baseline justify-between mb-2 gap-4">
+          <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark">
+            <a href="/games/mass-battle/" class="hover:underline underline-offset-4">Mass-Battle</a>
+          </h2>
+          <a href="/games/mass-battle/" class="text-ink/70 dark:text-ink-dark/70 hover:text-ink dark:hover:text-ink-dark text-sm font-medium whitespace-nowrap">
+            View all →
+          </a>
+        </div>
+        <p class="text-ink/70 dark:text-ink-dark/70 text-lg mb-8">
+          Rank-and-file and army-scale wargames. Push around 50+ models.
+        </p>
+        <GameGrid
+          games={massBattle}
+          emptyTitle="Nothing here yet"
+          emptyMessage="Mass-battle coverage is coming."
+        />
+      </section>
+
+      <!-- The Graveyard -->
+      {graveyard.length > 0 && (
+        <section>
+          <div class="flex items-baseline justify-between mb-2 gap-4">
+            <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark">
+              <a href="/games/graveyard/" class="hover:underline underline-offset-4">The Graveyard</a>
+            </h2>
+            <a href="/games/graveyard/" class="text-ink/70 dark:text-ink-dark/70 hover:text-ink dark:hover:text-ink-dark text-sm font-medium whitespace-nowrap">
+              View all →
+            </a>
+          </div>
+          <p class="text-ink/70 dark:text-ink-dark/70 text-lg mb-8 max-w-3xl">
+            Officially out of print. Still on the table somewhere. The communities keeping these dead games alive deserve their flowers.
+          </p>
+          <GameGrid games={graveyard} />
+        </section>
+      )}
+
+      <!-- Solo cross-link -->
+      {soloCount > 0 && (
+        <section class="border-t border-ink/10 dark:border-ink-dark/10 pt-12">
+          <p class="text-ink/70 dark:text-ink-dark/70 text-lg">
+            Looking for games that work without an opponent?{' '}
+            <a href="/games/solo/" class="text-ink dark:text-ink-dark font-medium underline underline-offset-4 hover:no-underline">
+              Browse solo-friendly games →
+            </a>
+          </p>
+        </section>
       )}
     </ContentContainer>
 

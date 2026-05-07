@@ -1,0 +1,53 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import ContentContainer from '../../components/ContentContainer.astro';
+import GameGrid from '../../components/GameGrid.astro';
+import StructuredData from '../../components/StructuredData.astro';
+
+const allGames = await getCollection('games', ({ data }) => !data.draft);
+const games = allGames
+  .filter((g) => g.data.format === 'mass-battle' && g.data.status !== 'oop')
+  .sort((a, b) => a.data.title.localeCompare(b.data.title));
+---
+
+<BaseLayout
+  title="Mass-Battle Games — The Hobbinomicon"
+  description="Rank-and-file and army-scale wargames — the kind where you push around 50+ models."
+>
+  <StructuredData
+    type="breadcrumb"
+    data={{
+      breadcrumbs: [
+        { name: 'Home', url: 'https://hobbinomicon.com/' },
+        { name: 'Games', url: 'https://hobbinomicon.com/games/' },
+        { name: 'Mass-Battle', url: 'https://hobbinomicon.com/games/mass-battle/' },
+      ],
+    }}
+  />
+  <Header theme="light" />
+
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
+    <PageHeader
+      title="Mass-Battle Games"
+      description="Rank-and-file and army-scale wargames — the kind where you push around 50+ models."
+      breadcrumbs={[
+        { label: 'Games', href: '/games' },
+        { label: 'Mass-Battle', href: '/games/mass-battle' },
+      ]}
+    />
+
+    <ContentContainer class="py-16">
+      <GameGrid
+        games={games}
+        emptyTitle="No mass-battle games yet"
+        emptyMessage="Working on it. The first batch will land soon."
+      />
+    </ContentContainer>
+
+    <Footer />
+  </main>
+</BaseLayout>
