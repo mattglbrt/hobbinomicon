@@ -38,6 +38,7 @@ const {
         imageAlt={game.data.heroImageAlt || game.data.title}
         title={game.data.title}
         subtitle={game.data.description}
+        badge={game.data.status === 'oop' ? 'Out of Print' : undefined}
         fallbackLetter={game.data.title.charAt(0)}
         aspectRatio="16/9"
         variant="overlay"

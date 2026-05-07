@@ -10,7 +10,7 @@ import StructuredData from '../../components/StructuredData.astro';
 
 const allGames = await getCollection('games', ({ data }) => !data.draft);
 const games = allGames
-  .filter((g) => g.data.format === 'mass-battle' && g.data.status !== 'oop')
+  .filter((g) => g.data.format === 'mass-battle')
   .sort((a, b) => a.data.title.localeCompare(b.data.title));
 ---
 
