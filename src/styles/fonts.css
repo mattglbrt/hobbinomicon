@@ -5,6 +5,30 @@
 @import "@fontsource-variable/eb-garamond/wght-italic.css";
 @import "@fontsource-variable/inter/wght.css";
 
-/* The metric-matched fallback @font-faces (Sorts Mill Goudy Fallback,
-   EB Garamond Fallback, Inter Fallback) live inline in BaseLayout.astro —
-   they have to be in the critical CSS to prevent CLS on first paint. */
+/* Metric-matched fallback fonts so the swap from fallback to webfont
+   doesn't reflow the page. Values from fontaine.readMetrics on the actual
+   bundled woff2 files. */
+@font-face {
+  font-family: 'Sorts Mill Goudy Fallback';
+  src: local('Georgia');
+  size-adjust: 96.46%;
+  ascent-override: 99.53%;
+  descent-override: 49.56%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'EB Garamond Fallback';
+  src: local('Georgia');
+  size-adjust: 86.36%;
+  ascent-override: 116.60%;
+  descent-override: 34.51%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Inter Fallback';
+  src: local('Helvetica Neue'), local('Arial');
+  size-adjust: 106.12%;
+  ascent-override: 91.29%;
+  descent-override: 22.73%;
+  line-gap-override: 0%;
+}

@@ -4,7 +4,6 @@ import netlify from '@astrojs/netlify';
 import mdx from '@astrojs/mdx';
 import { remarkReadingTime } from './src/utils/remarkReadingTime.ts';
 import sitemap from '@astrojs/sitemap';
-import Inline from '@playform/inline';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -54,6 +53,14 @@ export default defineConfig({
   output: 'static',
   trailingSlash: 'always',
   adapter: netlify({ imageCDN: false }),
+  // Inline all stylesheets so we don't get CLS from deferred CSS arriving
+  // after first paint. The site CSS bundle is ~64KB unminified (~12KB Brotli),
+  // small enough that the per-page inlining cost is preferable to the
+  // beasties-based critical-CSS extraction (which kept missing classes and
+  // causing 0.7+ CLS on long-form pages).
+  build: {
+    inlineStylesheets: 'always',
+  },
   image: {
     layout: 'constrained',
   },
@@ -62,7 +69,6 @@ export default defineConfig({
   },
   integrations: [
     mdx(),
-    Inline(),
     sitemap({
       filter: (page) => {
         // Exclude low-value and private pages

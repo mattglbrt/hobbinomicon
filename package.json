@@ -26,7 +26,6 @@
     "@fontsource-variable/eb-garamond": "^5.2.7",
     "@fontsource-variable/inter": "^5.2.8",
     "@fontsource/sorts-mill-goudy": "^5.2.8",
-    "@playform/inline": "^0.1.4",
     "astro": "^6.0.8",
     "googleapis": "^171.4.0",
     "mdast-util-to-string": "^4.0.0"
