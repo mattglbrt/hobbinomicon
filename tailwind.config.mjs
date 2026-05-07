@@ -14,10 +14,10 @@ export default {
         'ink-dark': '#F4ECD8',
       },
       fontFamily: {
-        'serif':   ['"Sorts Mill Goudy"', '"EB Garamond Variable"', 'Georgia', '"Times New Roman"', 'serif'],
-        'heading': ['"Sorts Mill Goudy"', '"EB Garamond Variable"', 'Georgia', 'serif'],
-        'display': ['"Sorts Mill Goudy"', '"EB Garamond Variable"', 'Georgia', 'serif'],
-        'sans':    ['"Inter Variable"', 'ui-sans-serif', 'system-ui', '-apple-system', '"Segoe UI"', 'sans-serif'],
+        'serif':   ['"Sorts Mill Goudy"', '"Sorts Mill Goudy Fallback"', '"EB Garamond Variable"', '"EB Garamond Fallback"', 'Georgia', '"Times New Roman"', 'serif'],
+        'heading': ['"Sorts Mill Goudy"', '"Sorts Mill Goudy Fallback"', '"EB Garamond Variable"', '"EB Garamond Fallback"', 'Georgia', 'serif'],
+        'display': ['"Sorts Mill Goudy"', '"Sorts Mill Goudy Fallback"', '"EB Garamond Variable"', '"EB Garamond Fallback"', 'Georgia', 'serif'],
+        'sans':    ['"Inter Variable"', '"Inter Fallback"', 'ui-sans-serif', 'system-ui', '-apple-system', '"Segoe UI"', 'sans-serif'],
       },
       keyframes: {
         'fade-up': {

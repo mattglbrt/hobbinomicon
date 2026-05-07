@@ -4,3 +4,33 @@
 @import "@fontsource-variable/eb-garamond/wght.css";
 @import "@fontsource-variable/eb-garamond/wght-italic.css";
 @import "@fontsource-variable/inter/wght.css";
+
+/* Metric-matched fallbacks built from local Georgia so the font-display: swap
+   from fallback to webfont doesn't reflow the page (CLS prevention). Values
+   are approximate but close enough to keep layout shifts under the radar. */
+@font-face {
+  font-family: 'Sorts Mill Goudy Fallback';
+  src: local('Georgia');
+  size-adjust: 108%;
+  ascent-override: 92%;
+  descent-override: 22%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'EB Garamond Fallback';
+  src: local('Georgia');
+  size-adjust: 105%;
+  ascent-override: 92%;
+  descent-override: 23%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'Inter Fallback';
+  src: local('Helvetica Neue'), local('Arial');
+  size-adjust: 100%;
+  ascent-override: 90%;
+  descent-override: 22%;
+  line-gap-override: 0%;
+}
