@@ -77,6 +77,9 @@ const canonicalURL = Astro.site
     <!-- DNS prefetch for YouTube thumbnails used further down the page -->
     <link rel="dns-prefetch" href="https://img.youtube.com" />
 
+    <!-- Preconnect to GA so the lazy-loaded analytics handshake is already warm -->
+    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin />
+
     <!-- Favicons -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />

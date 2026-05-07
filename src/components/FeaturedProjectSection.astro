@@ -1,5 +1,6 @@
 ---
-import { getHeroImageUrl } from '../utils/getHeroImage';
+import { Image } from 'astro:assets';
+import { getHeroImage, isImageMetadata } from '../utils/getHeroImage';
 import { formatDateLong } from '../utils/formatDate';
 import ContentContainer from './ContentContainer.astro';
 import ListCard from './ListCard.astro';
@@ -39,6 +40,9 @@ if (posts.length === 0) {
 
 const featuredPost = posts[0];
 const recentPosts = posts.slice(1, 4);
+
+const featuredHero = getHeroImage(featuredPost.data.heroImage, featuredPost.data.youtubeId);
+const featuredHeroIsOptimized = isImageMetadata(featuredHero);
 ---
 
 <section class="relative py-16 md:py-24 bg-gradient-to-br from-violet-950 via-ink to-indigo-950 overflow-hidden">
@@ -64,15 +68,31 @@ const recentPosts = posts.slice(1, 4);
         href={`/blog/${featuredPost.id}/`}
         class="group relative aspect-[4/3] overflow-hidden rounded-lg"
       >
-        <img
-          src={getHeroImageUrl(featuredPost.data.heroImage, featuredPost.data.youtubeId)}
-          alt={featuredPost.data.heroImageAlt || featuredPost.data.title}
-          class="absolute inset-0 w-full h-full object-cover img-hover-slow"
-          loading="lazy"
-          decoding="async"
-          width="800"
-          height="600"
-        />
+        {featuredHeroIsOptimized ? (
+          <Image
+            src={featuredHero}
+            alt={featuredPost.data.heroImageAlt || featuredPost.data.title}
+            class="absolute inset-0 w-full h-full object-cover img-hover-slow"
+            loading="lazy"
+            decoding="async"
+            format="webp"
+            quality={50}
+            width={800}
+            height={600}
+            widths={[400, 800]}
+            sizes="(min-width: 1024px) 50vw, 100vw"
+          />
+        ) : (
+          <img
+            src={featuredHero}
+            alt={featuredPost.data.heroImageAlt || featuredPost.data.title}
+            class="absolute inset-0 w-full h-full object-cover img-hover-slow"
+            loading="lazy"
+            decoding="async"
+            width="800"
+            height="600"
+          />
+        )}
         <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-transparent"></div>
         <div class="absolute bottom-0 left-0 right-0 p-6">
           <span class="inline-block px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-sm rounded mb-3">
@@ -93,7 +113,7 @@ const recentPosts = posts.slice(1, 4);
           {recentPosts.map((post) => (
             <ListCard
               href={`/blog/${post.id}/`}
-              image={getHeroImageUrl(post.data.heroImage, post.data.youtubeId)}
+              image={getHeroImage(post.data.heroImage, post.data.youtubeId)}
               imageAlt={post.data.heroImageAlt || post.data.title}
               title={post.data.title}
               description={post.data.description}
