@@ -11,13 +11,13 @@ const { variant = 'section', class: className = '' } = Astro.props;
   <section class:list={['relative overflow-hidden', className]} data-scroll-reveal>
     <div class="max-w-2xl mx-auto text-center px-6 py-20">
       <p class="text-sm font-heading uppercase tracking-[0.3em] text-ink/50 dark:text-ink-dark/50 mb-4">
-        Dispatch from the deep
+        From the painting desk
       </p>
       <h2 class="font-display text-4xl md:text-5xl lg:text-6xl text-ink dark:text-ink-dark mb-4">
-        The Monthly Slam
+        From the Workbench
       </h2>
       <p class="text-ink/70 dark:text-ink-dark/70 text-lg mb-8 max-w-lg mx-auto">
-        Indie wargame news, painting deep cuts, Kickstarters worth your gold, and whatever weird thing showed up in the mail. Once a month-ish. Niche of the niche, no spam, no apologies.
+        What I'm painting, what indie wargames are doing something interesting, the Kickstarter you might've missed, and whatever weird thing I'm obsessed with this month. Once a month-ish. Niche of the niche. Won't waste your inbox.
       </p>
       <form class="newsletter-form flex flex-col sm:flex-row gap-3 max-w-md mx-auto" data-newsletter-form>
         <input
@@ -40,10 +40,10 @@ const { variant = 'section', class: className = '' } = Astro.props;
 ) : (
   <div class:list={['newsletter-inline', className]}>
     <p class="text-sm font-medium text-white/80 uppercase tracking-wider mb-4">
-      The Monthly Slam
+      From the Workbench
     </p>
     <p class="text-white/60 text-sm mb-4">
-      Indie wargame news, monthly. Niche of the niche, no spam.
+      What I'm painting and the indie wargame stuff worth your time. Once a month-ish.
     </p>
     <form class="newsletter-form flex flex-col gap-2" data-newsletter-form>
       <input
