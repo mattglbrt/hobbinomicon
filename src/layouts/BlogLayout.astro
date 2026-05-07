@@ -100,6 +100,18 @@ const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
       ],
     }}
   />
+  {youtubeId && (
+    <StructuredData
+      type="videoObject"
+      data={{
+        name: title,
+        description,
+        thumbnailUrl: imageUrl,
+        uploadDate: pubDate,
+        youtubeId,
+      }}
+    />
+  )}
   <Header />
   <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
     <!-- Standard Blog Post Layout -->

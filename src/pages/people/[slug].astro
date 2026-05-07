@@ -74,6 +74,29 @@ const roleLabels: Record<string, string> = {
       ],
     }}
   />
+  <StructuredData
+    type="person"
+    data={{
+      name: person.data.name,
+      description: person.data.bio,
+      url: `https://hobbinomicon.com/people/${person.id}`,
+      image: person.data.heroImage ? new URL(person.data.heroImage, 'https://hobbinomicon.com').toString() : undefined,
+      jobTitles: person.data.roles.map((r) => roleLabels[r]),
+      affiliations: studios.map((s) => ({
+        name: s.data.name,
+        url: `https://hobbinomicon.com/studios/${s.id}`,
+      })),
+      sameAs: [
+        person.data.websiteUrl,
+        person.data.twitterUrl,
+        person.data.blueskyUrl,
+        person.data.instagramUrl,
+        person.data.youtubeUrl,
+        person.data.twitchUrl,
+        person.data.patreonUrl,
+      ].filter((u): u is string => Boolean(u)),
+    }}
+  />
   <Header theme="light" />
 
   <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">

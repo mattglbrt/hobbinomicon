@@ -65,6 +65,24 @@ const referenceLinks = [
       ],
     }}
   />
+  <StructuredData
+    type="organization"
+    data={{
+      name: studio.data.name,
+      url: studio.data.officialUrl || `https://hobbinomicon.com/studios/${studio.id}`,
+      description: studio.data.description,
+      logo: studio.data.heroImage ? new URL(studio.data.heroImage, 'https://hobbinomicon.com').toString() : undefined,
+      foundingDate: studio.data.founded ? String(studio.data.founded) : undefined,
+      address: studio.data.headquarters,
+      sameAs: [
+        studio.data.twitterUrl,
+        studio.data.instagramUrl,
+        studio.data.youtubeUrl,
+        studio.data.patreonUrl,
+        studio.data.discordUrl,
+      ].filter((u): u is string => Boolean(u)),
+    }}
+  />
   <Header theme="light" />
 
   <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">

@@ -54,6 +54,20 @@ const kindLabels: Record<string, string> = {
       ],
     }}
   />
+  <StructuredData
+    type="newsArticle"
+    data={{
+      title: item.data.title,
+      description: item.data.description,
+      image: item.data.heroImage ? new URL(item.data.heroImage, 'https://hobbinomicon.com').toString() : undefined,
+      datePublished: item.data.pubDate,
+      dateModified: item.data.updatedDate,
+      category: kindLabels[item.data.kind],
+      url: `https://hobbinomicon.com/news/${item.id}`,
+      sourceUrl: item.data.sourceUrl,
+      sourceName: item.data.sourceName,
+    }}
+  />
   <Header theme={item.data.heroImage ? 'dark' : 'light'} />
 
   <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">

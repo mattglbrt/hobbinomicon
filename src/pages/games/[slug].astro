@@ -87,6 +87,27 @@ const statusLabel: Record<string, string> = {
       ],
     }}
   />
+  <StructuredData
+    type="game"
+    data={{
+      name: game.data.title,
+      description: game.data.description,
+      url: `https://hobbinomicon.com/games/${game.id}`,
+      image: game.data.heroImage ? new URL(game.data.heroImage, 'https://hobbinomicon.com').toString() : undefined,
+      datePublished: game.data.pubDate,
+      dateModified: game.data.updatedDate,
+      releaseYear: game.data.releaseYear,
+      publisher: studio ? {
+        name: studio.data.name,
+        url: `https://hobbinomicon.com/studios/${studio.id}`,
+      } : undefined,
+      designers: designers.map((d) => ({
+        name: d.data.name,
+        url: `https://hobbinomicon.com/people/${d.id}`,
+      })),
+      genre: game.data.tags,
+    }}
+  />
   <Header theme={game.data.heroImage ? 'dark' : 'light'} />
 
   <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">

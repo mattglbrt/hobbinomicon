@@ -1,57 +1,43 @@
 ---
 /**
  * StructuredData Component
- * Renders JSON-LD structured data for SEO
- * Supports: WebSite, Organization, BlogPosting, BreadcrumbList
+ * Renders JSON-LD structured data for SEO.
+ * Each `type` corresponds to a schema.org type and accepts its own data shape.
  */
 
-interface WebSite {
-  '@type': 'WebSite';
+interface WebSiteData {
+  siteName?: string;
+  siteUrl?: string;
+  siteDescription?: string;
+}
+
+interface OrganizationData {
   name: string;
   url: string;
   description?: string;
-  potentialAction?: {
-    '@type': 'SearchAction';
-    target: string;
-    'query-input': string;
-  };
-}
-
-interface Organization {
-  '@type': 'Organization';
-  name: string;
-  url: string;
   logo?: string;
+  foundingDate?: string;
+  address?: string;
   sameAs?: string[];
 }
 
-interface BlogPosting {
-  '@type': 'BlogPosting';
-  headline: string;
+interface BlogPostingData {
+  title: string;
   description: string;
   image?: string;
-  datePublished: string;
-  dateModified?: string;
-  author: {
-    '@type': 'Person' | 'Organization';
-    name: string;
-    url?: string;
-  };
-  publisher: {
-    '@type': 'Organization';
-    name: string;
-    logo?: {
-      '@type': 'ImageObject';
-      url: string;
-    };
-  };
-  mainEntityOfPage: {
-    '@type': 'WebPage';
-    '@id': string;
-  };
+  datePublished: Date;
+  dateModified?: Date;
+  authorName?: string;
+  authorUrl?: string;
   keywords?: string[];
-  articleSection?: string;
+  category?: string;
   wordCount?: number;
+  url: string;
+}
+
+interface NewsArticleData extends BlogPostingData {
+  sourceUrl?: string;
+  sourceName?: string;
 }
 
 interface BreadcrumbItem {
@@ -59,86 +45,93 @@ interface BreadcrumbItem {
   url: string;
 }
 
-interface BreadcrumbList {
-  '@type': 'BreadcrumbList';
-  itemListElement: {
-    '@type': 'ListItem';
-    position: number;
-    name: string;
-    item: string;
-  }[];
+interface BreadcrumbData {
+  breadcrumbs: BreadcrumbItem[];
 }
 
-type SchemaType = WebSite | Organization | BlogPosting | BreadcrumbList;
-
-interface Props {
-  type: 'website' | 'organization' | 'blogPosting' | 'breadcrumb';
-  data: {
-    // WebSite
-    siteName?: string;
-    siteUrl?: string;
-    siteDescription?: string;
-    // Organization
-    orgName?: string;
-    orgUrl?: string;
-    orgLogo?: string;
-    socialLinks?: string[];
-    // BlogPosting
-    title?: string;
-    description?: string;
-    image?: string;
-    datePublished?: Date;
-    dateModified?: Date;
-    authorName?: string;
-    authorUrl?: string;
-    keywords?: string[];
-    category?: string;
-    wordCount?: number;
-    url?: string;
-    // Breadcrumb
-    breadcrumbs?: BreadcrumbItem[];
-  };
+interface GameData {
+  name: string;
+  description: string;
+  image?: string;
+  url: string;
+  datePublished?: Date;
+  dateModified?: Date;
+  releaseYear?: number;
+  publisher?: { name: string; url?: string };
+  designers?: { name: string; url?: string }[];
+  genre?: string[];
 }
 
-const { type, data } = Astro.props;
+interface PersonData {
+  name: string;
+  description: string;
+  image?: string;
+  url: string;
+  jobTitles?: string[];
+  affiliations?: { name: string; url?: string }[];
+  sameAs?: string[];
+}
 
-function generateSchema(): SchemaType | null {
-  switch (type) {
-    case 'website':
+interface VideoObjectData {
+  name: string;
+  description: string;
+  thumbnailUrl: string;
+  uploadDate: Date;
+  youtubeId: string;
+}
+
+type Props =
+  | { type: 'website'; data: WebSiteData }
+  | { type: 'organization'; data: OrganizationData }
+  | { type: 'blogPosting'; data: BlogPostingData }
+  | { type: 'newsArticle'; data: NewsArticleData }
+  | { type: 'breadcrumb'; data: BreadcrumbData }
+  | { type: 'game'; data: GameData }
+  | { type: 'person'; data: PersonData }
+  | { type: 'videoObject'; data: VideoObjectData };
+
+const props = Astro.props as Props;
+
+function buildSchema(): Record<string, unknown> | null {
+  switch (props.type) {
+    case 'website': {
+      const d = props.data;
       return {
         '@type': 'WebSite',
-        name: data.siteName || 'The Hobbinomicon',
-        url: data.siteUrl || 'https://hobbinomicon.com',
-        description: data.siteDescription || 'Hobbying from the deep end of the dungeon. Miniature painting, TTRPGs, and creative projects.',
+        name: d.siteName || 'The Hobbinomicon',
+        url: d.siteUrl || 'https://hobbinomicon.com',
+        description: d.siteDescription || 'Hobbying from the deep end of the dungeon. Miniature painting, TTRPGs, and creative projects.',
       };
+    }
 
-    case 'organization':
+    case 'organization': {
+      const d = props.data;
       return {
         '@type': 'Organization',
-        name: data.orgName || 'The Hobbinomicon',
-        url: data.orgUrl || 'https://hobbinomicon.com',
-        logo: data.orgLogo || 'https://hobbinomicon.com/og-image.jpg',
-        sameAs: data.socialLinks || [
-          'https://www.youtube.com/@Hobbinomicon',
-          'https://twitter.com/hobbinomicon',
-        ],
+        name: d.name,
+        url: d.url,
+        ...(d.description && { description: d.description }),
+        ...(d.logo && { logo: d.logo }),
+        ...(d.foundingDate && { foundingDate: d.foundingDate }),
+        ...(d.address && { address: d.address }),
+        ...(d.sameAs?.length && { sameAs: d.sameAs }),
       };
+    }
 
     case 'blogPosting':
-      if (!data.title || !data.description || !data.datePublished) {
-        return null;
-      }
+    case 'newsArticle': {
+      const d = props.data;
       return {
-        '@type': 'BlogPosting',
-        headline: data.title,
-        description: data.description,
-        image: data.image,
-        datePublished: data.datePublished.toISOString(),
-        dateModified: data.dateModified?.toISOString() || data.datePublished.toISOString(),
+        '@type': props.type === 'newsArticle' ? 'NewsArticle' : 'BlogPosting',
+        headline: d.title,
+        description: d.description,
+        ...(d.image && { image: d.image }),
+        datePublished: d.datePublished.toISOString(),
+        dateModified: (d.dateModified ?? d.datePublished).toISOString(),
         author: {
           '@type': 'Person',
-          name: data.authorName || 'Hobbinomicon',
-          url: data.authorUrl || 'https://hobbinomicon.com/about',
+          name: d.authorName || 'Hobbinomicon',
+          url: d.authorUrl || 'https://hobbinomicon.com/about',
         },
         publisher: {
           '@type': 'Organization',
@@ -150,37 +143,101 @@ function generateSchema(): SchemaType | null {
         },
         mainEntityOfPage: {
           '@type': 'WebPage',
-          '@id': data.url || '',
+          '@id': d.url,
         },
-        keywords: data.keywords,
-        articleSection: data.category,
-        wordCount: data.wordCount,
+        ...(d.keywords?.length && { keywords: d.keywords }),
+        ...(d.category && { articleSection: d.category }),
+        ...(d.wordCount && { wordCount: d.wordCount }),
+        ...(props.type === 'newsArticle' && (d as NewsArticleData).sourceUrl && {
+          isBasedOn: (d as NewsArticleData).sourceUrl,
+        }),
       };
+    }
 
-    case 'breadcrumb':
-      if (!data.breadcrumbs || data.breadcrumbs.length === 0) {
-        return null;
-      }
+    case 'breadcrumb': {
+      const d = props.data;
+      if (!d.breadcrumbs.length) return null;
       return {
         '@type': 'BreadcrumbList',
-        itemListElement: data.breadcrumbs.map((item, index) => ({
+        itemListElement: d.breadcrumbs.map((item, index) => ({
           '@type': 'ListItem',
           position: index + 1,
           name: item.name,
           item: item.url,
         })),
       };
+    }
+
+    case 'game': {
+      const d = props.data;
+      return {
+        '@type': 'Game',
+        name: d.name,
+        description: d.description,
+        url: d.url,
+        gamePlatform: 'Tabletop',
+        ...(d.image && { image: d.image }),
+        ...(d.datePublished && { datePublished: d.datePublished.toISOString() }),
+        ...(d.dateModified && { dateModified: d.dateModified.toISOString() }),
+        ...(d.releaseYear && { copyrightYear: d.releaseYear }),
+        ...(d.publisher && {
+          publisher: {
+            '@type': 'Organization',
+            name: d.publisher.name,
+            ...(d.publisher.url && { url: d.publisher.url }),
+          },
+        }),
+        ...(d.designers?.length && {
+          author: d.designers.map((p) => ({
+            '@type': 'Person',
+            name: p.name,
+            ...(p.url && { url: p.url }),
+          })),
+        }),
+        ...(d.genre?.length && { genre: d.genre }),
+      };
+    }
+
+    case 'person': {
+      const d = props.data;
+      return {
+        '@type': 'Person',
+        name: d.name,
+        description: d.description,
+        url: d.url,
+        ...(d.image && { image: d.image }),
+        ...(d.jobTitles?.length && { jobTitle: d.jobTitles }),
+        ...(d.affiliations?.length && {
+          affiliation: d.affiliations.map((org) => ({
+            '@type': 'Organization',
+            name: org.name,
+            ...(org.url && { url: org.url }),
+          })),
+        }),
+        ...(d.sameAs?.length && { sameAs: d.sameAs }),
+      };
+    }
+
+    case 'videoObject': {
+      const d = props.data;
+      return {
+        '@type': 'VideoObject',
+        name: d.name,
+        description: d.description,
+        thumbnailUrl: d.thumbnailUrl,
+        uploadDate: d.uploadDate.toISOString(),
+        embedUrl: `https://www.youtube.com/embed/${d.youtubeId}`,
+        contentUrl: `https://www.youtube.com/watch?v=${d.youtubeId}`,
+      };
+    }
 
     default:
       return null;
   }
 }
 
-const schema = generateSchema();
-const jsonLd = schema ? {
-  '@context': 'https://schema.org',
-  ...schema,
-} : null;
+const schema = buildSchema();
+const jsonLd = schema ? { '@context': 'https://schema.org', ...schema } : null;
 ---
 
 {jsonLd && (
