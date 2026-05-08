@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
@@ -8,7 +9,7 @@ import BackToTop from '../../components/BackToTop.astro';
 import StructuredData from '../../components/StructuredData.astro';
 import ContentContainer from '../../components/ContentContainer.astro';
 import { getPublishedPosts, sortByDate } from '../../utils/collections';
-import { getHeroImage, getHeroImageUrl } from '../../utils/getHeroImage';
+import { getHeroImage, getHeroImageUrl, isImageMetadata } from '../../utils/getHeroImage';
 import ProseContent from '../../components/ProseContent.astro';
 
 export async function getStaticPaths() {
@@ -44,9 +45,24 @@ const { Content } = await render(project);
 // Get project slug from params
 const projectSlug = Astro.params.slug;
 
+// Group posts by projectSection. Sectioned posts render under named headers;
+// unsectioned posts fall through to a default "Other" group at the end.
+const sectionedPosts = new Map<string, typeof posts>();
+const ungroupedPosts: typeof posts = [];
+for (const post of posts) {
+  const section = post.data.projectSection;
+  if (section) {
+    if (!sectionedPosts.has(section)) sectionedPosts.set(section, []);
+    sectionedPosts.get(section)!.push(post);
+  } else {
+    ungroupedPosts.push(post);
+  }
+}
+
 // Get the latest post's hero image for the header
 const latestPost = sortByDate(posts)[0];
 const heroImage = latestPost ? getHeroImage(latestPost.data.heroImage, latestPost.data.youtubeId) : null;
+const heroIsOptimized = heroImage && isImageMetadata(heroImage);
 const heroImageUrl = latestPost ? getHeroImageUrl(latestPost.data.heroImage, latestPost.data.youtubeId) : undefined;
 const heroImageAlt = latestPost?.data.heroImageAlt || project.data.title;
 ---
@@ -57,8 +73,8 @@ const heroImageAlt = latestPost?.data.heroImageAlt || project.data.title;
     data={{
       breadcrumbs: [
         { name: 'Home', url: 'https://hobbinomicon.com/' },
-        { name: 'Projects', url: 'https://hobbinomicon.com/projects' },
-        { name: project.data.title, url: `https://hobbinomicon.com/projects/${projectSlug}` },
+        { name: 'Projects', url: 'https://hobbinomicon.com/projects/' },
+        { name: project.data.title, url: `https://hobbinomicon.com/projects/${projectSlug}/` },
       ],
     }}
   />
@@ -67,13 +83,29 @@ const heroImageAlt = latestPost?.data.heroImageAlt || project.data.title;
     <!-- Hero Image -->
     <div class="relative h-[50vh] md:h-[60vh] overflow-hidden">
       {heroImage ? (
-        <img
-          src={heroImage}
-          alt={heroImageAlt}
-          class="w-full h-full object-cover"
-          width="1920"
-          height="1080"
-        />
+        heroIsOptimized ? (
+          <Image
+            src={heroImage}
+            alt={heroImageAlt}
+            class="w-full h-full object-cover"
+            loading="eager"
+            decoding="sync"
+            format="webp"
+            quality={50}
+            widths={[640, 1024, 1920]}
+            sizes="100vw"
+            width={1920}
+            height={1080}
+          />
+        ) : (
+          <img
+            src={heroImage}
+            alt={heroImageAlt}
+            class="w-full h-full object-cover"
+            width="1920"
+            height="1080"
+          />
+        )
       ) : (
         <div class="w-full h-full bg-ink/20"></div>
       )}
@@ -115,17 +147,43 @@ const heroImageAlt = latestPost?.data.heroImageAlt || project.data.title;
         {posts.length === 0 ? (
           <p class="text-ink/70 text-lg">No posts in this project yet. Check back soon!</p>
         ) : (
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {posts.map((post, index) => (
-              <div class="relative">
-                {post.data.projectOrder !== undefined && (
-                  <div class="absolute -top-3 -left-3 w-8 h-8 bg-ink text-parchment rounded-full flex items-center justify-center text-sm font-bold z-10">
-                    {post.data.projectOrder}
-                  </div>
-                )}
-                <PostCard post={post} />
+          <div class="space-y-12">
+            {Array.from(sectionedPosts.entries()).map(([sectionName, sectionPosts]) => (
+              <div>
+                <h3 class="text-2xl font-heading font-bold text-ink mb-6">{sectionName}</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {sectionPosts.map((post) => (
+                    <div class="relative">
+                      {post.data.projectOrder !== undefined && (
+                        <div class="absolute -top-3 -left-3 w-8 h-8 bg-ink text-parchment rounded-full flex items-center justify-center text-sm font-bold z-10">
+                          {post.data.projectOrder}
+                        </div>
+                      )}
+                      <PostCard post={post} />
+                    </div>
+                  ))}
+                </div>
               </div>
             ))}
+            {ungroupedPosts.length > 0 && (
+              <div>
+                {sectionedPosts.size > 0 && (
+                  <h3 class="text-2xl font-heading font-bold text-ink mb-6">Other</h3>
+                )}
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {ungroupedPosts.map((post) => (
+                    <div class="relative">
+                      {post.data.projectOrder !== undefined && (
+                        <div class="absolute -top-3 -left-3 w-8 h-8 bg-ink text-parchment rounded-full flex items-center justify-center text-sm font-bold z-10">
+                          {post.data.projectOrder}
+                        </div>
+                      )}
+                      <PostCard post={post} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </ContentContainer>

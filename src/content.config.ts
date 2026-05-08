@@ -25,6 +25,7 @@ const blog = defineCollection({
     youtubeTranscript: z.string().optional(),
     project: z.string().optional(),
     projectOrder: z.number().optional(),
+    projectSection: z.string().optional(),
     hideRelatedPosts: z.boolean().default(false),
     // Resource type for categorizing resource pages
     resourceType: z.enum(['hub', 'guide', 'article', 'checklist']).optional(),
@@ -83,6 +84,7 @@ const games = defineCollection({
     miniatureAgnostic: z.boolean().default(false),
     tier: z.enum(['indie', 'big']),
     status: z.enum(['active', 'oop', 'kickstarter', 'announced']).default('active'),
+    pinned: z.boolean().default(false),
     tags: z.array(z.string()).default([]),
 
     // Funnel

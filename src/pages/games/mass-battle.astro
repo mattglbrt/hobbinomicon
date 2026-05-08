@@ -7,16 +7,17 @@ import PageHeader from '../../components/PageHeader.astro';
 import ContentContainer from '../../components/ContentContainer.astro';
 import GameGrid from '../../components/GameGrid.astro';
 import StructuredData from '../../components/StructuredData.astro';
+import { sortGamesPinnedThenTitle } from '../../utils/collections';
 
 const allGames = await getCollection('games', ({ data }) => !data.draft);
-const games = allGames
-  .filter((g) => g.data.format === 'mass-battle')
-  .sort((a, b) => a.data.title.localeCompare(b.data.title));
+const games = sortGamesPinnedThenTitle(
+  allGames.filter((g) => g.data.format === 'mass-battle')
+);
 ---
 
 <BaseLayout
   title="Rank and Flank Games | The Hobbinomicon"
-  description="Rank-and-file and army-scale wargames. The kind where you push around 50+ models."
+  description="Rank-and-file and army-scale wargames. Push around your blocks of dudes."
 >
   <StructuredData
     type="breadcrumb"
@@ -33,7 +34,7 @@ const games = allGames
   <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
     <PageHeader
       title="Rank and Flank Games"
-      description="Rank-and-file and army-scale wargames. The kind where you push around 50+ models."
+      description="Rank-and-file and army-scale wargames. Push around your blocks of dudes."
       breadcrumbs={[
         { label: 'Games', href: '/games' },
         { label: 'Rank and Flank', href: '/games/mass-battle' },

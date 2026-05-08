@@ -115,8 +115,8 @@ const gameSpecs = [
     data={{
       breadcrumbs: [
         { name: 'Home', url: 'https://hobbinomicon.com/' },
-        { name: 'Games', url: 'https://hobbinomicon.com/games' },
-        { name: game.data.title, url: `https://hobbinomicon.com/games/${game.id}` },
+        { name: 'Games', url: 'https://hobbinomicon.com/games/' },
+        { name: game.data.title, url: `https://hobbinomicon.com/games/${game.id}/` },
       ],
     }}
   />
@@ -125,18 +125,18 @@ const gameSpecs = [
     data={{
       name: game.data.title,
       description: game.data.description,
-      url: `https://hobbinomicon.com/games/${game.id}`,
+      url: `https://hobbinomicon.com/games/${game.id}/`,
       image: game.data.heroImage ? new URL(game.data.heroImage, 'https://hobbinomicon.com').toString() : undefined,
       datePublished: game.data.pubDate,
       dateModified: game.data.updatedDate,
       releaseYear: game.data.releaseYear,
       publisher: studio ? {
         name: studio.data.name,
-        url: `https://hobbinomicon.com/studios/${studio.id}`,
+        url: `https://hobbinomicon.com/studios/${studio.id}/`,
       } : undefined,
       designers: designers.map((d) => ({
         name: d.data.name,
-        url: `https://hobbinomicon.com/people/${d.id}`,
+        url: `https://hobbinomicon.com/people/${d.id}/`,
       })),
       genre: game.data.tags,
     }}

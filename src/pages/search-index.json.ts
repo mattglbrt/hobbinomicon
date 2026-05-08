@@ -26,7 +26,7 @@ export const GET: APIRoute = async () => {
   const blogIndex = publishedPosts.map((post) => ({
     type: 'post',
     slug: post.id,
-    url: `/blog/${post.id}`,
+    url: `/blog/${post.id}/`,
     title: post.data.title,
     description: post.data.description,
     category: post.data.category,
@@ -42,7 +42,7 @@ export const GET: APIRoute = async () => {
   const projectIndex = publishedProjects.map((project) => ({
     type: 'project',
     slug: project.id,
-    url: `/projects/${project.id}`,
+    url: `/projects/${project.id}/`,
     title: project.data.title,
     description: project.data.description,
     category: 'Projects',
@@ -58,7 +58,7 @@ export const GET: APIRoute = async () => {
   const gameIndex = games.map((game) => ({
     type: 'game',
     slug: game.id,
-    url: `/games/${game.id}`,
+    url: `/games/${game.id}/`,
     title: game.data.title,
     description: game.data.description,
     category: 'Games',
@@ -78,7 +78,7 @@ export const GET: APIRoute = async () => {
   const studioIndex = studios.map((studio) => ({
     type: 'studio',
     slug: studio.id,
-    url: `/studios/${studio.id}`,
+    url: `/studios/${studio.id}/`,
     title: studio.data.name,
     description: studio.data.description,
     category: 'Studios',
@@ -94,7 +94,7 @@ export const GET: APIRoute = async () => {
   const personIndex = people.map((person) => ({
     type: 'person',
     slug: person.id,
-    url: `/people/${person.id}`,
+    url: `/people/${person.id}/`,
     title: person.data.name,
     description: person.data.bio,
     category: 'People',
@@ -110,7 +110,7 @@ export const GET: APIRoute = async () => {
   const newsIndex = news.map((item) => ({
     type: 'news',
     slug: item.id,
-    url: `/news/${item.id}`,
+    url: `/news/${item.id}/`,
     title: item.data.title,
     description: item.data.description,
     category: 'Indie News',

@@ -54,9 +54,9 @@ const pageNumbers = getPageNumbers(currentPage, totalPages);
 
 function getPageUrl(page: number): string {
   if (page === 1) {
-    return baseUrl;
+    return baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
   }
-  return `${baseUrl}/${page}`;
+  return `${baseUrl}/${page}/`;
 }
 ---
 

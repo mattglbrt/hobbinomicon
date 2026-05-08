@@ -82,7 +82,7 @@ const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
       datePublished: pubDate,
       dateModified: updatedDate,
       authorName: 'Hobbinomicon',
-      authorUrl: 'https://hobbinomicon.com/about',
+      authorUrl: 'https://hobbinomicon.com/about/',
       keywords: tags,
       category,
       wordCount: estimatedWordCount,
@@ -94,8 +94,8 @@ const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
     data={{
       breadcrumbs: [
         { name: 'Home', url: 'https://hobbinomicon.com/' },
-        { name: 'Blog', url: 'https://hobbinomicon.com/blog' },
-        { name: category, url: `https://hobbinomicon.com/categories/${category.toLowerCase().replace(/\s+/g, '-')}` },
+        { name: 'Blog', url: 'https://hobbinomicon.com/blog/' },
+        { name: category, url: `https://hobbinomicon.com/categories/${category.toLowerCase().replace(/\s+/g, '-')}/` },
         { name: title, url: canonicalUrl },
       ],
     }}

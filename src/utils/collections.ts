@@ -2,6 +2,17 @@ import type { CollectionEntry } from 'astro:content';
 
 type BlogPost = CollectionEntry<'blog'>;
 type Project = CollectionEntry<'projects'>;
+type Game = CollectionEntry<'games'>;
+
+/**
+ * Sort games: pinned first, then alphabetical by title.
+ */
+export function sortGamesPinnedThenTitle(games: Game[]): Game[] {
+  return [...games].sort((a, b) => {
+    if (a.data.pinned !== b.data.pinned) return a.data.pinned ? -1 : 1;
+    return a.data.title.localeCompare(b.data.title);
+  });
+}
 
 /**
  * Filter out draft posts

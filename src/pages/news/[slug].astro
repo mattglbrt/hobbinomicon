@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import { getCollection, getEntry, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
@@ -7,6 +8,7 @@ import ContentContainer from '../../components/ContentContainer.astro';
 import ProseContent from '../../components/ProseContent.astro';
 import StructuredData from '../../components/StructuredData.astro';
 import { formatDateLong } from '../../utils/formatDate';
+import { getHeroImage, isImageMetadata } from '../../utils/getHeroImage';
 
 export async function getStaticPaths() {
   const news = await getCollection('news', ({ data }) => !data.draft);
@@ -32,6 +34,9 @@ const kindLabels: Record<string, string> = {
   community: 'Community',
   other: 'News',
 };
+
+const resolvedHero = item.data.heroImage ? getHeroImage(item.data.heroImage) : null;
+const heroIsOptimized = resolvedHero && isImageMetadata(resolvedHero);
 ---
 
 <BaseLayout
@@ -49,8 +54,8 @@ const kindLabels: Record<string, string> = {
     data={{
       breadcrumbs: [
         { name: 'Home', url: 'https://hobbinomicon.com/' },
-        { name: 'News', url: 'https://hobbinomicon.com/news' },
-        { name: item.data.title, url: `https://hobbinomicon.com/news/${item.id}` },
+        { name: 'News', url: 'https://hobbinomicon.com/news/' },
+        { name: item.data.title, url: `https://hobbinomicon.com/news/${item.id}/` },
       ],
     }}
   />
@@ -63,7 +68,7 @@ const kindLabels: Record<string, string> = {
       datePublished: item.data.pubDate,
       dateModified: item.data.updatedDate,
       category: kindLabels[item.data.kind],
-      url: `https://hobbinomicon.com/news/${item.id}`,
+      url: `https://hobbinomicon.com/news/${item.id}/`,
       sourceUrl: item.data.sourceUrl,
       sourceName: item.data.sourceName,
     }}
@@ -71,14 +76,30 @@ const kindLabels: Record<string, string> = {
   <Header theme={item.data.heroImage ? 'dark' : 'light'} />
 
   <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
-    {item.data.heroImage && (
+    {resolvedHero && (
       <div class="relative h-[40vh] md:h-[50vh] overflow-hidden">
-        <img
-          src={item.data.heroImage}
-          alt={item.data.heroImageAlt || item.data.title}
-          class="w-full h-full object-cover"
-          loading="eager"
-        />
+        {heroIsOptimized ? (
+          <Image
+            src={resolvedHero}
+            alt={item.data.heroImageAlt || item.data.title}
+            class="w-full h-full object-cover"
+            loading="eager"
+            decoding="sync"
+            format="webp"
+            quality={50}
+            widths={[640, 1024, 1920]}
+            sizes="100vw"
+            width={1920}
+            height={1080}
+          />
+        ) : (
+          <img
+            src={resolvedHero}
+            alt={item.data.heroImageAlt || item.data.title}
+            class="w-full h-full object-cover"
+            loading="eager"
+          />
+        )}
         <div class="absolute inset-0 bg-gradient-to-t from-parchment dark:from-parchment-dark via-ink/40 to-transparent"></div>
       </div>
     )}

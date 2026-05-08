@@ -61,8 +61,8 @@ const referenceLinks = [
     data={{
       breadcrumbs: [
         { name: 'Home', url: 'https://hobbinomicon.com/' },
-        { name: 'Studios', url: 'https://hobbinomicon.com/studios' },
-        { name: studio.data.name, url: `https://hobbinomicon.com/studios/${studio.id}` },
+        { name: 'Studios', url: 'https://hobbinomicon.com/studios/' },
+        { name: studio.data.name, url: `https://hobbinomicon.com/studios/${studio.id}/` },
       ],
     }}
   />
@@ -70,7 +70,7 @@ const referenceLinks = [
     type="organization"
     data={{
       name: studio.data.name,
-      url: studio.data.officialUrl || `https://hobbinomicon.com/studios/${studio.id}`,
+      url: studio.data.officialUrl || `https://hobbinomicon.com/studios/${studio.id}/`,
       description: studio.data.description,
       logo: studio.data.heroImage ? new URL(studio.data.heroImage, 'https://hobbinomicon.com').toString() : undefined,
       foundingDate: studio.data.founded ? String(studio.data.founded) : undefined,

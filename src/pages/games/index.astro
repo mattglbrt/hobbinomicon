@@ -7,30 +7,25 @@ import PageHeader from '../../components/PageHeader.astro';
 import ContentContainer from '../../components/ContentContainer.astro';
 import GameGrid from '../../components/GameGrid.astro';
 import StructuredData from '../../components/StructuredData.astro';
+import { sortGamesPinnedThenTitle } from '../../utils/collections';
 
 const allGames = await getCollection('games', ({ data }) => !data.draft);
-const byTitle = (a, b) => a.data.title.localeCompare(b.data.title);
 
-const ttrpgs = allGames
-  .filter((g) => g.data.format === 'ttrpg' && g.data.status !== 'oop')
-  .sort(byTitle)
-  .slice(0, 6);
-const skirmish = allGames
-  .filter((g) => g.data.format === 'skirmish' && g.data.status !== 'oop')
-  .sort(byTitle)
-  .slice(0, 6);
-const largeScaleArmy = allGames
-  .filter((g) => g.data.format === 'large-scale-army' && g.data.status !== 'oop')
-  .sort(byTitle)
-  .slice(0, 6);
-const massBattle = allGames
-  .filter((g) => g.data.format === 'mass-battle' && g.data.status !== 'oop')
-  .sort(byTitle)
-  .slice(0, 6);
-const graveyard = allGames
-  .filter((g) => g.data.status === 'oop')
-  .sort(byTitle)
-  .slice(0, 6);
+const ttrpgs = sortGamesPinnedThenTitle(
+  allGames.filter((g) => g.data.format === 'ttrpg' && g.data.status !== 'oop')
+).slice(0, 6);
+const skirmish = sortGamesPinnedThenTitle(
+  allGames.filter((g) => g.data.format === 'skirmish')
+).slice(0, 6);
+const largeScaleArmy = sortGamesPinnedThenTitle(
+  allGames.filter((g) => g.data.format === 'large-scale-army' && g.data.status !== 'oop')
+).slice(0, 6);
+const massBattle = sortGamesPinnedThenTitle(
+  allGames.filter((g) => g.data.format === 'mass-battle' && g.data.status !== 'oop')
+).slice(0, 6);
+const graveyard = sortGamesPinnedThenTitle(
+  allGames.filter((g) => g.data.status === 'oop')
+).slice(0, 6);
 
 const soloCount = allGames.filter((g) => g.data.solo === true && g.data.status !== 'oop').length;
 ---
@@ -89,7 +84,7 @@ const soloCount = allGames.filter((g) => g.data.solo === true && g.data.status !
           </a>
         </div>
         <p class="text-ink/70 dark:text-ink-dark/70 text-lg mb-8">
-          Command-led wargames. Bigger than skirmish, tighter than rank-and-flank. 15 to 30 models, every activation matters.
+          Full size army wargames.
         </p>
         <GameGrid
           games={largeScaleArmy}
@@ -109,7 +104,7 @@ const soloCount = allGames.filter((g) => g.data.solo === true && g.data.status !
           </a>
         </div>
         <p class="text-ink/70 dark:text-ink-dark/70 text-lg mb-8">
-          Rank-and-file and army-scale wargames. Push around 50+ models.
+          Rank-and-file and army-scale wargames. Push around your blocks of dudes.
         </p>
         <GameGrid
           games={massBattle}

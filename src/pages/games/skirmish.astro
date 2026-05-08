@@ -7,11 +7,12 @@ import PageHeader from '../../components/PageHeader.astro';
 import ContentContainer from '../../components/ContentContainer.astro';
 import GameGrid from '../../components/GameGrid.astro';
 import StructuredData from '../../components/StructuredData.astro';
+import { sortGamesPinnedThenTitle } from '../../utils/collections';
 
 const allGames = await getCollection('games', ({ data }) => !data.draft);
-const games = allGames
-  .filter((g) => g.data.format === 'skirmish')
-  .sort((a, b) => a.data.title.localeCompare(b.data.title));
+const games = sortGamesPinnedThenTitle(
+  allGames.filter((g) => g.data.format === 'skirmish')
+);
 ---
 
 <BaseLayout
