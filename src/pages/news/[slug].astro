@@ -112,7 +112,7 @@ const kindLabels: Record<string, string> = {
             <div class="mt-12 p-4 bg-ink/5 dark:bg-ink-dark/5 rounded-lg text-sm">
               <span class="text-ink/60 dark:text-ink-dark/60">
                 {item.data.source === 'rss' ? 'Via RSS' : 'Via'}
-                {item.data.sourceName ? ` ${item.data.sourceName}` : ''} —
+                {item.data.sourceName ? ` ${item.data.sourceName}` : ''}.
               </span>
               <a href={item.data.sourceUrl} target="_blank" rel="noopener noreferrer" class="text-ink dark:text-ink-dark font-medium hover:underline ml-1">
                 Read original →

@@ -12,6 +12,17 @@ import { formatDateLong } from '../../utils/formatDate';
 import { getPublishedPosts, sortByDate } from '../../utils/collections';
 import { getHeroImage, isImageMetadata } from '../../utils/getHeroImage';
 import GameSpecs from '../../components/GameSpecs.astro';
+import ImageCard from '../../components/ImageCard.astro';
+
+const newsKindLabels: Record<string, string> = {
+  kickstarter: 'Kickstarter',
+  release: 'Release',
+  errata: 'Errata',
+  announcement: 'Announcement',
+  interview: 'Interview',
+  community: 'Community',
+  other: 'News',
+};
 
 export async function getStaticPaths() {
   const games = await getCollection('games', ({ data }) => !data.draft);
@@ -340,20 +351,26 @@ const gameSpecs = [
             <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mb-8">
               News
             </h2>
-            <div class="space-y-4">
-              {gameNews.map((n) => (
-                <a href={`/news/${n.id}/`} class="group block p-6 bg-ink/5 dark:bg-ink-dark/5 hover:bg-ink/10 dark:hover:bg-ink-dark/10 rounded-lg transition-colors">
-                  <div class="flex items-baseline justify-between gap-4 mb-2">
-                    <h3 class="text-lg font-heading font-bold text-ink dark:text-ink-dark group-hover:underline">
-                      {n.data.title}
-                    </h3>
-                    <time datetime={n.data.pubDate.toISOString()} class="text-xs text-ink/60 dark:text-ink-dark/60 whitespace-nowrap">
-                      {formatDateLong(n.data.pubDate)}
-                    </time>
-                  </div>
-                  <p class="text-sm text-ink/70 dark:text-ink-dark/70 line-clamp-2">{n.data.description}</p>
-                </a>
-              ))}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {gameNews.map((n) => {
+                const cardImageString = n.data.heroImage || game.data.heroImage;
+                const cardImage = cardImageString ? getHeroImage(cardImageString) : null;
+                return (
+                  <ImageCard
+                    href={`/news/${n.id}/`}
+                    image={cardImage}
+                    imageAlt={n.data.heroImageAlt || n.data.title}
+                    title={n.data.title}
+                    subtitle={n.data.description}
+                    badge={newsKindLabels[n.data.kind]}
+                    logoOverlay={resolvedLogo}
+                    fallbackLetter={n.data.title.charAt(0)}
+                    aspectRatio="16/9"
+                    variant="overlay"
+                    subtitleOnHover
+                  />
+                );
+              })}
             </div>
           </section>
         )}

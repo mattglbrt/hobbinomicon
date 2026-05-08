@@ -27,8 +27,9 @@ const recentVlogs = publishedPosts
   .slice(0, 6);
 
 // ─── News ───────────────────────────────────────────────────────────
+import { getEntry } from 'astro:content';
 const allNews = await getCollection('news', ({ data }) => !data.draft);
-const recentNews = sortByDate(allNews).slice(0, 5);
+const recentNews = sortByDate(allNews).slice(0, 6);
 const newsKindLabels: Record<string, string> = {
   kickstarter: 'Kickstarter',
   release: 'Release',
@@ -38,6 +39,18 @@ const newsKindLabels: Record<string, string> = {
   community: 'Community',
   other: 'News',
 };
+
+// Resolve the related-game (if any) for each news item so news cards can fall
+// back to the game's hero image and pick up the game's logo for the overlay.
+const recentNewsCards = await Promise.all(
+  recentNews.map(async (item) => {
+    const game = item.data.relatedGame ? await getEntry(item.data.relatedGame) : null;
+    const cardImageString = item.data.heroImage || game?.data.heroImage;
+    const cardImage = cardImageString ? getHeroImage(cardImageString) : null;
+    const logo = game?.data.logo ? getHeroImage(game.data.logo) : null;
+    return { item, cardImage, logo };
+  })
+);
 
 // ─── Directory ──────────────────────────────────────────────────────
 const allGames = await getCollection('games', ({ data }) => !data.draft);
@@ -124,27 +137,26 @@ if (heroImage && isImageMetadata(heroImage)) {
         <ContentContainer>
           <div class="flex items-center justify-between mb-12">
             <div>
-              <span class="block text-sm font-heading uppercase tracking-[0.3em] text-ink/40 dark:text-ink-dark/40 mb-2">From the Underground</span>
-              <h2 class="text-5xl md:text-7xl font-display font-bold text-ink dark:text-ink-dark">What's Banging in Indie Wargaming</h2>
+              <span class="block text-sm font-heading uppercase tracking-[0.3em] text-ink/40 dark:text-ink-dark/40 mb-2">What's new</span>
+              <h2 class="text-5xl md:text-7xl font-display font-bold text-ink dark:text-ink-dark">News from the indie wargame world</h2>
             </div>
             <ViewAllLink href="/news/">All News →</ViewAllLink>
           </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-5xl">
-            {recentNews.map((item) => (
-              <a href={`/news/${item.id}/`} class="group block p-6 bg-parchment dark:bg-parchment-dark hover:bg-ink/5 dark:hover:bg-ink-dark/10 rounded-lg shadow-sm transition-colors">
-                <div class="flex items-center gap-3 mb-2">
-                  <span class="text-xs font-heading uppercase tracking-[0.2em] px-2 py-1 bg-ink/10 dark:bg-ink-dark/10 text-ink dark:text-ink-dark rounded">
-                    {newsKindLabels[item.data.kind]}
-                  </span>
-                  <time datetime={item.data.pubDate.toISOString()} class="text-xs text-ink/60 dark:text-ink-dark/60">
-                    {formatDateLong(item.data.pubDate)}
-                  </time>
-                </div>
-                <h3 class="text-lg md:text-xl font-heading font-bold text-ink dark:text-ink-dark group-hover:underline mb-2">
-                  {item.data.title}
-                </h3>
-                <p class="text-sm text-ink/70 dark:text-ink-dark/70 line-clamp-2">{item.data.description}</p>
-              </a>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {recentNewsCards.map(({ item, cardImage, logo }) => (
+              <ImageCard
+                href={`/news/${item.id}/`}
+                image={cardImage}
+                imageAlt={item.data.heroImageAlt || item.data.title}
+                title={item.data.title}
+                subtitle={item.data.description}
+                badge={newsKindLabels[item.data.kind]}
+                logoOverlay={logo}
+                fallbackLetter={item.data.title.charAt(0)}
+                aspectRatio="16/9"
+                variant="overlay"
+                subtitleOnHover
+              />
             ))}
           </div>
         </ContentContainer>
