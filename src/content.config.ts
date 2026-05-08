@@ -78,7 +78,7 @@ const games = defineCollection({
     costToStart: z.string().optional(),
 
     // Categorization
-    format: z.enum(['ttrpg', 'skirmish', 'mass-battle', 'boardgame']),
+    format: z.enum(['ttrpg', 'skirmish', 'large-scale-army', 'mass-battle', 'boardgame']),
     solo: z.boolean().default(false),
     miniatureAgnostic: z.boolean().default(false),
     tier: z.enum(['indie', 'big']),

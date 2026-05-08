@@ -19,6 +19,10 @@ const skirmish = allGames
   .filter((g) => g.data.format === 'skirmish' && g.data.status !== 'oop')
   .sort(byTitle)
   .slice(0, 6);
+const largeScaleArmy = allGames
+  .filter((g) => g.data.format === 'large-scale-army' && g.data.status !== 'oop')
+  .sort(byTitle)
+  .slice(0, 6);
 const massBattle = allGames
   .filter((g) => g.data.format === 'mass-battle' && g.data.status !== 'oop')
   .sort(byTitle)
@@ -74,11 +78,31 @@ const soloCount = allGames.filter((g) => g.data.solo === true && g.data.status !
         />
       </section>
 
-      <!-- Mass-Battle -->
+      <!-- Large Scale Army -->
       <section>
         <div class="flex items-baseline justify-between mb-2 gap-4">
           <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark">
-            <a href="/games/mass-battle/" class="hover:underline underline-offset-4">Mass-Battle</a>
+            <a href="/games/large-scale-army/" class="hover:underline underline-offset-4">Large Scale Army</a>
+          </h2>
+          <a href="/games/large-scale-army/" class="text-ink/70 dark:text-ink-dark/70 hover:text-ink dark:hover:text-ink-dark text-sm font-medium whitespace-nowrap">
+            View all →
+          </a>
+        </div>
+        <p class="text-ink/70 dark:text-ink-dark/70 text-lg mb-8">
+          Command-led wargames. Bigger than skirmish, tighter than rank-and-flank. 15 to 30 models, every activation matters.
+        </p>
+        <GameGrid
+          games={largeScaleArmy}
+          emptyTitle="Nothing here yet"
+          emptyMessage="Large Scale Army coverage is coming."
+        />
+      </section>
+
+      <!-- Rank and Flank -->
+      <section>
+        <div class="flex items-baseline justify-between mb-2 gap-4">
+          <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark">
+            <a href="/games/mass-battle/" class="hover:underline underline-offset-4">Rank and Flank</a>
           </h2>
           <a href="/games/mass-battle/" class="text-ink/70 dark:text-ink-dark/70 hover:text-ink dark:hover:text-ink-dark text-sm font-medium whitespace-nowrap">
             View all →
@@ -90,7 +114,7 @@ const soloCount = allGames.filter((g) => g.data.solo === true && g.data.status !
         <GameGrid
           games={massBattle}
           emptyTitle="Nothing here yet"
-          emptyMessage="Mass-battle coverage is coming."
+          emptyMessage="Rank and Flank coverage is coming."
         />
       </section>
 

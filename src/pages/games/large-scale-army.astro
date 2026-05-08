@@ -10,13 +10,13 @@ import StructuredData from '../../components/StructuredData.astro';
 
 const allGames = await getCollection('games', ({ data }) => !data.draft);
 const games = allGames
-  .filter((g) => g.data.format === 'mass-battle')
+  .filter((g) => g.data.format === 'large-scale-army')
   .sort((a, b) => a.data.title.localeCompare(b.data.title));
 ---
 
 <BaseLayout
-  title="Rank and Flank Games | The Hobbinomicon"
-  description="Rank-and-file and army-scale wargames. The kind where you push around 50+ models."
+  title="Large Scale Army Games | The Hobbinomicon"
+  description="Command-led miniature wargames bigger than skirmish but tighter than rank-and-flank. 15 to 30 models, a single commander, every activation matters."
 >
   <StructuredData
     type="breadcrumb"
@@ -24,7 +24,7 @@ const games = allGames
       breadcrumbs: [
         { name: 'Home', url: 'https://hobbinomicon.com/' },
         { name: 'Games', url: 'https://hobbinomicon.com/games/' },
-        { name: 'Rank and Flank', url: 'https://hobbinomicon.com/games/mass-battle/' },
+        { name: 'Large Scale Army', url: 'https://hobbinomicon.com/games/large-scale-army/' },
       ],
     }}
   />
@@ -32,18 +32,18 @@ const games = allGames
 
   <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
     <PageHeader
-      title="Rank and Flank Games"
-      description="Rank-and-file and army-scale wargames. The kind where you push around 50+ models."
+      title="Large Scale Army Games"
+      description="Command-led miniature wargames bigger than skirmish but tighter than rank-and-flank. 15 to 30 models, a single commander, every activation matters."
       breadcrumbs={[
         { label: 'Games', href: '/games' },
-        { label: 'Rank and Flank', href: '/games/mass-battle' },
+        { label: 'Large Scale Army', href: '/games/large-scale-army' },
       ]}
     />
 
     <ContentContainer class="py-16">
       <GameGrid
         games={games}
-        emptyTitle="No Rank and Flank games yet"
+        emptyTitle="No large scale army games yet"
         emptyMessage="Working on it. The first batch will land soon."
       />
     </ContentContainer>
