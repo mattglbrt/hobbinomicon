@@ -105,6 +105,8 @@ Reference fields can't link to studios that don't exist. These need 1-paragraph 
 - [ ] Lampblack & Brimstone — for Stonetop
 - [ ] Metal King Studio — for Relic Blade
 - [ ] Games Workshop — for Middle Earth Strategy Battle Game
+- [x] Orc the Brand — shipped 2026-05-07
+- [ ] Electi Studio — for Bloody Hollow
 - [ ] (TBD per game as we figure out publishers)
 
 ---
@@ -178,13 +180,21 @@ Reference fields can't link to studios that don't exist. These need 1-paragraph 
 ### Necropolis
 - **Pre-fill:** which Necropolis? Multiple games share the name.
 
+## Format TBD
+
+### Bloody Hollow
+- **Pre-fill:** published by **Electi Studio**, written by **Alex C. Van Allen**.
+- **Format:** TBD — TTRPG / skirmish / something else?
+- **What I need from you:** format, status, the official URL, your take.
+- **References to stub:** Electi Studio, Alex C. Van Allen.
+
 ---
 
 # Wave 3 — need one sentence from you per game
 
 Format I need from you: "It's an [X — TTRPG / skirmish / mass-battle / boardgame] by [Y]. Solo: yes/no. Official: URL. My take: one line."
 
-- [ ] **Monster Friends: Battle for New Florida** —
+- [x] **Monster Friends: Battle for New Florida** — shipped 2026-05-07. Page at `/games/monster-friends-battle-for-new-florida/`.
 - [ ] **Wanted Reward CC 10000** —
 - [ ] **Flames of Orion** —
 - [ ] **Gloam** —
