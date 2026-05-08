@@ -9,6 +9,7 @@ import ImageCard from '../../components/ImageCard.astro';
 import StructuredData from '../../components/StructuredData.astro';
 import { formatDateLong } from '../../utils/formatDate';
 import { sortByDate } from '../../utils/collections';
+import { getHeroImage } from '../../utils/getHeroImage';
 
 export async function getStaticPaths() {
   const people = await getCollection('people', ({ data }) => !data.draft);
@@ -60,7 +61,7 @@ const roleLabels: Record<string, string> = {
 ---
 
 <BaseLayout
-  title={`${person.data.name} — The Hobbinomicon`}
+  title={`${person.data.name} | The Hobbinomicon`}
   description={person.data.bio}
   image={person.data.heroImage}
 >
@@ -184,18 +185,21 @@ const roleLabels: Record<string, string> = {
               Games
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {designedGames.map((g) => (
-                <ImageCard
-                  href={`/games/${g.id}/`}
-                  image={g.data.heroImage}
-                  imageAlt={g.data.heroImageAlt || g.data.title}
-                  title={g.data.title}
-                  subtitle={g.data.description}
-                  fallbackLetter={g.data.title.charAt(0)}
-                  aspectRatio="16/9"
-                  variant="overlay"
-                />
-              ))}
+              {designedGames.map((g) => {
+                const cardImage = g.data.heroImage ? getHeroImage(g.data.heroImage) : null;
+                return (
+                  <ImageCard
+                    href={`/games/${g.id}/`}
+                    image={cardImage}
+                    imageAlt={g.data.heroImageAlt || g.data.title}
+                    title={g.data.title}
+                    subtitle={g.data.description}
+                    fallbackLetter={g.data.title.charAt(0)}
+                    aspectRatio="16/9"
+                    variant="overlay"
+                  />
+                );
+              })}
             </div>
           </section>
         )}

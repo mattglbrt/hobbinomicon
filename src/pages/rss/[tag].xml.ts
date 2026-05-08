@@ -28,7 +28,7 @@ export async function GET(context: APIContext) {
   const siteUrl = context.site!.toString().replace(/\/$/, '');
 
   return rss({
-    title: `${tagDisplay} - The Hobbinomicon`,
+    title: `${tagDisplay} | The Hobbinomicon`,
     description: `Posts tagged "${tagDisplay}" on The Hobbinomicon`,
     site: context.site!,
     items: tagPosts.map((post) => {

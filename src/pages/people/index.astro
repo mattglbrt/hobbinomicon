@@ -7,13 +7,14 @@ import PageHeader from '../../components/PageHeader.astro';
 import ContentContainer from '../../components/ContentContainer.astro';
 import ImageCard from '../../components/ImageCard.astro';
 import StructuredData from '../../components/StructuredData.astro';
+import { getHeroImage } from '../../utils/getHeroImage';
 
 const people = (await getCollection('people', ({ data }) => !data.draft))
   .sort((a, b) => a.data.name.localeCompare(b.data.name));
 ---
 
 <BaseLayout
-  title="People — The Hobbinomicon"
+  title="People | The Hobbinomicon"
   description="Designers, sculptors, painters, podcasters, and content creators in the indie wargame scene."
 >
   <StructuredData
@@ -41,23 +42,26 @@ const people = (await getCollection('people', ({ data }) => !data.draft))
             No profiles yet
           </h2>
           <p class="text-ink/70 dark:text-ink-dark/70 text-lg">
-            Designers, sculptors, painters, podcasters, and creators — all in the queue. Patience, friend.
+            Designers, sculptors, painters, podcasters, and creators. All in the queue. Patience, friend.
           </p>
         </div>
       ) : (
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-          {people.map((person) => (
-            <ImageCard
-              href={`/people/${person.id}/`}
-              image={person.data.heroImage}
-              imageAlt={person.data.heroImageAlt || person.data.name}
-              title={person.data.name}
-              subtitle={person.data.roles.length > 0 ? person.data.roles[0] : undefined}
-              fallbackLetter={person.data.name.charAt(0)}
-              aspectRatio="2/3"
-              variant="overlay"
-            />
-          ))}
+          {people.map((person) => {
+            const cardImage = person.data.heroImage ? getHeroImage(person.data.heroImage) : null;
+            return (
+              <ImageCard
+                href={`/people/${person.id}/`}
+                image={cardImage}
+                imageAlt={person.data.heroImageAlt || person.data.name}
+                title={person.data.name}
+                subtitle={person.data.roles.length > 0 ? person.data.roles[0] : undefined}
+                fallbackLetter={person.data.name.charAt(0)}
+                aspectRatio="2/3"
+                variant="overlay"
+              />
+            );
+          })}
         </div>
       )}
     </ContentContainer>

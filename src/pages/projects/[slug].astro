@@ -51,7 +51,7 @@ const heroImageUrl = latestPost ? getHeroImageUrl(latestPost.data.heroImage, lat
 const heroImageAlt = latestPost?.data.heroImageAlt || project.data.title;
 ---
 
-<BaseLayout title={`${project.data.title} - The Hobbinomicon`} description={project.data.description} image={heroImageUrl}>
+<BaseLayout title={`${project.data.title} | The Hobbinomicon`} description={project.data.description} image={heroImageUrl}>
   <StructuredData
     type="breadcrumb"
     data={{

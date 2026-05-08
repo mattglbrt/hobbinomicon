@@ -31,7 +31,7 @@ const tagDescription = getTagDescription(tag);
 const socialImage = posts[0] ? getHeroImageUrl(posts[0].data.heroImage, posts[0].data.youtubeId) : undefined;
 ---
 
-<BaseLayout title={`${tagDisplay} - The Hobbinomicon`} description={tagDescription} image={socialImage}>
+<BaseLayout title={`${tagDisplay} | The Hobbinomicon`} description={tagDescription} image={socialImage}>
   <StructuredData
     type="breadcrumb"
     data={{

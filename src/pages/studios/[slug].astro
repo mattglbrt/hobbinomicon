@@ -9,6 +9,7 @@ import ImageCard from '../../components/ImageCard.astro';
 import StructuredData from '../../components/StructuredData.astro';
 import { formatDateLong } from '../../utils/formatDate';
 import { sortByDate } from '../../utils/collections';
+import { getHeroImage } from '../../utils/getHeroImage';
 
 export async function getStaticPaths() {
   const studios = await getCollection('studios', ({ data }) => !data.draft);
@@ -51,7 +52,7 @@ const referenceLinks = [
 ---
 
 <BaseLayout
-  title={`${studio.data.name} — The Hobbinomicon`}
+  title={`${studio.data.name} | The Hobbinomicon`}
   description={studio.data.description}
   image={studio.data.heroImage}
 >
@@ -165,18 +166,21 @@ const referenceLinks = [
               Games
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {studioGames.map((g) => (
-                <ImageCard
-                  href={`/games/${g.id}/`}
-                  image={g.data.heroImage}
-                  imageAlt={g.data.heroImageAlt || g.data.title}
-                  title={g.data.title}
-                  subtitle={g.data.description}
-                  fallbackLetter={g.data.title.charAt(0)}
-                  aspectRatio="16/9"
-                  variant="overlay"
-                />
-              ))}
+              {studioGames.map((g) => {
+                const cardImage = g.data.heroImage ? getHeroImage(g.data.heroImage) : null;
+                return (
+                  <ImageCard
+                    href={`/games/${g.id}/`}
+                    image={cardImage}
+                    imageAlt={g.data.heroImageAlt || g.data.title}
+                    title={g.data.title}
+                    subtitle={g.data.description}
+                    fallbackLetter={g.data.title.charAt(0)}
+                    aspectRatio="16/9"
+                    variant="overlay"
+                  />
+                );
+              })}
             </div>
           </section>
         )}

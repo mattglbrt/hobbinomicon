@@ -7,13 +7,14 @@ import PageHeader from '../../components/PageHeader.astro';
 import ContentContainer from '../../components/ContentContainer.astro';
 import ImageCard from '../../components/ImageCard.astro';
 import StructuredData from '../../components/StructuredData.astro';
+import { getHeroImage } from '../../utils/getHeroImage';
 
 const studios = (await getCollection('studios', ({ data }) => !data.draft))
   .sort((a, b) => a.data.name.localeCompare(b.data.name));
 ---
 
 <BaseLayout
-  title="Studios — The Hobbinomicon"
+  title="Studios | The Hobbinomicon"
   description="Game publishers, mini sculptors, and the studios making the indie wargame scene."
 >
   <StructuredData
@@ -46,18 +47,21 @@ const studios = (await getCollection('studios', ({ data }) => !data.draft))
         </div>
       ) : (
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {studios.map((studio) => (
-            <ImageCard
-              href={`/studios/${studio.id}/`}
-              image={studio.data.heroImage}
-              imageAlt={studio.data.heroImageAlt || studio.data.name}
-              title={studio.data.name}
-              subtitle={studio.data.description}
-              fallbackLetter={studio.data.name.charAt(0)}
-              aspectRatio="16/9"
-              variant="overlay"
-            />
-          ))}
+          {studios.map((studio) => {
+            const cardImage = studio.data.heroImage ? getHeroImage(studio.data.heroImage) : null;
+            return (
+              <ImageCard
+                href={`/studios/${studio.id}/`}
+                image={cardImage}
+                imageAlt={studio.data.heroImageAlt || studio.data.name}
+                title={studio.data.name}
+                subtitle={studio.data.description}
+                fallbackLetter={studio.data.name.charAt(0)}
+                aspectRatio="16/9"
+                variant="overlay"
+              />
+            );
+          })}
         </div>
       )}
     </ContentContainer>

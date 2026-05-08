@@ -49,7 +49,7 @@ const gameFilters = hubPosts.map((hub) => {
 const socialImage = posts[0] ? getHeroImageUrl(posts[0].data.heroImage, posts[0].data.youtubeId) : undefined;
 ---
 
-<BaseLayout title={`${category} - The Hobbinomicon`} description={`${posts.length} ${posts.length === 1 ? 'post' : 'posts'} in ${category}`} image={socialImage}>
+<BaseLayout title={`${category} | The Hobbinomicon`} description={`${posts.length} ${posts.length === 1 ? 'post' : 'posts'} in ${category}`} image={socialImage}>
   <StructuredData
     type="breadcrumb"
     data={{
