@@ -136,6 +136,7 @@ npm run dev
 | `npm run preview` | Preview production build locally |
 | `npm run sync-vlogs` | Sync new videos from YouTube channel and create blog posts |
 | `npm run download-heroes` | Download YouTube thumbnails for hero images |
+| `npm run update-youtube-stats` | Refresh the video count shown on the About page |
 
 ### Adding New YouTube Content
 
@@ -165,6 +166,27 @@ git push
 `npm run download-heroes` (optional):
 - Run manually if you want to download thumbnails without a full build
 - Useful during development to cache images before committing
+
+### Refreshing the YouTube video count on the About page
+
+The "Videos Created" stat on the About page reads from `src/data/youtube-stats.json` instead of counting blog posts (since not every video gets polished into a blog post). To update it:
+
+```bash
+npm run update-youtube-stats
+git add src/data/youtube-stats.json
+git commit -m "Refresh YouTube stats"
+git push
+```
+
+**What it does:**
+
+- Calls the YouTube Data API v3 `channels.list` endpoint for `@Hobbinomicon`
+- Reads `statistics.videoCount`
+- Writes `{ videoCount, fetchedAt }` to `src/data/youtube-stats.json`
+
+**Auth:** Uses `YOUTUBE_API_KEY` (and optionally `YOUTUBE_CHANNEL_ID`) from `.env`. The same key `sync-vlogs` already uses. No OAuth required since channel statistics are publicly readable.
+
+Run it whenever you publish a batch of videos and want the count on the About page to reflect reality. Manual cadence for now; can be moved to a weekly GitHub Action later if it becomes annoying to remember.
 
 ## Creating Content
 

@@ -143,19 +143,16 @@ if (heroImage && isImageMetadata(heroImage)) {
             <ViewAllLink href="/news/">All News →</ViewAllLink>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {recentNewsCards.map(({ item, cardImage, logo }) => (
+            {recentNewsCards.map(({ item, cardImage }) => (
               <ImageCard
                 href={`/news/${item.id}/`}
                 image={cardImage}
                 imageAlt={item.data.heroImageAlt || item.data.title}
                 title={item.data.title}
                 subtitle={item.data.description}
-                badge={newsKindLabels[item.data.kind]}
-                logoOverlay={logo}
                 fallbackLetter={item.data.title.charAt(0)}
                 aspectRatio="16/9"
-                variant="overlay"
-                subtitleOnHover
+                variant="stacked"
               />
             ))}
           </div>

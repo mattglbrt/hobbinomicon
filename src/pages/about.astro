@@ -5,12 +5,13 @@ import HeroHeader from '../components/HeroHeader.astro';
 import StatCounter from '../components/StatCounter.astro';
 import Footer from '../components/Footer.astro';
 import { getCollection } from 'astro:content';
+import youtubeStats from '../data/youtube-stats.json';
 
 // Manual counters - update these as needed
-const miniaturesPainted = 15;
-const xactoBlades = 12;
-const plasticGlueBottles = 1;
-const superGlueBottles = 5;
+const miniaturesPainted = 23;
+const xactoBlades = 15;
+const plasticGlueBottles = 3;
+const superGlueBottles = 8;
 const toadsShipped = 2;
 
 // Get all published blog posts
@@ -19,8 +20,9 @@ const allPosts = await getCollection('blog', ({ data }) => !data.draft);
 // Count total posts
 const totalPosts = allPosts.length;
 
-// Count posts with YouTube videos
-const totalVideos = allPosts.filter(post => post.data.youtubeId).length;
+// Total videos comes from src/data/youtube-stats.json — refreshed weekly
+// by .github/workflows/update-youtube-stats.yml via the YouTube Data API.
+const totalVideos = youtubeStats.videoCount;
 
 // Calculate days since content creation started (September 11, 2025 EST)
 const startDate = new Date('2025-09-11T00:00:00-05:00');
@@ -29,8 +31,8 @@ const daysSinceStart = Math.floor((now.getTime() - startDate.getTime()) / (1000 
 ---
 
 <BaseLayout
-  title="About - The Hobbinomicon"
-  description="Learn more about The Hobbinomicon - a journal, spell book, and hobby blog focused on scale modeling, Warmachine, TTRPGs, and indie wargames."
+  title="About | The Hobbinomicon"
+  description="What The Hobbinomicon is, why I'm building it, and what I'm trying to do with a hobby directory for the niche of the niche."
 >
   <Header theme="light" />
 
@@ -46,10 +48,16 @@ const daysSinceStart = Math.floor((now.getTime() - startDate.getTime()) / (1000 
       <!-- Introduction -->
       <div class="prose prose-lg max-w-none mb-16">
         <p class="text-2xl md:text-3xl text-ink dark:text-ink-dark font-serif leading-relaxed mb-8 first-letter:text-6xl first-letter:font-heading first-letter:font-bold first-letter:float-left first-letter:mr-3 first-letter:leading-none first-letter:mt-1">
-          The Hobbinomicon is part journal, part spell book, part directory of indie wargames worth knowing about. Daily vlogs from the painting desk, deep coverage of small-press games, GW Specialist Games, classic Warhammer editions, and the standalone miniature lines keeping the niche of the niche alive.
+          The Hobbinomicon is part journal, part personal hobby log, part indie game directory and discovery platform.
+        </p>
+        <p class="text-2xl md:text-3xl text-ink dark:text-ink-dark font-serif leading-relaxed mb-8">
+          I'm not chasing a big audience. I'm trying to build the site I wanted when I was hunting down Mage Knight strategy guides on websites that had been dead for a decade. If you're looking for indie games, weird minis, or games that put the soul back into gaming and hobbying, this site is for you.
+        </p>
+        <p class="text-2xl md:text-3xl text-ink dark:text-ink-dark font-serif leading-relaxed mb-8">
+          I want to help people find indie games or specialist games their publishers (Games Workshop) abandoned. I want to highlight the indie and small press studios that are making great games and keeping the hobby alive. The people doing it for the love of the game.
         </p>
         <p class="text-2xl md:text-3xl text-ink dark:text-ink-dark font-serif leading-relaxed">
-          I'm documenting the slow march from normal tabletop painter to Golden Daemon-winning painter. Hopefully.
+          Daily hobby content since September 2025 and haven't missed a day yet. Working toward a Golden Daemon win and, some day, my own miniature company. Hopefully.
         </p>
         <p class="text-xl md:text-2xl text-ink dark:text-ink-dark font-serif leading-relaxed mt-8">
           Check out my <a href="/buy-sell-trade/" class="underline hover:text-ink/70 dark:hover:text-ink-dark/70 transition-colors">buy / sell / trade list</a> if you're looking to swap hobby items.

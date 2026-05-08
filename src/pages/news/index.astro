@@ -1,13 +1,14 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, getEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import ContentContainer from '../../components/ContentContainer.astro';
+import ImageCard from '../../components/ImageCard.astro';
 import StructuredData from '../../components/StructuredData.astro';
 import { sortByDate } from '../../utils/collections';
-import { formatDateLong } from '../../utils/formatDate';
+import { getHeroImage } from '../../utils/getHeroImage';
 
 const news = sortByDate(await getCollection('news', ({ data }) => !data.draft));
 
@@ -20,11 +21,23 @@ const kindLabels: Record<string, string> = {
   community: 'Community',
   other: 'News',
 };
+
+// Resolve relatedGame for each news item so cards can fall back to the game's
+// hero image and pick up its logo for the overlay.
+const newsCards = await Promise.all(
+  news.map(async (item) => {
+    const game = item.data.relatedGame ? await getEntry(item.data.relatedGame) : null;
+    const cardImageString = item.data.heroImage || game?.data.heroImage;
+    const cardImage = cardImageString ? getHeroImage(cardImageString) : null;
+    const logo = game?.data.logo ? getHeroImage(game.data.logo) : null;
+    return { item, cardImage, logo };
+  })
+);
 ---
 
 <BaseLayout
-  title="News — The Hobbinomicon"
-  description="Indie wargames news — Kickstarter launches, releases, errata, interviews, and community happenings."
+  title="News | The Hobbinomicon"
+  description="Indie wargames news. Kickstarter launches, releases, errata, interviews, and community happenings."
 >
   <StructuredData
     type="breadcrumb"
@@ -51,26 +64,22 @@ const kindLabels: Record<string, string> = {
             The wire is quiet
           </h2>
           <p class="text-ink/70 dark:text-ink-dark/70 text-lg">
-            Indie wargame news — written and curated — kicks off soon. Drop your email below if you want it in your inbox.
+            Indie wargame news, written and curated, kicks off soon. Drop your email below if you want it in your inbox.
           </p>
         </div>
       ) : (
-        <div class="max-w-3xl mx-auto space-y-6">
-          {news.map((item) => (
-            <a href={`/news/${item.id}/`} class="group block p-6 bg-ink/5 dark:bg-ink-dark/5 hover:bg-ink/10 dark:hover:bg-ink-dark/10 rounded-lg transition-colors">
-              <div class="flex items-center gap-3 mb-3">
-                <span class="text-xs font-heading uppercase tracking-[0.2em] px-2 py-1 bg-ink/10 dark:bg-ink-dark/10 text-ink dark:text-ink-dark rounded">
-                  {kindLabels[item.data.kind]}
-                </span>
-                <time datetime={item.data.pubDate.toISOString()} class="text-xs text-ink/60 dark:text-ink-dark/60">
-                  {formatDateLong(item.data.pubDate)}
-                </time>
-              </div>
-              <h2 class="text-2xl font-heading font-bold text-ink dark:text-ink-dark group-hover:underline mb-2">
-                {item.data.title}
-              </h2>
-              <p class="text-ink/70 dark:text-ink-dark/70">{item.data.description}</p>
-            </a>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {newsCards.map(({ item, cardImage }) => (
+            <ImageCard
+              href={`/news/${item.id}/`}
+              image={cardImage}
+              imageAlt={item.data.heroImageAlt || item.data.title}
+              title={item.data.title}
+              subtitle={item.data.description}
+              fallbackLetter={item.data.title.charAt(0)}
+              aspectRatio="16/9"
+              variant="stacked"
+            />
           ))}
         </div>
       )}
