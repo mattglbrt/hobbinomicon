@@ -121,17 +121,7 @@ if (heroImage && isImageMetadata(heroImage)) {
       />
     )}
 
-    <!-- 2. Latest Vlogs -->
-    <PostGridSection
-      title="Latest Vlogs"
-      eyebrow="Watch"
-      viewAllLink="/vlogs/"
-      posts={recentVlogs}
-      layout="masonry"
-      mobileLimit={3}
-    />
-
-    <!-- 3. What's New in Indie Wargaming -->
+    <!-- 2. What's New in Indie Wargaming -->
     {recentNews.length > 0 && (
       <section class="bg-ink/[0.03] dark:bg-ink-dark/[0.03] py-16 md:py-24" data-scroll-reveal>
         <ContentContainer>
@@ -159,6 +149,16 @@ if (heroImage && isImageMetadata(heroImage)) {
         </ContentContainer>
       </section>
     )}
+
+    <!-- 3. Latest Vlogs -->
+    <PostGridSection
+      title="Latest Vlogs"
+      eyebrow="Watch"
+      viewAllLink="/vlogs/"
+      posts={recentVlogs}
+      layout="masonry"
+      mobileLimit={3}
+    />
 
     <!-- 4. Newsletter CTA -->
     <NewsletterSignup variant="section" />
