@@ -1,7 +1,12 @@
 ---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { isImageMetadata } from '../utils/getHeroImage';
+
 /**
  * ResourceCard Component
- * A visually appealing card for resource pages with icon, title, description, and optional CTA
+ * A visually appealing card for resource pages with icon, title, description, and optional CTA.
+ * Pass `image` to render an optimized thumbnail in place of the icon.
  */
 
 interface Props {
@@ -15,8 +20,12 @@ interface Props {
   external?: boolean;
   /** Visual style variant */
   variant?: 'default' | 'featured' | 'compact';
-  /** Optional icon (emoji or text) */
+  /** Optional icon (emoji or text). Ignored when `image` is provided. */
   icon?: string;
+  /** Optional thumbnail image. Replaces the icon slot. */
+  image?: string | ImageMetadata;
+  /** Alt text for the image */
+  imageAlt?: string;
 }
 
 const {
@@ -26,7 +35,11 @@ const {
   external = false,
   variant = 'default',
   icon,
+  image,
+  imageAlt = '',
 } = Astro.props;
+
+const imageIsOptimized = image && isImageMetadata(image);
 
 const externalProps = external
   ? { target: '_blank', rel: 'noopener noreferrer' }
@@ -54,7 +67,25 @@ const titleClasses = {
   {...externalProps}
 >
   <div class="flex items-start gap-4">
-    {icon && (
+    {image ? (
+      imageIsOptimized ? (
+        <Image
+          src={image}
+          alt={imageAlt}
+          width={160}
+          height={160}
+          class="flex-shrink-0 w-20 h-20 rounded object-cover"
+          format="webp"
+          quality={75}
+        />
+      ) : (
+        <img
+          src={image}
+          alt={imageAlt}
+          class="flex-shrink-0 w-20 h-20 rounded object-cover"
+        />
+      )
+    ) : icon && (
       <span class:list={[
         'flex-shrink-0 text-2xl',
         variant === 'featured' ? 'text-3xl' : 'text-2xl',

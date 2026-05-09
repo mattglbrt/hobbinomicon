@@ -18,6 +18,8 @@ interface Props {
   variant?: 'overlay' | 'stacked';
   /** Hide subtitle by default; reveal on hover (overlay variant only) */
   subtitleOnHover?: boolean;
+  /** Open the link in a new tab with safe rel attributes */
+  external?: boolean;
   class?: string;
 }
 
@@ -34,8 +36,13 @@ const {
   aspectRatio = '16/9',
   variant = 'overlay',
   subtitleOnHover = false,
+  external = false,
   class: className = '',
 } = Astro.props;
+
+const externalProps = external
+  ? { target: '_blank', rel: 'noopener noreferrer' }
+  : {};
 
 const imageIsOptimized = image && isImageMetadata(image);
 const logoOverlayIsOptimized = logoOverlay && isImageMetadata(logoOverlay);
@@ -56,6 +63,7 @@ const hasSlot = Astro.slots.has('default');
   <a
     href={href}
     class:list={['group block', className]}
+    {...externalProps}
   >
     <div class:list={['relative overflow-hidden rounded-lg shadow-lg', aspectClasses[aspectRatio]]}>
       {imageIsOptimized ? (
@@ -159,6 +167,7 @@ const hasSlot = Astro.slots.has('default');
       'group block bg-white dark:bg-parchment-dark rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border-2 border-ink/10 dark:border-ink-dark/10 hover:border-ink/20 dark:hover:border-ink-dark/20',
       className
     ]}
+    {...externalProps}
   >
     {imageIsOptimized ? (
       <div class:list={['overflow-hidden', aspectClasses[aspectRatio]]}>
