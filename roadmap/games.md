@@ -204,6 +204,9 @@ Format I need from you: "It's an [X — TTRPG / skirmish / mass-battle / boardga
 - [ ] **Midguard** —
 - [ ] **Hobgoblin** —
 - [ ] **Rumpus** —
+- [ ] **Cyber Savages** —
+- [ ] **Alien Zoo Keeper** —
+- [ ] **Scrungaloids** —
 
 ---
 
