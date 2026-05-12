@@ -46,3 +46,13 @@
   for = "/*.js"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
+
+# Persist the YouTube thumbnail cache between builds.
+# scripts/download-hero-images.js writes thumbnails to src/assets/hero-cache/
+# and skips any file that already exists. Restoring this folder before the
+# build means only newly-published vlogs incur a download on each deploy.
+[[plugins]]
+  package = "netlify-plugin-cache"
+
+  [plugins.inputs]
+    paths = ["src/assets/hero-cache"]
