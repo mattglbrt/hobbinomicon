@@ -130,9 +130,7 @@ const hasSlot = Astro.slots.has('default');
           {badge}
         </span>
       )}
-      {logoOverlay ? (
-        <span class="sr-only">{title}{subtitle ? `. ${subtitle}` : ''}</span>
-      ) : (
+      {!logoOverlay && (
         <div class="absolute bottom-0 left-0 right-0 p-4 md:p-6">
           {hasSlot ? (
             <slot />
@@ -158,6 +156,16 @@ const hasSlot = Astro.slots.has('default');
         </div>
       )}
     </div>
+    {logoOverlay && (
+      <div class="mt-3">
+        <h3 class="text-lg md:text-xl font-heading font-bold text-ink dark:text-ink-dark group-hover:text-ink/80 dark:group-hover:text-ink-dark/80 transition-colors">
+          {title}
+        </h3>
+        {subtitle && (
+          <p class="text-ink/70 dark:text-ink-dark/70 mt-1 text-sm line-clamp-3">{subtitle}</p>
+        )}
+      </div>
+    )}
   </a>
 ) : (
   <!-- Stacked variant: Image on top, content below in a card -->
