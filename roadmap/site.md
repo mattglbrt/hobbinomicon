@@ -64,12 +64,13 @@ You're shipping build content already (draft energy counter post; daemon prince 
 
 ### Search coverage
 
-Cmd+K is wired. Coverage may not yet include the new directory entities.
+Audit done 2026-05-12. Coverage was already deeper than this roadmap originally implied: all six collections (`blog`, `projects`, `games`, `studios`, `people`, `news`) are indexed in `src/pages/search-index.json.ts`, result order puts directory entities before blog content, and vlog `searchText` excludes transcripts so blog posts only match intentional metadata.
 
-- [?] Confirm what `src/pages/search-index.json.ts` currently indexes
-- [ ] Add games, studios, people to the search index if they aren't already
-- [ ] Add news items
-- [ ] Test ranking — game name should outrank a vlog that just mentions the game in passing
+- [x] Audit existing coverage — all six collections already indexed
+- [x] Verify ranking — games outrank vlog mentions via collection priority + per-result scoring
+- [x] Title-prefix relevance boost (2026-05-12) — typing "war" surfaces Warmachine ahead of slug-order siblings; exact title match scores 1000, prefix match 500
+- [x] Default browse surface (2026-05-12) — modal opens to Featured games + Latest news + Recent vlogs when there's no query and no filter
+- [x] Clickable result tags (2026-05-12) — tag chips on each result are buttons that add to the active filter set
 
 ### Recurring maintenance
 
