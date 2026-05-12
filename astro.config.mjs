@@ -71,16 +71,15 @@ export default defineConfig({
     mdx(),
     sitemap({
       filter: (page) => {
-        // Exclude low-value and private pages
         const excludePatterns = [
           '/contact-success/',
           '/secret-toad/',
           '/404/',
-          '/blog/2/', '/blog/3/', '/blog/4/', '/blog/5/',
-          '/blog/6/', '/blog/7/', '/blog/8/', '/blog/9/',
-          '/blog/10/', '/blog/11/', '/blog/12/',
         ];
-        return !excludePatterns.some(pattern => page.includes(pattern));
+        if (excludePatterns.some(pattern => page.includes(pattern))) return false;
+        // Exclude paginated index pages (e.g. /blog/2/, /vlogs/3/) — keep page 1.
+        if (/\/(blog|vlogs)\/\d+\/$/.test(page)) return false;
+        return true;
       },
       serialize: (item) => {
         // Match the URL pathname against the content date map
