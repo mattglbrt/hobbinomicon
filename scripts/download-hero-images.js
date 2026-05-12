@@ -12,11 +12,14 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const CONTENT_DIR = path.join(__dirname, '../src/content/blog');
 const IMAGES_DIR = path.join(__dirname, '../src/assets/hero-cache');
+// Mirror path: sync-vlogs.js writes the no-prefix variant for posts whose
+// frontmatter uses heroImage="/images/hero-cache/<id>.jpg". Mirroring it
+// here means Netlify can regenerate both caches from a single download.
+const IMAGES_DIR_ALT = path.join(__dirname, '../src/assets/images/hero-cache');
 
-// Ensure cache directory exists
-if (!fs.existsSync(IMAGES_DIR)) {
-  fs.mkdirSync(IMAGES_DIR, { recursive: true });
-}
+// Ensure both cache directories exist
+fs.mkdirSync(IMAGES_DIR, { recursive: true });
+fs.mkdirSync(IMAGES_DIR_ALT, { recursive: true });
 
 /**
  * Extract frontmatter from MDX file
@@ -131,10 +134,23 @@ async function main() {
     const youtubeId = frontmatter.youtubeId;
     const cacheFileName = `yt-${youtubeId}.jpg`;
     const cachePath = path.join(IMAGES_DIR, cacheFileName);
-    const publicPath = `/images/hero-cache/${cacheFileName}`;
+    const altPath = path.join(IMAGES_DIR_ALT, `${youtubeId}.jpg`);
 
-    // Skip if already cached
-    if (fs.existsSync(cachePath)) {
+    // Both caches already populated
+    if (fs.existsSync(cachePath) && fs.existsSync(altPath)) {
+      skipped++;
+      continue;
+    }
+
+    // Mirror across when one side exists (covers warm-cache + new-vlog cases
+    // without re-downloading)
+    if (fs.existsSync(cachePath) && !fs.existsSync(altPath)) {
+      fs.copyFileSync(cachePath, altPath);
+      skipped++;
+      continue;
+    }
+    if (!fs.existsSync(cachePath) && fs.existsSync(altPath)) {
+      fs.copyFileSync(altPath, cachePath);
       skipped++;
       continue;
     }
@@ -145,6 +161,7 @@ async function main() {
       console.log(`   ${thumbnailUrl}`);
 
       await downloadImage(thumbnailUrl, cachePath);
+      fs.copyFileSync(cachePath, altPath);
 
       const stats = fs.statSync(cachePath);
       console.log(`   ✓ Saved (${(stats.size / 1024).toFixed(1)} KB)\n`);
