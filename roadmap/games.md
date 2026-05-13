@@ -11,25 +11,28 @@ Working doc — not deployed. Fill in the per-game checklists below; once a game
 
 ---
 
-## URL structure (decided 2026-05-07)
+## URL structure (decided 2026-05-07, shipped 2026-05-11)
 
 Format-based directory pages, each game lives under exactly one format. Solo is cross-cutting.
 
 ```
-/games/             → directory hub (intro + a few featured per format)
-/games/ttrpgs/      → all TTRPGs
-/games/skirmish/    → all skirmish miniature games
-/games/mass-battle/ → all rank-and-file / army-scale games
-/games/solo/        → cross-list: every game flagged solo:true (TTRPGs + minis)
-/games/graveyard/   → status:'oop' games (cross-format)
-/games/[slug]/      → individual game pages (already exists)
+/games/                  → directory hub (intro + a few featured per format)
+/games/ttrpgs/           → all TTRPGs
+/games/skirmish/         → all skirmish miniature games
+/games/large-scale-army/ → all rank-and-file / army-scale games
+/games/mass-battle/      → (also exists — see note below)
+/games/solo/             → cross-list: every game flagged solo:true (TTRPGs + minis)
+/games/graveyard/        → status:'oop' games (cross-format)
+/games/[slug]/           → individual game pages
 ```
 
-Schema changes needed to support this (do once before shipping any new game):
+Schema (shipped — see `src/content.config.ts:82-84`):
 
-- Add `format: 'ttrpg' | 'skirmish' | 'mass-battle' | 'boardgame'` (required)
-- Add `solo: boolean` (default false)
-- Mage Knight gets retroactively tagged with `format: 'skirmish'`.
+- `format: 'ttrpg' | 'skirmish' | 'large-scale-army' | 'mass-battle' | 'boardgame'` (required)
+- `solo: boolean` (default false)
+- `miniatureAgnostic: boolean` (default false) — added during build-out, not on original spec
+
+**Taxonomy drift to resolve:** Both `large-scale-army` and `mass-battle` are valid format values, but only `large-scale-army` is in use (Warmachine). Decide whether `mass-battle` is a duplicate to remove, or a distinct second bucket (e.g. rank-and-file historicals) we're keeping room for.
 
 ---
 
@@ -41,8 +44,9 @@ Schema changes needed to support this (do once before shipping any new game):
 ### Must have (page can't ship without these)
 - [ ] Title:
 - [ ] One-line description (~140 chars):
-- [ ] Format: ttrpg / skirmish / mass-battle / boardgame
+- [ ] Format: ttrpg / skirmish / large-scale-army / boardgame
 - [ ] Solo-friendly: yes / no
+- [ ] Miniature-agnostic: yes / no
 - [ ] Tier: indie / big
 - [ ] Status: active / oop / kickstarter / announced
 - [ ] Hero image: (path or "TBD — need source")
@@ -98,7 +102,7 @@ Lean toward fewer tags per game (3–6). The tags drive the "if you like X, try 
 
 Reference fields can't link to studios that don't exist. These need 1-paragraph stub entries before games that link to them can ship:
 
-- [ ] Steamforged Games — for Warmachine
+- [x] Steamforged Games — shipped 2026-05-08 (with Warmachine)
 - [ ] Corvus Belli — for Infinity
 - [ ] Free League — for The One Ring (Strider Mode)
 - [ ] Necrotic Gnome — for Dolmenwood
@@ -106,6 +110,8 @@ Reference fields can't link to studios that don't exist. These need 1-paragraph 
 - [ ] Metal King Studio — for Relic Blade
 - [ ] Games Workshop — for Middle Earth Strategy Battle Game
 - [x] Orc the Brand — shipped 2026-05-07
+- [x] Nubmark — shipped 2026-05-09 (with Motley Crews)
+- [x] Castle Grief — shipped 2026-05-13 (with Kal Arath)
 - [ ] Electi Studio — for Bloody Hollow
 - [ ] (TBD per game as we figure out publishers)
 
@@ -121,6 +127,9 @@ Reference fields can't link to studios that don't exist. These need 1-paragraph 
 - **Pre-fill:** Necrotic Gnome; current featured project (the Pokédex Project); OSR-adjacent fantasy.
 - **Solo?** GM-led campaign game. Probably no.
 
+### Kal Arath
+- **Shipped 2026-05-13** — page at `/games/kal-arath/`. Studio: Castle Grief. Format: ttrpg, solo: true. (Reclassified from skirmish — it's actually a solo-friendly OSR TTRPG.)
+
 ## Skirmish
 
 ### Trench Crusade
@@ -135,16 +144,11 @@ Reference fields can't link to studios that don't exist. These need 1-paragraph 
 - **Pre-fill:** Metal King Studio; you own a ton, planning to paint it this year, "huge fan."
 - **Solo?** TBD.
 
-### Kal Arath
-- **Pre-fill:** indie; you have multi-episode live-play vlog content.
-- **Solo?** TBD.
-
 ## Mass-battle
 
 ### Warmachine
-- **Pre-fill:** Steamforged Games (formerly Privateer Press); you own Crucible Guard, Menoth, Fifth Division, Armored Core, Retribution, Dusk, Phantom of Nero, Cryx (partial), Convergence (most), Royal Guard, Dark Operations, Storm of the North, Grymkin (partial), Rolling Guard.
-- **Tier:** big (your call — confirmed 2026-05-07)
-- **Solo?** No.
+- **Shipped 2026-05-08** — page at `/games/warmachine/`. Format: `large-scale-army`.
+- **Pre-fill (kept for reference):** Steamforged Games (formerly Privateer Press); Crucible Guard, Menoth, Fifth Division, Armored Core, Retribution, Dusk, Phantom of Nero, Cryx (partial), Convergence (most), Royal Guard, Dark Operations, Storm of the North, Grymkin (partial), Rolling Guard.
 
 ### Infinity
 - **Pre-fill:** Corvus Belli; you own the full Combined Army faction.
@@ -174,8 +178,7 @@ Reference fields can't link to studios that don't exist. These need 1-paragraph 
 ## Skirmish
 
 ### Motley Crews
-- **Pre-fill:** indie skirmish.
-- **Studio:** TBD.
+- **Shipped 2026-05-09** — page at `/games/motley-crews/`. Studio: Nubmark. Format: skirmish, miniature-agnostic.
 
 ### Necropolis
 - **Pre-fill:** which Necropolis? Multiple games share the name.
@@ -195,11 +198,11 @@ Reference fields can't link to studios that don't exist. These need 1-paragraph 
 Format I need from you: "It's an [X — TTRPG / skirmish / mass-battle / boardgame] by [Y]. Solo: yes/no. Official: URL. My take: one line."
 
 - [x] **Monster Friends: Battle for New Florida** — shipped 2026-05-07. Page at `/games/monster-friends-battle-for-new-florida/`.
-- [ ] **Wanted Reward CC 10000** —
+- [x] **Wanted! Reward: CC 10000** — shipped 2026-05-12. Page at `/games/wanted-reward-cc10000/`.
 - [ ] **Flames of Orion** —
 - [ ] **Gloam** —
 - [ ] **Hag 28** —
-- [ ] **Omentide** —
+- [x] **Ømen Tide** — shipped 2026-05-11. Page at `/games/omen-tide/`.
 - [ ] **Pillage** —
 - [ ] **Midguard** —
 - [ ] **Hobgoblin** —
@@ -212,11 +215,11 @@ Format I need from you: "It's an [X — TTRPG / skirmish / mass-battle / boardga
 
 ## Implementation order
 
-1. **Schema change** — add `format` and `solo` fields. Update Mage Knight frontmatter (set `format`, set `solo`). Build, ship.
-2. **Format index pages** — build `/games/ttrpgs/`, `/games/skirmish/`, `/games/mass-battle/`, `/games/solo/`. Convert `/games/index.astro` into a hub page with a few featured games per format. Existing `/games/graveyard/` lives at status filter level — already implicitly covered by current Graveyard section, but now becomes its own page too.
-3. **Studio stubs** — write 1-paragraph entries for all studios in the "to stub first" list.
-4. **Game stubs** — start with one wave-1 game per format to test the full flow end-to-end (e.g. Dolmenwood + Trench Crusade + Warmachine). Once the flow feels good, batch the rest.
-5. **Deepen** — full wave-1 coverage as content gets written.
+1. **Schema change** — ✅ shipped. `format`, `solo`, `miniatureAgnostic` all live in `src/content.config.ts`. Mage Knight retagged.
+2. **Format index pages** — ✅ shipped. `ttrpgs.astro`, `skirmish.astro`, `large-scale-army.astro`, `mass-battle.astro`, `solo.astro`, `graveyard.astro`, hub at `index.astro`.
+3. **Studio stubs** — in progress. Shipped: Orc the Brand, Nubmark, Steamforged Games, Castle Grief. Still needed: Corvus Belli, Free League, Necrotic Gnome, Lampblack & Brimstone, Metal King Studio, Games Workshop, Electi Studio.
+4. **Game stubs** — in progress. End-to-end flow validated via Warmachine (large-scale-army), Monster Friends / Motley Crews / Wanted / Ømen Tide (skirmish), Kal Arath (ttrpg).
+5. **Deepen** — pending full wave-1 coverage.
 
 ---
 
