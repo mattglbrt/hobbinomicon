@@ -219,6 +219,11 @@ const hasSlot = Astro.slots.has('default');
         <slot />
       ) : (
         <>
+          {badge && (
+            <span class="inline-block mb-2 text-[10px] font-heading uppercase tracking-[0.15em] text-ink/50 dark:text-ink-dark/50">
+              {badge}
+            </span>
+          )}
           <h3 class="text-xl font-heading font-bold text-ink dark:text-ink-dark group-hover:text-ink/80 dark:group-hover:text-ink-dark/80 transition-colors">
             {title}
           </h3>

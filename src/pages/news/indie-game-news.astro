@@ -10,18 +10,9 @@ import StructuredData from '../../components/StructuredData.astro';
 import { sortByDate } from '../../utils/collections';
 import { getHeroImage } from '../../utils/getHeroImage';
 
-const news = sortByDate(await getCollection('news', ({ data }) => !data.draft));
-
-const kindLabels: Record<string, string> = {
-  kickstarter: 'Kickstarter',
-  'indie-game-news': 'Indie Game News',
-  release: 'Release',
-  errata: 'Errata',
-  announcement: 'Announcement',
-  interview: 'Interview',
-  community: 'Community',
-  other: 'News',
-};
+const news = sortByDate(
+  await getCollection('news', ({ data }) => !data.draft && data.kind === 'indie-game-news')
+);
 
 // Resolve relatedGame for each news item so cards can fall back to the game's
 // hero image and pick up its logo for the overlay.
@@ -30,15 +21,14 @@ const newsCards = await Promise.all(
     const game = item.data.relatedGame ? await getEntry(item.data.relatedGame) : null;
     const cardImageString = item.data.heroImage || game?.data.heroImage;
     const cardImage = cardImageString ? getHeroImage(cardImageString) : null;
-    const logo = game?.data.logo ? getHeroImage(game.data.logo) : null;
-    return { item, cardImage, logo };
+    return { item, cardImage };
   })
 );
 ---
 
 <BaseLayout
-  title="News | The Hobbinomicon"
-  description="Indie wargames news. Kickstarter launches, releases, errata, interviews, and community happenings."
+  title="Indie Game News | The Hobbinomicon"
+  description="Indie wargame news. Releases, updates, free downloads, and what's new from indie studios."
 >
   <StructuredData
     type="breadcrumb"
@@ -46,6 +36,7 @@ const newsCards = await Promise.all(
       breadcrumbs: [
         { name: 'Home', url: 'https://hobbinomicon.com/' },
         { name: 'News', url: 'https://hobbinomicon.com/news/' },
+        { name: 'Indie Game News', url: 'https://hobbinomicon.com/news/indie-game-news/' },
       ],
     }}
   />
@@ -53,38 +44,25 @@ const newsCards = await Promise.all(
 
   <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
     <PageHeader
-      title="News"
-      description="What's launching, releasing, and worth knowing in the indie wargame world."
-      breadcrumbs={[{ label: 'News', href: '/news' }]}
+      title="Indie Game News"
+      description="Releases, updates, and free downloads from the indie wargame studios worth following."
+      breadcrumbs={[
+        { label: 'News', href: '/news' },
+        { label: 'Indie Game News', href: '/news/indie-game-news' },
+      ]}
     />
 
     <ContentContainer class="py-16">
       {news.length === 0 ? (
         <div class="max-w-2xl mx-auto text-center py-16">
           <h2 class="text-2xl md:text-3xl font-heading font-bold text-ink dark:text-ink-dark mb-4">
-            The wire is quiet
+            Nothing on the wire yet
           </h2>
           <p class="text-ink/70 dark:text-ink-dark/70 text-lg">
-            Indie wargame news, written and curated, kicks off soon. Drop your email below if you want it in your inbox.
+            Indie game releases and updates land here as studios ship them. Check back soon.
           </p>
         </div>
       ) : (
-        <>
-        <div class="flex flex-wrap items-center gap-2 mb-8 text-xs font-heading uppercase tracking-[0.15em]">
-          <span class="text-ink/50 dark:text-ink-dark/50">Browse:</span>
-          <a
-            href="/news/kickstarter/"
-            class="px-3 py-1 rounded-full border border-ink/20 dark:border-ink-dark/20 text-ink/70 dark:text-ink-dark/70 hover:bg-ink/10 dark:hover:bg-ink-dark/10 transition-colors"
-          >
-            Kickstarters
-          </a>
-          <a
-            href="/news/indie-game-news/"
-            class="px-3 py-1 rounded-full border border-ink/20 dark:border-ink-dark/20 text-ink/70 dark:text-ink-dark/70 hover:bg-ink/10 dark:hover:bg-ink-dark/10 transition-colors"
-          >
-            Indie Game News
-          </a>
-        </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {newsCards.map(({ item, cardImage }) => (
             <ImageCard
@@ -93,14 +71,13 @@ const newsCards = await Promise.all(
               imageAlt={item.data.heroImageAlt || item.data.title}
               title={item.data.title}
               subtitle={item.data.description}
-              badge={item.data.kind !== 'other' ? kindLabels[item.data.kind] : undefined}
+              badge="Indie Game News"
               fallbackLetter={item.data.title.charAt(0)}
               aspectRatio="16/9"
               variant="stacked"
             />
           ))}
         </div>
-        </>
       )}
     </ContentContainer>
 

@@ -183,8 +183,8 @@ const news = defineCollection({
     draft: z.boolean().default(false),
 
     kind: z.enum([
-      'kickstarter', 'release', 'errata', 'announcement',
-      'interview', 'community', 'other',
+      'kickstarter', 'indie-game-news', 'release', 'errata',
+      'announcement', 'interview', 'community', 'other',
     ]).default('other'),
 
     relatedGame: reference('games').optional(),
