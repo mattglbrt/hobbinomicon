@@ -98,6 +98,7 @@ const games = defineCollection({
     discordUrl: z.string().url().optional(),
     subredditUrl: z.string().url().optional(),
     kickstarterUrl: z.string().url().optional(),
+    facebookUrl: z.string().url().optional(),
 
     podcasts: z.array(z.object({
       name: z.string(),
@@ -135,6 +136,7 @@ const studios = defineCollection({
     instagramUrl: z.string().url().optional(),
     youtubeUrl: z.string().url().optional(),
     patreonUrl: z.string().url().optional(),
+    facebookUrl: z.string().url().optional(),
   }),
 });
 

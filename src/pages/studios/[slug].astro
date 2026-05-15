@@ -48,6 +48,7 @@ const referenceLinks = [
   { label: 'Instagram', url: studio.data.instagramUrl },
   { label: 'YouTube', url: studio.data.youtubeUrl },
   { label: 'Patreon', url: studio.data.patreonUrl },
+  { label: 'Facebook', url: studio.data.facebookUrl },
 ].filter((l): l is { label: string; url: string } => Boolean(l.url));
 ---
 
@@ -81,6 +82,7 @@ const referenceLinks = [
         studio.data.youtubeUrl,
         studio.data.patreonUrl,
         studio.data.discordUrl,
+        studio.data.facebookUrl,
       ].filter((u): u is string => Boolean(u)),
     }}
   />

@@ -70,6 +70,7 @@ const referenceLinks = [
   { label: 'Official Discord', url: game.data.discordUrl },
   { label: 'Subreddit', url: game.data.subredditUrl },
   { label: 'Kickstarter', url: game.data.kickstarterUrl },
+  { label: 'Facebook', url: game.data.facebookUrl },
 ].filter((l): l is { label: string; url: string } => Boolean(l.url));
 
 const hasReferenceCard = Boolean(studio) || designers.length > 0 || referenceLinks.length > 0;
