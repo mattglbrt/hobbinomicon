@@ -23,6 +23,9 @@ const largeScaleArmy = sortGamesPinnedThenTitle(
 const massBattle = sortGamesPinnedThenTitle(
   allGames.filter((g) => g.data.format === 'mass-battle' && g.data.status !== 'oop')
 ).slice(0, 6);
+const narrative = sortGamesPinnedThenTitle(
+  allGames.filter((g) => g.data.format === 'narrative' && g.data.status !== 'oop')
+).slice(0, 6);
 const graveyard = sortGamesPinnedThenTitle(
   allGames.filter((g) => g.data.status === 'oop')
 ).slice(0, 6);
@@ -130,6 +133,26 @@ const soloCount = allGames.filter((g) => g.data.solo === true && g.data.status !
           games={ttrpgs}
           emptyTitle="Nothing here yet"
           emptyMessage="TTRPGs are coming. The first batch is in the roadmap."
+        />
+      </section>
+
+      <!-- Narrative -->
+      <section>
+        <div class="flex items-baseline justify-between mb-2 gap-4">
+          <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark">
+            <a href="/games/narrative/" class="hover:underline underline-offset-4">Narrative</a>
+          </h2>
+          <a href="/games/narrative/" class="text-ink/70 dark:text-ink-dark/70 hover:text-ink dark:hover:text-ink-dark text-sm font-medium whitespace-nowrap">
+            View all →
+          </a>
+        </div>
+        <p class="text-ink/70 dark:text-ink-dark/70 text-lg mb-8">
+          Story and scenario-driven miniature games. Often solo or co-op, often the weirder end of the hobby.
+        </p>
+        <GameGrid
+          games={narrative}
+          emptyTitle="Nothing here yet"
+          emptyMessage="Narrative games coverage is coming."
         />
       </section>
 
