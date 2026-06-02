@@ -10,6 +10,10 @@
 [build.environment]
   # Astro 6 requires Node.js 22+
   NODE_VERSION = "22"
+  # YOUTUBE_CHANNEL_ID is a public identifier (it appears in channel links, the
+  # RSS feed, and src/data/youtube-comments.json), so exclude it from secrets
+  # scanning. YOUTUBE_API_KEY is intentionally NOT listed — it stays scanned.
+  SECRETS_SCAN_OMIT_KEYS = "YOUTUBE_CHANNEL_ID"
 
 # Email notification for form submissions
 # Form submissions will be sent to the email configured in Netlify dashboard
