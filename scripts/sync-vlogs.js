@@ -14,6 +14,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { fetchTranscript } from 'youtube-transcript-plus';
 import dotenv from 'dotenv';
+import { formatTranscriptParagraphs } from './lib/format-transcript.js';
 
 dotenv.config();
 
@@ -249,9 +250,9 @@ import YouTubeEmbed from '../../../components/YouTubeEmbed.astro';
     content += `\n## About This Video\n\n${video.description}\n`;
   }
 
-  // Add transcript section
+  // Add transcript section (split into readable paragraphs)
   if (transcript) {
-    content += `\n## Transcript\n\n${transcript}\n`;
+    content += `\n## Transcript\n\n${formatTranscriptParagraphs(transcript)}\n`;
   }
 
   return content;
@@ -276,23 +277,28 @@ function saveSyncLog(log) {
 async function main() {
   console.log('Syncing YouTube videos to blog posts...\n');
 
-  if (!YOUTUBE_API_KEY) {
-    console.error('Error: YOUTUBE_API_KEY not set in .env');
-    process.exit(1);
-  }
-  if (!CHANNEL_ID) {
-    console.error('Error: YOUTUBE_CHANNEL_ID not set in .env');
-    process.exit(1);
+  // Missing credentials must never break a deploy — skip the sync and let the
+  // build proceed with whatever vlogs are already committed.
+  if (!YOUTUBE_API_KEY || !CHANNEL_ID) {
+    console.warn('Skipping vlog sync: YOUTUBE_API_KEY / YOUTUBE_CHANNEL_ID not set. Using existing content.');
+    return;
   }
 
   // Get existing YouTube IDs from blog posts
   const existingIds = getExistingYouTubeIds();
   console.log(`Found ${existingIds.size} existing posts with YouTube videos\n`);
 
-  // Fetch channel videos
+  // Fetch channel videos. A feed failure (API down, quota, bad key) must not
+  // break the build — warn and fall back to existing content.
   console.log('Fetching channel uploads...');
-  const uploadsPlaylistId = await getUploadsPlaylistId(CHANNEL_ID);
-  const videos = await getPlaylistVideos(uploadsPlaylistId);
+  let videos;
+  try {
+    const uploadsPlaylistId = await getUploadsPlaylistId(CHANNEL_ID);
+    videos = await getPlaylistVideos(uploadsPlaylistId);
+  } catch (error) {
+    console.warn(`Skipping vlog sync: could not fetch channel feed (${error.message}). Using existing content.`);
+    return;
+  }
   console.log(`Found ${videos.length} total videos\n`);
 
   // Filter to new videos only
@@ -368,6 +374,7 @@ async function main() {
 }
 
 main().catch(error => {
-  console.error('Fatal error:', error);
-  process.exit(1);
+  // Never fail the build on an unexpected sync error — log and continue with
+  // whatever content is already committed.
+  console.warn('Vlog sync did not complete:', error.message);
 });
