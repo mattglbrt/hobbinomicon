@@ -191,7 +191,9 @@ function createExcerpt(description) {
 
 function generateMdx(video, transcript, tags, hasHeroImage) {
   const safeTitle = video.title.replace(/"/g, '\\"');
-  const excerpt = createExcerpt(video.description).replace(/"/g, '\\"');
+  // Fall back to a transcript-derived excerpt when the video has no
+  // description, so the post never ships an empty meta description.
+  const excerpt = (createExcerpt(video.description) || createExcerpt(transcript)).replace(/"/g, '\\"');
   const tagsStr = JSON.stringify(tags);
 
   let content = `---
