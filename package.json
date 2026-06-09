@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "astro dev",
     "sync-vlogs": "node scripts/sync-vlogs.js",
-    "prebuild": "node scripts/sync-vlogs.js && node scripts/download-hero-images.js",
+    "backfill-transcripts": "node scripts/backfill-transcripts.js",
+    "prebuild": "node scripts/sync-vlogs.js && node scripts/backfill-transcripts.js && node scripts/download-hero-images.js",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",

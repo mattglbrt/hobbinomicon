@@ -12,9 +12,9 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { fetchTranscript } from 'youtube-transcript-plus';
 import dotenv from 'dotenv';
 import { formatTranscriptParagraphs } from './lib/format-transcript.js';
+import { getTranscript } from './lib/fetch-transcript.js';
 
 dotenv.config();
 
@@ -90,38 +90,6 @@ async function getPlaylistVideos(playlistId) {
   } while (pageToken);
 
   return videos;
-}
-
-// ─── Transcript ────────────────────────────────────────────────
-
-async function getTranscript(videoId) {
-  try {
-    const transcript = await fetchTranscript(videoId);
-    if (!transcript || transcript.length === 0) return null;
-
-    const text = transcript
-      .map(item => item.text || item.content || item.snippet || '')
-      .join(' ');
-
-    // Clean up auto-generated artifacts
-    return text
-      .replace(/\[Music\]/gi, '')
-      .replace(/\[Applause\]/gi, '')
-      .replace(/&amp;#39;/g, "'")
-      .replace(/&amp;quot;/g, '"')
-      .replace(/&amp;gt;/g, '>')
-      .replace(/&amp;lt;/g, '<')
-      .replace(/&amp;amp;/g, '&')
-      .replace(/&#39;/g, "'")
-      .replace(/&quot;/g, '"')
-      .replace(/&gt;/g, '>')
-      .replace(/&lt;/g, '<')
-      .replace(/&amp;/g, '&')
-      .replace(/\s+/g, ' ')
-      .trim();
-  } catch {
-    return null;
-  }
 }
 
 // ─── Auto-Tagging ──────────────────────────────────────────────
