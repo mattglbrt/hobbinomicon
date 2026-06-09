@@ -14,7 +14,7 @@ const { postSlug } = Astro.props;
 const API_URL = import.meta.env.PUBLIC_COMMENTS_API_URL || 'https://hobbinomicon-comments.YOUR_SUBDOMAIN.workers.dev';
 ---
 
-<section class="comments-section mt-16 pt-12 border-t-2 border-ink/20 dark:border-ink-dark/20" data-post-slug={postSlug} data-api-url={API_URL}>
+<section class="comments-section mt-16 pt-12 border-t-2 border-ink/20 dark:border-ink-dark/20" data-post-slug={postSlug} data-api-url={API_URL} data-pagefind-ignore>
   <h2 class="text-3xl font-heading font-bold text-ink dark:text-ink-dark mb-8">Comments</h2>
 
   <!-- Comment Form -->

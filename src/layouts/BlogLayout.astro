@@ -113,7 +113,7 @@ const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
     />
   )}
   <Header />
-  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark" data-pagefind-body data-pagefind-meta={`category:${category}`} data-pagefind-filter={`category:${category}`}>
     <!-- Standard Blog Post Layout -->
         <!-- Reading Progress Bar -->
         <div class="reading-progress fixed top-0 left-0 h-[3px] bg-gradient-to-r from-ink/80 via-ink to-ink/80 dark:from-parchment-dark/80 dark:via-parchment-dark dark:to-parchment-dark/80 z-50 transition-none" style="width: 0%;"></div>
@@ -178,7 +178,7 @@ const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
                 {category}
               </span>
             </div>
-            <h1 class="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-ink dark:text-ink-dark mb-6 leading-tight" style="line-height: 0.9;" transition:name={`title-${slug}`}>
+            <h1 class="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-ink dark:text-ink-dark mb-6 leading-tight" style="line-height: 0.9;" transition:name={`title-${slug}`} data-pagefind-meta="title">
               {title}
             </h1>
             <div class="flex flex-wrap gap-4 items-center text-ink/60 dark:text-ink-dark/60 text-sm">
@@ -207,6 +207,7 @@ const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
                 <a
                   href={`/tags/${tag}/`}
                   class="text-sm px-3 py-1 bg-ink/5 dark:bg-ink-dark/5 hover:bg-ink/20 dark:hover:bg-ink-dark/20 text-ink dark:text-ink-dark rounded-full transition-colors"
+                  data-pagefind-filter={`tag:${tag}`}
                 >
                   #{tag}
                 </a>
