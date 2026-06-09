@@ -19,6 +19,10 @@
     "content-type": {
       "display": "Content Types",
       "description": "Types of content and posts"
+    },
+    "brand": {
+      "display": "Brands & Products",
+      "description": "Paint ranges, tools, and hobby products"
     }
   },
   "tags": {
@@ -72,7 +76,6 @@
       "description": "Episodes from the Hesychía settlement campaign in Kingdom Death: Monster.",
       "category": "faction"
     },
-
     "menoth": {
       "display": "Menoth",
       "description": "The Protectorate of Menoth faction from Warmachine - zealous theocracy with fire and denial mechanics.",
@@ -103,7 +106,6 @@
       "description": "The Last Watch campaign party - a group of Nyss survivors in the Crown and Skull RPG.",
       "category": "faction"
     },
-
     "painting": {
       "display": "Painting",
       "description": "General miniature painting content, tips, and techniques.",
@@ -229,7 +231,6 @@
       "description": "Painting eyes and faces on miniatures.",
       "category": "technique"
     },
-
     "3d-printing": {
       "display": "3D Printing",
       "description": "Resin and FDM 3D printing for miniatures, terrain, and hobby projects.",
@@ -285,7 +286,6 @@
       "description": "Hobby workspace setup, organization, and optimization.",
       "category": "hobby"
     },
-
     "battle-report": {
       "display": "Battle Report",
       "description": "Game reports and battle recaps from tabletop gaming sessions.",
@@ -356,11 +356,6 @@
       "description": "Content related to ongoing tabletop RPG campaigns.",
       "category": "content-type"
     },
-    "rpg": {
-      "display": "RPG",
-      "description": "Tabletop role-playing game content and related topics.",
-      "category": "game-system"
-    },
     "wargaming": {
       "display": "Wargaming",
       "description": "General tabletop wargaming content, strategy, and discussion.",
@@ -395,6 +390,136 @@
       "display": "Prima Materia",
       "description": "Content using the Prima Materia oracle dice by Man Alone and Dice Nest, an alchemical-symbol storytelling system.",
       "category": "game-system"
+    },
+    "ttrpg": {
+      "display": "TTRPG",
+      "description": "Tabletop role-playing game content and related topics.",
+      "category": "game-system"
+    },
+    "infinity": {
+      "display": "Infinity",
+      "description": "Content about Infinity, the sci-fi skirmish game by Corvus Belli.",
+      "category": "game-system"
+    },
+    "inq28": {
+      "display": "INQ28",
+      "description": "Content about INQ28, the narrative 28mm Inquisitor / Warhammer 40,000 kitbashing scene.",
+      "category": "game-system"
+    },
+    "old-world": {
+      "display": "The Old World",
+      "description": "Content about Warhammer: The Old World, the mass-battle fantasy wargame.",
+      "category": "game-system"
+    },
+    "relicblade": {
+      "display": "Relicblade",
+      "description": "Content about Relicblade, the fantasy adventure skirmish game by Metal King Studio.",
+      "category": "game-system"
+    },
+    "midgard": {
+      "display": "Midgard",
+      "description": "Content about Midgard, a fantasy mass-battle wargame.",
+      "category": "game-system"
+    },
+    "board-games": {
+      "display": "Board Games",
+      "description": "Board game content, plays, and reviews.",
+      "category": "game-system"
+    },
+    "crucible-guard": {
+      "display": "Crucible Guard",
+      "description": "The Crucible Guard, an alchemy-and-industry faction from Warmachine.",
+      "category": "faction"
+    },
+    "children-of-gomb": {
+      "display": "Children of Gomb",
+      "description": "The Children of Gomb warband.",
+      "category": "faction"
+    },
+    "goblins": {
+      "display": "Goblins",
+      "description": "Painting and modeling goblins and other greenskins.",
+      "category": "faction"
+    },
+    "normans": {
+      "display": "Normans",
+      "description": "Norman medieval historical miniatures and armies.",
+      "category": "faction"
+    },
+    "sculpting": {
+      "display": "Sculpting",
+      "description": "Sculpting original miniatures and details from scratch.",
+      "category": "technique"
+    },
+    "conversion": {
+      "display": "Conversion",
+      "description": "Converting and modifying miniatures into custom models.",
+      "category": "technique"
+    },
+    "green-stuff": {
+      "display": "Green Stuff",
+      "description": "Sculpting and gap-filling with Green Stuff epoxy putty.",
+      "category": "technique"
+    },
+    "mold-making": {
+      "display": "Mold Making",
+      "description": "Making molds for casting resin or metal parts.",
+      "category": "technique"
+    },
+    "oil-wash": {
+      "display": "Oil Wash",
+      "description": "Using oil-paint washes for shading and weathering.",
+      "category": "technique"
+    },
+    "movement-trays": {
+      "display": "Movement Trays",
+      "description": "Building and using movement trays for rank-and-file units.",
+      "category": "hobby"
+    },
+    "review": {
+      "display": "Review",
+      "description": "Reviews of games, models, paints, and hobby products.",
+      "category": "content-type"
+    },
+    "giveaway": {
+      "display": "Giveaway",
+      "description": "Giveaways and community contests.",
+      "category": "content-type"
+    },
+    "competition": {
+      "display": "Competition",
+      "description": "Painting and modeling competitions.",
+      "category": "content-type"
+    },
+    "scale-75": {
+      "display": "Scale75",
+      "description": "Content using Scale75 paints and products.",
+      "category": "brand"
+    },
+    "vallejo": {
+      "display": "Vallejo",
+      "description": "Content using Vallejo paints and products.",
+      "category": "brand"
+    },
+    "army-painter": {
+      "display": "The Army Painter",
+      "description": "Content using The Army Painter paints and products.",
+      "category": "brand"
+    },
+    "liquid-chrome": {
+      "display": "Liquid Chrome",
+      "description": "Content using Molotow Liquid Chrome and similar chrome-finish products.",
+      "category": "brand"
+    },
+    "hobgoblin": {
+      "display": "Hobgoblin",
+      "description": "Content about Hobgoblin, the fantasy skirmish wargame.",
+      "category": "game-system"
+    },
+    "orcs": {
+      "display": "Orcs",
+      "description": "Painting and modeling orcs and ork armies.",
+      "category": "faction"
     }
   }
 }
