@@ -23,35 +23,43 @@ const HANDLE = '@Hobbinomicon';
 const apiKey = process.env.YOUTUBE_API_KEY;
 const channelId = process.env.YOUTUBE_CHANNEL_ID;
 
+// Runs in `prebuild`, so it must never break the build: on any missing
+// credential or API failure, warn and keep the value already committed in
+// src/data/youtube-stats.json.
 if (!apiKey) {
-  console.error('Missing YOUTUBE_API_KEY (set it in .env).');
-  process.exit(1);
+  console.warn('Skipping YouTube stats update: YOUTUBE_API_KEY not set. Using existing value.');
+  process.exit(0);
 }
 
-const youtube = google.youtube({ version: 'v3', auth: apiKey });
+try {
+  const youtube = google.youtube({ version: 'v3', auth: apiKey });
 
-const params = channelId
-  ? { part: ['statistics'], id: [channelId] }
-  : { part: ['statistics'], forHandle: HANDLE };
+  const params = channelId
+    ? { part: ['statistics'], id: [channelId] }
+    : { part: ['statistics'], forHandle: HANDLE };
 
-const res = await youtube.channels.list(params);
+  const res = await youtube.channels.list(params);
 
-const channel = res.data.items?.[0];
-if (!channel) {
-  console.error(`Channel not found (id=${channelId || ''} handle=${HANDLE}).`);
-  process.exit(1);
+  const channel = res.data.items?.[0];
+  if (!channel) {
+    console.warn(`Skipping YouTube stats update: channel not found (id=${channelId || ''} handle=${HANDLE}). Using existing value.`);
+    process.exit(0);
+  }
+
+  const videoCount = parseInt(channel.statistics.videoCount, 10);
+  if (!Number.isFinite(videoCount)) {
+    console.warn('Skipping YouTube stats update: could not parse videoCount. Using existing value.');
+    process.exit(0);
+  }
+
+  const data = {
+    videoCount,
+    fetchedAt: new Date().toISOString(),
+  };
+
+  fs.writeFileSync(STATS_PATH, JSON.stringify(data, null, 2) + '\n');
+  console.log(`Updated YouTube stats: ${videoCount} videos at ${data.fetchedAt}`);
+} catch (error) {
+  console.warn(`Skipping YouTube stats update: ${error.message}. Using existing value.`);
+  process.exit(0);
 }
-
-const videoCount = parseInt(channel.statistics.videoCount, 10);
-if (!Number.isFinite(videoCount)) {
-  console.error('Could not parse videoCount from API response.');
-  process.exit(1);
-}
-
-const data = {
-  videoCount,
-  fetchedAt: new Date().toISOString(),
-};
-
-fs.writeFileSync(STATS_PATH, JSON.stringify(data, null, 2) + '\n');
-console.log(`Updated YouTube stats: ${videoCount} videos at ${data.fetchedAt}`);
