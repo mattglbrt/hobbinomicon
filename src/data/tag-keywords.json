@@ -57,6 +57,14 @@
       "dolmen wood",
       "necrotic gnome"
     ],
+    "kingdom-death": [
+      "kingdom death",
+      "kdm"
+    ],
+    "kdm-hesychia": [
+      "hesychia",
+      "hesychía"
+    ],
     "menoth": [
       "menoth",
       "protectorate",
@@ -486,6 +494,60 @@
       "facebook marketplace",
       "miniswap",
       "r/miniswap"
+    ],
+    "tutorial": [
+      "tutorial",
+      "how to",
+      "step-by-step",
+      "step by step"
+    ],
+    "vlog": [
+      "vlog",
+      "video blog"
+    ],
+    "resources": [
+      "resources",
+      "resource",
+      "reference material"
+    ],
+    "campaign": [
+      "campaign"
+    ],
+    "wargaming": [
+      "wargaming",
+      "wargame",
+      "war gaming",
+      "war game"
+    ],
+    "strategy": [
+      "strategy",
+      "strategic",
+      "tactics",
+      "tactical"
+    ],
+    "old-school-essentials": [
+      "old school essentials",
+      "old-school essentials"
+    ],
+    "dungeons-and-dragons": [
+      "dungeons and dragons",
+      "dungeons & dragons",
+      "d&d",
+      "dnd"
+    ],
+    "fractured-isles": [
+      "fractured isles",
+      "fractured-isles"
+    ],
+    "kal-arath": [
+      "kal arath",
+      "kal-arath",
+      "kalarath"
+    ],
+    "prima-materia": [
+      "prima materia",
+      "prima-materia",
+      "oracle dice"
     ],
     "ttrpg": [
       "ttrpg",
