@@ -58,3 +58,6 @@ comments-api/node_modules/
 comments-api/.wrangler/
 comments-api/.dev.vars
 
+# Local notes — not published
+voice.md
+
