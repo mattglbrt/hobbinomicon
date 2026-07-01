@@ -418,6 +418,16 @@ const metaDescription =
         plugins: [new SwupHeadPlugin()],
       });
 
+      // Wait for the next page to finish loading before starting the fade.
+      // Without this, Swup fades the current page to invisible immediately
+      // on click, in parallel with the fetch — on a real network, a slow
+      // fetch leaves a blank (background-color-only) gap before the new
+      // content arrives. Waiting keeps the old page fully visible until the
+      // new one is ready, then plays a single quick crossfade.
+      swup.hooks.on('visit:start', (visit) => {
+        visit.animation.wait = true;
+      });
+
       // Fire a GA virtual pageview for each client-side navigation. GA itself
       // loads lazily (see above), so gtag may not exist yet on early visits.
       document.addEventListener('swup:page:view', (event) => {
