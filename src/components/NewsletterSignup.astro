@@ -115,5 +115,7 @@ const { variant = 'section', class: className = '' } = Astro.props;
   }
 
   initNewsletterForms();
-  document.addEventListener('astro:after-swap', initNewsletterForms);
+  // Re-initialize after Swup navigation — lives inside #swup and gets
+  // destroyed/recreated on every swap, losing its listener.
+  document.addEventListener('swup:page:view', initNewsletterForms);
 </script>

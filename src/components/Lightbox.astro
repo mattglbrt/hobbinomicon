@@ -210,11 +210,13 @@
     });
   }
 
-  // Initialize
+  // Initialize. The lightbox dialog lives outside #swup (rendered once by
+  // BaseLayout) and its open/close/click handling is delegated on
+  // `document`, so it automatically picks up new [data-lightbox] images
+  // after a Swup navigation without needing to re-run.
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initLightbox);
   } else {
     initLightbox();
   }
-  document.addEventListener('astro:after-swap', initLightbox);
 </script>

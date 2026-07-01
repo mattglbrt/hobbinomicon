@@ -90,7 +90,8 @@
       initDarkModeToggle();
     }
 
-    // Re-initialize after View Transitions navigation
-    document.addEventListener('astro:after-swap', initDarkModeToggle);
+    // Re-initialize after Swup navigation — the toggle button lives inside
+    // #swup and gets destroyed/recreated on every swap, losing its listener.
+    document.addEventListener('swup:page:view', initDarkModeToggle);
   })();
 </script>

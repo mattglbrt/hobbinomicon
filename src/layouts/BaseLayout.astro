@@ -69,11 +69,9 @@ const metaDescription =
           }
         }
 
-        // Apply immediately on page load
+        // Apply immediately on page load. <html> lives outside the #swup
+        // container and is never swapped, so this never needs to re-run.
         applyDarkMode();
-
-        // Re-apply after View Transitions navigation
-        document.addEventListener('astro:after-swap', applyDarkMode);
       })();
     </script>
     <meta name="description" content={metaDescription} />
@@ -331,7 +329,9 @@ const metaDescription =
   <body class="min-h-screen font-serif bg-parchment dark:bg-parchment-dark text-ink dark:text-ink-dark transition-colors duration-300">
     <GrainOverlay />
     <SkipLink />
-    <slot />
+    <div id="swup" class="transition-fade">
+      <slot />
+    </div>
     <SearchModal />
     <Lightbox />
 
@@ -363,7 +363,7 @@ const metaDescription =
         } else {
           initScrollReveal();
         }
-        document.addEventListener('astro:after-swap', initScrollReveal);
+        document.addEventListener('swup:page:view', initScrollReveal);
       })();
     </script>
 
@@ -406,6 +406,27 @@ const metaDescription =
           }, { passive: true });
         }
       })();
+    </script>
+
+    <!-- Swup: client-side page transitions (fade), replacing native
+         cross-document view transitions for consistent cross-browser support -->
+    <script>
+      import Swup from 'swup';
+      import SwupHeadPlugin from '@swup/head-plugin';
+
+      const swup = new Swup({
+        plugins: [new SwupHeadPlugin()],
+      });
+
+      // Fire a GA virtual pageview for each client-side navigation. GA itself
+      // loads lazily (see above), so gtag may not exist yet on early visits.
+      document.addEventListener('swup:page:view', (event) => {
+        if (typeof window.gtag === 'function') {
+          window.gtag('config', 'G-990EP8N5XW', {
+            page_path: (event as CustomEvent).detail.args.url,
+          });
+        }
+      });
     </script>
   </body>
 </html>

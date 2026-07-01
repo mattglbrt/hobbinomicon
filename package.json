@@ -29,9 +29,11 @@
     "@fontsource-variable/eb-garamond": "^5.2.7",
     "@fontsource-variable/inter": "^5.2.8",
     "@fontsource/sorts-mill-goudy": "^5.2.8",
+    "@swup/head-plugin": "^2.3.1",
     "astro": "^6.0.8",
     "googleapis": "^171.4.0",
-    "mdast-util-to-string": "^4.0.0"
+    "mdast-util-to-string": "^4.0.0",
+    "swup": "^4.9.2"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.19",

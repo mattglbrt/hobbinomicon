@@ -252,37 +252,44 @@ const containerClass = {
       });
     }
 
-    // Header scroll behavior
-    if (header) {
+    // Header scroll behavior — bind the window scroll listener only once
+    // (window persists across Swup navigations), and re-query the live
+    // header element on every tick since #swup replaces it on each swap.
+    if (header && !window.__headerScrollBound) {
+      window.__headerScrollBound = true;
       let lastScroll = 0;
       const scrollThreshold = 100;
 
       function handleScroll() {
+        const currentHeader = document.getElementById('main-header');
+        if (!currentHeader) return;
         const currentScroll = window.scrollY;
 
         // Don't hide header at the very top of the page
         if (currentScroll <= scrollThreshold) {
-          header.style.transform = 'translateY(0)';
-          header.style.opacity = '1';
+          currentHeader.style.transform = 'translateY(0)';
+          currentHeader.style.opacity = '1';
+          lastScroll = currentScroll;
           return;
         }
 
         // Scrolling down - hide header
         if (currentScroll > lastScroll && currentScroll > scrollThreshold) {
-          header.style.transform = 'translateY(-100%)';
-          header.style.opacity = '0';
+          currentHeader.style.transform = 'translateY(-100%)';
+          currentHeader.style.opacity = '0';
           // Close mobile menu when hiding header
-          if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
-            mobileMenu.classList.add('hidden');
-            hamburgerIcon?.classList.remove('hidden');
-            closeIcon?.classList.add('hidden');
-            mobileMenuButton?.setAttribute('aria-expanded', 'false');
+          const currentMobileMenu = document.getElementById('mobile-menu');
+          if (currentMobileMenu && !currentMobileMenu.classList.contains('hidden')) {
+            currentMobileMenu.classList.add('hidden');
+            document.getElementById('hamburger-icon')?.classList.remove('hidden');
+            document.getElementById('close-icon')?.classList.add('hidden');
+            document.getElementById('mobile-menu-button')?.setAttribute('aria-expanded', 'false');
           }
         }
         // Scrolling up - show header
         else if (currentScroll < lastScroll) {
-          header.style.transform = 'translateY(0)';
-          header.style.opacity = '1';
+          currentHeader.style.transform = 'translateY(0)';
+          currentHeader.style.opacity = '1';
         }
 
         lastScroll = currentScroll;
@@ -305,6 +312,7 @@ const containerClass = {
   // Initialize on first load
   initHeader();
 
-  // Re-initialize after View Transitions navigation
-  document.addEventListener('astro:after-swap', initHeader);
+  // Re-initialize after Swup navigation — the header lives inside #swup and
+  // gets destroyed/recreated on every swap, losing its click listeners.
+  document.addEventListener('swup:page:view', initHeader);
 </script>

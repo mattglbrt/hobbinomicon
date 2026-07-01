@@ -625,18 +625,13 @@ const browseVlogs = [...publishedPosts]
     });
   }
 
-  // Initialize when DOM is ready
+  // Initialize when DOM is ready. The search modal lives outside #swup
+  // (rendered once by BaseLayout, content is page-independent), so its DOM
+  // is never destroyed by a Swup navigation and this only needs to run once.
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initSearch);
   } else {
     initSearch();
   }
-
-  // Re-initialize after View Transitions navigation
-  document.addEventListener('astro:after-swap', function() {
-    window.searchInitialized = false;
-    initSearch();
-    window.searchInitialized = true;
-  });
 })();
 </script>

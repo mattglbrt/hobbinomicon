@@ -2,26 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Native cross-document View Transitions (Chrome 126+, Safari 18.2+) */
-/* No JavaScript, no history manipulation — back button works natively */
-@view-transition {
-  navigation: auto;
+/* Swup page transition: simple crossfade on the #swup container.
+   The "transition-" class name is required — it's Swup's default
+   animationSelector for detecting how long to wait before swapping content. */
+#swup.transition-fade {
+  opacity: 1;
+  transition: opacity 0.2s ease;
 }
 
-::view-transition-old(root) {
-  animation: fade-out 0.2s ease-in;
-}
-
-::view-transition-new(root) {
-  animation: fade-in 0.3s ease-out;
-}
-
-@keyframes fade-out {
-  from { opacity: 1; }
-  to { opacity: 0; }
-}
-
-@keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+html.is-animating.is-leaving #swup.transition-fade {
+  opacity: 0;
 }

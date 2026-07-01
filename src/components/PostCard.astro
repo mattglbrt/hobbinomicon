@@ -106,7 +106,6 @@ const formattedDate = formatDateShort(pubDate);
         widths={[320, 480, 640]}
         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
         onload="this.closest('.card-image').querySelector('[data-placeholder]').classList.add('loaded')"
-        transition:name={`hero-${slug}`}
       />
     ) : isRemoteImage ? (
       <picture>
@@ -139,7 +138,6 @@ const formattedDate = formatDateShort(pubDate);
         widths={[320, 480, 640]}
         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
         onload="this.closest('.card-image').querySelector('[data-placeholder]').classList.add('loaded')"
-        transition:name={`hero-${slug}`}
       />
     )}
 
@@ -166,7 +164,7 @@ const formattedDate = formatDateShort(pubDate);
       </div>
 
       <!-- Title — always visible -->
-      <h2 class="text-lg md:text-xl font-display font-bold text-white mb-0 leading-tight drop-shadow-lg" transition:name={`title-${slug}`}>
+      <h2 class="text-lg md:text-xl font-display font-bold text-white mb-0 leading-tight drop-shadow-lg">
         {title}
       </h2>
 
