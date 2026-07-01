@@ -2,14 +2,3 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Swup page transition: simple crossfade on the #swup container.
-   The "transition-" class name is required — it's Swup's default
-   animationSelector for detecting how long to wait before swapping content. */
-#swup.transition-fade {
-  opacity: 1;
-  transition: opacity 0.2s ease;
-}
-
-html.is-animating.is-leaving #swup.transition-fade {
-  opacity: 0;
-}

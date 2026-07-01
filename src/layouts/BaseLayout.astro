@@ -329,7 +329,7 @@ const metaDescription =
   <body class="min-h-screen font-serif bg-parchment dark:bg-parchment-dark text-ink dark:text-ink-dark transition-colors duration-300">
     <GrainOverlay />
     <SkipLink />
-    <div id="swup" class="transition-fade">
+    <div id="swup">
       <slot />
     </div>
     <SearchModal />
@@ -408,24 +408,23 @@ const metaDescription =
       })();
     </script>
 
-    <!-- Swup: client-side page transitions (fade), replacing native
-         cross-document view transitions for consistent cross-browser support -->
+    <!-- Swup: client-side navigation (no full page reload), replacing native
+         cross-document view transitions for consistent cross-browser support.
+         No animation — the old page stays fully visible until the new one
+         has fetched, then content swaps in instantly. -->
     <script>
       import Swup from 'swup';
       import SwupHeadPlugin from '@swup/head-plugin';
+      import SwupPreloadPlugin from '@swup/preload-plugin';
 
       const swup = new Swup({
-        plugins: [new SwupHeadPlugin()],
+        // Preload plugin fetches links on hover/touch/focus so the page is
+        // usually already cached by the time the user actually clicks.
+        plugins: [new SwupHeadPlugin(), new SwupPreloadPlugin()],
       });
 
-      // Wait for the next page to finish loading before starting the fade.
-      // Without this, Swup fades the current page to invisible immediately
-      // on click, in parallel with the fetch — on a real network, a slow
-      // fetch leaves a blank (background-color-only) gap before the new
-      // content arrives. Waiting keeps the old page fully visible until the
-      // new one is ready, then plays a single quick crossfade.
       swup.hooks.on('visit:start', (visit) => {
-        visit.animation.wait = true;
+        visit.animation.animate = false;
       });
 
       // Fire a GA virtual pageview for each client-side navigation. GA itself
