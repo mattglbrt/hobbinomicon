@@ -30,6 +30,7 @@
     "@fontsource-variable/inter": "^5.2.8",
     "@fontsource/sorts-mill-goudy": "^5.2.8",
     "@swup/head-plugin": "^2.3.1",
+    "@swup/preload-plugin": "^3.2.11",
     "astro": "^6.0.8",
     "googleapis": "^171.4.0",
     "mdast-util-to-string": "^4.0.0",
