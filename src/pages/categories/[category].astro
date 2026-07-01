@@ -179,8 +179,9 @@ const socialImage = posts[0] ? getHeroImageUrl(posts[0].data.heroImage, posts[0]
       // Initialize on page load
       initFilters();
 
-      // Re-initialize after view transitions
-      document.addEventListener('astro:after-swap', initFilters);
+      // Re-initialize after Swup navigation — lives inside #swup and gets
+      // destroyed/recreated on every swap, losing its listeners.
+      document.addEventListener('swup:page:view', initFilters);
     </script>
   )}
 </BaseLayout>

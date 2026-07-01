@@ -226,7 +226,8 @@ const API_URL = import.meta.env.PUBLIC_COMMENTS_API_URL || 'https://hobbinomicon
     initComments();
   }
 
-  // Re-initialize after View Transitions
-  document.addEventListener('astro:after-swap', initComments);
+  // Re-initialize after Swup navigation — lives inside #swup and gets
+  // destroyed/recreated on every swap, losing its listener.
+  document.addEventListener('swup:page:view', initComments);
 })();
 </script>
