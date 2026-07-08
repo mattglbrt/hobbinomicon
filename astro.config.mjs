@@ -3,6 +3,7 @@ import { defineConfig } from 'astro/config';
 import netlify from '@astrojs/netlify';
 import mdx from '@astrojs/mdx';
 import { remarkReadingTime } from './src/utils/remarkReadingTime.ts';
+import { rehypeTranscriptWeight } from './src/utils/rehypeTranscriptWeight.mjs';
 import sitemap from '@astrojs/sitemap';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -66,6 +67,7 @@ export default defineConfig({
   },
   markdown: {
     remarkPlugins: [remarkReadingTime],
+    rehypePlugins: [rehypeTranscriptWeight],
   },
   integrations: [
     mdx(),
