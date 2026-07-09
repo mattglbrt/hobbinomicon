@@ -346,7 +346,6 @@ const browseVlogs = [...publishedPosts]
     const moreBtn = moreEl ? moreEl.querySelector('button') : null;
     const backdrop = document.querySelector('[data-search-backdrop]');
     const closeBtn = document.querySelector('[data-search-close]');
-    const searchButtons = document.querySelectorAll('[data-search-trigger]');
     const categoryFilters = document.querySelectorAll('[data-filter-category]');
     const tagFilters = document.querySelectorAll('[data-filter-tag]');
 
@@ -604,9 +603,13 @@ const browseVlogs = [...publishedPosts]
       });
     });
 
-    // Event listeners
-    searchButtons.forEach(function(btn) {
-      btn.addEventListener('click', openModal);
+    // Open triggers are delegated to document: the header lives inside #swup,
+    // so Swup replaces the trigger buttons on every navigation — listeners
+    // bound directly to them die after the first page swap (the modal itself
+    // sits outside #swup and is safe to bind directly).
+    document.addEventListener('click', function(e) {
+      var el = e.target instanceof Element ? e.target.closest('[data-search-trigger]') : null;
+      if (el) openModal();
     });
 
     backdrop && backdrop.addEventListener('click', closeModal);
