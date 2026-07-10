@@ -614,6 +614,15 @@ const browseVlogs = [...publishedPosts]
 
     backdrop && backdrop.addEventListener('click', closeModal);
     closeBtn && closeBtn.addEventListener('click', closeModal);
+
+    // Close when any result/browse link is clicked. Swup intercepts these
+    // links and swaps only #swup — the modal lives outside it, so without
+    // this the page changes underneath while the modal stays open. Result
+    // tag buttons stopPropagation, so they never reach this handler.
+    modal.addEventListener('click', function(e) {
+      var link = e.target instanceof Element ? e.target.closest('a[href]') : null;
+      if (link) closeModal();
+    });
     moreBtn && moreBtn.addEventListener('click', function() { loadMore(queryToken); });
 
     var debounceTimer;
@@ -634,7 +643,14 @@ const browseVlogs = [...publishedPosts]
         updateSelection(selectedIndex - 1);
       } else if (e.key === 'Enter' && selectedIndex >= 0 && results[selectedIndex]) {
         e.preventDefault();
-        window.location.href = normalizeUrl(results[selectedIndex].url);
+        // Click the rendered link instead of setting window.location so the
+        // navigation goes through Swup (and the modal-close click handler).
+        var selectedLink = resultsList.querySelector('[data-index="' + selectedIndex + '"]');
+        if (selectedLink) {
+          selectedLink.click();
+        } else {
+          window.location.href = normalizeUrl(results[selectedIndex].url);
+        }
       }
     });
 
