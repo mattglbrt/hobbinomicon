@@ -382,7 +382,10 @@ const browseVlogs = [...publishedPosts]
       modal.classList.remove('hidden');
       document.body.style.overflow = 'hidden';
       loadPagefind();
-      setTimeout(function() { input.focus(); }, 50);
+      // Focus synchronously — the modal is already visible (plain class
+      // toggle, no animation), and a delayed focus drops keystrokes typed
+      // right after Cmd+K.
+      input.focus();
     }
 
     function closeModal() {
