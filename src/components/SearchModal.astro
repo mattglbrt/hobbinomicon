@@ -14,38 +14,26 @@
  * available under `astro dev` — test search with `npm run build && npm run preview`.
  */
 import { getCollection } from 'astro:content';
-import { getPublishedPosts, groupByTags } from '../utils/collections';
-import { getTagDisplay } from '../utils/tags';
+import { getPublishedPosts } from '../utils/collections';
 
 const allPosts = await getCollection('blog');
 const publishedPosts = getPublishedPosts(allPosts);
 
-const allProjects = await getCollection('projects');
-const publishedProjects = allProjects.filter((p) => !p.data.draft);
-
 const games = await getCollection('games', ({ data }) => !data.draft);
 const studios = await getCollection('studios', ({ data }) => !data.draft);
-const people = await getCollection('people', ({ data }) => !data.draft);
 const news = await getCollection('news', ({ data }) => !data.draft);
 
-// Filter chip labels: directory pillars first, then blog categories.
-const blogCategories = [...new Set(publishedPosts.map((post) => post.data.category))].sort();
-const directoryCategories = [
-  games.length ? 'Games' : null,
-  news.length ? 'Indie News' : null,
-  studios.length ? 'Studios' : null,
-  people.length ? 'People' : null,
-  publishedProjects.length ? 'Projects' : null,
-].filter((c): c is string => Boolean(c));
-const categories = [...new Set([...directoryCategories, ...blogCategories])];
-
-// Top tags by blog usage (densest source). Per-item tags from games/news still
-// participate in filtering when their result row surfaces them as chips.
-const tagsMap = groupByTags(publishedPosts);
-const topTags = Array.from(tagsMap.entries())
-  .sort((a, b) => b[1].length - a[1].length)
-  .slice(0, 8)
-  .map(([tag]) => ({ tag, display: getTagDisplay(tag) }));
+// One clean row of scopes backed by the coarse Pagefind `type` filter. Finer
+// topics (tags, granular categories) become clickable chips ON results, to
+// refine AFTER searching rather than a wall of choices before typing.
+const videoCount = publishedPosts.filter((p) => p.data.youtubeId).length;
+const scopes = [
+  { label: 'All', value: '' },
+  games.length ? { label: 'Games', value: 'game' } : null,
+  news.length ? { label: 'News', value: 'news' } : null,
+  videoCount ? { label: 'Videos', value: 'video' } : null,
+  studios.length ? { label: 'Studios', value: 'studio' } : null,
+].filter((s): s is { label: string; value: string } => Boolean(s));
 
 // Default browse surface: shown when the modal opens with no query and no
 // filters. Mixes recent news, featured games, and latest vlogs so visitors
@@ -192,37 +180,16 @@ const browseVlogs = [...publishedPosts]
         </div>
       </div>
 
-      <!-- Filters -->
+      <!-- Scope filters (one clean row; finer tags refine on results) -->
       <div class="px-4 pb-3">
-        <!-- Category Filters -->
-        <div class="flex flex-wrap gap-2 mb-2">
-          <button
-            type="button"
-            class="filter-chip px-3 py-1 rounded-full text-xs text-white/80 active"
-            data-filter-category=""
-          >
-            All
-          </button>
-          {categories.map(category => (
-            <button
-              type="button"
-              class="filter-chip px-3 py-1 rounded-full text-xs text-white/80"
-              data-filter-category={category}
-            >
-              {category}
-            </button>
-          ))}
-        </div>
-
-        <!-- Tag Filters -->
         <div class="flex flex-wrap gap-2">
-          {topTags.map(({ tag, display }) => (
+          {scopes.map((s) => (
             <button
               type="button"
-              class="filter-chip px-2.5 py-0.5 rounded-full text-xs text-white/60"
-              data-filter-tag={tag}
+              class:list={['filter-chip px-3 py-1 rounded-full text-xs text-white/80', { active: s.value === '' }]}
+              data-filter-scope={s.value}
             >
-              #{display}
+              {s.label}
             </button>
           ))}
         </div>
@@ -359,8 +326,7 @@ const browseVlogs = [...publishedPosts]
     const moreBtn = moreEl ? moreEl.querySelector('button') : null;
     const backdrop = document.querySelector('[data-search-backdrop]');
     const closeBtn = document.querySelector('[data-search-close]');
-    const categoryFilters = document.querySelectorAll('[data-filter-category]');
-    const tagFilters = document.querySelectorAll('[data-filter-tag]');
+    const scopeFilters = document.querySelectorAll('[data-filter-scope]');
 
     if (!modal || !input || !resultsList) return;
 
@@ -368,7 +334,7 @@ const browseVlogs = [...publishedPosts]
     let results = [];      // genuine (relevance-gated) result rows, rendered
     let allResults = [];   // Pagefind result handles for the whole match set
     let rawLoaded = 0;     // how many raw Pagefind results we've fetched data for
-    let activeCategory = '';
+    let activeScope = '';
     let activeTags = new Set();
     const PAGE_SIZE = 15;
 
@@ -378,6 +344,34 @@ const browseVlogs = [...publishedPosts]
     let lastQuery = '';
     const ENTITY_CATS = ['Games', 'Studios', 'People'];
     function compact(s) { return (s || '').toLowerCase().replace(/[^a-z0-9]+/g, ''); }
+
+    // Privacy-respecting analytics: logs the settled query + result count, and
+    // result clicks, to /api/search-log. No PII is sent. Honors Do Not Track.
+    var analyticsTimer = null;
+    var lastLoggedQuery = '';
+    var lastShownCount = 0;
+    var dnt = (navigator.doNotTrack === '1' || window.doNotTrack === '1' || navigator.msDoNotTrack === '1');
+    function logSearch(payload) {
+      if (dnt) return;
+      try {
+        var body = JSON.stringify(payload);
+        if (navigator.sendBeacon) {
+          navigator.sendBeacon('/api/search-log', new Blob([body], { type: 'application/json' }));
+        } else {
+          fetch('/api/search-log', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body, keepalive: true });
+        }
+      } catch (e) {}
+    }
+    function scheduleAnalytics() {
+      if (dnt) return;
+      clearTimeout(analyticsTimer);
+      analyticsTimer = setTimeout(function() {
+        var q = lastQuery;
+        if (q.length < 2 || q === lastLoggedQuery) return;
+        lastLoggedQuery = q;
+        logSearch({ query: q, resultCount: lastShownCount });
+      }, 1200);
+    }
 
     // Pagefind is the search engine: a static, build-time, full-text index
     // (transcripts and post bodies included) with typo tolerance and ranking.
@@ -416,18 +410,15 @@ const browseVlogs = [...publishedPosts]
       selectedIndex = -1;
       results = [];
       allResults = [];
-      activeCategory = '';
+      activeScope = '';
       activeTags.clear();
       resetFilters();
       showEmptyState();
     }
 
     function resetFilters() {
-      categoryFilters.forEach(function(btn) {
-        btn.classList.toggle('active', btn.dataset.filterCategory === '');
-      });
-      tagFilters.forEach(function(btn) {
-        btn.classList.remove('active');
+      scopeFilters.forEach(function(btn) {
+        btn.classList.toggle('active', btn.dataset.filterScope === '');
       });
     }
 
@@ -451,6 +442,7 @@ const browseVlogs = [...publishedPosts]
 
     function showNoResults() {
       if (noResultQuery) noResultQuery.textContent = lastQuery ? '“' + lastQuery + '”' : 'that';
+      lastShownCount = 0;
       emptyState.classList.add('hidden');
       noResultsState.classList.remove('hidden');
       loadingState.classList.add('hidden');
@@ -465,6 +457,7 @@ const browseVlogs = [...publishedPosts]
       loadingState.classList.add('hidden');
       resultsList.classList.remove('hidden');
       countEl.classList.remove('hidden');
+      lastShownCount = results.length;
       updateCountAndMore();
     }
 
@@ -479,7 +472,7 @@ const browseVlogs = [...publishedPosts]
       // Both dimensions are native Pagefind filters. `all` gives tag chips AND
       // semantics (every selected tag must match) across the full match set.
       var f = {};
-      if (activeCategory) f.category = activeCategory;
+      if (activeScope) f.type = activeScope;
       if (activeTags.size > 0) f.tag = { all: Array.from(activeTags) };
       return f;
     }
@@ -502,7 +495,7 @@ const browseVlogs = [...publishedPosts]
     function search(query) {
       var q = (query || '').trim();
       var hasQuery = q.length > 0;
-      var hasFilters = activeCategory || activeTags.size > 0;
+      var hasFilters = activeScope || activeTags.size > 0;
       lastQuery = q;
 
       if (!hasQuery && !hasFilters) {
@@ -513,6 +506,7 @@ const browseVlogs = [...publishedPosts]
       // Immediate feedback: show a loading state so the stale browse surface
       // can't be misread as the answer while Pagefind resolves.
       showLoading();
+      scheduleAnalytics();
 
       // Monotonic token guards against out-of-order async responses: a fast
       // keystroke must not have its results overwritten by a slower earlier one.
@@ -621,9 +615,6 @@ const browseVlogs = [...publishedPosts]
           var tag = btn.dataset.resultTag;
           if (!tag) return;
           activeTags.add(tag);
-          tagFilters.forEach(function(b) {
-            if (b.dataset.filterTag === tag) b.classList.add('active');
-          });
           search(input.value);
           input.focus();
         });
@@ -669,30 +660,15 @@ const browseVlogs = [...publishedPosts]
       }
     }
 
-    // Category filter click handlers. Return focus to the input so the footer's
+    // Scope filter click handlers. Return focus to the input so the footer's
     // "↵ select" stays true (Enter selects a result, not re-toggles the chip).
-    categoryFilters.forEach(function(btn) {
+    scopeFilters.forEach(function(btn) {
       btn.addEventListener('click', function() {
-        activeCategory = btn.dataset.filterCategory;
-        categoryFilters.forEach(function(b) {
-          b.classList.toggle('active', b.dataset.filterCategory === activeCategory);
+        activeScope = btn.dataset.filterScope;
+        scopeFilters.forEach(function(b) {
+          b.classList.toggle('active', b.dataset.filterScope === activeScope);
         });
-        search(input.value);
-        input.focus();
-      });
-    });
-
-    // Tag filter click handlers
-    tagFilters.forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        var tag = btn.dataset.filterTag;
-        if (activeTags.has(tag)) {
-          activeTags.delete(tag);
-          btn.classList.remove('active');
-        } else {
-          activeTags.add(tag);
-          btn.classList.add('active');
-        }
+        activeTags.clear(); // switching scope clears any result-tag refinement
         search(input.value);
         input.focus();
       });
@@ -716,7 +692,14 @@ const browseVlogs = [...publishedPosts]
     // tag buttons stopPropagation, so they never reach this handler.
     modal.addEventListener('click', function(e) {
       var link = e.target instanceof Element ? e.target.closest('a[href]') : null;
-      if (link) closeModal();
+      if (link) {
+        // A click on an actual search result is the "zero-click" signal's
+        // positive case; browse-surface links don't count as query clicks.
+        if (link.classList.contains('search-result-link') && lastQuery.length >= 2) {
+          logSearch({ query: lastQuery, clicked: true });
+        }
+        closeModal();
+      }
     });
     moreBtn && moreBtn.addEventListener('click', function() { loadMore(queryToken); });
 
