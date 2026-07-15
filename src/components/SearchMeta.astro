@@ -1,0 +1,25 @@
+---
+/**
+ * Hidden search metadata for Pagefind. Render inside a `data-pagefind-body`
+ * region on entity pages.
+ *
+ * - description → sets Pagefind meta.description, so search results show the
+ *   entity's own curated one-liner instead of a harvested page snippet or raw
+ *   transcript text.
+ * - aliases → alternate spellings/spacings/abbreviations, indexed as body text
+ *   (heavily weighted) so e.g. "relic blade" finds the "Relicblade" entry.
+ */
+interface Props {
+  description?: string;
+  aliases?: string[];
+}
+
+const { description, aliases = [] } = Astro.props;
+---
+
+{description && (
+  <span class="sr-only" data-pagefind-meta="description">{description}</span>
+)}
+{aliases.length > 0 && (
+  <span class="sr-only" data-pagefind-weight="10">{aliases.join(' ')}</span>
+)}

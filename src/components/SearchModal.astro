@@ -281,10 +281,21 @@ const browseVlogs = [...publishedPosts]
           )}
         </div>
 
+        <!-- Loading state -->
+        <div id="search-loading" class="hidden p-8 text-center" aria-hidden="true">
+          <div class="inline-block w-5 h-5 rounded-full border-2 border-white/20 border-t-white/70 animate-spin"></div>
+          <p class="text-sm mt-3 text-white/50">Searching…</p>
+        </div>
+
         <!-- No results state -->
         <div id="search-no-results" class="hidden p-8 text-center">
-          <p class="text-lg text-white/60">No results found</p>
-          <p class="text-sm mt-2 text-white/60">Try different keywords or filters</p>
+          <p class="text-lg text-white/70">No results for <span data-noresult-query class="text-white/90 font-medium"></span></p>
+          <p class="text-sm mt-2 text-white/50">We might not cover it yet. Browse the directory or send us a tip.</p>
+          <div class="flex items-center justify-center gap-2 mt-4 flex-wrap">
+            <a href="/games/" class="filter-chip px-4 py-1.5 rounded-full text-xs text-white/80">Browse all games</a>
+            <a href="/games/skirmish/" class="filter-chip px-4 py-1.5 rounded-full text-xs text-white/80">Skirmish games</a>
+            <a href="/contact/" class="filter-chip px-4 py-1.5 rounded-full text-xs text-white/80">Suggest a game</a>
+          </div>
         </div>
 
         <!-- Results list -->
@@ -341,6 +352,8 @@ const browseVlogs = [...publishedPosts]
     const resultsList = document.getElementById('search-results-list');
     const emptyState = document.getElementById('search-empty');
     const noResultsState = document.getElementById('search-no-results');
+    const loadingState = document.getElementById('search-loading');
+    const noResultQuery = document.querySelector('[data-noresult-query]');
     const countEl = document.getElementById('search-count');
     const moreEl = document.getElementById('search-more');
     const moreBtn = moreEl ? moreEl.querySelector('button') : null;
@@ -352,11 +365,19 @@ const browseVlogs = [...publishedPosts]
     if (!modal || !input || !resultsList) return;
 
     let selectedIndex = -1;
-    let results = [];      // loaded result data objects (rendered rows)
+    let results = [];      // genuine (relevance-gated) result rows, rendered
     let allResults = [];   // Pagefind result handles for the whole match set
+    let rawLoaded = 0;     // how many raw Pagefind results we've fetched data for
     let activeCategory = '';
     let activeTags = new Set();
     const PAGE_SIZE = 15;
+
+    // Entity pinning: on a name/alias match, float the directory entity (game,
+    // studio, person) to the top as a distinct "best match". compact() strips
+    // spacing/punctuation so "relic blade" and "Relicblade" compare equal.
+    let lastQuery = '';
+    const ENTITY_CATS = ['Games', 'Studios', 'People'];
+    function compact(s) { return (s || '').toLowerCase().replace(/[^a-z0-9]+/g, ''); }
 
     // Pagefind is the search engine: a static, build-time, full-text index
     // (transcripts and post bodies included) with typo tolerance and ranking.
@@ -413,14 +434,26 @@ const browseVlogs = [...publishedPosts]
     function showEmptyState() {
       emptyState.classList.remove('hidden');
       noResultsState.classList.add('hidden');
+      loadingState.classList.add('hidden');
+      resultsList.classList.add('hidden');
+      countEl.classList.add('hidden');
+      moreEl.classList.add('hidden');
+    }
+
+    function showLoading() {
+      emptyState.classList.add('hidden');
+      noResultsState.classList.add('hidden');
+      loadingState.classList.remove('hidden');
       resultsList.classList.add('hidden');
       countEl.classList.add('hidden');
       moreEl.classList.add('hidden');
     }
 
     function showNoResults() {
+      if (noResultQuery) noResultQuery.textContent = lastQuery ? '“' + lastQuery + '”' : 'that';
       emptyState.classList.add('hidden');
       noResultsState.classList.remove('hidden');
+      loadingState.classList.add('hidden');
       resultsList.classList.add('hidden');
       countEl.classList.add('hidden');
       moreEl.classList.add('hidden');
@@ -429,16 +462,17 @@ const browseVlogs = [...publishedPosts]
     function showResults() {
       emptyState.classList.add('hidden');
       noResultsState.classList.add('hidden');
+      loadingState.classList.add('hidden');
       resultsList.classList.remove('hidden');
       countEl.classList.remove('hidden');
       updateCountAndMore();
     }
 
     function updateCountAndMore() {
-      var total = allResults.length;
-      countEl.textContent = total === 1 ? '1 result' :
-        (results.length < total ? 'Showing ' + results.length + ' of ' + total + ' results' : total + ' results');
-      moreEl.classList.toggle('hidden', results.length >= total);
+      var shown = results.length;
+      countEl.textContent = shown === 1 ? '1 result' : shown + ' results';
+      // Offer "show more" only while raw Pagefind results remain to sift.
+      moreEl.classList.toggle('hidden', rawLoaded >= allResults.length);
     }
 
     function buildFilters() {
@@ -469,11 +503,16 @@ const browseVlogs = [...publishedPosts]
       var q = (query || '').trim();
       var hasQuery = q.length > 0;
       var hasFilters = activeCategory || activeTags.size > 0;
+      lastQuery = q;
 
       if (!hasQuery && !hasFilters) {
         showEmptyState();
         return;
       }
+
+      // Immediate feedback: show a loading state so the stale browse surface
+      // can't be misread as the answer while Pagefind resolves.
+      showLoading();
 
       // Monotonic token guards against out-of-order async responses: a fast
       // keystroke must not have its results overwritten by a slower earlier one.
@@ -487,37 +526,86 @@ const browseVlogs = [...publishedPosts]
         if (!res || token !== queryToken) return;
         allResults = res.results;
         results = [];
+        rawLoaded = 0;
         if (allResults.length === 0) { showNoResults(); return; }
         loadMore(token);
       });
     }
 
-    // Load the next PAGE_SIZE result fragments and re-render the list.
+    // Relevance gate: Pagefind returns fuzzy matches for almost any input
+    // (e.g. "gaslands" matching "gas"), so a raw miss looks like junk results.
+    // Keep only results where the query actually appears in the title,
+    // description, or excerpt; if none survive, we fall through to the empty
+    // state (a zero-result query is a content request worth capturing).
+    function isGenuineMatch(it) {
+      var qc = compact(lastQuery);
+      if (qc.length < 2) return true; // filter-only browse, or too short to gate
+      var excerpt = (it.excerpt || '').replace(/<[^>]+>/g, ' ');
+      var hay = compact(metaTitle(it) + ' ' + ((it.meta && it.meta.description) || '') + ' ' + excerpt);
+      if (hay.indexOf(qc) !== -1) return true;
+      var toks = lastQuery.toLowerCase().split(/\s+/).filter(function(t) { return t.length >= 3; });
+      return toks.length > 0 && toks.every(function(t) { return hay.indexOf(compact(t)) !== -1; });
+    }
+
+    // Load raw results a page at a time, keeping only genuine matches. If a page
+    // is all fuzzy junk, keep pulling until a genuine match appears or the raw
+    // set is exhausted (then show the empty state).
     function loadMore(token) {
-      var next = allResults.slice(results.length, results.length + PAGE_SIZE);
+      var next = allResults.slice(rawLoaded, rawLoaded + PAGE_SIZE);
       Promise.all(next.map(function(r) { return r.data(); })).then(function(items) {
         if (token !== queryToken) return;
-        results = results.concat(items);
+        rawLoaded += items.length;
+        results = results.concat(items.filter(isGenuineMatch));
+        if (results.length === 0) {
+          if (rawLoaded >= allResults.length) { showNoResults(); return; }
+          loadMore(token);
+          return;
+        }
         renderResults(results);
         showResults();
         selectedIndex = -1;
       });
     }
 
+    // Float a directory entity (game/studio/person) whose name or alias matches
+    // the query to the top, flagged as the best match. On a directory site the
+    // entity IS the answer, so it should outrank vlogs/articles.
+    function pinBestEntity(items) {
+      var qc = compact(lastQuery);
+      if (qc.length < 3) return;
+      var idx = -1;
+      for (var i = 0; i < items.length; i++) {
+        if (ENTITY_CATS.indexOf(metaCategory(items[i])) === -1) continue;
+        var tc = compact(metaTitle(items[i]));
+        if (tc && (tc.indexOf(qc) !== -1 || qc.indexOf(tc) !== -1)) { idx = i; break; }
+      }
+      items.forEach(function(it) { it.__best = false; });
+      if (idx > 0) { items.unshift(items.splice(idx, 1)[0]); }
+      if (idx !== -1) { items[0].__best = true; }
+    }
+
     function renderResults(items) {
+      pinBestEntity(items);
       resultsList.innerHTML = items.map(function(it, index) {
-        // Pagefind returns an excerpt with <mark> highlights already applied.
         var tags = ((it.filters && it.filters.tag) || []).slice(0, 3);
         var tagsHtml = tags.map(function(tag) {
           return '<button type="button" class="result-tag text-xs text-white/50 hover:text-white/90 transition-colors" data-result-tag="' + escapeHtml(tag) + '">#' + escapeHtml(tag) + '</button>';
         }).join(' ');
         var cat = metaCategory(it);
         var catHtml = cat ? '<span class="text-xs px-2 py-0.5 glass-tag text-white/60 rounded-lg">' + escapeHtml(cat) + '</span>' : '';
+        // Prefer the entity's own curated description over Pagefind's auto
+        // excerpt — keeps raw transcript text and harvested page copy out of
+        // snippets. Fall back to the (already-<mark>-highlighted) excerpt.
+        var snippet = (it.meta && it.meta.description) ? escapeHtml(it.meta.description) : (it.excerpt || '');
+        var bestBadge = it.__best ? '<span class="text-[10px] uppercase tracking-[0.15em] px-2 py-0.5 rounded-full bg-white/15 border border-white/25 text-white/90">Best match</span>' : '';
+        var rowClass = it.__best ? 'block px-4 py-3 result-item search-result-link bg-white/5 border-l-2 border-white/40' : 'block px-4 py-3 result-item search-result-link';
 
         return '<li role="option" id="search-result-' + index + '">' +
-          '<a href="' + normalizeUrl(it.url) + '" class="block px-4 py-3 result-item search-result-link" data-index="' + index + '">' +
-            '<div class="font-medium text-white/90 mb-1">' + escapeHtml(metaTitle(it)) + '</div>' +
-            '<div class="text-sm text-white/70 line-clamp-2">' + (it.excerpt || '') + '</div>' +
+          '<a href="' + normalizeUrl(it.url) + '" class="' + rowClass + '" data-index="' + index + '">' +
+            '<div class="flex items-center gap-2 mb-1">' +
+              '<span class="font-medium text-white/90">' + escapeHtml(metaTitle(it)) + '</span>' + bestBadge +
+            '</div>' +
+            '<div class="text-sm text-white/70 line-clamp-2">' + snippet + '</div>' +
             '<div class="flex items-center gap-2 mt-2 flex-wrap">' + catHtml + tagsHtml + '</div>' +
           '</a>' +
         '</li>';
@@ -537,6 +625,7 @@ const browseVlogs = [...publishedPosts]
             if (b.dataset.filterTag === tag) b.classList.add('active');
           });
           search(input.value);
+          input.focus();
         });
       });
     }
@@ -580,7 +669,8 @@ const browseVlogs = [...publishedPosts]
       }
     }
 
-    // Category filter click handlers
+    // Category filter click handlers. Return focus to the input so the footer's
+    // "↵ select" stays true (Enter selects a result, not re-toggles the chip).
     categoryFilters.forEach(function(btn) {
       btn.addEventListener('click', function() {
         activeCategory = btn.dataset.filterCategory;
@@ -588,6 +678,7 @@ const browseVlogs = [...publishedPosts]
           b.classList.toggle('active', b.dataset.filterCategory === activeCategory);
         });
         search(input.value);
+        input.focus();
       });
     });
 
@@ -603,6 +694,7 @@ const browseVlogs = [...publishedPosts]
           btn.classList.add('active');
         }
         search(input.value);
+        input.focus();
       });
     });
 

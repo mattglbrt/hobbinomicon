@@ -15,6 +15,7 @@ import GameSpecs from '../../components/GameSpecs.astro';
 import ImageCard from '../../components/ImageCard.astro';
 import LiteYouTube from '../../components/LiteYouTube.astro';
 import NewsletterSignup from '../../components/NewsletterSignup.astro';
+import SearchMeta from '../../components/SearchMeta.astro';
 import gameVideos from '../../data/game-videos.json';
 
 const newsKindLabels: Record<string, string> = {
@@ -153,7 +154,8 @@ const gameSpecs = [
   />
   <Header theme={game.data.heroImage ? 'dark' : 'light'} />
 
-  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark" data-pagefind-body data-pagefind-meta="category:Games" data-pagefind-filter="category:Games">
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark" data-pagefind-body data-pagefind-meta="category:Games" data-pagefind-filter="category:Games, type:game">
+    <SearchMeta description={game.data.description} aliases={game.data.aliases} />
     {resolvedHero ? (
       <div class="relative h-[50vh] md:h-[60vh] overflow-hidden">
         {heroIsOptimized ? (

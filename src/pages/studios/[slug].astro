@@ -7,6 +7,7 @@ import ContentContainer from '../../components/ContentContainer.astro';
 import ProseContent from '../../components/ProseContent.astro';
 import ImageCard from '../../components/ImageCard.astro';
 import StructuredData from '../../components/StructuredData.astro';
+import SearchMeta from '../../components/SearchMeta.astro';
 import { formatDateLong } from '../../utils/formatDate';
 import { sortByDate } from '../../utils/collections';
 import { getHeroImage } from '../../utils/getHeroImage';
@@ -88,7 +89,8 @@ const referenceLinks = [
   />
   <Header theme="light" />
 
-  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark" data-pagefind-body data-pagefind-meta="category:Studios" data-pagefind-filter="category:Studios">
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark" data-pagefind-body data-pagefind-meta="category:Studios" data-pagefind-filter="category:Studios, type:studio">
+    <SearchMeta description={studio.data.description} aliases={studio.data.aliases} />
     <article class="pt-32">
       <ContentContainer class="py-16">
         <header class="mb-12">

@@ -9,6 +9,7 @@ import BackToTop from '../components/BackToTop.astro';
 import StructuredData from '../components/StructuredData.astro';
 import Comments from '../components/Comments.astro';
 import ProseContent from '../components/ProseContent.astro';
+import SearchMeta from '../components/SearchMeta.astro';
 import { getHeroImage, getHeroImageUrl, isImageMetadata } from '../utils/getHeroImage';
 import { formatReadingTime } from '../utils/readingTime';
 import { formatDateLong } from '../utils/formatDate';
@@ -113,7 +114,8 @@ const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
     />
   )}
   <Header />
-  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark" data-pagefind-body data-pagefind-meta={`category:${category}`} data-pagefind-filter={`category:${category}`}>
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark" data-pagefind-body data-pagefind-meta={`category:${category}`} data-pagefind-filter={`category:${category}, type:${youtubeId ? 'video' : 'article'}`}>
+    <SearchMeta description={description} />
     <!-- Standard Blog Post Layout -->
         <!-- Reading Progress Bar -->
         <div class="reading-progress fixed top-0 left-0 h-[3px] bg-gradient-to-r from-ink/80 via-ink to-ink/80 dark:from-parchment-dark/80 dark:via-parchment-dark dark:to-parchment-dark/80 z-50 transition-none" style="width: 0%;"></div>

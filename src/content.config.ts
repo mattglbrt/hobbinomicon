@@ -86,6 +86,9 @@ const games = defineCollection({
     status: z.enum(['active', 'oop', 'kickstarter', 'announced']).default('active'),
     pinned: z.boolean().default(false),
     tags: z.array(z.string()).default([]),
+    // Search aliases: alternate spellings, spacings, abbreviations, and common
+    // misspellings, indexed (hidden) so e.g. "relic blade" finds "Relicblade".
+    aliases: z.array(z.string()).default([]),
 
     // Funnel
     relatedGames: z.array(reference('games')).default([]),
@@ -125,6 +128,7 @@ const studios = defineCollection({
     heroImageAlt: z.string().optional(),
     draft: z.boolean().default(false),
 
+    aliases: z.array(z.string()).default([]),
     founded: z.number().optional(),
     headquarters: z.string().optional(),
 
@@ -154,6 +158,7 @@ const people = defineCollection({
     heroImageAlt: z.string().optional(),
     draft: z.boolean().default(false),
 
+    aliases: z.array(z.string()).default([]),
     roles: z.array(z.enum([
       'designer', 'sculptor', 'painter', 'podcaster',
       'creator', 'writer', 'streamer',
