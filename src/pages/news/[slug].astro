@@ -7,6 +7,7 @@ import Footer from '../../components/Footer.astro';
 import ContentContainer from '../../components/ContentContainer.astro';
 import ProseContent from '../../components/ProseContent.astro';
 import StructuredData from '../../components/StructuredData.astro';
+import NewsletterSignup from '../../components/NewsletterSignup.astro';
 import { formatDateLong } from '../../utils/formatDate';
 import { getHeroImage, isImageMetadata } from '../../utils/getHeroImage';
 
@@ -175,6 +176,8 @@ const heroIsOptimized = resolvedHero && isImageMetadata(resolvedHero);
         </div>
       </ContentContainer>
     </article>
+
+    <NewsletterSignup variant="section" class="bg-parchment dark:bg-parchment-dark border-t border-ink/10 dark:border-ink-dark/10" />
 
     <Footer />
   </main>

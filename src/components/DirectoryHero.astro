@@ -1,0 +1,61 @@
+---
+import ContentContainer from './ContentContainer.astro';
+
+// Browse-by-format shortcuts — hrefs match the existing /games/<format>/ pages.
+const formats = [
+  { label: 'Skirmish', href: '/games/skirmish/' },
+  { label: 'Rank & Flank', href: '/games/mass-battle/' },
+  { label: 'Large Army', href: '/games/large-scale-army/' },
+  { label: 'TTRPGs', href: '/games/ttrpgs/' },
+  { label: 'Narrative', href: '/games/narrative/' },
+  { label: 'Solo', href: '/games/solo/' },
+];
+---
+
+<section class="relative overflow-hidden bg-ink dark:bg-ink-dark pt-32 pb-20 md:pt-40 md:pb-28">
+  <ContentContainer maxWidth="4xl" class="relative z-10 text-center">
+    <p class="text-sm font-heading uppercase tracking-[0.3em] text-parchment/50 dark:text-parchment-dark/50 mb-6">
+      Hobbying from the deep end of the dungeon
+    </p>
+
+    <h1 class="font-display font-bold text-parchment dark:text-parchment-dark leading-[0.95] text-5xl md:text-7xl lg:text-8xl mb-6">
+      The indie wargames directory
+    </h1>
+
+    <p class="text-lg md:text-2xl text-parchment/70 dark:text-parchment-dark/70 max-w-2xl mx-auto mb-10 font-serif">
+      Skirmish, mass battle, TTRPG, and the weird stuff in between — plus the news desk keeping tabs on it all.
+    </p>
+
+    <!-- Search: opens the site-wide search modal (data-search-trigger) -->
+    <button
+      type="button"
+      data-search-trigger
+      class="group mx-auto mb-8 flex w-full max-w-lg items-center gap-3 rounded-xl border border-white/15 bg-white/5 px-5 py-4 text-left transition-colors hover:border-white/30 hover:bg-white/10"
+      aria-label="Search the directory"
+    >
+      <svg class="h-5 w-5 shrink-0 text-parchment/60 dark:text-parchment-dark/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      </svg>
+      <span class="flex-1 text-parchment/60 dark:text-parchment-dark/60">Search games, studios, and news…</span>
+      <kbd class="hidden sm:inline-block rounded border border-white/15 px-2 py-0.5 text-xs text-parchment/50 dark:text-parchment-dark/50">⌘K</kbd>
+    </button>
+
+    <!-- Browse by format -->
+    <div class="flex flex-wrap items-center justify-center gap-2">
+      <a
+        href="/games/"
+        class="inline-block rounded-full bg-parchment px-4 py-2 text-sm font-heading uppercase tracking-wider text-ink transition-transform hover:scale-105 dark:bg-parchment-dark dark:text-ink-dark"
+      >
+        Browse all games
+      </a>
+      {formats.map((f) => (
+        <a
+          href={f.href}
+          class="inline-block rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-parchment/80 transition-colors hover:border-white/30 hover:bg-white/10 dark:text-parchment-dark/80"
+        >
+          {f.label}
+        </a>
+      ))}
+    </div>
+  </ContentContainer>
+</section>

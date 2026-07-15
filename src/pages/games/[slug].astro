@@ -13,6 +13,9 @@ import { getPublishedPosts, sortByDate } from '../../utils/collections';
 import { getHeroImage, isImageMetadata } from '../../utils/getHeroImage';
 import GameSpecs from '../../components/GameSpecs.astro';
 import ImageCard from '../../components/ImageCard.astro';
+import LiteYouTube from '../../components/LiteYouTube.astro';
+import NewsletterSignup from '../../components/NewsletterSignup.astro';
+import gameVideos from '../../data/game-videos.json';
 
 const newsKindLabels: Record<string, string> = {
   kickstarter: 'Kickstarter',
@@ -34,6 +37,12 @@ export async function getStaticPaths() {
 
 const { game } = Astro.props;
 const { Content } = await render(game);
+
+// Mapped YouTube videos for this game (src/data/game-videos.json is the single
+// source of truth — adding a video is a one-line change there).
+const videos = (gameVideos as Record<string, { id: string; title: string }[]>)[game.id] ?? [];
+const channelUrl =
+  'https://www.youtube.com/@Hobbinomicon?utm_source=hobbinomicon&utm_medium=directory';
 
 // Resolve studio + designers
 const studio = game.data.studio ? await getEntry(game.data.studio) : null;
@@ -348,6 +357,27 @@ const gameSpecs = [
           )}
         </div>
 
+        {videos.length > 0 && (
+          <section class="mt-20 pt-12 border-t border-ink/10 dark:border-ink-dark/10">
+            <div class="flex items-end justify-between mb-8 gap-4">
+              <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark">
+                Videos
+              </h2>
+              <a
+                href={channelUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-ink/70 dark:text-ink-dark/70 hover:text-ink dark:hover:text-ink-dark text-sm font-medium whitespace-nowrap"
+              >
+                More on YouTube →
+              </a>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {videos.map((v) => <LiteYouTube videoId={v.id} title={v.title} />)}
+            </div>
+          </section>
+        )}
+
         {gameNews.length > 0 && (
           <section class="mt-20 pt-12 border-t border-ink/10 dark:border-ink-dark/10">
             <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mb-8">
@@ -386,6 +416,8 @@ const gameSpecs = [
         )}
       </ContentContainer>
     </article>
+
+    <NewsletterSignup variant="section" class="bg-parchment dark:bg-parchment-dark border-t border-ink/10 dark:border-ink-dark/10" />
 
     <Footer />
   </main>
