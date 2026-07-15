@@ -686,6 +686,18 @@ const browseVlogs = [...publishedPosts]
     backdrop && backdrop.addEventListener('click', closeModal);
     closeBtn && closeBtn.addEventListener('click', closeModal);
 
+    // Focus trap: keep Tab focus inside the open dialog (a11y).
+    modal.addEventListener('keydown', function(e) {
+      if (e.key !== 'Tab') return;
+      var focusable = modal.querySelectorAll('a[href], button:not([disabled]), input, [tabindex]:not([tabindex="-1"])');
+      var visible = Array.prototype.filter.call(focusable, function(el) { return el.offsetParent !== null; });
+      if (visible.length === 0) return;
+      var first = visible[0];
+      var last = visible[visible.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    });
+
     // Close when any result/browse link is clicked. Swup intercepts these
     // links and swaps only #swup — the modal lives outside it, so without
     // this the page changes underneath while the modal stays open. Result

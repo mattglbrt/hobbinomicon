@@ -103,6 +103,29 @@ const logoIsOptimized = resolvedLogo && isImageMetadata(resolvedLogo);
 const resolvedHero = game.data.heroImage ? getHeroImage(game.data.heroImage) : null;
 const heroIsOptimized = resolvedHero && isImageMetadata(resolvedHero);
 
+// Preload the hero (the LCP element) so the browser fetches it immediately
+// instead of discovering it after CSS. Mirrors the hero <Image> params so the
+// preloaded resource is the one actually rendered.
+import { getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+let heroPreloadSrcset = '';
+if (heroIsOptimized) {
+  const widths = [640, 1024, 1920];
+  const parts = await Promise.all(
+    widths.map(async (w) => {
+      const img = await getImage({
+        src: resolvedHero as ImageMetadata,
+        width: w,
+        height: Math.round((w * 9) / 16),
+        format: 'webp',
+        quality: 50,
+      });
+      return `${img.src} ${w}w`;
+    })
+  );
+  heroPreloadSrcset = parts.join(', ');
+}
+
 // Build the spec pill row from schema fields. Only included pills that have a value.
 // The Minis pill is always shown — derived from the miniatureAgnostic flag.
 const gameSpecs = [
@@ -121,6 +144,9 @@ const gameSpecs = [
   description={game.data.description}
   image={game.data.heroImage}
 >
+  {heroPreloadSrcset && (
+    <link slot="head" rel="preload" as="image" imagesrcset={heroPreloadSrcset} imagesizes="100vw" fetchpriority="high" />
+  )}
   <StructuredData
     type="breadcrumb"
     data={{
@@ -244,7 +270,7 @@ const gameSpecs = [
                 <p class="text-lg md:text-xl font-serif italic text-ink dark:text-ink-dark">
                   "{game.data.verdict}"
                 </p>
-                <footer class="mt-3 text-sm text-ink/60 dark:text-ink-dark/60 font-heading uppercase tracking-wider">
+                <footer class="mt-3 text-sm text-ink/70 dark:text-ink-dark/70 font-heading uppercase tracking-wider">
                   The Hobbinomicon Take
                 </footer>
               </blockquote>
@@ -259,13 +285,13 @@ const gameSpecs = [
           <aside class="space-y-8">
             {hasReferenceCard && (
             <div class="bg-ink/5 dark:bg-ink-dark/5 p-6 rounded-lg">
-              <h2 class="text-sm font-heading uppercase tracking-[0.2em] text-ink/60 dark:text-ink-dark/60 mb-4">
+              <h2 class="text-sm font-heading uppercase tracking-[0.2em] text-ink/70 dark:text-ink-dark/70 mb-4">
                 Reference
               </h2>
               <dl class="space-y-3 text-sm">
                 {studio && (
                   <div>
-                    <dt class="text-ink/60 dark:text-ink-dark/60">Publisher</dt>
+                    <dt class="text-ink/70 dark:text-ink-dark/70">Publisher</dt>
                     <dd class="text-ink dark:text-ink-dark font-medium">
                       <a href={`/studios/${studio.id}/`} class="hover:underline">{studio.data.name}</a>
                     </dd>
@@ -273,7 +299,7 @@ const gameSpecs = [
                 )}
                 {designers.length > 0 && (
                   <div>
-                    <dt class="text-ink/60 dark:text-ink-dark/60">{designers.length === 1 ? 'Designer' : 'Designers'}</dt>
+                    <dt class="text-ink/70 dark:text-ink-dark/70">{designers.length === 1 ? 'Designer' : 'Designers'}</dt>
                     <dd class="text-ink dark:text-ink-dark font-medium">
                       {designers.map((d, i) => (
                         <>
@@ -286,7 +312,7 @@ const gameSpecs = [
                 )}
                 {referenceLinks.length > 0 && (
                   <div class="pt-3 border-t border-ink/10 dark:border-ink-dark/10">
-                    <dt class="text-ink/60 dark:text-ink-dark/60 mb-2">Links</dt>
+                    <dt class="text-ink/70 dark:text-ink-dark/70 mb-2">Links</dt>
                     <dd class="flex flex-col gap-1">
                       {referenceLinks.map((link) => (
                         <a
@@ -307,7 +333,7 @@ const gameSpecs = [
 
             {game.data.podcasts.length > 0 && (
               <div class="bg-ink/5 dark:bg-ink-dark/5 p-6 rounded-lg">
-                <h2 class="text-sm font-heading uppercase tracking-[0.2em] text-ink/60 dark:text-ink-dark/60 mb-4">
+                <h2 class="text-sm font-heading uppercase tracking-[0.2em] text-ink/70 dark:text-ink-dark/70 mb-4">
                   Podcasts
                 </h2>
                 <ul class="space-y-2 text-sm">
@@ -324,7 +350,7 @@ const gameSpecs = [
 
             {game.data.creators.length > 0 && (
               <div class="bg-ink/5 dark:bg-ink-dark/5 p-6 rounded-lg">
-                <h2 class="text-sm font-heading uppercase tracking-[0.2em] text-ink/60 dark:text-ink-dark/60 mb-4">
+                <h2 class="text-sm font-heading uppercase tracking-[0.2em] text-ink/70 dark:text-ink-dark/70 mb-4">
                   Content Creators
                 </h2>
                 <ul class="space-y-2 text-sm">
@@ -341,7 +367,7 @@ const gameSpecs = [
 
             {relatedGames.length > 0 && (
               <div class="bg-ink/5 dark:bg-ink-dark/5 p-6 rounded-lg">
-                <h2 class="text-sm font-heading uppercase tracking-[0.2em] text-ink/60 dark:text-ink-dark/60 mb-4">
+                <h2 class="text-sm font-heading uppercase tracking-[0.2em] text-ink/70 dark:text-ink-dark/70 mb-4">
                   If you like this, try
                 </h2>
                 <ul class="space-y-2 text-sm">
