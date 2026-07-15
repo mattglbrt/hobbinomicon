@@ -1,58 +1,18 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, getEntry } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
-import HeroSection from '../components/HeroSection.astro';
+import DirectoryHero from '../components/DirectoryHero.astro';
 import PostGridSection from '../components/PostGridSection.astro';
-import FeaturedProjectSection from '../components/FeaturedProjectSection.astro';
-import YouTubeCTA from '../components/YouTubeCTA.astro';
 import NewsletterSignup from '../components/NewsletterSignup.astro';
 import Footer from '../components/Footer.astro';
 import ContentContainer from '../components/ContentContainer.astro';
 import ImageCard from '../components/ImageCard.astro';
 import ViewAllLink from '../components/ViewAllLink.astro';
-import { getHeroImage, isImageMetadata } from '../utils/getHeroImage';
+import { getHeroImage } from '../utils/getHeroImage';
 import { getPublishedPosts, sortByDate } from '../utils/collections';
-import { formatDateLong } from '../utils/formatDate';
 
-// ─── Hero + Latest Vlogs ────────────────────────────────────────────
-const allPosts = await getCollection('blog');
-const publishedPosts = getPublishedPosts(allPosts);
-
-const featuredPosts = publishedPosts.filter((p) => p.data.featured);
-const latestPost = featuredPosts[0] || publishedPosts[0];
-
-const recentVlogs = publishedPosts
-  .filter((p) => p.id !== latestPost?.id && p.data.youtubeId)
-  .slice(0, 6);
-
-// ─── News ───────────────────────────────────────────────────────────
-import { getEntry } from 'astro:content';
-const allNews = await getCollection('news', ({ data }) => !data.draft);
-const recentNews = sortByDate(allNews).slice(0, 6);
-const newsKindLabels: Record<string, string> = {
-  kickstarter: 'Kickstarter',
-  release: 'Release',
-  errata: 'Errata',
-  announcement: 'Announcement',
-  interview: 'Interview',
-  community: 'Community',
-  other: 'News',
-};
-
-// Resolve the related-game (if any) for each news item so news cards can fall
-// back to the game's hero image and pick up the game's logo for the overlay.
-const recentNewsCards = await Promise.all(
-  recentNews.map(async (item) => {
-    const game = item.data.relatedGame ? await getEntry(item.data.relatedGame) : null;
-    const cardImageString = item.data.heroImage || game?.data.heroImage;
-    const cardImage = cardImageString ? getHeroImage(cardImageString) : null;
-    const logo = game?.data.logo ? getHeroImage(game.data.logo) : null;
-    return { item, cardImage, logo };
-  })
-);
-
-// ─── Directory ──────────────────────────────────────────────────────
+// ─── Directory: featured / recently added games ─────────────────────
 const allGames = await getCollection('games', ({ data }) => !data.draft);
 const featuredGames = [...allGames]
   .sort((a, b) => {
@@ -64,106 +24,49 @@ const featuredGames = [...allGames]
   })
   .slice(0, 6);
 
-// ─── From the Dungeon (Featured Project) ───────────────────────────
-const allProjects = await getCollection('projects');
-const publishedProjects = allProjects.filter((p) => !p.data.draft);
-const projectsWithLatestPost = publishedProjects
-  .map((project) => {
-    const projectPosts = sortByDate(publishedPosts.filter((post) => post.data.project === project.id));
-    return { project, projectSlug: project.id, latestPost: projectPosts[0] };
+// ─── Latest indie news ──────────────────────────────────────────────
+const allNews = await getCollection('news', ({ data }) => !data.draft);
+const recentNews = sortByDate(allNews).slice(0, 6);
+
+// Resolve the related-game (if any) for each news item so news cards can fall
+// back to the game's hero image.
+const recentNewsCards = await Promise.all(
+  recentNews.map(async (item) => {
+    const game = item.data.relatedGame ? await getEntry(item.data.relatedGame) : null;
+    const cardImageString = item.data.heroImage || game?.data.heroImage;
+    const cardImage = cardImageString ? getHeroImage(cardImageString) : null;
+    return { item, cardImage };
   })
-  .filter((p) => p.latestPost)
-  .sort((a, b) => (b.latestPost?.data.pubDate.valueOf() || 0) - (a.latestPost?.data.pubDate.valueOf() || 0));
+);
 
-const featuredProject = projectsWithLatestPost[0];
-const featuredProjectPosts = featuredProject
-  ? sortByDate(publishedPosts.filter((post) => post.data.project === featuredProject.projectSlug)).slice(0, 4)
-  : [];
-
-// ─── Hero LCP preload ───────────────────────────────────────────────
-const heroImage = getHeroImage(latestPost?.data.heroImage, latestPost?.data.youtubeId);
-
-import { getImage } from 'astro:assets';
-let heroPreloadSrcset = '';
-if (heroImage && isImageMetadata(heroImage)) {
-  const sizes = [640, 1024, 1280];
-  const srcsetParts = await Promise.all(sizes.map(async (w) => {
-    const img = await getImage({ src: heroImage, width: w, height: Math.round(w * 9 / 16), format: 'webp', quality: 35 });
-    return `${img.src} ${w}w`;
-  }));
-  heroPreloadSrcset = srcsetParts.join(', ');
-}
+// ─── Latest videos: deep dives & tutorials only, not daily vlogs ────
+const allPosts = await getCollection('blog');
+const publishedPosts = getPublishedPosts(allPosts);
+// Evergreen instructional categories — the "Vlogs" category is the daily
+// catch-all and is intentionally excluded from the homepage feature.
+const EVERGREEN_CATEGORIES = new Set(['Tutorials', 'Tips', 'Reviews']);
+const DAILY_TITLE = /\b(vlog day|hobby vlog|day \d+|mail day|just vlogg)/i;
+const latestVideos = sortByDate(
+  publishedPosts.filter(
+    (p) =>
+      p.data.youtubeId &&
+      EVERGREEN_CATEGORIES.has(p.data.category) &&
+      !DAILY_TITLE.test(p.data.title)
+  )
+).slice(0, 3);
 ---
 
 <BaseLayout
-  title="The Hobbinomicon"
-  description="A directory of indie wargames, daily vlogs from the painting desk, and field notes on the hobby, for players who want to go deeper than the main lines."
+  title="The Hobbinomicon — the indie wargames directory"
+  description="A directory and news desk for indie wargames — skirmish, mass battle, TTRPG, and the weird stuff in between. Browse by format, follow the news, and go deeper than the main lines."
 >
-  {heroPreloadSrcset && (
-    <link slot="head" rel="preload" as="image" imagesrcset={heroPreloadSrcset} imagesizes="100vw" fetchpriority="high" />
-  )}
   <Header theme="dark" />
 
   <main id="main-content" class="min-h-screen">
-    <!-- 1. Hero — featured / latest big thing -->
-    {latestPost && (
-      <HeroSection
-        slug={latestPost.id}
-        title={latestPost.data.title}
-        description={latestPost.data.description}
-        heroImage={heroImage}
-        heroImageAlt={latestPost.data.heroImageAlt}
-        category={latestPost.data.category}
-        pubDate={latestPost.data.pubDate}
-        tags={latestPost.data.tags}
-        badge="Featured Post"
-        size="large"
-      />
-    )}
+    <!-- 1. Hero — directory value proposition + search -->
+    <DirectoryHero />
 
-    <!-- 2. What's New in Indie Wargaming -->
-    {recentNews.length > 0 && (
-      <section class="bg-ink/[0.03] dark:bg-ink-dark/[0.03] py-16 md:py-24" data-scroll-reveal>
-        <ContentContainer>
-          <div class="flex items-center justify-between mb-12">
-            <div>
-              <span class="block text-sm font-heading uppercase tracking-[0.3em] text-ink/40 dark:text-ink-dark/40 mb-2">What's new</span>
-              <h2 class="text-5xl md:text-7xl font-display font-bold text-ink dark:text-ink-dark">News from the indie wargame world</h2>
-            </div>
-            <ViewAllLink href="/news/">All News →</ViewAllLink>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {recentNewsCards.map(({ item, cardImage }) => (
-              <ImageCard
-                href={`/news/${item.id}/`}
-                image={cardImage}
-                imageAlt={item.data.heroImageAlt || item.data.title}
-                title={item.data.title}
-                subtitle={item.data.description}
-                fallbackLetter={item.data.title.charAt(0)}
-                aspectRatio="16/9"
-                variant="stacked"
-              />
-            ))}
-          </div>
-        </ContentContainer>
-      </section>
-    )}
-
-    <!-- 3. Latest Vlogs -->
-    <PostGridSection
-      title="Latest Vlogs"
-      eyebrow="Watch"
-      viewAllLink="/vlogs/"
-      posts={recentVlogs}
-      layout="masonry"
-      mobileLimit={3}
-    />
-
-    <!-- 4. Newsletter CTA -->
-    <NewsletterSignup variant="section" />
-
-    <!-- 5. Browse the Directory -->
+    <!-- 2. Featured / recently added games -->
     {featuredGames.length > 0 && (
       <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24" data-scroll-reveal>
         <ContentContainer>
@@ -200,17 +103,50 @@ if (heroImage && isImageMetadata(heroImage)) {
       </section>
     )}
 
-    <!-- 6. From the Dungeon (Featured Project) -->
-    {featuredProject && featuredProjectPosts.length > 0 && (
-      <FeaturedProjectSection
-        projectSlug={featuredProject.projectSlug}
-        project={featuredProject.project}
-        posts={featuredProjectPosts}
+    <!-- 3. Latest indie news -->
+    {recentNews.length > 0 && (
+      <section class="bg-ink/[0.03] dark:bg-ink-dark/[0.03] py-16 md:py-24" data-scroll-reveal>
+        <ContentContainer>
+          <div class="flex items-center justify-between mb-12">
+            <div>
+              <span class="block text-sm font-heading uppercase tracking-[0.3em] text-ink/40 dark:text-ink-dark/40 mb-2">What's new</span>
+              <h2 class="text-5xl md:text-7xl font-display font-bold text-ink dark:text-ink-dark">News from the indie wargame world</h2>
+            </div>
+            <ViewAllLink href="/news/">All News →</ViewAllLink>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {recentNewsCards.map(({ item, cardImage }) => (
+              <ImageCard
+                href={`/news/${item.id}/`}
+                image={cardImage}
+                imageAlt={item.data.heroImageAlt || item.data.title}
+                title={item.data.title}
+                subtitle={item.data.description}
+                fallbackLetter={item.data.title.charAt(0)}
+                aspectRatio="16/9"
+                variant="stacked"
+              />
+            ))}
+          </div>
+        </ContentContainer>
+      </section>
+    )}
+
+    <!-- 4. Latest videos — deep dives & tutorials, capped at 3 -->
+    {latestVideos.length > 0 && (
+      <PostGridSection
+        title="Latest Videos"
+        eyebrow="Watch"
+        viewAllLink="/vlogs/"
+        posts={latestVideos}
+        layout="masonry"
       />
     )}
 
-    <!-- 7. YouTube CTA -->
-    <YouTubeCTA />
+    <!-- 5. Newsletter — From the Workbench -->
+    <div id="newsletter" class="scroll-mt-24">
+      <NewsletterSignup variant="section" />
+    </div>
 
     <Footer />
   </main>

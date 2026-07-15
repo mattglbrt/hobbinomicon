@@ -1,0 +1,71 @@
+---
+// Lazy YouTube facade: renders only a thumbnail + play button, and swaps in
+// the real iframe on click. Keeps game pages fast (no YouTube JS/iframe until
+// the visitor actually chooses to watch). Thumbnail host i.ytimg.com is already
+// allowlisted in astro.config's image.domains.
+interface Props {
+  videoId: string;
+  title?: string;
+}
+
+const { videoId, title = 'YouTube video' } = Astro.props;
+const thumb = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+---
+
+<div class="lite-yt group relative w-full overflow-hidden rounded-lg shadow-lg" style="aspect-ratio: 16 / 9;">
+  <button
+    type="button"
+    class="lite-yt-trigger absolute inset-0 h-full w-full cursor-pointer"
+    data-video-id={videoId}
+    aria-label={`Play video: ${title}`}
+  >
+    <img
+      src={thumb}
+      alt={title}
+      loading="lazy"
+      decoding="async"
+      width="480"
+      height="270"
+      class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+    />
+    <span class="absolute inset-0 bg-black/10 transition-colors group-hover:bg-black/25"></span>
+    <span
+      class="absolute left-1/2 top-1/2 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-black/70 transition-transform duration-300 group-hover:scale-110"
+    >
+      <svg class="ml-1 h-7 w-7 text-white" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M8 5v14l11-7z" />
+      </svg>
+    </span>
+  </button>
+</div>
+
+<script>
+  function initLiteYouTube() {
+    document.querySelectorAll('.lite-yt-trigger').forEach((btn) => {
+      if ((btn as HTMLElement).dataset.initialized) return;
+      (btn as HTMLElement).dataset.initialized = 'true';
+
+      btn.addEventListener('click', () => {
+        const wrapper = btn.closest('.lite-yt') as HTMLElement;
+        const id = (btn as HTMLElement).dataset.videoId;
+        if (!wrapper || !id) return;
+
+        const iframe = document.createElement('iframe');
+        iframe.className = 'absolute inset-0 h-full w-full';
+        iframe.src = `https://www.youtube.com/embed/${id}?autoplay=1`;
+        iframe.title = btn.getAttribute('aria-label')?.replace(/^Play video: /, '') || 'YouTube video';
+        iframe.allow =
+          'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+        iframe.setAttribute('allowfullscreen', '');
+        iframe.setAttribute('frameborder', '0');
+
+        wrapper.innerHTML = '';
+        wrapper.appendChild(iframe);
+      });
+    });
+  }
+
+  initLiteYouTube();
+  // Re-init after Swup navigation (component lives inside #swup).
+  document.addEventListener('swup:page:view', initLiteYouTube);
+</script>
