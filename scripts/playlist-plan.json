@@ -1,0 +1,227 @@
+{
+  "privacy": "public",
+  "playlists": [
+    {
+      "title": "Solo RPG Toolkit",
+      "description": "Everything you need to start and run solo tabletop RPGs — kit, character creation, session zero, and play.",
+      "videos": [
+        { "t": "My minimal solo rpg kit", "v": 1333 },
+        { "t": "How to create a Dolmenwood character", "v": 307 },
+        { "t": "Making zines is easy with the right tools", "v": 264 },
+        { "t": "Mage Knight Dungeons Solo", "v": 231 },
+        { "t": "Solo Roleplaying Session 0 Part 1: Intro to the system", "v": 159 },
+        { "t": "Dolmenwood Pokedex Project Ep 1", "v": 107 },
+        { "t": "Dolmenwood Unboxing", "v": 81 },
+        { "t": "How to get better by playing yourself", "v": 74 },
+        { "t": "Dolmenwood Players Book Flip Through", "v": 43 },
+        { "t": "Loose Ends and Crown & Skull Session 0", "v": 18 },
+        { "t": "Do you play solo or coop RPGs / war games?", "v": 13 },
+        { "t": "Using Tarot Cards & Casting Bones to Create Deeper Roleplaying Characters", "v": 12 }
+      ]
+    },
+    {
+      "title": "Kal Arath Solo Campaign",
+      "description": "The full Kal Arath solo live-play campaign, in order.",
+      "videos": [
+        { "t": "Kal Arath Live Play Session 1", "v": 158 },
+        { "t": "Kal Arath Episode 2", "v": 123 },
+        { "t": "Kal Arath Live Play Episode 3", "v": 58 },
+        { "t": "Kal Arath Episode 4", "v": 43 }
+      ]
+    },
+    {
+      "title": "Terrain & Game Boards",
+      "description": "Scratch-built terrain, game boards, basing, and scenic effects.",
+      "videos": [
+        { "t": "Getting the most out of dirty down moss", "v": 855 },
+        { "t": "Making a board for Motley Crews", "v": 819 },
+        { "t": "How to turn foam to stone", "v": 741 },
+        { "t": "My favorite Trench Crusade bases", "v": 198 },
+        { "t": "Working on Ultimate Dungeon Terrain", "v": 194 },
+        { "t": "Quick base work", "v": 162 },
+        { "t": "Magnetizing Bases and Fixing a Foam Board Disaster", "v": 127 },
+        { "t": "Fixing Warped Terrain Boards", "v": 123 },
+        { "t": "How to make scratch built terrain indestructible", "v": 92 },
+        { "t": "How to prepare bases for an entire army quickly and cheaply", "v": 91 },
+        { "t": "The best snow effect ever", "v": 89 },
+        { "t": "Lava rock diorama for teaspoon part 1", "v": 77 },
+        { "t": "Finishing touches in the movement trays", "v": 72 },
+        { "t": "Painting dirt", "v": 68 },
+        { "t": "Scenic and magnetic movement trays part 1", "v": 57 },
+        { "t": "Basing and life tips", "v": 41 },
+        { "t": "Starting a board for Necropolis", "v": 38 },
+        { "t": "Simple Lego Minifig Bases for DnD", "v": 32 },
+        { "t": "How to make terrain glue", "v": 29 },
+        { "t": "Old school sand bases", "v": 28 },
+        { "t": "Salvaging an Old Shelf Into a 16x16 Game Board", "v": 25 },
+        { "t": "Scratch Building a Wargame Board — Almost Ready for Paint", "v": 25 },
+        { "t": "Scenic Movement Trays Part 2", "v": 22 },
+        { "t": "Make your own base texture", "v": 19 }
+      ]
+    },
+    {
+      "title": "Building the Motley Crews Board",
+      "description": "One game board, start to finish — the Motley Crews build series in chronological order.",
+      "videos": [
+        { "t": "Making a board for Motley Crews", "v": 819 },
+        { "t": "How to turn foam to stone", "v": 741 },
+        { "t": "Magnetizing Bases and Fixing a Foam Board Disaster", "v": 127 },
+        { "t": "Getting the most out of dirty down moss", "v": 855 },
+        { "t": "Vlog Day 6 — Almost Done with the Board", "v": 65 },
+        { "t": "Expanding our tile into a full game board", "v": 47 },
+        { "t": "A Game Board Turned Into Its Own World", "v": 16 },
+        { "t": "Fixing Warped Terrain Boards", "v": 123 }
+      ]
+    },
+    {
+      "title": "Miniature Painting Tutorials",
+      "description": "Miniature painting tutorials — NMM, metallics, faces, washes, speed paints, and more.",
+      "videos": [
+        { "t": "A Christmas oil wash", "v": 609 },
+        { "t": "How to paint crucible guard green", "v": 252 },
+        { "t": "A new way to paint skeletons", "v": 158 },
+        { "t": "Using speed paints as a wash", "v": 158 },
+        { "t": "Painting an NMM Belt Buckle With Scale 75 Grays", "v": 157 },
+        { "t": "How to paint talons & toesies", "v": 103 },
+        { "t": "Another easy way to paint faces", "v": 97 },
+        { "t": "How to Paint Red — Airbrush vs Drybrush", "v": 93 },
+        { "t": "Painting Illuminated Text and Magical Pipe Smoke", "v": 85 },
+        { "t": "How to wash Bright Red", "v": 83 },
+        { "t": "Starting the year with true metal metallics", "v": 73 },
+        { "t": "2 Color NMM Easy Peasy Style", "v": 70 },
+        { "t": "How to paint Brass / Gold", "v": 65 },
+        { "t": "How not to paint yellow", "v": 57 },
+        { "t": "Probably not the worst Chainmail tutorial ever", "v": 53 },
+        { "t": "Painting a leather belt", "v": 46 },
+        { "t": "How to paint white robes", "v": 43 },
+        { "t": "How to paint leather with just two colors", "v": 41 },
+        { "t": "The power of purple", "v": 39 },
+        { "t": "Painting Purple Daemon Skin With Scale 75", "v": 37 },
+        { "t": "20 minute Purple Robe", "v": 37 },
+        { "t": "40 minute painting tutorial", "v": 36 },
+        { "t": "Tips for batch painting unique models", "v": 36 },
+        { "t": "Easy mode goblin faces", "v": 33 },
+        { "t": "How to paint pale orc flesh", "v": 30 },
+        { "t": "Airbrushing speed paints to easy mode horses", "v": 26 },
+        { "t": "How to speed paint faces", "v": 23 },
+        { "t": "Fixing a Bad Speed Paint Job", "v": 21 },
+        { "t": "Nmm Blue Steel Scales and an existential crisis", "v": 20 },
+        { "t": "How to paint bronze part 2", "v": 19 },
+        { "t": "Painting creepy cartoonish skin", "v": 19 },
+        { "t": "Painting chaosy green marble", "v": 14 },
+        { "t": "Super fast OSL", "v": 11 },
+        { "t": "Highlighting black", "v": 11 },
+        { "t": "Highlighting red", "v": 10 },
+        { "t": "The Jankiest Rust Tutorial Ever", "v": 10 },
+        { "t": "I fixed my contrast paint problems", "v": 10 },
+        { "t": "How to glaze for fun and profit", "v": 9 }
+      ]
+    },
+    {
+      "title": "Painting Trench Crusade",
+      "description": "Painting and building Trench Crusade warbands — pilgrims, communicants, bases, and weathering.",
+      "videos": [
+        { "t": "How to Paint Trench Crusade Communicant", "v": 297 },
+        { "t": "My favorite Trench Crusade bases", "v": 198 },
+        { "t": "Revisiting trench crusade warband", "v": 119 },
+        { "t": "Paint a Trench Pilgrim Warband in 2 Hours", "v": 102 },
+        { "t": "How to Paint Trench Pilgrims Fast", "v": 85 },
+        { "t": "How to Paint the Anchorite Shrine", "v": 70 },
+        { "t": "Building more figures for trench crusade", "v": 67 },
+        { "t": "Trench Crusade Bases & Weathering — Part 1", "v": 64 },
+        { "t": "Two minute trench crusade battle recap", "v": 32 },
+        { "t": "How to Use Dirty Down Rust + Creating Blood & Gore — Part 2", "v": 29 }
+      ]
+    },
+    {
+      "title": "Hobby Opinions",
+      "description": "Opinions, rants, and reflections on the miniatures hobby.",
+      "videos": [
+        { "t": "GW got me again", "v": 980 },
+        { "t": "These miniatures changed how I looked at the hobby", "v": 917 },
+        { "t": "I'm not a competitive wargamer anymore", "v": 126 },
+        { "t": "What 20 Days of Daily Vlogging Taught Me About Creativity", "v": 78 },
+        { "t": "Why are 3d sculpted models so overly detailed?", "v": 65 },
+        { "t": "The first miniatures I ever painted", "v": 60 },
+        { "t": "Bald man rants about AI", "v": 29 },
+        { "t": "Thoughts On 90 Days of Hobby Vlogging", "v": 25 },
+        { "t": "It's ok to not paint your miniatures", "v": 16 },
+        { "t": "Rambling about competitive vs fun games", "v": 9 }
+      ]
+    },
+    {
+      "title": "Sculpting, Casting & 3D Printing",
+      "description": "Sculpting, mold-making, casting, and 3D printing your own miniatures.",
+      "videos": [
+        { "t": "I finished the daemon prince", "v": 278 },
+        { "t": "Sculpting toes", "v": 255 },
+        { "t": "Starting my first sculpting project", "v": 185 },
+        { "t": "I created my first miniature thing", "v": 70 },
+        { "t": "More Daemon Prince Progress", "v": 68 },
+        { "t": "How I clean my resin 3d prints", "v": 42 },
+        { "t": "Re-Cutting a Toad Mold and Gluing Goblins Wrong", "v": 39 },
+        { "t": "Fixing My 3D Printer by Reflashing the Firmware", "v": 34 },
+        { "t": "Working with 3d prints", "v": 31 },
+        { "t": "Vlog: How to go from 0 skills to Recaster", "v": 24 },
+        { "t": "Finishing the Daemon Prince and Mail Day", "v": 16 },
+        { "t": "Merging stl files has me feeling like a god!", "v": 12 },
+        { "t": "Making a mold to recast and customize miniatures", "v": 10 },
+        { "t": "Casting my own bases", "v": 9 },
+        { "t": "Casting Daemon Heads", "v": 6 }
+      ]
+    },
+    {
+      "title": "Kitbashing & Army Projects",
+      "description": "Kitbashing conversions and batch army-building projects.",
+      "videos": [
+        { "t": "Ogryn Kitbash Part 2: Shoulders, Staff, and Story", "v": 198 },
+        { "t": "I built 90 goblins in 5 days", "v": 171 },
+        { "t": "Kitbashing an Ogryn with a Cursed City Head", "v": 100 },
+        { "t": "Necromunda Kitbashing & Giveaway Winners", "v": 62 },
+        { "t": "Building Sunrot, Miscast, and newest Gardens of Hecate minis", "v": 59 },
+        { "t": "I finally painted a goblin", "v": 49 },
+        { "t": "Preshading 90 Goblins", "v": 32 },
+        { "t": "Rebasing 60 Goblins and Pouring a Base Mold", "v": 22 },
+        { "t": "Finally primed the orcs & goblins", "v": 23 }
+      ]
+    },
+    {
+      "title": "Kingdom Death: Monster — Blind Campaign",
+      "description": "A blind Kingdom Death: Monster campaign, played in order.",
+      "videos": [
+        { "t": "Kingdom Death: Monster blind play through part 1: setup", "v": 111 },
+        { "t": "Kingdom Death Monster: Settlement 1 — Episode 1", "v": 59 },
+        { "t": "Kingdom Death Monster — Settlement 1 Ep. 2", "v": 79 },
+        { "t": "KDM Settlement 1 ep 3 — Our first hunt", "v": 43 },
+        { "t": "Kingdom Death Monster Episode 4", "v": 13 },
+        { "t": "Kingdom Death Monster — Episode 5", "v": 19 },
+        { "t": "International Lego day and more KDM — Episode 6", "v": 11 },
+        { "t": "KDM Episode 7", "v": 11 },
+        { "t": "KDM Episode 8: Screaming Antelope Hunt Phase", "v": 26 },
+        { "t": "King death monster: Antelope Fight", "v": 13 },
+        { "t": "Kingdom Death Monster: Lantern Year 4 Settlement Phase", "v": 12 },
+        { "t": "Kingdom Death Monster: 1st Butcher Fight. Part 1", "v": 25 },
+        { "t": "Kingdom Death Monster: Butcher", "v": 21 },
+        { "t": "Kingdom Death: Monster — Lantern Year 5", "v": 15 },
+        { "t": "Building Kingdom Death Survivors", "v": 49 },
+        { "t": "3d printing KDM terrain", "v": 30 }
+      ]
+    },
+    {
+      "title": "Unboxings & First Looks",
+      "description": "Unboxings, reviews, and first looks at miniatures, games, and hobby gear.",
+      "videos": [
+        { "t": "I received my new Relic Blade Plastic kits", "v": 215 },
+        { "t": "My tips on Buying / Selling / Trading Warhammer Miniatures", "v": 203 },
+        { "t": "Wtf is a rectifier", "v": 150 },
+        { "t": "Opening 20 Year Old Mage Knight Boosters", "v": 73 },
+        { "t": "Prima Materia Dice, Orc the Brand, and a Foam Haul", "v": 60 },
+        { "t": "Taking a look at Inquisitor Kroyle", "v": 54 },
+        { "t": "Victrix Historical Miniatures Review", "v": 47 },
+        { "t": "Other ways to sell your hobby stuff besides eBay", "v": 44 },
+        { "t": "Cracking Dungeons & Dragons packs from 1992", "v": 31 },
+        { "t": "How to start commission painting and why you maybe shouldn't", "v": 30 }
+      ]
+    }
+  ]
+}
