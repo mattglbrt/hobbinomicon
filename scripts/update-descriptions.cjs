@@ -96,7 +96,11 @@ function stripFooter(desc) {
 
 function isQuotaError(e) {
   const reason = e?.errors?.[0]?.reason || '';
-  return reason === 'quotaExceeded' || reason === 'dailyLimitExceeded';
+  return (
+    reason === 'quotaExceeded' ||
+    reason === 'dailyLimitExceeded' ||
+    /exceeded your.*quota|quotaExceeded/i.test(e?.message || '')
+  );
 }
 
 async function main() {
