@@ -345,6 +345,34 @@ const browseVlogs = [...publishedPosts]
     const ENTITY_CATS = ['Games', 'Studios', 'People'];
     function compact(s) { return (s || '').toLowerCase().replace(/[^a-z0-9]+/g, ''); }
 
+    // Privacy-respecting analytics: logs the settled query + result count, and
+    // result clicks, to /api/search-log. No PII is sent. Honors Do Not Track.
+    var analyticsTimer = null;
+    var lastLoggedQuery = '';
+    var lastShownCount = 0;
+    var dnt = (navigator.doNotTrack === '1' || window.doNotTrack === '1' || navigator.msDoNotTrack === '1');
+    function logSearch(payload) {
+      if (dnt) return;
+      try {
+        var body = JSON.stringify(payload);
+        if (navigator.sendBeacon) {
+          navigator.sendBeacon('/api/search-log', new Blob([body], { type: 'application/json' }));
+        } else {
+          fetch('/api/search-log', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body, keepalive: true });
+        }
+      } catch (e) {}
+    }
+    function scheduleAnalytics() {
+      if (dnt) return;
+      clearTimeout(analyticsTimer);
+      analyticsTimer = setTimeout(function() {
+        var q = lastQuery;
+        if (q.length < 2 || q === lastLoggedQuery) return;
+        lastLoggedQuery = q;
+        logSearch({ query: q, resultCount: lastShownCount });
+      }, 1200);
+    }
+
     // Pagefind is the search engine: a static, build-time, full-text index
     // (transcripts and post bodies included) with typo tolerance and ranking.
     // Loaded lazily on first modal open from /pagefind/pagefind.js.
@@ -414,6 +442,7 @@ const browseVlogs = [...publishedPosts]
 
     function showNoResults() {
       if (noResultQuery) noResultQuery.textContent = lastQuery ? '“' + lastQuery + '”' : 'that';
+      lastShownCount = 0;
       emptyState.classList.add('hidden');
       noResultsState.classList.remove('hidden');
       loadingState.classList.add('hidden');
@@ -428,6 +457,7 @@ const browseVlogs = [...publishedPosts]
       loadingState.classList.add('hidden');
       resultsList.classList.remove('hidden');
       countEl.classList.remove('hidden');
+      lastShownCount = results.length;
       updateCountAndMore();
     }
 
@@ -476,6 +506,7 @@ const browseVlogs = [...publishedPosts]
       // Immediate feedback: show a loading state so the stale browse surface
       // can't be misread as the answer while Pagefind resolves.
       showLoading();
+      scheduleAnalytics();
 
       // Monotonic token guards against out-of-order async responses: a fast
       // keystroke must not have its results overwritten by a slower earlier one.
@@ -661,7 +692,14 @@ const browseVlogs = [...publishedPosts]
     // tag buttons stopPropagation, so they never reach this handler.
     modal.addEventListener('click', function(e) {
       var link = e.target instanceof Element ? e.target.closest('a[href]') : null;
-      if (link) closeModal();
+      if (link) {
+        // A click on an actual search result is the "zero-click" signal's
+        // positive case; browse-surface links don't count as query clicks.
+        if (link.classList.contains('search-result-link') && lastQuery.length >= 2) {
+          logSearch({ query: lastQuery, clicked: true });
+        }
+        closeModal();
+      }
     });
     moreBtn && moreBtn.addEventListener('click', function() { loadMore(queryToken); });
 
