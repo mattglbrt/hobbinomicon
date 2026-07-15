@@ -18,6 +18,9 @@ interface Props {
   variant?: 'overlay' | 'stacked';
   /** Hide subtitle by default; reveal on hover (overlay variant only) */
   subtitleOnHover?: boolean;
+  /** Force title + subtitle below the image (overlay variant) even without a
+   *  logo — keeps logo-less cards consistent with logo'd ones. */
+  titleBelow?: boolean;
   /** Open the link in a new tab with safe rel attributes */
   external?: boolean;
   class?: string;
@@ -36,6 +39,7 @@ const {
   aspectRatio = '16/9',
   variant = 'overlay',
   subtitleOnHover = false,
+  titleBelow = false,
   external = false,
   class: className = '',
 } = Astro.props;
@@ -130,7 +134,7 @@ const hasSlot = Astro.slots.has('default');
           {badge}
         </span>
       )}
-      {!logoOverlay && (
+      {!logoOverlay && !titleBelow && (
         <div class="absolute bottom-0 left-0 right-0 p-4 md:p-6">
           {hasSlot ? (
             <slot />
@@ -156,7 +160,7 @@ const hasSlot = Astro.slots.has('default');
         </div>
       )}
     </div>
-    {logoOverlay && (
+    {(logoOverlay || titleBelow) && (
       <div class="mt-3">
         <h3 class="text-lg md:text-xl font-heading font-bold text-ink dark:text-ink-dark group-hover:text-ink/80 dark:group-hover:text-ink-dark/80 transition-colors">
           {title}
