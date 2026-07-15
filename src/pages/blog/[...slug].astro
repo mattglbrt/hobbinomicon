@@ -69,7 +69,10 @@ if (post.data.project) {
       previousPost: currentIndex > 0 ? projectPosts[currentIndex - 1] : null,
       nextPost: currentIndex < projectPosts.length - 1 ? projectPosts[currentIndex + 1] : null,
       projectName: project?.data.title || post.data.project,
-      projectSlug: post.data.project,
+      // Only link to a project page when one actually exists; otherwise the
+      // name renders as plain text (avoids /projects/<slug>/ 404s for series
+      // that don't have a project entry, e.g. kingdom-death).
+      projectSlug: project ? post.data.project : null,
     };
   }
 }
