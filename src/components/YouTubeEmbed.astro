@@ -1,4 +1,10 @@
 ---
+// In-prose YouTube embed. Renders the lazy facade (thumbnail + play button)
+// rather than a live iframe, so embeds in MDX bodies don't load YouTube's
+// player JS/iframe (and its webfonts) on page load — that was tanking LCP/TBT
+// and pulling in Roboto from gstatic. The real iframe loads on click.
+import LiteYouTube from './LiteYouTube.astro';
+
 interface Props {
   videoId: string;
   title?: string;
@@ -7,21 +13,6 @@ interface Props {
 const { videoId, title = 'YouTube video' } = Astro.props;
 ---
 
-<div class="youtube-embed my-8">
-  <div class="relative overflow-hidden rounded-lg shadow-2xl" style="padding-bottom: 56.25%;">
-    <iframe
-      class="absolute top-0 left-0 w-full h-full"
-      src={`https://www.youtube.com/embed/${videoId}`}
-      title={title}
-      frameborder="0"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-      allowfullscreen
-    ></iframe>
-  </div>
+<div class="my-8">
+  <LiteYouTube videoId={videoId} title={title} />
 </div>
-
-<style>
-  .youtube-embed {
-    max-width: 100%;
-  }
-</style>

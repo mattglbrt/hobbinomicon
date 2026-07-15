@@ -1,5 +1,6 @@
 ---
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
 import BaseLayout from './BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
@@ -47,6 +48,28 @@ const hasRealHero = Boolean(heroImage) || Boolean(youtubeId);
 const isOptimizedImage = isImageMetadata(displayImage);
 const isRemoteImage = !isOptimizedImage && typeof displayImage === 'string' && displayImage.startsWith('http');
 
+// Preload the hero (LCP element) so it's fetched immediately, not after CSS.
+let heroPreloadSrcset = '';
+let heroPreloadHref = '';
+if (hasRealHero && isOptimizedImage) {
+  const widths = [640, 1024, 1920];
+  const parts = await Promise.all(
+    widths.map(async (w) => {
+      const img = await getImage({
+        src: displayImage as ImageMetadata,
+        width: w,
+        height: Math.round((w * 9) / 16),
+        format: 'webp',
+        quality: 50,
+      });
+      return `${img.src} ${w}w`;
+    })
+  );
+  heroPreloadSrcset = parts.join(', ');
+} else if (hasRealHero && isRemoteImage) {
+  heroPreloadHref = displayImage as string;
+}
+
 const formattedDate = formatDateLong(pubDate);
 const formattedUpdatedDate = updatedDate ? formatDateLong(updatedDate) : null;
 
@@ -73,6 +96,12 @@ const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
   tags={tags}
   section={category}
 >
+  {heroPreloadSrcset && (
+    <link slot="head" rel="preload" as="image" imagesrcset={heroPreloadSrcset} imagesizes="100vw" fetchpriority="high" />
+  )}
+  {heroPreloadHref && (
+    <link slot="head" rel="preload" as="image" href={heroPreloadHref} fetchpriority="high" />
+  )}
   <!-- BlogPosting Structured Data -->
   <StructuredData
     type="blogPosting"
@@ -183,7 +212,7 @@ const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
             <h1 class="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-ink dark:text-ink-dark mb-6 leading-tight" style="line-height: 0.9;" data-pagefind-meta="title">
               {title}
             </h1>
-            <div class="flex flex-wrap gap-4 items-center text-ink/60 dark:text-ink-dark/60 text-sm" data-pagefind-ignore>
+            <div class="flex flex-wrap gap-4 items-center text-ink/70 dark:text-ink-dark/70 text-sm" data-pagefind-ignore>
               <time datetime={pubDate.toISOString()} class="font-heading tracking-wide">{formattedDate}</time>
               {readingTime && (
                 <>

@@ -94,7 +94,7 @@ const referenceLinks = [
     <article class="pt-32">
       <ContentContainer class="py-16">
         <header class="mb-12">
-          <a href="/studios/" class="inline-block text-ink/60 dark:text-ink-dark/60 hover:text-ink dark:hover:text-ink-dark text-sm mb-4 transition-colors">
+          <a href="/studios/" class="inline-block text-ink/70 dark:text-ink-dark/70 hover:text-ink dark:hover:text-ink-dark text-sm mb-4 transition-colors">
             ← Studios
           </a>
           <h1 class="text-5xl md:text-7xl font-display font-bold text-ink dark:text-ink-dark mb-6">
@@ -114,25 +114,25 @@ const referenceLinks = [
 
           <aside class="space-y-8">
             <div class="bg-ink/5 dark:bg-ink-dark/5 p-6 rounded-lg">
-              <h2 class="text-sm font-heading uppercase tracking-[0.2em] text-ink/60 dark:text-ink-dark/60 mb-4">
+              <h2 class="text-sm font-heading uppercase tracking-[0.2em] text-ink/70 dark:text-ink-dark/70 mb-4">
                 Reference
               </h2>
               <dl class="space-y-3 text-sm">
                 {studio.data.founded && (
                   <div>
-                    <dt class="text-ink/60 dark:text-ink-dark/60">Founded</dt>
+                    <dt class="text-ink/70 dark:text-ink-dark/70">Founded</dt>
                     <dd class="text-ink dark:text-ink-dark font-medium">{studio.data.founded}</dd>
                   </div>
                 )}
                 {studio.data.headquarters && (
                   <div>
-                    <dt class="text-ink/60 dark:text-ink-dark/60">Headquarters</dt>
+                    <dt class="text-ink/70 dark:text-ink-dark/70">Headquarters</dt>
                     <dd class="text-ink dark:text-ink-dark font-medium">{studio.data.headquarters}</dd>
                   </div>
                 )}
                 {referenceLinks.length > 0 && (
                   <div class="pt-3 border-t border-ink/10 dark:border-ink-dark/10">
-                    <dt class="text-ink/60 dark:text-ink-dark/60 mb-2">Links</dt>
+                    <dt class="text-ink/70 dark:text-ink-dark/70 mb-2">Links</dt>
                     <dd class="flex flex-col gap-1">
                       {referenceLinks.map((link) => (
                         <a href={link.url} target="_blank" rel="noopener noreferrer" class="text-ink dark:text-ink-dark hover:underline">
@@ -147,7 +147,7 @@ const referenceLinks = [
 
             {studioPeople.length > 0 && (
               <div class="bg-ink/5 dark:bg-ink-dark/5 p-6 rounded-lg">
-                <h2 class="text-sm font-heading uppercase tracking-[0.2em] text-ink/60 dark:text-ink-dark/60 mb-4">
+                <h2 class="text-sm font-heading uppercase tracking-[0.2em] text-ink/70 dark:text-ink-dark/70 mb-4">
                   People
                 </h2>
                 <ul class="space-y-2 text-sm">
@@ -201,7 +201,7 @@ const referenceLinks = [
                     <h3 class="text-lg font-heading font-bold text-ink dark:text-ink-dark group-hover:underline">
                       {n.data.title}
                     </h3>
-                    <time datetime={n.data.pubDate.toISOString()} class="text-xs text-ink/60 dark:text-ink-dark/60 whitespace-nowrap">
+                    <time datetime={n.data.pubDate.toISOString()} class="text-xs text-ink/70 dark:text-ink-dark/70 whitespace-nowrap">
                       {formatDateLong(n.data.pubDate)}
                     </time>
                   </div>

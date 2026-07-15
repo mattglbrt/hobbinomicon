@@ -64,7 +64,7 @@ const quickFilterTags = popularTags.filter(tag => allTags.includes(tag));
     {quickFilterTags.length > 0 && (
       <ContentContainer class="py-4">
         <div class="flex flex-wrap items-center gap-2">
-          <span class="text-sm text-ink/60 dark:text-ink-dark/60 mr-2">Quick filters:</span>
+          <span class="text-sm text-ink/70 dark:text-ink-dark/70 mr-2">Quick filters:</span>
           {quickFilterTags.map((tag) => (
             <a
               href={`/tags/${tag}/`}
@@ -117,7 +117,7 @@ const quickFilterTags = popularTags.filter(tag => allTags.includes(tag));
                 <h2 class="font-heading font-bold text-ink dark:text-ink-dark group-hover:text-ink/80 dark:group-hover:text-ink-dark/80 transition-colors line-clamp-2 mb-2">
                   {post.data.title}
                 </h2>
-                <p class="text-sm text-ink/60 dark:text-ink-dark/60 line-clamp-2 mb-3">
+                <p class="text-sm text-ink/70 dark:text-ink-dark/70 line-clamp-2 mb-3">
                   {post.data.description}
                 </p>
                 <div class="flex flex-wrap gap-1">
