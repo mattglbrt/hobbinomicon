@@ -7,7 +7,7 @@ interface Props {
   previousPost: CollectionEntry<'blog'> | null;
   nextPost: CollectionEntry<'blog'> | null;
   projectName: string;
-  projectSlug: string;
+  projectSlug: string | null;
 }
 
 const { previousPost, nextPost, projectName, projectSlug } = Astro.props;
@@ -29,12 +29,16 @@ function getSlug(post: CollectionEntry<'blog'> | null): string {
       <h3 class="text-xl font-heading font-bold text-ink">
         More from this project
       </h3>
-      <a
-        href={`/projects/${projectSlug}/`}
-        class="text-sm text-ink/70 hover:text-ink transition-colors"
-      >
-        View all {projectName} posts →
-      </a>
+      {projectSlug ? (
+        <a
+          href={`/projects/${projectSlug}/`}
+          class="text-sm text-ink/70 hover:text-ink transition-colors"
+        >
+          View all {projectName} posts →
+        </a>
+      ) : (
+        <span class="text-sm text-ink/70">{projectName}</span>
+      )}
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
