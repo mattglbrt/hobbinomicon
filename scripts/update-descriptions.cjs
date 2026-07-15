@@ -94,6 +94,18 @@ function stripFooter(desc) {
   return i === -1 ? desc : lines.slice(0, i).join('\n');
 }
 
+// Correct the legacy footer typo baked into old auto-generated descriptions.
+function fixTypos(text) {
+  return text.replace(/hobbynomicon\.com/gi, 'hobbinomicon.com');
+}
+
+// The full description we want a video to end up with: cleaned original body
+// (footer stripped, typos fixed) + the standard footer.
+function desiredDescription(snippet, gameSlug, titles) {
+  const base = fixTypos(stripFooter(snippet.description).trimEnd());
+  return `${base}\n\n${buildFooter(gameSlug, titles)}`;
+}
+
 function isQuotaError(e) {
   const reason = e?.errors?.[0]?.reason || '';
   return (
@@ -151,8 +163,7 @@ async function main() {
       if (shown >= LIMIT) break;
       const sn = snippets.get(id);
       const slug = videoToGame[id];
-      const base = stripFooter(sn.description).trimEnd();
-      const next = `${base}\n\n${buildFooter(slug, titles)}`;
+      const next = desiredDescription(sn, slug, titles);
       if (next === sn.description) continue; // already correct, skip in preview
       shown++;
       console.log('━'.repeat(72));
@@ -166,7 +177,7 @@ async function main() {
     }
     const needing = ordered.filter((id) => {
       const sn = snippets.get(id);
-      return `${stripFooter(sn.description).trimEnd()}\n\n${buildFooter(videoToGame[id], titles)}` !== sn.description;
+      return desiredDescription(sn, videoToGame[id], titles) !== sn.description;
     }).length;
     console.log('━'.repeat(72));
     console.log(`\nTotal videos: ${ordered.length} | need footer added/updated: ${needing} | priority (evergreen/mapped): ${[...priority].filter((id) => snippets.has(id)).length}`);
@@ -182,10 +193,12 @@ async function main() {
       console.log(`\nReached --max ${MAX}. Re-run tomorrow to continue (already-updated are skipped).`);
       break;
     }
-    if (already.has(id)) continue;
+    // Skip is content-based, not id-based: a video already carrying the exact
+    // desired description (footer + typo fix) is skipped; everything else is
+    // (re)written. This lets a footer-only pass get revisited to fix the typo.
     const sn = snippets.get(id);
     const slug = videoToGame[id];
-    const next = `${stripFooter(sn.description).trimEnd()}\n\n${buildFooter(slug, titles)}`;
+    const next = desiredDescription(sn, slug, titles);
     if (next === sn.description) {
       already.add(id);
       continue; // already correct
