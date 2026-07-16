@@ -49,23 +49,19 @@ const isOptimizedImage = isImageMetadata(displayImage);
 const isRemoteImage = !isOptimizedImage && typeof displayImage === 'string' && displayImage.startsWith('http');
 
 // Preload the hero (LCP element) so it's fetched immediately, not after CSS.
-let heroPreloadSrcset = '';
+// Generate it via getImage ONCE and reuse the exact same srcset for both the
+// preload and the rendered <img>, so the browser preloads the variant it
+// actually paints (a separate <Image> would hash differently and double-fetch).
+let heroImg: Awaited<ReturnType<typeof getImage>> | null = null;
 let heroPreloadHref = '';
 if (hasRealHero && isOptimizedImage) {
-  const widths = [640, 1024, 1920];
-  const parts = await Promise.all(
-    widths.map(async (w) => {
-      const img = await getImage({
-        src: displayImage as ImageMetadata,
-        width: w,
-        height: Math.round((w * 9) / 16),
-        format: 'webp',
-        quality: 50,
-      });
-      return `${img.src} ${w}w`;
-    })
-  );
-  heroPreloadSrcset = parts.join(', ');
+  heroImg = await getImage({
+    src: displayImage as ImageMetadata,
+    widths: [640, 1024, 1920],
+    sizes: '100vw',
+    format: 'webp',
+    quality: 50,
+  });
 } else if (hasRealHero && isRemoteImage) {
   heroPreloadHref = displayImage as string;
 }
@@ -96,8 +92,8 @@ const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
   tags={tags}
   section={category}
 >
-  {heroPreloadSrcset && (
-    <link slot="head" rel="preload" as="image" imagesrcset={heroPreloadSrcset} imagesizes="100vw" fetchpriority="high" />
+  {heroImg && (
+    <link slot="head" rel="preload" as="image" imagesrcset={heroImg.srcSet.attribute} imagesizes="100vw" fetchpriority="high" />
   )}
   {heroPreloadHref && (
     <link slot="head" rel="preload" as="image" href={heroPreloadHref} fetchpriority="high" />
@@ -152,19 +148,18 @@ const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
         <!-- Hero Image — Full-bleed with parallax -->
         <div class="relative h-[60vh] md:h-[70vh] overflow-hidden blog-hero-wrapper">
           <div class="absolute inset-0 blog-parallax-img" style="top: -10%; bottom: -10%; height: 120%;">
-            {isOptimizedImage ? (
-              <Image
-                src={displayImage}
+            {heroImg ? (
+              <img
+                src={heroImg.src}
+                srcset={heroImg.srcSet.attribute}
+                sizes="100vw"
                 alt={heroImageAlt || title}
-                width={1920}
-                height={1080}
+                width="1920"
+                height="1080"
                 class="w-full h-full object-cover object-top"
                 loading="eager"
+                fetchpriority="high"
                 decoding="sync"
-                format="webp"
-                quality={50}
-                widths={[640, 1024, 1920]}
-                sizes="100vw"
               />
             ) : isRemoteImage ? (
               <img
