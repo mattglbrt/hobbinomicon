@@ -21,18 +21,22 @@ const publishedPosts = getPublishedPosts(allPosts);
 
 const games = await getCollection('games', ({ data }) => !data.draft);
 const studios = await getCollection('studios', ({ data }) => !data.draft);
+const people = await getCollection('people', ({ data }) => !data.draft);
 const news = await getCollection('news', ({ data }) => !data.draft);
 
 // One clean row of scopes backed by the coarse Pagefind `type` filter. Finer
-// topics (tags, granular categories) become clickable chips ON results, to
-// refine AFTER searching rather than a wall of choices before typing.
+// topics (tags) become clickable chips ON results, to refine AFTER searching
+// rather than a wall of choices before typing.
 const videoCount = publishedPosts.filter((p) => p.data.youtubeId).length;
+const articleCount = publishedPosts.filter((p) => !p.data.youtubeId).length;
 const scopes = [
   { label: 'All', value: '' },
   games.length ? { label: 'Games', value: 'game' } : null,
   news.length ? { label: 'News', value: 'news' } : null,
   videoCount ? { label: 'Videos', value: 'video' } : null,
+  articleCount ? { label: 'Articles', value: 'article' } : null,
   studios.length ? { label: 'Studios', value: 'studio' } : null,
+  people.length ? { label: 'People', value: 'person' } : null,
 ].filter((s): s is { label: string; value: string } => Boolean(s));
 
 // Default browse surface: shown when the modal opens with no query and no
@@ -49,8 +53,8 @@ const browseGames = [...games]
     return bDate - aDate;
   })
   .slice(0, 3);
-const browseVlogs = [...publishedPosts]
-  .filter((p) => p.data.category === 'Vlogs')
+const browseVideos = [...publishedPosts]
+  .filter((p) => p.data.youtubeId)
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
   .slice(0, 3);
 ---
@@ -231,12 +235,12 @@ const browseVlogs = [...publishedPosts]
               ))}
             </ul>
           )}
-          {browseVlogs.length > 0 && (
+          {browseVideos.length > 0 && (
             <div class="px-4 pt-3 pb-1">
-              <div class="text-[10px] uppercase tracking-[0.2em] text-white/40 font-heading">Recent vlogs</div>
+              <div class="text-[10px] uppercase tracking-[0.2em] text-white/40 font-heading">Latest videos</div>
             </div>
             <ul class="mb-2">
-              {browseVlogs.map((post) => (
+              {browseVideos.map((post) => (
                 <li>
                   <a href={`/blog/${post.id}/`} class="block px-4 py-2 result-item">
                     <div class="font-medium text-white/90">{post.data.title}</div>

@@ -66,6 +66,14 @@ const matchingPosts = publishedBlog
   .filter((post) => post.data.tags?.includes(game.id))
   .slice(0, 6);
 
+// Relocated project build series (the Projects section was retired). Ordered
+// chronologically so a build reads start-to-finish.
+const buildsPosts = game.data.relatedProjects.length
+  ? publishedBlog
+      .filter((post) => post.data.project && game.data.relatedProjects.includes(post.data.project))
+      .sort((a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf())
+  : [];
+
 // News tagged to this game
 const allNews = await getCollection('news', ({ data }) => !data.draft);
 const gameNews = sortByDate(
@@ -420,6 +428,18 @@ const gameSpecs = [
                   />
                 );
               })}
+            </div>
+          </section>
+        )}
+
+        {buildsPosts.length > 0 && (
+          <section class="mt-20 pt-12 border-t border-ink/10 dark:border-ink-dark/10">
+            <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mb-2">
+              Builds &amp; Series
+            </h2>
+            <p class="text-ink/70 dark:text-ink-dark/70 mb-8">Build logs and painting guides, in order.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {buildsPosts.map((post) => <PostCard post={post} />)}
             </div>
           </section>
         )}

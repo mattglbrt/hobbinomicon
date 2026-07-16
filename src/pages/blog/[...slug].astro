@@ -60,19 +60,15 @@ if (post.data.project) {
 
   const currentIndex = projectPosts.findIndex((p) => p.id === post.id);
 
-  if (currentIndex !== -1) {
-    // Get project info
-    const projects = await getCollection('projects');
-    const project = projects.find((p) => p.id === post.data.project);
-
+  if (currentIndex !== -1 && projectPosts.length > 1) {
+    // The Projects section was retired, so there are no project pages to link.
+    // We still show prev/next within a series, with the project name as plain
+    // text (ProjectNavigation renders no link when projectSlug is null).
     projectNavigation = {
       previousPost: currentIndex > 0 ? projectPosts[currentIndex - 1] : null,
       nextPost: currentIndex < projectPosts.length - 1 ? projectPosts[currentIndex + 1] : null,
-      projectName: project?.data.title || post.data.project,
-      // Only link to a project page when one actually exists; otherwise the
-      // name renders as plain text (avoids /projects/<slug>/ 404s for series
-      // that don't have a project entry, e.g. kingdom-death).
-      projectSlug: project ? post.data.project : null,
+      projectName: post.data.project,
+      projectSlug: null,
     };
   }
 }

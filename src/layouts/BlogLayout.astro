@@ -11,6 +11,9 @@ import StructuredData from '../components/StructuredData.astro';
 import Comments from '../components/Comments.astro';
 import ProseContent from '../components/ProseContent.astro';
 import SearchMeta from '../components/SearchMeta.astro';
+import { getEntry } from 'astro:content';
+import { collectionByVideoId } from '../utils/videoCollections';
+import gameVideos from '../data/game-videos.json';
 import { getHeroImage, getHeroImageUrl, isImageMetadata } from '../utils/getHeroImage';
 import { formatReadingTime } from '../utils/readingTime';
 import { formatDateLong } from '../utils/formatDate';
@@ -68,6 +71,17 @@ if (hasRealHero && isOptimizedImage) {
 
 const formattedDate = formatDateLong(pubDate);
 const formattedUpdatedDate = updatedDate ? formatDateLong(updatedDate) : null;
+
+// Video back-links: its topic collection and its related directory game.
+const videoCollection = youtubeId ? collectionByVideoId().get(youtubeId) : undefined;
+const gameVideoMap: Record<string, string> = {};
+for (const [g, vids] of Object.entries(gameVideos as Record<string, { id: string }[]>)) {
+  for (const v of vids) if (!gameVideoMap[v.id]) gameVideoMap[v.id] = g;
+}
+const relatedGameSlug = youtubeId ? gameVideoMap[youtubeId] : undefined;
+let relatedGame = relatedGameSlug ? await getEntry('games', relatedGameSlug) : null;
+// Don't link to draft games (their pages aren't built).
+if (relatedGame?.data.draft) relatedGame = null;
 
 // Build full image URL for structured data
 const imageUrl = displayImageUrl.startsWith('http')
@@ -247,6 +261,22 @@ const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
           <ProseContent>
             <slot />
           </ProseContent>
+
+          <!-- Video back-links: topic collection + related directory game -->
+          {(videoCollection || relatedGame) && (
+            <div class="mt-12 pt-8 border-t border-ink/10 dark:border-ink-dark/10 flex flex-wrap gap-x-6 gap-y-2 text-sm" data-pagefind-ignore>
+              {videoCollection && (
+                <a href={`/videos/${videoCollection.slug}/`} class="text-ink dark:text-ink-dark underline underline-offset-4 hover:no-underline">
+                  Part of: {videoCollection.title} →
+                </a>
+              )}
+              {relatedGame && (
+                <a href={`/games/${relatedGame.id}/`} class="text-ink dark:text-ink-dark underline underline-offset-4 hover:no-underline">
+                  {relatedGame.data.title} in the directory →
+                </a>
+              )}
+            </div>
+          )}
 
           <!-- Updated Date -->
           {formattedUpdatedDate && (
