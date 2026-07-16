@@ -10,7 +10,8 @@ import ContentContainer from '../components/ContentContainer.astro';
 import ImageCard from '../components/ImageCard.astro';
 import ViewAllLink from '../components/ViewAllLink.astro';
 import { getHeroImage } from '../utils/getHeroImage';
-import { getPublishedPosts, sortByDate } from '../utils/collections';
+import { sortByDate } from '../utils/collections';
+import { getVideoCollections } from '../utils/videoCollections';
 
 // ─── Directory: featured / recently added games ─────────────────────
 const allGames = await getCollection('games', ({ data }) => !data.draft);
@@ -39,21 +40,17 @@ const recentNewsCards = await Promise.all(
   })
 );
 
-// ─── Latest videos: deep dives & tutorials only, not daily vlogs ────
-const allPosts = await getCollection('blog');
-const publishedPosts = getPublishedPosts(allPosts);
-// Evergreen instructional categories — the "Vlogs" category is the daily
-// catch-all and is intentionally excluded from the homepage feature.
-const EVERGREEN_CATEGORIES = new Set(['Tutorials', 'Tips', 'Reviews']);
-const DAILY_TITLE = /\b(vlog day|hobby vlog|day \d+|mail day|just vlogg)/i;
-const latestVideos = sortByDate(
-  publishedPosts.filter(
-    (p) =>
-      p.data.youtubeId &&
-      EVERGREEN_CATEGORIES.has(p.data.category) &&
-      !DAILY_TITLE.test(p.data.title)
-  )
-).slice(0, 3);
+// ─── Latest videos: newest posts from the topic collections only ────
+// (never the daily archive — collection membership is the quality filter).
+const collections = await getVideoCollections();
+const seen = new Set<string>();
+const collectionPosts = [];
+for (const c of collections) {
+  for (const p of c.posts) {
+    if (!seen.has(p.id)) { seen.add(p.id); collectionPosts.push(p); }
+  }
+}
+const latestVideos = sortByDate(collectionPosts).slice(0, 3);
 ---
 
 <BaseLayout
@@ -138,7 +135,7 @@ const latestVideos = sortByDate(
       <PostGridSection
         title="Latest Videos"
         eyebrow="Watch"
-        viewAllLink="/vlogs/"
+        viewAllLink="/videos/"
         posts={latestVideos}
         layout="masonry"
       />

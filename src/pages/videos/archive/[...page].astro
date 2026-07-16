@@ -1,0 +1,64 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+import PageHeader from '../../../components/PageHeader.astro';
+import ContentContainer from '../../../components/ContentContainer.astro';
+import Pagination from '../../../components/Pagination.astro';
+import VideoCard from '../../../components/VideoCard.astro';
+import StructuredData from '../../../components/StructuredData.astro';
+import { getArchivePosts } from '../../../utils/videoCollections';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const posts = await getArchivePosts();
+  return paginate(posts, { pageSize: 24 });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+---
+
+<BaseLayout
+  title={page.currentPage === 1 ? 'Video Archive | The Hobbinomicon' : `Video Archive | Page ${page.currentPage} | The Hobbinomicon`}
+  description="The full back catalogue — mail days, progress fragments, and everything that isn't in a topic collection."
+>
+  <StructuredData
+    type="breadcrumb"
+    data={{
+      breadcrumbs: [
+        { name: 'Home', url: 'https://hobbinomicon.com/' },
+        { name: 'Videos', url: 'https://hobbinomicon.com/videos/' },
+        { name: 'Archive', url: 'https://hobbinomicon.com/videos/archive/' },
+      ],
+    }}
+  />
+  <Header theme="light" />
+
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
+    <PageHeader
+      title="Video Archive"
+      description={page.currentPage === 1
+        ? 'The full back catalogue. Everything that isn’t in a topic collection.'
+        : `Page ${page.currentPage} of ${page.lastPage}`}
+      breadcrumbs={[{ label: 'Videos', href: '/videos' }, { label: 'Archive', href: '/videos/archive' }]}
+    />
+
+    <ContentContainer class="py-8">
+      <p class="text-ink/70 dark:text-ink-dark/70 text-sm mb-8">
+        {page.total} videos · <a href="/videos/" class="underline hover:no-underline">back to collections</a>
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {page.data.map((post) => <VideoCard post={post} />)}
+      </div>
+      <Pagination
+        currentPage={page.currentPage}
+        totalPages={page.lastPage}
+        baseUrl="/videos/archive"
+        prevUrl={page.url.prev}
+        nextUrl={page.url.next}
+      />
+    </ContentContainer>
+
+    <Footer />
+  </main>
+</BaseLayout>

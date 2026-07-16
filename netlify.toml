@@ -26,6 +26,32 @@
   status = 200
   force = false
 
+# Projects section retired — content relocated to game pages, or archived.
+# Specific relocations first, then a catch-all to the directory.
+[[redirects]]
+  from = "/projects/motley-crews"
+  to = "/games/motley-crews/"
+  status = 301
+[[redirects]]
+  from = "/projects/trench-pilgrims"
+  to = "/games/trench-crusade/"
+  status = 301
+[[redirects]]
+  from = "/projects/*"
+  to = "/games/"
+  status = 301
+
+# Vlogs listing rebuilt as topic-organized Videos. Individual video posts stay
+# at /blog/... (unchanged); only the old listing/pagination redirects.
+[[redirects]]
+  from = "/vlogs"
+  to = "/videos/"
+  status = 301
+[[redirects]]
+  from = "/vlogs/*"
+  to = "/videos/"
+  status = 301
+
 # Headers for security and performance
 [[headers]]
   for = "/*"

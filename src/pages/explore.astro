@@ -21,18 +21,6 @@ const recentPosts = publishedPosts.slice(0, 6);
 // Video count
 const totalVideos = publishedPosts.filter(p => p.data.youtubeId).length;
 
-// Projects
-const allProjects = await getCollection('projects');
-const publishedProjects = allProjects.filter(p => !p.data.draft);
-const projectsWithActivity = publishedProjects.map(project => {
-  const projectPosts = sortByDate(publishedPosts.filter(p => p.data.project === project.id));
-  return { project, postCount: projectPosts.length, latestPost: projectPosts[0] };
-}).filter(p => p.postCount > 0).sort((a, b) => {
-  const dateA = a.latestPost?.data.pubDate.valueOf() || 0;
-  const dateB = b.latestPost?.data.pubDate.valueOf() || 0;
-  return dateB - dateA;
-});
-
 // Categories with counts and images
 const categories = getCategoriesWithCounts(allPosts).map(({ name, count, posts }) => {
   const postWithImage = posts.find(post => post.data.heroImage || post.data.youtubeId) || posts[0];
@@ -101,9 +89,6 @@ const totalTags = tagsWithCounts.length;
           {totalVideos} videos
         </span>
         <span class="px-4 py-2 bg-ink/5 dark:bg-ink-dark/5 rounded-full text-sm text-ink dark:text-ink-dark font-medium">
-          {projectsWithActivity.length} projects
-        </span>
-        <span class="px-4 py-2 bg-ink/5 dark:bg-ink-dark/5 rounded-full text-sm text-ink dark:text-ink-dark font-medium">
           {totalTags} tags
         </span>
         <button
@@ -159,37 +144,6 @@ const totalTags = tagsWithCounts.length;
         </div>
       </ContentContainer>
     </section>
-
-    <!-- Projects Section -->
-    {projectsWithActivity.length > 0 && (
-      <ContentContainer class="py-16">
-        <div class="flex items-center justify-between mb-8">
-          <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark">
-            Projects
-          </h2>
-          <a href="/projects/" class="text-sm text-ink/70 dark:text-ink-dark/70 hover:text-ink dark:hover:text-ink-dark transition-colors">
-            View all →
-          </a>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {projectsWithActivity.map(({ project, postCount, latestPost }) => {
-            const projectImage = latestPost ? getHeroImageUrl(latestPost.data.heroImage, latestPost.data.youtubeId) : null;
-            return (
-              <ImageCard
-                href={`/projects/${project.id}/`}
-                image={projectImage}
-                imageAlt={project.data.title}
-                title={project.data.title}
-                subtitle={`${postCount} ${postCount === 1 ? 'post' : 'posts'}${project.data.game ? ` · ${project.data.game}` : ''}`}
-                fallbackLetter={project.data.title.charAt(0)}
-                aspectRatio="16/9"
-                variant="overlay"
-              />
-            );
-          })}
-        </div>
-      </ContentContainer>
-    )}
 
     <!-- Tags Section -->
     <section class="bg-ink/[0.03] dark:bg-ink-dark/[0.03]">

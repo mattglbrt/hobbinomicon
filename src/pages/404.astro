@@ -151,8 +151,8 @@
       <div class="options">
         <p>What would you like to do?</p>
         <a href="/">[R] Return to Town (Home)</a>
-        <a href="/blog/">[B] Browse the Archives (Blog)</a>
-        <a href="/projects/">[P] View Past Quests (Projects)</a>
+        <a href="/games/">[G] Browse the Directory (Games)</a>
+        <a href="/videos/">[V] Watch the Videos</a>
       </div>
 
       <!-- Footer -->
@@ -164,8 +164,8 @@
       document.addEventListener('keydown', function(e) {
         const key = e.key.toLowerCase();
         if (key === 'r') window.location.href = '/';
-        if (key === 'b') window.location.href = '/blog';
-        if (key === 'p') window.location.href = '/projects';
+        if (key === 'g') window.location.href = '/games';
+        if (key === 'v') window.location.href = '/videos';
       });
     </script>
   </body>

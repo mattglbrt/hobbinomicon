@@ -32,19 +32,6 @@ const blog = defineCollection({
   }),
 });
 
-const projects = defineCollection({
-  loader: glob({
-    pattern: '**/*.{md,mdx}',
-    base: './src/content/projects',
-  }),
-  schema: z.object({
-    title: z.string(),
-    description: z.string(),
-    pubDate: z.coerce.date(),
-    draft: z.boolean().default(false),
-    game: z.string().optional(),
-  }),
-});
 
 const games = defineCollection({
   loader: glob({
@@ -92,6 +79,9 @@ const games = defineCollection({
 
     // Funnel
     relatedGames: z.array(reference('games')).default([]),
+    // Slugs of former project series whose build posts now live on this game
+    // page (the Projects section was retired; content relocated here).
+    relatedProjects: z.array(z.string()).default([]),
     verdict: z.string().optional(),
 
     // Reference card links
@@ -204,4 +194,4 @@ const news = defineCollection({
   }),
 });
 
-export const collections = { blog, projects, games, studios, people, news };
+export const collections = { blog, games, studios, people, news };
