@@ -108,22 +108,15 @@ const heroIsOptimized = resolvedHero && isImageMetadata(resolvedHero);
 // preloaded resource is the one actually rendered.
 import { getImage } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
-let heroPreloadSrcset = '';
+let heroImg: Awaited<ReturnType<typeof getImage>> | null = null;
 if (heroIsOptimized) {
-  const widths = [640, 1024, 1920];
-  const parts = await Promise.all(
-    widths.map(async (w) => {
-      const img = await getImage({
-        src: resolvedHero as ImageMetadata,
-        width: w,
-        height: Math.round((w * 9) / 16),
-        format: 'webp',
-        quality: 50,
-      });
-      return `${img.src} ${w}w`;
-    })
-  );
-  heroPreloadSrcset = parts.join(', ');
+  heroImg = await getImage({
+    src: resolvedHero as ImageMetadata,
+    widths: [640, 1024, 1920],
+    sizes: '100vw',
+    format: 'webp',
+    quality: 50,
+  });
 }
 
 // Build the spec pill row from schema fields. Only included pills that have a value.
@@ -144,8 +137,8 @@ const gameSpecs = [
   description={game.data.description}
   image={game.data.heroImage}
 >
-  {heroPreloadSrcset && (
-    <link slot="head" rel="preload" as="image" imagesrcset={heroPreloadSrcset} imagesizes="100vw" fetchpriority="high" />
+  {heroImg && (
+    <link slot="head" rel="preload" as="image" imagesrcset={heroImg.srcSet.attribute} imagesizes="100vw" fetchpriority="high" />
   )}
   <StructuredData
     type="breadcrumb"
@@ -184,19 +177,18 @@ const gameSpecs = [
     <SearchMeta description={game.data.description} aliases={game.data.aliases} type="game" />
     {resolvedHero ? (
       <div class="relative h-[50vh] md:h-[60vh] overflow-hidden">
-        {heroIsOptimized ? (
-          <Image
-            src={resolvedHero}
+        {heroImg ? (
+          <img
+            src={heroImg.src}
+            srcset={heroImg.srcSet.attribute}
+            sizes="100vw"
             alt={game.data.heroImageAlt || game.data.title}
+            width="1920"
+            height="1080"
             class="w-full h-full object-cover object-center"
             loading="eager"
+            fetchpriority="high"
             decoding="sync"
-            format="webp"
-            quality={50}
-            widths={[640, 1024, 1920]}
-            sizes="100vw"
-            width={1920}
-            height={1080}
           />
         ) : (
           <img

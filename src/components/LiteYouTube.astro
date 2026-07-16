@@ -1,15 +1,23 @@
 ---
 // Lazy YouTube facade: renders only a thumbnail + play button, and swaps in
-// the real iframe on click. Keeps game pages fast (no YouTube JS/iframe until
-// the visitor actually chooses to watch). Thumbnail host i.ytimg.com is already
-// allowlisted in astro.config's image.domains.
+// the real iframe on click. Keeps pages fast (no YouTube JS/iframe until the
+// visitor chooses to watch).
+//
+// Prefer the same-origin cached thumbnail (yt-<id>.jpg, downloaded by the
+// prebuild) so we serve an optimized same-origin WebP instead of a remote
+// i.ytimg.com image. Falls back to the YouTube thumbnail when uncached.
+import { Image } from 'astro:assets';
+import { getHeroImage, isImageMetadata } from '../utils/getHeroImage';
+
 interface Props {
   videoId: string;
   title?: string;
 }
 
 const { videoId, title = 'YouTube video' } = Astro.props;
-const thumb = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+const cached = getHeroImage(undefined, videoId);
+const thumbImage = isImageMetadata(cached) ? cached : null;
+const thumbUrl = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
 ---
 
 <div class="lite-yt group relative w-full overflow-hidden rounded-lg shadow-lg" style="aspect-ratio: 16 / 9;">
@@ -19,15 +27,29 @@ const thumb = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
     data-video-id={videoId}
     aria-label={`Play video: ${title}`}
   >
-    <img
-      src={thumb}
-      alt={title}
-      loading="lazy"
-      decoding="async"
-      width="480"
-      height="270"
-      class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-    />
+    {thumbImage ? (
+      <Image
+        src={thumbImage}
+        alt={title}
+        loading="lazy"
+        decoding="async"
+        format="webp"
+        quality={60}
+        width={640}
+        height={360}
+        class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+      />
+    ) : (
+      <img
+        src={thumbUrl}
+        alt={title}
+        loading="lazy"
+        decoding="async"
+        width="480"
+        height="270"
+        class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+      />
+    )}
     <span class="absolute inset-0 bg-black/10 transition-colors group-hover:bg-black/25"></span>
     <span
       class="absolute left-1/2 top-1/2 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-black/70 transition-transform duration-300 group-hover:scale-110"
