@@ -142,8 +142,19 @@ export async function getGeoContent() {
     getCollection('blog', ({ data }) => !data.draft),
   ]);
 
-  const byDate = <T extends { data: { pubDate: Date } }>(items: T[]) =>
-    [...items].sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+  // Tie-break on id. Date-only pubDates all parse to UTC midnight, so same-day
+  // posts tie exactly and would otherwise fall back to the glob loader's
+  // filesystem order — which differs between macOS and Netlify's Linux.
+  //
+  // Note this does NOT fix the wider ordering drift: ~192 posts carry
+  // `pubDate: "YYYY-MM-DD HH:MM:SS"` with no timezone, which JS parses as
+  // *local* time, so they resolve to different instants here vs. on Netlify.
+  // Pre-existing and not specific to these outputs (it moves RSS and the blog
+  // index too); sync-vlogs.js now writes proper ISO-with-Z, so it's legacy data.
+  const byDate = <T extends { id: string; data: { pubDate: Date } }>(items: T[]) =>
+    [...items].sort(
+      (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf() || a.id.localeCompare(b.id)
+    );
 
   return {
     games: [...games].sort((a, b) => {
