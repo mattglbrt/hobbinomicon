@@ -1,25 +1,34 @@
 # STATUS — The Hobbinomicon · updated 2026-07-21
 
 ## Now
-Live on Astro 6 (README still says Astro 5 — stale). v2 baseline shipped: three-entity directory, format-based game URLs, News pillar, SEO/perf pass (Lighthouse mobile high-90s), search improvements (05-12). Daily scheduled rebuild auto-publishes vlogs. YouTube description footer pass is ~76% done (204 of 269 videos, all priority ones covered). Tag audit done 07-08: 279 posts / 349 distinct tags / **290 unregistered** vs the 99-tag canonical set; 5-phase cleanup plan ready in `roadmap/tags.md`.
+Live on Astro 6 (README still says Astro 5 — stale). v2 baseline shipped: three-entity directory, format-based game URLs, News pillar, SEO/perf pass, search improvements. Deployed earlier today: 9 new vlogs, six weeks of missing transcripts, a hardened vlog pipeline. **GEO output built this evening and sitting on `dev`, unpushed** — `/llms.txt`, `/llms-full.txt`, and a `.md` rendering of all 316 public pages, all statically generated so the daily rebuild keeps them current. YouTube description footer pass ~76% done (204/269, all priority videos covered). **Transcripts only reach the live site from a local sync** — YouTube blocks caption fetches from Netlify's IPs, so `npm run refresh-vlogs` weekly is load-bearing (see `_system/RECURRING.md`). Tag audit 07-08: 279 posts / 349 tags / **290 unregistered** vs the 99-tag canonical set; plan in `roadmap/tags.md`.
 
 ## Next (ranked)
-1. **Last 65 YouTube descriptions** — one quota day's work. `npm run youtube-auth` (token expires 07-22), `npm run backup-descriptions`, then `node scripts/update-descriptions.cjs --run --max 190`. All remaining videos are non-priority; the evergreen/game-mapped set is already done.
-2. **Funnel mechanic v1** ("if you like X, try Y") — biggest visible gap from the v2 vision; schema ready, rendering + tag-fallback + backfill not.
-3. Newsletter: pick provider (Buttondown/ConvertKit/DIY — coordinate with AITD), cadence, archive page. Form is wired, engine missing.
-4. Tag cleanup phases 1-2 (lock taxonomy ~120-140, extend `tag-normalize.json`); fix the generator so junk stops regrowing daily.
-5. Monster Friends project entry + backfill `project:` on posts.
-6. Schedule the recurring maintenance (validate-schema, Lighthouse, tag-audit, link-rot) — currently unscheduled.
+1. **Deploy `dev` → `main`** — carries both the GEO commit (`0871107`) and the earlier verification work. `git switch main && git merge dev && git push && git switch dev`. Then confirm `/llms.txt` and one `.md` URL are live.
+2. **Verify the 07-21 deploy** — the skeletons post should show its link section + transcript; check the Netlify build log for the new blocked-fetch banner (expected quiet, no new videos since 07-10).
+3. **Last 65 YouTube descriptions** — one quota day. `npm run youtube-auth` → `npm run backup-descriptions` → `node scripts/update-descriptions.cjs --run --max 190`. All remaining are non-priority.
+4. **Hand-clean two long transcripts** — `lava-rock-diorama-for-teaspoon-part-1` (3,620 words) and `planning-a-new-hobby-room-layout` (3,241). The other six synced posts are too short to be worth it.
+5. **Funnel mechanic v1** ("if you like X, try Y") — biggest visible gap from the v2 vision; schema ready, rendering + tag-fallback + backfill not.
+6. Newsletter: pick provider (Buttondown/ConvertKit/DIY — coordinate with AITD), cadence, archive page. Form is wired, engine missing.
+7. Tag cleanup phases 1-2 (lock taxonomy ~120-140, extend `tag-normalize.json`); fix the generator so junk stops regrowing daily. Today's sync added ~30 more tag instances.
+8. Monster Friends project entry + backfill `project:` on posts.
+9. **Port the GEO pattern to aloneinthedungeon.com and mattglbrt.com** — `src/utils/markdownExport.ts` and `geoContent.ts` are close to portable; only the collection schemas differ. Do it after Hobbinomicon's version has been live long enough to shake out.
 
 ## Blockers
 - Matt: wave-3 game one-liners (10 games) + wave-1 game-page inputs; MESBG tier call; The One Ring page-split call.
-- YouTube OAuth refresh token expires 07-22 — `npm run youtube-auth` before any API work. Staying unverified/local-only is a closed decision (Matt, 07-21); the 7-day re-auth is accepted cost, not a problem to solve.
+- Matt: serve `.md` as `text/plain` so it renders in-browser instead of downloading? `nosniff` is site-wide and Netlify types `.md` as `text/markdown`. One `[[headers]]` block in `netlify.toml`. Not applied — changes a whole file class, and `text/markdown` is arguably more correct.
+- YouTube OAuth token expires 07-22 — `npm run youtube-auth` before API work. Staying unverified/local-only is a closed decision (07-21); the 7-day re-auth is accepted cost, not a problem to solve.
 - Comments moderation has no pending-notification (manual D1 SQL checks only).
 
 ## Recently done
-- 07-21 — 190 video descriptions updated (0 errors); fixed a quota-burning rewrite loop; stripped the legacy "Website & Blog" block from 232 videos; retired `push-descriptions.cjs`. Then synced 9 vlogs (06-16 → 07-10) and fixed sync-vlogs so the new footer stops leaking into post descriptions/tags; cleaned the transcript on the latest post.
-- 07-08 — full tag audit. 06-09 — first tag normalization pass (`466ed2f`). 05-12 — search + hero-cache work.
+- 07-21 (evening) — GEO output built: `/llms.txt` (25KB curated index, directory-first), `/llms-full.txt` (274KB, no split needed), and `.md` renderings of 316 pages with vlog transcripts intact. Descriptions lifted from frontmatter, no new copy. robots.txt was **not** blocking any AI crawler; named the major ones explicitly as a guardrail. Zero impact on HTML pages — nothing pre-existing touched but robots.txt; schema validation passes on all 692. Committed to `dev`, unpushed.
+- 07-21 (pm) — Found transcripts never reach the site from Netlify builds (YouTube blocks datacenter IPs; failure was silent for six weeks). Synced 9 vlogs, cleaned + linked the newest post, fixed the footer leaking into descriptions/tags, added blocked-fetch reporting, `lib/excerpt.js`, and `transcript-normalize.json`. Merged `dev`→`main` (6 commits, +3,311/−359). Created `_system/RECURRING.md` + dashboard panel.
+- 07-21 (am) — 190 video descriptions updated; fixed a quota-burning rewrite loop; stripped the legacy "Website & Blog" block from 232 videos; retired `push-descriptions.cjs`.
+- 07-08 — full tag audit. 06-09 — first tag normalization pass (`466ed2f`).
 
 ## Open questions
-- Delete the now-unused `descriptions/` corpus (232 files) and `descriptions_pushed.json`? Both gitignored, both dead since `push-descriptions.cjs` was retired.
+- Should `/llms.txt` be linked from the site (footer, or a `<link rel="alternate">` on pages)? Nothing references it yet; discovery is crawler-side only.
+- Delete the now-unused `descriptions/` corpus (232 files) and `descriptions_pushed.json`? Both gitignored, both dead.
+- Mirror the `_system/PLAYBOOK.md` §5 edit into `clients/_system/`? That tree is outside this working directory.
+- Worth a transcript proxy so Netlify can fetch captions itself, or is the weekly local sync fine? (Deferred on cost/complexity.)
 - Tagline alternatives? Newsletter provider? Moderation alerting approach?

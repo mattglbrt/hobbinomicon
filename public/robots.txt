@@ -3,9 +3,31 @@
 
 User-agent: *
 Allow: /
+# Disallow admin/system paths (if any)
+Disallow: /_astro/
+
+# AI crawlers are welcome — the wildcard group above already allows them.
+# Naming them keeps that intent explicit, so a future Disallow under "*"
+# doesn't silently lock them out.
+User-agent: GPTBot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: ClaudeBot
+User-agent: Claude-User
+User-agent: Claude-SearchBot
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+User-agent: CCBot
+User-agent: meta-externalagent
+Allow: /
+Disallow: /_astro/
 
 # Sitemap location
 Sitemap: https://hobbinomicon.com/sitemap-index.xml
 
-# Disallow admin/system paths (if any)
-Disallow: /_astro/
+# Machine-readable content index for language models (https://llmstxt.org/):
+#   https://hobbinomicon.com/llms.txt
+#   https://hobbinomicon.com/llms-full.txt
+# Any content page also has a markdown rendering at its URL + ".md".
