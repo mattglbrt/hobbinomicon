@@ -14,7 +14,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { formatTranscriptParagraphs } from './lib/format-transcript.js';
-import { getTranscript } from './lib/fetch-transcript.js';
+import { getTranscriptResult, reportBlocked } from './lib/fetch-transcript.js';
+import { excerptFromDescription, excerptFromTranscript } from './lib/excerpt.js';
 
 dotenv.config();
 
@@ -193,22 +194,16 @@ function stripFooter(description) {
   return (i === -1 ? description : lines.slice(0, i).join('\n')).trim();
 }
 
-function createExcerpt(description) {
-  if (!description) return '';
-  let clean = description.replace(/https?:\/\/[^\s]+/g, '');
-  clean = clean.replace(/\s+/g, ' ').trim();
-  if (clean.length <= 160) return clean;
-  const truncated = clean.slice(0, 160);
-  const lastSpace = truncated.lastIndexOf(' ');
-  return truncated.slice(0, lastSpace) + '...';
-}
-
 function generateMdx(video, transcript, tags, hasHeroImage) {
   const safeTitle = video.title.replace(/"/g, '\\"');
   // Fall back to a transcript-derived excerpt when the video has no
-  // description, so the post never ships an empty meta description.
+  // description, so the post never ships an empty meta description. The
+  // transcript path skips leading throat-clearing — see lib/excerpt.js.
   const body = stripFooter(video.description);
-  const excerpt = (createExcerpt(body) || createExcerpt(transcript)).replace(/"/g, '\\"');
+  const excerpt = (excerptFromDescription(body) || excerptFromTranscript(transcript)).replace(
+    /"/g,
+    '\\"'
+  );
   const tagsStr = JSON.stringify(tags);
 
   let content = `---
@@ -299,14 +294,25 @@ async function main() {
   const syncLog = loadSyncLog();
   let created = 0;
   let errors = 0;
+  let blocked = 0;
 
   for (const video of newVideos) {
     try {
       console.log(`  ${video.title}`);
 
       // Fetch transcript
-      const transcript = await getTranscript(video.id);
-      console.log(transcript ? '    Transcript found' : '    No transcript available');
+      const result = await getTranscriptResult(video.id);
+      const transcript = result.text;
+      if (result.status === 'ok') {
+        console.log('    Transcript found');
+      } else if (result.status === 'blocked') {
+        blocked++;
+        console.log('    Transcript BLOCKED (not missing) — this post will have no body');
+      } else if (result.status === 'error') {
+        console.log(`    Transcript fetch failed: ${result.reason}`);
+      } else {
+        console.log('    No captions on YouTube for this video');
+      }
 
       // Auto-tag
       // Footer stripped here too: it names games ("Kal Arath", "TSPN") and would
@@ -358,6 +364,7 @@ async function main() {
   console.log('---');
   console.log(`Created: ${created} new blog posts`);
   if (errors > 0) console.log(`Errors: ${errors}`);
+  reportBlocked(blocked, 'npm run sync-vlogs');
 }
 
 main().catch(error => {

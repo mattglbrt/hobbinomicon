@@ -6,6 +6,8 @@
     "dev": "astro dev",
     "sync-vlogs": "node scripts/sync-vlogs.js",
     "backfill-transcripts": "node scripts/backfill-transcripts.js",
+    "normalize-transcripts": "node scripts/normalize-transcripts.js",
+    "refresh-vlogs": "node scripts/sync-vlogs.js && node scripts/backfill-transcripts.js && node scripts/normalize-transcripts.js && node scripts/download-hero-images.js && git status --short src/content/blog/vlogs",
     "prebuild": "node scripts/sync-vlogs.js && node scripts/backfill-transcripts.js && node scripts/update-youtube-stats.js && node scripts/download-hero-images.js",
     "build": "astro build",
     "postbuild": "pagefind --site dist",
