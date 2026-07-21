@@ -4,6 +4,56 @@ Append-only. **Newest entry first.** Pre-existing planning history lives in `roa
 
 ---
 
+## 2026-07-21 (evening, cont.) — GEO deployed and verified live; a timezone bug fell out of the diff
+
+Continuation of the entry below, which closed with the GEO work committed to `dev` but unpushed and unverified. Both of those are now resolved; this entry supersedes its "Still open" list.
+
+### Deploys
+
+Two batched merges, one build each, both normal merges per the workflow:
+
+- **`890e8e3`** — GEO output + both wrap commits (3 commits).
+- **`35d3eea`** — the sort fix below + two STATUS updates (3 commits).
+
+Matt confirmed the earlier 07-21 transcript deploy independently, closing that item.
+
+### Live verification
+
+All outputs confirmed at 200. `/llms.txt` came back **byte-identical to the local build** (26,015 bytes), and its section counts match exactly: Games 10, Studios 6, People 8, News 6, Guides 13, Articles 2, Browse 7, Recent vlogs 60, Optional 2. `/llms-full.txt` is 280,503 bytes; `/games/kal-arath.md` and `/blog/vlogs/wtf-is-a-rectifier.md` both serve as `text/markdown` with the transcript intact.
+
+**The `.md` content-type worry was unfounded** — despite site-wide `nosniff`, Netlify serves `text/markdown` and browsers display it. No `netlify.toml` change needed; that blocker is closed.
+
+**Method note worth keeping:** the first verification pass used WebFetch, which miscounted two sections (reported Browse 6 and vlogs 71, actual 7 and 60). Its answers come from a small summarizing model that is not reliable at counting long lists. Re-checked with `curl` + `awk`, which is what the numbers above come from. Don't trust WebFetch for anything numeric.
+
+### What the diff caught
+
+Diffing live `llms-full.txt` against local showed identical byte counts but one vlog sorted one position differently. Chasing it turned up a real, pre-existing bug:
+
+**192 posts carry `pubDate: "YYYY-MM-DD HH:MM:SS"` with no timezone.** JS parses that as *local* time, so those posts resolve to a different UTC instant on Netlify (UTC) than on Matt's Mac. Content inventory: 79 explicit-TZ, 48 date-only, **192 ambiguous**.
+
+This is broader than the GEO outputs — it shifts ordering in RSS and the blog index too. `scripts/sync-vlogs.js` writes `video.publishedAt` (ISO with Z), so it's legacy data rather than a live regression, and the impact is cosmetic ordering only.
+
+**Not fixed.** Rewriting 192 content files is a separate call from "implement GEO output," and the correct fix depends on whether those timestamps were originally UTC (likely — they came from YouTube `publishedAt`). Logged as an open question instead.
+
+### Decisions
+
+- **Tie-break the date sort by id** (`17ce0c7`). The 48 date-only pubDates parse to exactly UTC midnight, so same-day posts tie genuinely and fell back to the glob loader's filesystem order, which differs between macOS and Linux. Real fix, kept — but note it does *not* address the 192-post timezone issue, which is a different mechanism.
+- **First diagnosis was wrong and got corrected.** I initially attributed the ordering difference to a sort tie and committed a comment saying so. Reading the two actual pubDates showed they differ by time, not tie. Comment and commit message corrected before push; recording it because the wrong explanation was briefly in the tree.
+- **Reported the timezone bug rather than fixing it.** Out of scope, touches 192 content files, and needs Matt's read on original intent.
+
+### Artifacts
+
+- `src/utils/geoContent.ts` — id tie-breaker + a comment documenting the wider timezone caveat.
+- `STATUS.md` — GEO verified live, `.md` content-type blocker closed, timezone finding logged.
+
+### Still open
+
+- **Normalize the 192 timezone-less pubDates?** One-off script, cosmetic impact, Matt's call.
+- Should `/llms.txt` be linked from the site? Nothing references it; discovery is crawler-side only.
+- Port the pattern to aloneinthedungeon.com and mattglbrt.com once this version has been live a while.
+
+---
+
 ## 2026-07-21 (evening) — GEO output: llms.txt, llms-full.txt, and .md renderings of every page
 
 Built the Generative Engine Optimization surface Matt asked for, modeled on Ghost's new built-in feature. All of it is statically generated at build time from the content collections, so the existing daily scheduled rebuild keeps it fresh — no new automation, no new moving parts to forget about.
