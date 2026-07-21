@@ -61,7 +61,9 @@ so the pass is safely re-runnable and self-healing.
   10,000/day limit, so a full pass takes two days. Priority (playlisted +
   game-mapped) videos go first, so a quota-limited day covers what matters.
 - The OAuth app is unverified → **refresh token dies after 7 days**. Expect
-  `npm run youtube-auth` before most passes. Publishing the app kills this.
+  `npm run youtube-auth` before most passes. This is a **closed decision**
+  (Matt, 07-21): these scripts run locally only, and Google verification isn't
+  worth it for a one-machine tool. Don't propose publishing the app again.
 - Retired 2026-07-21: `push-descriptions.cjs` + the `descriptions/` text corpus
   (gitignored, still on disk). It matched description files to videos by fuzzy
   title similarity and would have pushed the wrong description to a short-titled

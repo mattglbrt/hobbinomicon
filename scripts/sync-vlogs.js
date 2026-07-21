@@ -179,6 +179,20 @@ function slugify(title) {
     .slice(0, 80);
 }
 
+// Every video now carries the standard footer appended by
+// update-descriptions.cjs (the ――― delimiter and everything after it). It is
+// our own boilerplate, so it must never become a post's meta description or
+// "About This Video" body — strip it before either. Keep the delimiter in sync
+// with DELIM in update-descriptions.cjs.
+const FOOTER_DELIM = '―――';
+
+function stripFooter(description) {
+  if (!description) return '';
+  const lines = description.split('\n');
+  const i = lines.findIndex((l) => l.trim() === FOOTER_DELIM);
+  return (i === -1 ? description : lines.slice(0, i).join('\n')).trim();
+}
+
 function createExcerpt(description) {
   if (!description) return '';
   let clean = description.replace(/https?:\/\/[^\s]+/g, '');
@@ -193,7 +207,8 @@ function generateMdx(video, transcript, tags, hasHeroImage) {
   const safeTitle = video.title.replace(/"/g, '\\"');
   // Fall back to a transcript-derived excerpt when the video has no
   // description, so the post never ships an empty meta description.
-  const excerpt = (createExcerpt(video.description) || createExcerpt(transcript)).replace(/"/g, '\\"');
+  const body = stripFooter(video.description);
+  const excerpt = (createExcerpt(body) || createExcerpt(transcript)).replace(/"/g, '\\"');
   const tagsStr = JSON.stringify(tags);
 
   let content = `---
@@ -216,8 +231,8 @@ import YouTubeEmbed from '../../../components/YouTubeEmbed.astro';
 `;
 
   // Add description section
-  if (video.description && video.description.trim().length > 0) {
-    content += `\n## About This Video\n\n${video.description}\n`;
+  if (body.length > 0) {
+    content += `\n## About This Video\n\n${body}\n`;
   }
 
   // Add transcript section (split into readable paragraphs)
@@ -294,7 +309,9 @@ async function main() {
       console.log(transcript ? '    Transcript found' : '    No transcript available');
 
       // Auto-tag
-      const combinedText = [video.title, video.description, transcript || ''].join(' ');
+      // Footer stripped here too: it names games ("Kal Arath", "TSPN") and would
+      // otherwise auto-tag every video with whatever the footer links to.
+      const combinedText = [video.title, stripFooter(video.description), transcript || ''].join(' ');
       const tags = extractTags(combinedText);
       if (tags.length > 0) {
         console.log(`    Tags: ${tags.join(', ')}`);
