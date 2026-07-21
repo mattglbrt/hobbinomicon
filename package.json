@@ -18,7 +18,8 @@
     "tag-rename": "node scripts/tag-rename.js",
     "validate-schema": "node scripts/validate-schema.js",
     "update-youtube-stats": "node scripts/update-youtube-stats.js",
-    "push-descriptions": "node scripts/push-descriptions.cjs",
+    "update-descriptions": "node scripts/update-descriptions.cjs",
+    "backup-descriptions": "node scripts/backup-descriptions.cjs",
     "youtube-auth": "node scripts/youtube-auth.cjs"
   },
   "dependencies": {

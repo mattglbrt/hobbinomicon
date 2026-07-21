@@ -46,3 +46,36 @@ YouTube generates captions.
 
 Transcripts are embedded as a `## Transcript` markdown section in the MDX body
 (not via a frontmatter field or component).
+
+## YouTube description footer pass
+
+`scripts/update-descriptions.cjs` is the **only** description writer. It appends
+the standard footer (directory or game-specific link, newsletter, Discord) to
+every video, leaving title/tags/categoryId untouched. Skipping is content-based,
+not id-based: a video already carrying the exact desired description is skipped,
+so the pass is safely re-runnable and self-healing.
+
+- **Always `npm run backup-descriptions` first** — it snapshots all live
+  snippets to `scripts/backups/`. That backup is the only undo.
+- Dry run, then `--run --max 190`. Each update costs 50 quota units against a
+  10,000/day limit, so a full pass takes two days. Priority (playlisted +
+  game-mapped) videos go first, so a quota-limited day covers what matters.
+- The OAuth app is unverified → **refresh token dies after 7 days**. Expect
+  `npm run youtube-auth` before most passes. Publishing the app kills this.
+- Retired 2026-07-21: `push-descriptions.cjs` + the `descriptions/` text corpus
+  (gitignored, still on disk). It matched description files to videos by fuzzy
+  title similarity and would have pushed the wrong description to a short-titled
+  video. `update-descriptions.cjs` matches on video ID and supersedes it.
+  Unrelated despite the name: `backfill-descriptions.js` fills empty
+  `description:` frontmatter in MDX from transcripts — nothing to do with
+  YouTube-side descriptions.
+
+---
+
+## Session workflow (Everyway standard — added 2026-07-21)
+
+This repo follows the standard in `../_system/PLAYBOOK.md` (MDG Growth root; venture context in `../CLAUDE.md`).
+
+- **Start:** `/orient` — read `STATUS.md`. Roadmaps (`roadmap/*.md`) stay the deep planning docs; STATUS.md is the one-page rollup.
+- **End:** `/wrap` — append a `SESSION_LOG.md` entry (newest first), refresh `STATUS.md`, update `../PROJECTS.md` row if the picture changed.
+- Writing anything reader-facing? `voice.md` is law (it is the master copy; yellowimp mirrors it).
