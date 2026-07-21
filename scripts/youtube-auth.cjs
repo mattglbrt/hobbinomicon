@@ -1,6 +1,8 @@
 /**
  * YouTube OAuth2 Authentication Setup
- * Run this once to get your refresh token, then use push-descriptions.cjs
+ * Run this once to get your refresh token, then use update-descriptions.cjs.
+ * The app is unverified, so the refresh token expires after 7 days — expect to
+ * rerun this before most description passes.
  */
 
 const fs = require('fs');
@@ -85,7 +87,7 @@ async function main() {
 
           console.log('\n=== Success! ===');
           console.log(`Tokens saved to ${TOKEN_PATH}`);
-          console.log('\nYou can now run: node scripts/push-descriptions.cjs');
+          console.log('\nYou can now run: node scripts/update-descriptions.cjs --dry-run');
 
           server.close();
           process.exit(0);

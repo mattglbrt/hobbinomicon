@@ -21,13 +21,19 @@
  *
  * Idempotent and build-safe: a vlog that already has a transcript is skipped,
  * and any unexpected error is logged without failing the build.
+ *
+ * IMPORTANT: on Netlify this script can never succeed. YouTube blocks the
+ * caption endpoint from datacenter IPs, so every fetch comes back 'blocked'.
+ * Running it in `prebuild` is close to a no-op; the transcripts on the live
+ * site are the ones synced from a home connection and committed. It now says
+ * so loudly instead of reporting blocks as "still no captions".
  */
 
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { formatTranscriptParagraphs } from './lib/format-transcript.js';
-import { getTranscript } from './lib/fetch-transcript.js';
+import { getTranscriptResult, reportBlocked } from './lib/fetch-transcript.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const VLOGS_DIR = path.join(__dirname, '../src/content/blog/vlogs');
@@ -47,6 +53,7 @@ async function main() {
   let backfilled = 0;
   let stillMissing = 0;
   let skipped = 0;
+  let blocked = 0;
   const attempts = [];
 
   for (const name of fs.readdirSync(VLOGS_DIR)) {
@@ -99,15 +106,24 @@ async function main() {
   );
 
   for (const { name, filePath, content, youtubeId } of attempts) {
-    const transcript = await getTranscript(youtubeId);
+    const result = await getTranscriptResult(youtubeId);
 
-    if (transcript) {
-      const section = `\n## Transcript\n\n${formatTranscriptParagraphs(transcript)}\n`;
+    if (result.text) {
+      const section = `\n## Transcript\n\n${formatTranscriptParagraphs(result.text)}\n`;
       fs.writeFileSync(filePath, `${content.replace(/\s+$/, '')}\n${section}`, 'utf-8');
       console.log(`  + ${name} (${youtubeId}) — transcript added`);
       backfilled++;
+    } else if (result.status === 'blocked') {
+      // This is the case that made the whole thing look like it was working:
+      // on Netlify every attempt lands here and used to print "still no
+      // captions", so a fixable block read as a fact about the video.
+      blocked++;
+      console.log(`  ! ${name} (${youtubeId}) — BLOCKED, captions may well exist`);
+    } else if (result.status === 'error') {
+      console.log(`  ? ${name} (${youtubeId}) — fetch failed: ${result.reason}`);
+      stillMissing++;
     } else {
-      console.log(`  · ${name} (${youtubeId}) — still no captions`);
+      console.log(`  · ${name} (${youtubeId}) — no captions on YouTube`);
       stillMissing++;
     }
 
@@ -118,7 +134,9 @@ async function main() {
   console.log('\n---');
   console.log(`Backfilled: ${backfilled}`);
   console.log(`Still no captions: ${stillMissing}`);
+  if (blocked > 0) console.log(`Blocked (retry from a home connection): ${blocked}`);
   console.log(`Skipped (already have transcript / out of window): ${skipped}`);
+  reportBlocked(blocked, 'npm run backfill-transcripts');
 }
 
 main().catch(error => {

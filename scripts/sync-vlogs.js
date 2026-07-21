@@ -14,7 +14,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { formatTranscriptParagraphs } from './lib/format-transcript.js';
-import { getTranscript } from './lib/fetch-transcript.js';
+import { getTranscriptResult, reportBlocked } from './lib/fetch-transcript.js';
+import { excerptFromDescription, excerptFromTranscript } from './lib/excerpt.js';
 
 dotenv.config();
 
@@ -179,21 +180,30 @@ function slugify(title) {
     .slice(0, 80);
 }
 
-function createExcerpt(description) {
+// Every video now carries the standard footer appended by
+// update-descriptions.cjs (the ――― delimiter and everything after it). It is
+// our own boilerplate, so it must never become a post's meta description or
+// "About This Video" body — strip it before either. Keep the delimiter in sync
+// with DELIM in update-descriptions.cjs.
+const FOOTER_DELIM = '―――';
+
+function stripFooter(description) {
   if (!description) return '';
-  let clean = description.replace(/https?:\/\/[^\s]+/g, '');
-  clean = clean.replace(/\s+/g, ' ').trim();
-  if (clean.length <= 160) return clean;
-  const truncated = clean.slice(0, 160);
-  const lastSpace = truncated.lastIndexOf(' ');
-  return truncated.slice(0, lastSpace) + '...';
+  const lines = description.split('\n');
+  const i = lines.findIndex((l) => l.trim() === FOOTER_DELIM);
+  return (i === -1 ? description : lines.slice(0, i).join('\n')).trim();
 }
 
 function generateMdx(video, transcript, tags, hasHeroImage) {
   const safeTitle = video.title.replace(/"/g, '\\"');
   // Fall back to a transcript-derived excerpt when the video has no
-  // description, so the post never ships an empty meta description.
-  const excerpt = (createExcerpt(video.description) || createExcerpt(transcript)).replace(/"/g, '\\"');
+  // description, so the post never ships an empty meta description. The
+  // transcript path skips leading throat-clearing — see lib/excerpt.js.
+  const body = stripFooter(video.description);
+  const excerpt = (excerptFromDescription(body) || excerptFromTranscript(transcript)).replace(
+    /"/g,
+    '\\"'
+  );
   const tagsStr = JSON.stringify(tags);
 
   let content = `---
@@ -216,8 +226,8 @@ import YouTubeEmbed from '../../../components/YouTubeEmbed.astro';
 `;
 
   // Add description section
-  if (video.description && video.description.trim().length > 0) {
-    content += `\n## About This Video\n\n${video.description}\n`;
+  if (body.length > 0) {
+    content += `\n## About This Video\n\n${body}\n`;
   }
 
   // Add transcript section (split into readable paragraphs)
@@ -284,17 +294,30 @@ async function main() {
   const syncLog = loadSyncLog();
   let created = 0;
   let errors = 0;
+  let blocked = 0;
 
   for (const video of newVideos) {
     try {
       console.log(`  ${video.title}`);
 
       // Fetch transcript
-      const transcript = await getTranscript(video.id);
-      console.log(transcript ? '    Transcript found' : '    No transcript available');
+      const result = await getTranscriptResult(video.id);
+      const transcript = result.text;
+      if (result.status === 'ok') {
+        console.log('    Transcript found');
+      } else if (result.status === 'blocked') {
+        blocked++;
+        console.log('    Transcript BLOCKED (not missing) — this post will have no body');
+      } else if (result.status === 'error') {
+        console.log(`    Transcript fetch failed: ${result.reason}`);
+      } else {
+        console.log('    No captions on YouTube for this video');
+      }
 
       // Auto-tag
-      const combinedText = [video.title, video.description, transcript || ''].join(' ');
+      // Footer stripped here too: it names games ("Kal Arath", "TSPN") and would
+      // otherwise auto-tag every video with whatever the footer links to.
+      const combinedText = [video.title, stripFooter(video.description), transcript || ''].join(' ');
       const tags = extractTags(combinedText);
       if (tags.length > 0) {
         console.log(`    Tags: ${tags.join(', ')}`);
@@ -341,6 +364,7 @@ async function main() {
   console.log('---');
   console.log(`Created: ${created} new blog posts`);
   if (errors > 0) console.log(`Errors: ${errors}`);
+  reportBlocked(blocked, 'npm run sync-vlogs');
 }
 
 main().catch(error => {

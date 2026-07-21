@@ -1,0 +1,26 @@
+{
+  "_comment": "Auto-caption corrections applied to every transcript at generation time. YouTube's ASR mangles hobby proper nouns constantly, and it mangles the same word differently in different videos, so each entry lists every spelling actually seen. Matched case-insensitively on whole words, longest variant first.",
+
+  "_rules": [
+    "Only add a variant you have SEEN in a real transcript. Do not invent plausible mishearings — an unused entry is dead weight, and a wrong one silently rewrites Matt's words.",
+    "Never add a variant that is also a normal English phrase. 'more time' is a believable mishearing of 'Mordheim' and would corrupt dozens of transcripts; that is exactly the entry to leave out.",
+    "Verify the correct spelling against the maker's own site before adding it.",
+    "This fixes mechanical errors only. 'dry brush' vs 'drybrush' is Matt's usage, not a mistake — leave it alone."
+  ],
+
+  "replacements": {
+    "Mörk Borg": ["morboard", "morborg"],
+    "Westfalia Miniatures": ["westfallian miniatures", "westfallia miniatures"],
+    "Westfalia": ["westfallian", "westfallia"],
+    "Boris Woloszyn": ["boris wellazin"],
+    "MyMiniFactory": ["miami factory"],
+    "Skelly Joe": ["skellyy joe"],
+    "Tenebrous Grey": ["teneembbas gray", "tenebris grey", "tenebris gray"],
+    "Hexwraith Flame": ["hexraith flame", "hex-ray flame"],
+    "Sunny Skin Tone": ["skinny sunny skin tone"],
+    "phthalocyanine": ["thallocyanine"],
+    "zenithal": ["zenithl"],
+    "baking soda": ["bacon soda"],
+    "light box": ["light boost"]
+  }
+}
