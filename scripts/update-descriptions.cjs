@@ -99,11 +99,28 @@ function fixTypos(text) {
   return text.replace(/hobbynomicon\.com/gi, 'hobbinomicon.com');
 }
 
+// The pre-footer link block, sitting mid-description above the hashtags:
+//   ---
+//   🌐 Website & Blog: https://hobbinomicon.com
+//   ---
+// Deliberately narrow (the site URL is required) so a bare "---" separator in
+// real body text is never eaten. Superseded by the standard footer.
+const LEGACY_BLOCK =
+  /\n*^-{3,}[ \t]*\n[^\n]{0,4}[ \t]*Website & Blog:[ \t]*https?:\/\/\S*hobb\w*\.com\/?[ \t]*\n-{3,}[ \t]*$\n*/m;
+
+function stripLegacyBlock(desc) {
+  return desc.replace(LEGACY_BLOCK, '\n\n');
+}
+
 // The full description we want a video to end up with: cleaned original body
 // (footer stripped, typos fixed) + the standard footer.
 function desiredDescription(snippet, gameSlug, titles) {
-  const base = fixTypos(stripFooter(snippet.description).trimEnd());
-  return `${base}\n\n${buildFooter(gameSlug, titles)}`;
+  const base = fixTypos(stripLegacyBlock(stripFooter(snippet.description)).trimEnd());
+  const footer = buildFooter(gameSlug, titles);
+  // A video with no body is footer-only: YouTube strips leading whitespace, so
+  // prefixing "\n\n" here would never match what comes back and the video would
+  // be rewritten on every pass.
+  return base ? `${base}\n\n${footer}` : footer;
 }
 
 function isQuotaError(e) {
