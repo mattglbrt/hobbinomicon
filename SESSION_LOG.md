@@ -4,6 +4,55 @@ Append-only. **Newest entry first.** Pre-existing planning history lives in `roa
 
 ---
 
+## 2026-07-21 (evening) — GEO output: llms.txt, llms-full.txt, and .md renderings of every page
+
+Built the Generative Engine Optimization surface Matt asked for, modeled on Ghost's new built-in feature. All of it is statically generated at build time from the content collections, so the existing daily scheduled rebuild keeps it fresh — no new automation, no new moving parts to forget about.
+
+### What shipped
+
+- **`/llms.txt`** (25KB) — curated index per the [llms.txt spec](https://llmstxt.org/). H1, a one-paragraph blockquote, then H2 sections: Games → Studios → People → News → Guides and resources → Articles → Browse → Recent vlogs (60) → Optional. Directory entities lead, as asked. Every link points at the `.md` rendering, so a model that follows one gets clean markdown instead of a page of layout.
+- **`.md` renderings** — appending `.md` to any public page URL returns frontmatter (title, description, date, tags, canonical URL) plus body. 316 files: 10 games, 6 studios, 8 people, 6 news, 286 blog. Vlog renderings keep their `## Transcript` section intact.
+- **`/llms-full.txt`** (274KB) — directory, News, guides, and articles in full; the 271 vlogs as title + description + link. Well under the 2MB threshold, so **no split needed**.
+
+### Decisions
+
+- **Link descriptions are lifted verbatim from frontmatter.** Per Matt's constraint, no new copy written in his voice. The only prose I authored is the llms.txt blockquote and the llms-full.txt header, both deliberately flat and factual — they're machine-facing metadata, not site copy.
+- **Rendered from the raw MDX body, not Astro's HTML.** Keeps the output real markdown. `src/utils/markdownExport.ts` strips scaffolding mechanically: imports and JSX out, with the four components carrying citable text converted to equivalents — `YouTubeEmbed` → a watch link, `ResourceSection` → `###`, `ResourceCard`/`ImageCard` → list items with their titles, prices, and descriptions. No word is ever changed, same rule as `scripts/lib/format-transcript.js`.
+- **Documents in llms-full.txt are bounded by HTML comments, not `---`.** Caught during review: every doc opens with a YAML frontmatter fence, so a `---` separator would be indistinguishable from one and split the file wrong for anything parsing it.
+- **Vlog transcripts excluded from llms-full.txt.** They'd multiply the file by roughly 10× for content that's one fetch away at each post's own `.md` URL.
+- **`<div>` tags stripped from markdown output.** They only ever wrap layout here (grid rows around cards) and mean nothing in a markdown export. Found because stripping `ImageCard` left empty husks on the Wave 2 news post.
+- **Doc builders factored into `src/utils/geoContent.ts`** so the `.md` endpoints and llms-full.txt render a page identically rather than drifting apart.
+
+### robots.txt — was not blocking anything
+
+Reported as asked: the existing `User-agent: * / Allow: /` already permitted every AI crawler. Nothing was being excluded, so nothing needed unblocking. Named GPTBot, OAI-SearchBot, ChatGPT-User, ClaudeBot, Claude-User, Claude-SearchBot, PerplexityBot, Perplexity-User, Google-Extended, Applebot-Extended, CCBot, and meta-externalagent explicitly anyway — the wildcard covers them, but naming them means a future `Disallow` under `*` can't silently lock them out. Kept `Disallow: /_astro/` in both groups.
+
+### Verification
+
+- Built clean with `npx astro build` (skipping `prebuild`'s YouTube API calls). 692 HTML pages, unchanged.
+- Spot-checked `llms.txt`, `llms-full.txt`, and three `.md` URLs — `/games/kal-arath.md`, `/blog/resources/mageknight-stormfox-newbie-guide.md`, `/blog/vlogs/wtf-is-a-rectifier.md` (transcript present).
+- **Zero leftover MDX scaffolding** across all 316 files and llms-full.txt (grepped for `^import` and `<Capital`).
+- **All 105 `.md` links in llms.txt resolve** to real files; all Browse targets exist.
+- **Performance impact is zero by construction** — no existing page, layout, or component was touched. `git status` confirms the only modified pre-existing file is `robots.txt`. `npm run validate-schema` still passes across all 692 pages.
+- Endpoints emit as static files, confirmed in `dist` — not SSR functions. They do **not** appear in the sitemap, which is correct.
+
+### Artifacts
+
+- `src/utils/markdownExport.ts` (new) — MDX stripping, frontmatter rendering, canonical URLs.
+- `src/utils/geoContent.ts` (new) — per-collection doc builders + the filtered/sorted content set.
+- `src/pages/llms.txt.ts`, `src/pages/llms-full.txt.ts` (new).
+- `src/pages/{blog/[...slug],games/[slug],studios/[slug],people/[slug],news/[slug]}.md.ts` (new).
+- `public/robots.txt` (modified).
+- Committed to `dev` as `0871107`, **not pushed** — Matt deploys via the batched merge.
+
+### Still open
+
+- **One decision for Matt:** `netlify.toml` sets `X-Content-Type-Options: nosniff` site-wide, and Netlify serves `.md` as `text/markdown`. Browsers will therefore *download* a `.md` URL rather than display it. Fine for crawlers, awkward for eyeballing. A `[[headers]]` block forcing `text/plain; charset=utf-8` on `/*.md` would make them render inline. Not applied — it changes how a whole file class is served, and `text/markdown` is arguably the more correct type.
+- Not yet verified against the live site (nothing pushed).
+- **Port the same pattern to aloneinthedungeon.com and mattglbrt.com.** The two utils are close to portable; only the collection schemas differ.
+
+---
+
 ## 2026-07-21 (later) — Transcripts were never reaching the live site; pipeline hardened, everything deployed
 
 Started as "pull the transcript for the latest video and clean it up." Ended up finding that **no recent vlog on the live site had a transcript at all**, and that this had been true for six weeks.
