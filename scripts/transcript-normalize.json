@@ -10,6 +10,9 @@
 
   "replacements": {
     "Mörk Borg": ["morboard", "morborg"],
+    "Grymkin": ["grimkin"],
+    "Shadespire": ["shades spire", "shade spire"],
+    "diorama": ["diioama", "diarama"],
     "Westfalia Miniatures": ["westfallian miniatures", "westfallia miniatures"],
     "Westfalia": ["westfallian", "westfallia"],
     "Boris Woloszyn": ["boris wellazin"],
