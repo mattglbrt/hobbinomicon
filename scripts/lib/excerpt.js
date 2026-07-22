@@ -39,6 +39,9 @@ function splitSentences(text) {
 }
 
 function isThrowaway(sentence) {
+  // The transcript censors profanity as "[ __ ]". That must never reach a
+  // search snippet, so skip the whole sentence rather than serve a redaction.
+  if (/\[\s*_*\s*\]/.test(sentence)) return true;
   const words = sentence.replace(/[^\w\s']/g, ' ').trim().split(/\s+/).filter(Boolean);
   // Very short openers are almost always fragments or interjections.
   if (words.length <= 3) return true;
@@ -76,7 +79,7 @@ export function excerptFromTranscript(transcript, max = MAX) {
   const kept = splitSentences(out);
   while (kept.length > 1 && isThrowaway(kept[kept.length - 1])) kept.pop();
 
-  return tidyOpening(kept.join(' '));
+  return tidyInterior(tidyOpening(kept.join(' ')));
 }
 
 // The first sentence often survives selection but still opens on a particle.
@@ -84,6 +87,22 @@ function tidyOpening(text) {
   const trimmed = text.replace(/^(uh|um|er|ah|oh|so|well|okay|ok|alright|all right)[,\s]+/i, '');
   if (!trimmed) return text;
   return trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+}
+
+// Interior sentences keep their hesitation noise too ("...his picture. Uh I
+// printed it off."). Only the pure hesitation particles are stripped here —
+// "so"/"well"/"okay" mid-description carry his rhythm and stay.
+function tidyInterior(text) {
+  return (
+    text
+      // After a sentence break: "...picture. Uh I printed it off."
+      .replace(
+        /(^|[.!?]\s+)(uh|um|er|ah)[,\s]+(\w)/gi,
+        (_, lead, _particle, first) => `${lead}${first.toUpperCase()}`,
+      )
+      // After a comma, where the sentence continues: "Today, uh I'm building..."
+      .replace(/,\s+(uh|um|er|ah)\s+/gi, ', ')
+  );
 }
 
 /** Same trim for an authored YouTube description (already prose, just clamp). */

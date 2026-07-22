@@ -26,24 +26,14 @@
     }
   },
   "tags": {
-    "warmachine": {
-      "display": "Warmachine",
-      "description": "Content about Warmachine, the steampunk wargame by Steamforged Games featuring warjacks and warcasters.",
+    "board-games": {
+      "display": "Board Games",
+      "description": "Board game content, plays, and reviews.",
       "category": "game-system"
     },
-    "trench-crusade": {
-      "display": "Trench Crusade",
-      "description": "Content about Trench Crusade, a grimdark alternate-history skirmish game set in WWI trenches.",
-      "category": "game-system"
-    },
-    "mage-knight": {
-      "display": "Mage Knight",
-      "description": "Content about Mage Knight, the collectible miniatures game with pre-painted figures and combat dials.",
-      "category": "game-system"
-    },
-    "necromunda": {
-      "display": "Necromunda",
-      "description": "Content about Necromunda, Games Workshop's gang warfare skirmish game set in the 40K universe.",
+    "card-games": {
+      "display": "Card Games",
+      "description": "Trading and collectible card games, including Magic: The Gathering and the One Piece TCG.",
       "category": "game-system"
     },
     "crown-and-skull": {
@@ -51,324 +41,9 @@
       "description": "Content about Crown and Skull, a fantasy RPG system with unique skill-based character progression.",
       "category": "game-system"
     },
-    "motley-crews": {
-      "display": "Motley Crews",
-      "description": "Content about Motley Crews, a fantasy skirmish game featuring diverse warbands.",
-      "category": "game-system"
-    },
-    "warhammer": {
-      "display": "Warhammer",
-      "description": "Content about Warhammer Fantasy and Age of Sigmar miniatures and games.",
-      "category": "game-system"
-    },
     "dolmenwood": {
       "display": "Dolmenwood",
       "description": "Content about Dolmenwood, a fairy-tale inspired OSR setting with dark folklore themes.",
-      "category": "game-system"
-    },
-    "kingdom-death": {
-      "display": "Kingdom Death",
-      "description": "Content about Kingdom Death: Monster, the cooperative survival horror board game.",
-      "category": "game-system"
-    },
-    "kdm-hesychia": {
-      "display": "Hesychía Campaign",
-      "description": "Episodes from the Hesychía settlement campaign in Kingdom Death: Monster.",
-      "category": "faction"
-    },
-    "menoth": {
-      "display": "Menoth",
-      "description": "The Protectorate of Menoth faction from Warmachine - zealous theocracy with fire and denial mechanics.",
-      "category": "faction"
-    },
-    "dusk": {
-      "display": "Dusk",
-      "description": "The Dusk faction from Warmachine - elven forces with shadow and stealth abilities.",
-      "category": "faction"
-    },
-    "orgoth": {
-      "display": "Orgoth",
-      "description": "The Orgoth faction from Warmachine - returning dark empire with blighted technology.",
-      "category": "faction"
-    },
-    "trench-pilgrims": {
-      "display": "Trench Pilgrims",
-      "description": "The Trench Pilgrims warband from Trench Crusade - penitent religious fanatics.",
-      "category": "faction"
-    },
-    "orcs-and-goblins": {
-      "display": "Orcs and Goblins",
-      "description": "Orcs and Goblins army for Warhammer - greenskin horde with squigs and war machines.",
-      "category": "faction"
-    },
-    "the-last-watch": {
-      "display": "The Last Watch",
-      "description": "The Last Watch campaign party - a group of Nyss survivors in the Crown and Skull RPG.",
-      "category": "faction"
-    },
-    "painting": {
-      "display": "Painting",
-      "description": "General miniature painting content, tips, and techniques.",
-      "category": "technique"
-    },
-    "glazing": {
-      "display": "Glazing",
-      "description": "Glazing technique for smooth color transitions using thin, transparent paint layers.",
-      "category": "technique"
-    },
-    "dry-brushing": {
-      "display": "Dry Brushing",
-      "description": "Dry brushing technique for quick highlights using minimal paint on a dry brush.",
-      "category": "technique"
-    },
-    "airbrushing": {
-      "display": "Airbrushing",
-      "description": "Airbrush painting techniques for smooth gradients, zenithal priming, and basecoating.",
-      "category": "technique"
-    },
-    "nmm": {
-      "display": "NMM",
-      "description": "Non-Metallic Metal technique - painting metallic effects using regular paints without metallics.",
-      "category": "technique"
-    },
-    "contrast-paints": {
-      "display": "Contrast Paints",
-      "description": "Using contrast and speedpaints for quick shading and highlighting in one coat.",
-      "category": "technique"
-    },
-    "basing": {
-      "display": "Basing",
-      "description": "Miniature base decoration techniques including texture, grass, rocks, and scenic elements.",
-      "category": "technique"
-    },
-    "weathering": {
-      "display": "Weathering",
-      "description": "Weathering techniques for adding wear, damage, and environmental effects to models.",
-      "category": "technique"
-    },
-    "rust-effects": {
-      "display": "Rust Effects",
-      "description": "Creating realistic rust and corrosion effects on miniatures and terrain.",
-      "category": "technique"
-    },
-    "snow-effects": {
-      "display": "Snow Effects",
-      "description": "Adding snow and winter effects to bases and models.",
-      "category": "technique"
-    },
-    "orc-skin": {
-      "display": "Orc Skin",
-      "description": "Painting green orc and ork flesh tones with various recipes and techniques.",
-      "category": "technique"
-    },
-    "pale-flesh": {
-      "display": "Pale Flesh",
-      "description": "Painting pale, undead, or sickly skin tones on miniatures.",
-      "category": "technique"
-    },
-    "goblin-skin": {
-      "display": "Goblin Skin",
-      "description": "Painting goblin flesh - typically lighter or yellower greens than orcs.",
-      "category": "technique"
-    },
-    "preshading": {
-      "display": "Preshading",
-      "description": "Preshading technique - applying shadows before basecoats for depth.",
-      "category": "technique"
-    },
-    "zenithal": {
-      "display": "Zenithal",
-      "description": "Zenithal priming technique - black primer with white from above for natural lighting.",
-      "category": "technique"
-    },
-    "edge-highlighting": {
-      "display": "Edge Highlighting",
-      "description": "Edge highlighting technique for crisp highlights on armor edges and raised details.",
-      "category": "technique"
-    },
-    "blending": {
-      "display": "Blending",
-      "description": "Wet blending and layering techniques for smooth color gradients.",
-      "category": "technique"
-    },
-    "washes": {
-      "display": "Washes",
-      "description": "Using washes and shades for quick shading in recesses.",
-      "category": "technique"
-    },
-    "speed-painting": {
-      "display": "Speed Painting",
-      "description": "Fast painting techniques to get armies table-ready quickly.",
-      "category": "technique"
-    },
-    "skin-tones": {
-      "display": "Skin Tones",
-      "description": "Painting human and humanoid flesh tones.",
-      "category": "technique"
-    },
-    "leather": {
-      "display": "Leather",
-      "description": "Painting realistic leather textures on belts, pouches, and armor.",
-      "category": "technique"
-    },
-    "cloth": {
-      "display": "Cloth",
-      "description": "Painting fabric and cloth materials on miniatures.",
-      "category": "technique"
-    },
-    "wood": {
-      "display": "Wood",
-      "description": "Painting wood grain and wooden surfaces.",
-      "category": "technique"
-    },
-    "metal": {
-      "display": "Metal",
-      "description": "Painting metallic surfaces using metallic paints or NMM.",
-      "category": "technique"
-    },
-    "eyes": {
-      "display": "Eyes",
-      "description": "Painting eyes and faces on miniatures.",
-      "category": "technique"
-    },
-    "3d-printing": {
-      "display": "3D Printing",
-      "description": "Resin and FDM 3D printing for miniatures, terrain, and hobby projects.",
-      "category": "hobby"
-    },
-    "resin-casting": {
-      "display": "Resin Casting",
-      "description": "Casting miniatures and bases using silicone molds and resin.",
-      "category": "hobby"
-    },
-    "kitbashing": {
-      "display": "Kitbashing",
-      "description": "Converting and combining parts from different kits to create unique models.",
-      "category": "hobby"
-    },
-    "building": {
-      "display": "Building",
-      "description": "Assembling and constructing miniatures and models.",
-      "category": "hobby"
-    },
-    "priming": {
-      "display": "Priming",
-      "description": "Priming miniatures with spray or brush-on primer before painting.",
-      "category": "hobby"
-    },
-    "terrain": {
-      "display": "Terrain",
-      "description": "Building and painting terrain pieces for tabletop gaming.",
-      "category": "hobby"
-    },
-    "model-prep": {
-      "display": "Model Prep",
-      "description": "Preparing models - cleaning, gap filling, mould line removal.",
-      "category": "hobby"
-    },
-    "magnetizing": {
-      "display": "Magnetizing",
-      "description": "Adding magnets to miniatures for swappable weapons and transport.",
-      "category": "hobby"
-    },
-    "stripping": {
-      "display": "Stripping",
-      "description": "Stripping paint from miniatures to repaint or rescue old models.",
-      "category": "hobby"
-    },
-    "hobby-tools": {
-      "display": "Hobby Tools",
-      "description": "Tools, supplies, and equipment for miniature hobbying.",
-      "category": "hobby"
-    },
-    "workspace": {
-      "display": "Workspace",
-      "description": "Hobby workspace setup, organization, and optimization.",
-      "category": "hobby"
-    },
-    "battle-report": {
-      "display": "Battle Report",
-      "description": "Game reports and battle recaps from tabletop gaming sessions.",
-      "category": "content-type"
-    },
-    "event-photos": {
-      "display": "Event Photos",
-      "description": "Photos and coverage from gaming events and tournaments.",
-      "category": "content-type"
-    },
-    "unboxing": {
-      "display": "Unboxing",
-      "description": "Unboxing and first looks at new miniatures and hobby products.",
-      "category": "content-type"
-    },
-    "hobby-motivation": {
-      "display": "Hobby Motivation",
-      "description": "Motivational content about staying inspired and productive in the hobby.",
-      "category": "content-type"
-    },
-    "tips": {
-      "display": "Tips",
-      "description": "Quick tips and advice for miniature painting and hobbying.",
-      "category": "content-type"
-    },
-    "showcase": {
-      "display": "Showcase",
-      "description": "Showcasing finished miniatures and completed projects.",
-      "category": "content-type"
-    },
-    "work-in-progress": {
-      "display": "Work in Progress",
-      "description": "Work-in-progress updates on ongoing painting and hobby projects.",
-      "category": "content-type"
-    },
-    "live-stream": {
-      "display": "Live Stream",
-      "description": "Recordings and content from live streaming sessions.",
-      "category": "content-type"
-    },
-    "rpg-session": {
-      "display": "RPG Session",
-      "description": "Tabletop RPG actual play sessions and campaign content.",
-      "category": "content-type"
-    },
-    "buying-selling": {
-      "display": "Buying & Selling",
-      "description": "Tips and content about buying, selling, and trading miniatures.",
-      "category": "content-type"
-    },
-    "tutorial": {
-      "display": "Tutorial",
-      "description": "Step-by-step guides and instructional content for painting and hobbying.",
-      "category": "content-type"
-    },
-    "vlog": {
-      "display": "Vlog",
-      "description": "Video blog content covering hobby progress, thoughts, and updates.",
-      "category": "content-type"
-    },
-    "resources": {
-      "display": "Resources",
-      "description": "Helpful resources, guides, and reference materials for hobbyists.",
-      "category": "content-type"
-    },
-    "campaign": {
-      "display": "Campaign",
-      "description": "Content related to ongoing tabletop RPG campaigns.",
-      "category": "content-type"
-    },
-    "wargaming": {
-      "display": "Wargaming",
-      "description": "General tabletop wargaming content, strategy, and discussion.",
-      "category": "game-system"
-    },
-    "strategy": {
-      "display": "Strategy",
-      "description": "Tactical and strategic content for tabletop gaming.",
-      "category": "content-type"
-    },
-    "old-school-essentials": {
-      "display": "Old School Essentials",
-      "description": "Content about Old School Essentials, a streamlined OSR RPG system.",
       "category": "game-system"
     },
     "dungeons-and-dragons": {
@@ -381,19 +56,19 @@
       "description": "Content set in the Fractured Isles homebrew campaign setting.",
       "category": "game-system"
     },
-    "kal-arath": {
-      "display": "Kal Arath",
-      "description": "Content about Kal Arath, a sword-and-sandal solo OSR RPG inspired by Conan the Cimmerian.",
+    "historical-miniatures": {
+      "display": "Historical Miniatures",
+      "description": "Historical wargaming miniatures and periods, from ancients through the medieval era.",
       "category": "game-system"
     },
-    "prima-materia": {
-      "display": "Prima Materia",
-      "description": "Content using the Prima Materia oracle dice by Man Alone and Dice Nest, an alchemical-symbol storytelling system.",
+    "hobgoblin": {
+      "display": "Hobgoblin",
+      "description": "Content about Hobgoblin, the fantasy skirmish wargame.",
       "category": "game-system"
     },
-    "ttrpg": {
-      "display": "TTRPG",
-      "description": "Tabletop role-playing game content and related topics.",
+    "indie-miniatures": {
+      "display": "Indie Miniatures",
+      "description": "Miniatures from independent sculptors and small studios outside the major manufacturers.",
       "category": "game-system"
     },
     "infinity": {
@@ -406,14 +81,19 @@
       "description": "Content about INQ28, the narrative 28mm Inquisitor / Warhammer 40,000 kitbashing scene.",
       "category": "game-system"
     },
-    "old-world": {
-      "display": "The Old World",
-      "description": "Content about Warhammer: The Old World, the mass-battle fantasy wargame.",
+    "kal-arath": {
+      "display": "Kal Arath",
+      "description": "Content about Kal Arath, a sword-and-sandal solo OSR RPG inspired by Conan the Cimmerian.",
       "category": "game-system"
     },
-    "relicblade": {
-      "display": "Relicblade",
-      "description": "Content about Relicblade, the fantasy adventure skirmish game by Metal King Studio.",
+    "kingdom-death": {
+      "display": "Kingdom Death",
+      "description": "Content about Kingdom Death: Monster, the cooperative survival horror board game.",
+      "category": "game-system"
+    },
+    "mage-knight": {
+      "display": "Mage Knight",
+      "description": "Content about Mage Knight, the collectible miniatures game with pre-painted figures and combat dials.",
       "category": "game-system"
     },
     "midgard": {
@@ -421,19 +101,79 @@
       "description": "Content about Midgard, a fantasy mass-battle wargame.",
       "category": "game-system"
     },
-    "board-games": {
-      "display": "Board Games",
-      "description": "Board game content, plays, and reviews.",
+    "motley-crews": {
+      "display": "Motley Crews",
+      "description": "Content about Motley Crews, a fantasy skirmish game featuring diverse warbands.",
       "category": "game-system"
+    },
+    "necromunda": {
+      "display": "Necromunda",
+      "description": "Content about Necromunda, Games Workshop's gang warfare skirmish game set in the 40K universe.",
+      "category": "game-system"
+    },
+    "old-school-essentials": {
+      "display": "Old School Essentials",
+      "description": "Content about Old School Essentials, a streamlined OSR RPG system.",
+      "category": "game-system"
+    },
+    "old-world": {
+      "display": "The Old World",
+      "description": "Content about Warhammer: The Old World, the mass-battle fantasy wargame.",
+      "category": "game-system"
+    },
+    "prima-materia": {
+      "display": "Prima Materia",
+      "description": "Content using the Prima Materia oracle dice by Man Alone and Dice Nest, an alchemical-symbol storytelling system.",
+      "category": "game-system"
+    },
+    "relicblade": {
+      "display": "Relicblade",
+      "description": "Content about Relicblade, the fantasy adventure skirmish game by Metal King Studio.",
+      "category": "game-system"
+    },
+    "solo-rpg": {
+      "display": "Solo RPG",
+      "description": "Solo roleplaying games and solo play sessions, including journaling and oracle-driven play.",
+      "category": "game-system"
+    },
+    "trench-crusade": {
+      "display": "Trench Crusade",
+      "description": "Content about Trench Crusade, a grimdark alternate-history skirmish game set in WWI trenches.",
+      "category": "game-system"
+    },
+    "ttrpg": {
+      "display": "TTRPG",
+      "description": "Tabletop role-playing game content and related topics.",
+      "category": "game-system"
+    },
+    "wargaming": {
+      "display": "Wargaming",
+      "description": "General tabletop wargaming content, strategy, and discussion.",
+      "category": "game-system"
+    },
+    "warhammer": {
+      "display": "Warhammer",
+      "description": "Content about Warhammer Fantasy and Age of Sigmar miniatures and games.",
+      "category": "game-system"
+    },
+    "warmachine": {
+      "display": "Warmachine",
+      "description": "Content about Warmachine, the steampunk wargame by Steamforged Games featuring warjacks and warcasters.",
+      "category": "game-system"
+    },
+    "children-of-gomb": {
+      "display": "Children of Gomb",
+      "description": "The Children of Gomb warband.",
+      "category": "faction"
     },
     "crucible-guard": {
       "display": "Crucible Guard",
       "description": "The Crucible Guard, an alchemy-and-industry faction from Warmachine.",
       "category": "faction"
     },
-    "children-of-gomb": {
-      "display": "Children of Gomb",
-      "description": "The Children of Gomb warband.",
+    "dusk": {
+      "display": "Dusk",
+      "description": "The Dusk faction from Warmachine - elven forces with shadow and stealth abilities.",
       "category": "faction"
     },
     "goblins": {
@@ -441,14 +181,84 @@
       "description": "Painting and modeling goblins and other greenskins.",
       "category": "faction"
     },
+    "kdm-hesychia": {
+      "display": "Hesychía Campaign",
+      "description": "Episodes from the Hesychía settlement campaign in Kingdom Death: Monster.",
+      "category": "faction"
+    },
+    "menoth": {
+      "display": "Menoth",
+      "description": "The Protectorate of Menoth faction from Warmachine - zealous theocracy with fire and denial mechanics.",
+      "category": "faction"
+    },
+    "monolith-bearer": {
+      "display": "Monolith Bearer",
+      "description": "The Monolith Bearer conversion and painting project.",
+      "category": "faction"
+    },
+    "monster-friends": {
+      "display": "Monster Friends",
+      "description": "The Monster Friends project, a series of friendly monster sculpts and prints.",
+      "category": "faction"
+    },
     "normans": {
       "display": "Normans",
       "description": "Norman medieval historical miniatures and armies.",
       "category": "faction"
     },
-    "sculpting": {
-      "display": "Sculpting",
-      "description": "Sculpting original miniatures and details from scratch.",
+    "orcs": {
+      "display": "Orcs",
+      "description": "Painting and modeling orcs and ork armies.",
+      "category": "faction"
+    },
+    "orcs-and-goblins": {
+      "display": "Orcs and Goblins",
+      "description": "Orcs and Goblins army for Warhammer - greenskin horde with squigs and war machines.",
+      "category": "faction"
+    },
+    "orgoth": {
+      "display": "Orgoth",
+      "description": "The Orgoth faction from Warmachine - returning dark empire with blighted technology.",
+      "category": "faction"
+    },
+    "smashbash": {
+      "display": "SmashBash",
+      "description": "The SmashBash project, an ongoing build and paint series.",
+      "category": "faction"
+    },
+    "the-last-watch": {
+      "display": "The Last Watch",
+      "description": "The Last Watch campaign party - a group of Nyss survivors in the Crown and Skull RPG.",
+      "category": "faction"
+    },
+    "trench-pilgrims": {
+      "display": "Trench Pilgrims",
+      "description": "The Trench Pilgrims warband from Trench Crusade - penitent religious fanatics.",
+      "category": "faction"
+    },
+    "airbrushing": {
+      "display": "Airbrushing",
+      "description": "Airbrush painting techniques for smooth gradients, zenithal priming, and basecoating.",
+      "category": "technique"
+    },
+    "basing": {
+      "display": "Basing",
+      "description": "Miniature base decoration techniques including texture, grass, rocks, and scenic elements.",
+      "category": "technique"
+    },
+    "blending": {
+      "display": "Blending",
+      "description": "Wet blending and layering techniques for smooth color gradients.",
+      "category": "technique"
+    },
+    "cloth": {
+      "display": "Cloth",
+      "description": "Painting fabric and cloth materials on miniatures.",
+      "category": "technique"
+    },
+    "contrast-paints": {
+      "display": "Contrast Paints",
+      "description": "Using contrast and speedpaints for quick shading and highlighting in one coat.",
       "category": "technique"
     },
     "conversion": {
@@ -456,9 +266,54 @@
       "description": "Converting and modifying miniatures into custom models.",
       "category": "technique"
     },
+    "crafts": {
+      "display": "Crafts",
+      "description": "Hobby crafts beyond miniatures: bookbinding, zines, paper marbling, and laser engraving.",
+      "category": "technique"
+    },
+    "dry-brushing": {
+      "display": "Dry Brushing",
+      "description": "Dry brushing technique for quick highlights using minimal paint on a dry brush.",
+      "category": "technique"
+    },
+    "edge-highlighting": {
+      "display": "Edge Highlighting",
+      "description": "Edge highlighting technique for crisp highlights on armor edges and raised details.",
+      "category": "technique"
+    },
+    "eyes": {
+      "display": "Eyes",
+      "description": "Painting eyes and faces on miniatures.",
+      "category": "technique"
+    },
+    "glazing": {
+      "display": "Glazing",
+      "description": "Glazing technique for smooth color transitions using thin, transparent paint layers.",
+      "category": "technique"
+    },
+    "goblin-skin": {
+      "display": "Goblin Skin",
+      "description": "Painting goblin flesh - typically lighter or yellower greens than orcs.",
+      "category": "technique"
+    },
     "green-stuff": {
       "display": "Green Stuff",
       "description": "Sculpting and gap-filling with Green Stuff epoxy putty.",
+      "category": "technique"
+    },
+    "leather": {
+      "display": "Leather",
+      "description": "Painting realistic leather textures on belts, pouches, and armor.",
+      "category": "technique"
+    },
+    "metal": {
+      "display": "Metal",
+      "description": "Painting metallic surfaces using metallic paints or NMM.",
+      "category": "technique"
+    },
+    "metallics": {
+      "display": "Metallics",
+      "description": "True metallic paints and finishes: gold, brass, bronze, silver, chainmail, and patina.",
       "category": "technique"
     },
     "mold-making": {
@@ -466,24 +321,164 @@
       "description": "Making molds for casting resin or metal parts.",
       "category": "technique"
     },
+    "nmm": {
+      "display": "NMM",
+      "description": "Non-Metallic Metal technique - painting metallic effects using regular paints without metallics.",
+      "category": "technique"
+    },
     "oil-wash": {
       "display": "Oil Wash",
       "description": "Using oil-paint washes for shading and weathering.",
       "category": "technique"
+    },
+    "orc-skin": {
+      "display": "Orc Skin",
+      "description": "Painting green orc and ork flesh tones with various recipes and techniques.",
+      "category": "technique"
+    },
+    "painting": {
+      "display": "Painting",
+      "description": "General miniature painting content, tips, and techniques.",
+      "category": "technique"
+    },
+    "pale-flesh": {
+      "display": "Pale Flesh",
+      "description": "Painting pale, undead, or sickly skin tones on miniatures.",
+      "category": "technique"
+    },
+    "preshading": {
+      "display": "Preshading",
+      "description": "Preshading technique - applying shadows before basecoats for depth.",
+      "category": "technique"
+    },
+    "rust-effects": {
+      "display": "Rust Effects",
+      "description": "Creating realistic rust and corrosion effects on miniatures and terrain.",
+      "category": "technique"
+    },
+    "sculpting": {
+      "display": "Sculpting",
+      "description": "Sculpting original miniatures and details from scratch.",
+      "category": "technique"
+    },
+    "skin-tones": {
+      "display": "Skin Tones",
+      "description": "Painting human and humanoid flesh tones.",
+      "category": "technique"
+    },
+    "snow-effects": {
+      "display": "Snow Effects",
+      "description": "Adding snow and winter effects to bases and models.",
+      "category": "technique"
+    },
+    "speed-painting": {
+      "display": "Speed Painting",
+      "description": "Fast painting techniques to get armies table-ready quickly.",
+      "category": "technique"
+    },
+    "washes": {
+      "display": "Washes",
+      "description": "Using washes and shades for quick shading in recesses.",
+      "category": "technique"
+    },
+    "weathering": {
+      "display": "Weathering",
+      "description": "Weathering techniques for adding wear, damage, and environmental effects to models.",
+      "category": "technique"
+    },
+    "wood": {
+      "display": "Wood",
+      "description": "Painting wood grain and wooden surfaces.",
+      "category": "technique"
+    },
+    "zenithal": {
+      "display": "Zenithal",
+      "description": "Zenithal priming technique - black primer with white from above for natural lighting.",
+      "category": "technique"
+    },
+    "3d-printing": {
+      "display": "3D Printing",
+      "description": "Resin and FDM 3D printing for miniatures, terrain, and hobby projects.",
+      "category": "hobby"
+    },
+    "building": {
+      "display": "Building",
+      "description": "Assembling and constructing miniatures and models.",
+      "category": "hobby"
+    },
+    "hobby-tools": {
+      "display": "Hobby Tools",
+      "description": "Tools, supplies, and equipment for miniature hobbying.",
+      "category": "hobby"
+    },
+    "kitbashing": {
+      "display": "Kitbashing",
+      "description": "Converting and combining parts from different kits to create unique models.",
+      "category": "hobby"
+    },
+    "magnetizing": {
+      "display": "Magnetizing",
+      "description": "Adding magnets to miniatures for swappable weapons and transport.",
+      "category": "hobby"
+    },
+    "model-prep": {
+      "display": "Model Prep",
+      "description": "Preparing models - cleaning, gap filling, mould line removal.",
+      "category": "hobby"
     },
     "movement-trays": {
       "display": "Movement Trays",
       "description": "Building and using movement trays for rank-and-file units.",
       "category": "hobby"
     },
-    "review": {
-      "display": "Review",
-      "description": "Reviews of games, models, paints, and hobby products.",
+    "priming": {
+      "display": "Priming",
+      "description": "Priming miniatures with spray or brush-on primer before painting.",
+      "category": "hobby"
+    },
+    "resin-casting": {
+      "display": "Resin Casting",
+      "description": "Casting miniatures and bases using silicone molds and resin.",
+      "category": "hobby"
+    },
+    "stripping": {
+      "display": "Stripping",
+      "description": "Stripping paint from miniatures to repaint or rescue old models.",
+      "category": "hobby"
+    },
+    "terrain": {
+      "display": "Terrain",
+      "description": "Building and painting terrain pieces for tabletop gaming.",
+      "category": "hobby"
+    },
+    "workspace": {
+      "display": "Workspace",
+      "description": "Hobby workspace setup, organization, and optimization.",
+      "category": "hobby"
+    },
+    "battle-report": {
+      "display": "Battle Report",
+      "description": "Game reports and battle recaps from tabletop gaming sessions.",
       "category": "content-type"
     },
-    "giveaway": {
-      "display": "Giveaway",
-      "description": "Giveaways and community contests.",
+    "buying-selling": {
+      "display": "Buying & Selling",
+      "description": "Tips and content about buying, selling, and trading miniatures.",
+      "category": "content-type"
+    },
+    "campaign": {
+      "display": "Campaign",
+      "description": "Content related to ongoing tabletop RPG campaigns.",
+      "category": "content-type"
+    },
+    "collection": {
+      "display": "Collection",
+      "description": "Hobby collection tours, backlog reviews, and looks at what is on the shelf.",
+      "category": "content-type"
+    },
+    "commission": {
+      "display": "Commission",
+      "description": "Commissioned painting work and the process behind it.",
       "category": "content-type"
     },
     "competition": {
@@ -491,19 +486,94 @@
       "description": "Painting and modeling competitions.",
       "category": "content-type"
     },
-    "scale-75": {
-      "display": "Scale75",
-      "description": "Content using Scale75 paints and products.",
-      "category": "brand"
+    "event-photos": {
+      "display": "Event Photos",
+      "description": "Photos and coverage from gaming events and tournaments.",
+      "category": "content-type"
     },
-    "vallejo": {
-      "display": "Vallejo",
-      "description": "Content using Vallejo paints and products.",
-      "category": "brand"
+    "event-recap": {
+      "display": "Event Recap",
+      "description": "Recaps and coverage from gaming events, conventions, and tournaments.",
+      "category": "content-type"
+    },
+    "giveaway": {
+      "display": "Giveaway",
+      "description": "Giveaways and community contests.",
+      "category": "content-type"
+    },
+    "hobby-motivation": {
+      "display": "Hobby Motivation",
+      "description": "Motivational content about staying inspired and productive in the hobby.",
+      "category": "content-type"
+    },
+    "live-stream": {
+      "display": "Live Stream",
+      "description": "Recordings and content from live streaming sessions.",
+      "category": "content-type"
+    },
+    "resources": {
+      "display": "Resources",
+      "description": "Helpful resources, guides, and reference materials for hobbyists.",
+      "category": "content-type"
+    },
+    "review": {
+      "display": "Review",
+      "description": "Reviews of games, models, paints, and hobby products.",
+      "category": "content-type"
+    },
+    "rpg-session": {
+      "display": "RPG Session",
+      "description": "Tabletop RPG actual play sessions and campaign content.",
+      "category": "content-type"
+    },
+    "showcase": {
+      "display": "Showcase",
+      "description": "Showcasing finished miniatures and completed projects.",
+      "category": "content-type"
+    },
+    "strategy": {
+      "display": "Strategy",
+      "description": "Tactical and strategic content for tabletop gaming.",
+      "category": "content-type"
+    },
+    "tips": {
+      "display": "Tips",
+      "description": "Quick tips and advice for miniature painting and hobbying.",
+      "category": "content-type"
+    },
+    "tutorial": {
+      "display": "Tutorial",
+      "description": "Step-by-step guides and instructional content for painting and hobbying.",
+      "category": "content-type"
+    },
+    "unboxing": {
+      "display": "Unboxing",
+      "description": "Unboxing and first looks at new miniatures and hobby products.",
+      "category": "content-type"
+    },
+    "vlog": {
+      "display": "Vlog",
+      "description": "Video blog content covering hobby progress, thoughts, and updates.",
+      "category": "content-type"
+    },
+    "work-in-progress": {
+      "display": "Work in Progress",
+      "description": "Work-in-progress updates on ongoing painting and hobby projects.",
+      "category": "content-type"
     },
     "army-painter": {
       "display": "The Army Painter",
       "description": "Content using The Army Painter paints and products.",
+      "category": "brand"
+    },
+    "dirty-down": {
+      "display": "Dirty Down",
+      "description": "Content using Dirty Down rust, moss, and verdigris effect paints.",
+      "category": "brand"
+    },
+    "lego": {
+      "display": "LEGO",
+      "description": "LEGO builds and LEGO-adjacent hobby projects.",
       "category": "brand"
     },
     "liquid-chrome": {
@@ -511,15 +581,20 @@
       "description": "Content using Molotow Liquid Chrome and similar chrome-finish products.",
       "category": "brand"
     },
-    "hobgoblin": {
-      "display": "Hobgoblin",
-      "description": "Content about Hobgoblin, the fantasy skirmish wargame.",
-      "category": "game-system"
+    "scale-75": {
+      "display": "Scale75",
+      "description": "Content using Scale75 paints and products.",
+      "category": "brand"
     },
-    "orcs": {
-      "display": "Orcs",
-      "description": "Painting and modeling orcs and ork armies.",
-      "category": "faction"
+    "streaking-grime": {
+      "display": "Streaking Grime",
+      "description": "Content using AK Interactive Streaking Grime enamel effects.",
+      "category": "brand"
+    },
+    "vallejo": {
+      "display": "Vallejo",
+      "description": "Content using Vallejo paints and products.",
+      "category": "brand"
     }
   }
 }

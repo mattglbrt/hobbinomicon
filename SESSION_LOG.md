@@ -4,6 +4,118 @@ Append-only. **Newest entry first.** Pre-existing planning history lives in `roa
 
 ---
 
+## 2026-07-22 — Description pass finished at 269/269; two transcripts polished; back-catalogue description sweep
+
+Cleared the top two items off the board, then chased the follow-ups they exposed. Everything is committed and pushed to `dev`. **Nothing is deployed** — no `dev` → `main` merge this session, so none of it is live yet.
+
+### YouTube footer pass — done, 269/269
+
+The token had not actually expired. STATUS said "expires 07-22, re-auth first regardless," but a dry run read live snippets fine, so `npm run youtube-auth` was skipped. Worth remembering: the 7-day window is a floor, not a hard stop, and a dry run is the cheap way to check.
+
+Backed up first (`scripts/backups/descriptions-backup-2026-07-22T13-26-53.json`, 271 snippets), then `--run --max 190` updated all 65 remaining in one pass, ~3,250 units against the 10,000 daily quota. Verified with a follow-up dry run reporting **0 remaining** — that's live-API confirmation, not just trusting the run output.
+
+Note: the backup holds 271 snippets but the pass sees 269. Two videos are in the channel but outside the script's working set, most likely private or unlisted. Not chased.
+
+### Two long transcripts polished into written posts
+
+Matt chose **full polish to `voice.md` §3, edited in place** over the lighter options.
+
+**Decision worth recording:** full polish means the body is no longer what was said in the video. Left under a `## Transcript` heading with the embed directly above, the page would claim to be something it isn't, and a reader could check it against the video in seconds. So the heading came out in favor of topical headers. Same work Matt asked for, minus the false promise. The alternative — keeping verbatim text under the transcript heading — is the disfluency-only option, still available if he wants it back.
+
+- `planning-a-new-hobby-room-layout.mdx` — 3,241 → ~1,690 words, 9 headers.
+- `lava-rock-diorama-for-teaspoon-part-1.mdx` — 3,620 → ~1,780 words, 8 headers, cork technique broken out as the centerpiece with the one bullet list (voice.md allows bullets for steps/gear, never prose).
+
+Both had a lowercase raw-fragment `title` and a truncated-transcript `description`; both rewritten. Slugs unchanged, so no URLs moved. Zero em-dashes in either. Kept near-verbatim: the pen pocket bit, the ceiling fan joke, "no tool better for the job than the tool you can reach," "you're literally just gluing trash together," the razor-blade safety gag, and both sign-offs.
+
+**I got one thing wrong and corrected it.** I reported leaving "the Belling competition" as-is; I had actually dropped it. Restored as "the Bellwoken competition" in `dba6d2e`.
+
+### Follow-up 1 — three ASR entries, 20 corrections swept
+
+Added to `scripts/transcript-normalize.json`: **Grymkin** (9 mangled vs 4 correct across 6 files), **diorama** (12 mangled, 3 different spellings), **Shadespire**. Each variant was seen in a real transcript and none is valid English, per the `_rules`.
+
+`normalize-transcripts.js` then fixed 20 occurrences across 13 files. It skipped the two hand-polished posts, correctly — it only touches `## Transcript` sections and those no longer have one, which is exactly the "hand-written words are not this script's business" rule working as designed.
+
+**Deliberately not added:** "Bellwoken" turned out to be *correct*, not a mangle — it has its own post (`bellwoken-whimsical-army-set.mdx`) and is spelled consistently across three videos. "skin mounds" is probably the Grymkin warbeast **Skin and Moans**, but it appears once and is unverified, so it stayed as-is and is logged as an open question.
+
+### Follow-up 2 — excerpt.js was never broken
+
+I flagged `lib/excerpt.js` as failing to skip throat-clearing. **That diagnosis was wrong.** Git timeline settles it: `excerpt.js` landed at **11:41** on 07-21 (`6478615`), the 9-vlog sync ran at **11:17** (`abcbd26`). Those posts predate the fix by 24 minutes, and the rest of the back catalogue predates it entirely. Two of the offenders were the literal examples quoted in its own docstring — it was written *from* these posts and never applied *back* to them.
+
+So the gap was a missing backfill, not a bug. Rebuilt **12 meta descriptions** that were raw transcript dumps.
+
+Testing against real posts did expose two genuine small gaps, both fixed in `2d2d48d`:
+
+- Hesitation particles survived in interior sentences (`"...his picture. Uh I printed it off."`) and after a comma (`"Today, uh I'm building"`). Only `uh/um/er/ah` are stripped; `so`/`well`/`okay` carry his rhythm and stay.
+- Sentences containing the `[ __ ]` profanity redaction could reach a meta description. Now treated as throwaway. `coffee-cup.mdx` would have shipped one.
+
+Corpus now has **zero filler-opening descriptions and zero censor markers** in frontmatter. Schema validates clean at 402 pages; `astro build` completes.
+
+### Commits (all on `dev`, pushed, none deployed)
+
+- `f791f0d` — description backup snapshot
+- `9daa35e` — the two polished posts
+- `2d2d48d` — normalize entries + excerpt.js fixes
+- `dba6d2e` — back-catalogue sweep: 20 ASR fixes, 12 rebuilt descriptions, Bellwoken restore
+
+### Still open
+
+- **Nothing is live.** Needs `git switch main && git merge dev && git push && git switch dev` — one build. Held back because this is reader-facing copy and Matt hasn't read the two posts yet.
+- **"skin mounds" → "Skin and Moans"?** Matt's hobby knowledge, one occurrence, unverified.
+- A few regenerated descriptions are thin where the transcript opens weakly (`rambling-about-competitive-vs-fun-games`, `coffee-cup`). Auto-generated beats a dump, but hand-written blurbs would beat both.
+- The 192 timezone-less `pubDate` values, unchanged from yesterday.
+
+---
+
+## 2026-07-21 (evening, cont.) — GEO deployed and verified live; a timezone bug fell out of the diff
+
+Continuation of the entry below, which closed with the GEO work committed to `dev` but unpushed and unverified. Both of those are now resolved; this entry supersedes its "Still open" list.
+
+### Deploys
+
+Two batched merges, one build each, both normal merges per the workflow:
+
+- **`890e8e3`** — GEO output + both wrap commits (3 commits).
+- **`35d3eea`** — the sort fix below + two STATUS updates (3 commits).
+
+Matt confirmed the earlier 07-21 transcript deploy independently, closing that item.
+
+### Live verification
+
+All outputs confirmed at 200. `/llms.txt` came back **byte-identical to the local build** (26,015 bytes), and its section counts match exactly: Games 10, Studios 6, People 8, News 6, Guides 13, Articles 2, Browse 7, Recent vlogs 60, Optional 2. `/llms-full.txt` is 280,503 bytes; `/games/kal-arath.md` and `/blog/vlogs/wtf-is-a-rectifier.md` both serve as `text/markdown` with the transcript intact.
+
+**The `.md` content-type worry was unfounded** — despite site-wide `nosniff`, Netlify serves `text/markdown` and browsers display it. No `netlify.toml` change needed; that blocker is closed.
+
+**Method note worth keeping:** the first verification pass used WebFetch, which miscounted two sections (reported Browse 6 and vlogs 71, actual 7 and 60). Its answers come from a small summarizing model that is not reliable at counting long lists. Re-checked with `curl` + `awk`, which is what the numbers above come from. Don't trust WebFetch for anything numeric.
+
+### What the diff caught
+
+Diffing live `llms-full.txt` against local showed identical byte counts but one vlog sorted one position differently. Chasing it turned up a real, pre-existing bug:
+
+**192 posts carry `pubDate: "YYYY-MM-DD HH:MM:SS"` with no timezone.** JS parses that as *local* time, so those posts resolve to a different UTC instant on Netlify (UTC) than on Matt's Mac. Content inventory: 79 explicit-TZ, 48 date-only, **192 ambiguous**.
+
+This is broader than the GEO outputs — it shifts ordering in RSS and the blog index too. `scripts/sync-vlogs.js` writes `video.publishedAt` (ISO with Z), so it's legacy data rather than a live regression, and the impact is cosmetic ordering only.
+
+**Not fixed.** Rewriting 192 content files is a separate call from "implement GEO output," and the correct fix depends on whether those timestamps were originally UTC (likely — they came from YouTube `publishedAt`). Logged as an open question instead.
+
+### Decisions
+
+- **Tie-break the date sort by id** (`17ce0c7`). The 48 date-only pubDates parse to exactly UTC midnight, so same-day posts tie genuinely and fell back to the glob loader's filesystem order, which differs between macOS and Linux. Real fix, kept — but note it does *not* address the 192-post timezone issue, which is a different mechanism.
+- **First diagnosis was wrong and got corrected.** I initially attributed the ordering difference to a sort tie and committed a comment saying so. Reading the two actual pubDates showed they differ by time, not tie. Comment and commit message corrected before push; recording it because the wrong explanation was briefly in the tree.
+- **Reported the timezone bug rather than fixing it.** Out of scope, touches 192 content files, and needs Matt's read on original intent.
+
+### Artifacts
+
+- `src/utils/geoContent.ts` — id tie-breaker + a comment documenting the wider timezone caveat.
+- `STATUS.md` — GEO verified live, `.md` content-type blocker closed, timezone finding logged.
+
+### Still open
+
+- **Normalize the 192 timezone-less pubDates?** One-off script, cosmetic impact, Matt's call.
+- Should `/llms.txt` be linked from the site? Nothing references it; discovery is crawler-side only.
+- Port the pattern to aloneinthedungeon.com and mattglbrt.com once this version has been live a while.
+
+---
+
 ## 2026-07-21 (evening) — GEO output: llms.txt, llms-full.txt, and .md renderings of every page
 
 Built the Generative Engine Optimization surface Matt asked for, modeled on Ghost's new built-in feature. All of it is statically generated at build time from the content collections, so the existing daily scheduled rebuild keeps it fresh — no new automation, no new moving parts to forget about.
