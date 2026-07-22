@@ -28,7 +28,6 @@ Live on Astro 6 (README still says Astro 5 — stale). v2 baseline shipped: thre
 
 ## Open questions
 - **Normalize the 192 timezone-less `pubDate` values?** They read `"YYYY-MM-DD HH:MM:SS"`, which JS parses as *local* time, so those posts resolve to a different instant on Netlify (UTC) than locally — shifting ordering in RSS, the blog index, and GEO outputs. `sync-vlogs.js` now writes ISO-with-Z, so it's legacy data, not a live regression. Fix is a one-off script rewriting them as UTC. Cosmetic-only impact.
-- **Is "skin mounds" the Grymkin warbeast "Skin and Moans"?** One occurrence, unverified, left as-is. Matt's call — if yes it's a `transcript-normalize.json` entry.
 - A few regenerated descriptions are thin where the transcript opens weakly (`rambling-about-competitive-vs-fun-games`, `coffee-cup`). Hand-written blurbs would beat auto-generated. Worth it?
 - Should the other 7 vlogs from the 07-21 sync get the same full-polish treatment, or is that only worth it for long ones?
 - Should `/llms.txt` be linked from the site (footer, or `<link rel="alternate">`)? Discovery is crawler-side only.
