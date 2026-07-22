@@ -39,7 +39,7 @@ const tagsWithCounts = Array.from(tagsMap.entries())
   }))
   .sort((a, b) => b.count - a.count);
 
-const categoryOrder = ['game-system', 'faction', 'technique', 'hobby', 'content-type'];
+const categoryOrder = ['game-system', 'faction', 'technique', 'hobby', 'content-type', 'brand'];
 const tagsByCategory: Record<string, typeof tagsWithCounts> = {};
 const uncategorizedTags: typeof tagsWithCounts = [];
 
