@@ -3,7 +3,12 @@ import { getCollection, render } from 'astro:content';
 import BlogLayout from '../../layouts/BlogLayout.astro';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog');
+  // Drafts must not get a page. Nothing links to them — the index, RSS, tag and
+  // category pages, search, and the .md renderings all filter drafts — but
+  // without this filter they still built a reachable URL, and the sitemap is
+  // generated from emitted routes, so Google was being pointed straight at
+  // them. Every other collection already filters this way.
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
   return posts.map((post) => ({
     params: { slug: post.id },
     props: post,
