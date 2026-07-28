@@ -55,42 +55,9 @@
   </svg>
 </button>
 
-<script>
-  const backToTopButton = document.getElementById('back-to-top');
-
-  if (backToTopButton) {
-    // Show button when user scrolls down
-    function handleScroll() {
-      const scrollThreshold = 500; // Show after scrolling 500px
-
-      if (window.pageYOffset > scrollThreshold) {
-        backToTopButton.classList.add('visible');
-      } else {
-        backToTopButton.classList.remove('visible');
-      }
-    }
-
-    // Smooth scroll to top when clicked
-    backToTopButton.addEventListener('click', () => {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
-    });
-
-    // Throttle scroll events for better performance
-    let ticking = false;
-    window.addEventListener('scroll', () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          handleScroll();
-          ticking = false;
-        });
-        ticking = true;
-      }
-    });
-
-    // Initial check
-    handleScroll();
-  }
-</script>
+{/*
+  No script here on purpose — see the note on the handler in BaseLayout.
+  This component renders inside #swup, and scripts that arrive via a Swup
+  swap never execute. The old version also captured the button once at load,
+  so after the first client-side navigation it was toggling a detached node.
+*/}
