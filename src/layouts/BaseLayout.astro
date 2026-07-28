@@ -335,6 +335,40 @@ const metaDescription =
     <SearchModal />
     <Lightbox />
 
+    <!-- LiteYouTube: swap the thumbnail facade for the real iframe on click.
+         Delegated from document and placed outside #swup so it keeps working
+         across Swup navigations — a handler inside the container would never
+         run, since Swup swaps content in as parsed markup and scripts that
+         arrive that way don't execute. -->
+    <script is:inline>
+      (function() {
+        document.addEventListener('click', function(e) {
+          var target = e.target;
+          if (!target || typeof target.closest !== 'function') return;
+
+          var btn = target.closest('.lite-yt-trigger');
+          if (!btn) return;
+
+          var wrapper = btn.closest('.lite-yt');
+          var id = btn.dataset.videoId;
+          if (!wrapper || !id) return;
+
+          var iframe = document.createElement('iframe');
+          iframe.className = 'absolute inset-0 h-full w-full';
+          iframe.src = 'https://www.youtube.com/embed/' + id + '?autoplay=1';
+          iframe.title =
+            (btn.getAttribute('aria-label') || '').replace(/^Play video: /, '') || 'YouTube video';
+          iframe.allow =
+            'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+          iframe.setAttribute('allowfullscreen', '');
+          iframe.setAttribute('frameborder', '0');
+
+          wrapper.innerHTML = '';
+          wrapper.appendChild(iframe);
+        });
+      })();
+    </script>
+
     <!-- ScrollReveal: IntersectionObserver for scroll-triggered animations -->
     <script is:inline>
       (function() {

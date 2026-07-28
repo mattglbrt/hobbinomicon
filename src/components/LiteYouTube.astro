@@ -61,33 +61,10 @@ const thumbUrl = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
   </button>
 </div>
 
-<script>
-  function initLiteYouTube() {
-    document.querySelectorAll('.lite-yt-trigger').forEach((btn) => {
-      if ((btn as HTMLElement).dataset.initialized) return;
-      (btn as HTMLElement).dataset.initialized = 'true';
-
-      btn.addEventListener('click', () => {
-        const wrapper = btn.closest('.lite-yt') as HTMLElement;
-        const id = (btn as HTMLElement).dataset.videoId;
-        if (!wrapper || !id) return;
-
-        const iframe = document.createElement('iframe');
-        iframe.className = 'absolute inset-0 h-full w-full';
-        iframe.src = `https://www.youtube.com/embed/${id}?autoplay=1`;
-        iframe.title = btn.getAttribute('aria-label')?.replace(/^Play video: /, '') || 'YouTube video';
-        iframe.allow =
-          'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
-        iframe.setAttribute('allowfullscreen', '');
-        iframe.setAttribute('frameborder', '0');
-
-        wrapper.innerHTML = '';
-        wrapper.appendChild(iframe);
-      });
-    });
-  }
-
-  initLiteYouTube();
-  // Re-init after Swup navigation (component lives inside #swup).
-  document.addEventListener('swup:page:view', initLiteYouTube);
-</script>
+{/*
+  No script here on purpose. This component renders inside #swup, and Swup
+  swaps that container's contents in as parsed markup — scripts arriving that
+  way never execute. A component-local handler would therefore be dead on
+  every page reached by client-side navigation. The click handler is delegated
+  from document in BaseLayout, outside the container, where it survives swaps.
+*/}
