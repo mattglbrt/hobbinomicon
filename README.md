@@ -71,9 +71,7 @@ A beautiful, performant personal portfolio and blog built with Astro 5, featurin
 │   │   ├── Search.astro     # Client-side search modal
 │   │   ├── Comments.astro   # Comment form and display
 │   │   ├── BackToTop.astro
-│   │   ├── YouTubeEmbed.astro
-│   │   ├── ImageGallery.astro
-│   │   └── VideoTranscript.astro
+│   │   └── YouTubeEmbed.astro
 │   ├── content/
 │   │   ├── config.ts        # Content collections schema
 │   │   ├── blog/            # Blog posts (Markdown/MDX)
@@ -216,28 +214,11 @@ Your content here...
 ```astro
 import YouTubeEmbed from '../../components/YouTubeEmbed.astro';
 
-<YouTubeEmbed videoId="dQw4w9WgXcQ" title="Video Title" />
+<YouTubeEmbed videoId="VIDEO_ID" title="Video Title" />
 ```
 
-**Image Gallery:**
-```astro
-import ImageGallery from '../../components/ImageGallery.astro';
-
-<ImageGallery
-  images={[
-    { src: '/images/1.jpg', alt: 'Description', caption: 'Optional caption' },
-    { src: '/images/2.jpg', alt: 'Description' }
-  ]}
-  columns={2}
-/>
-```
-
-**Video Transcript:**
-```astro
-import VideoTranscript from '../../components/VideoTranscript.astro';
-
-<VideoTranscript transcript="Your full transcript text here..." />
-```
+Vlog transcripts are not a component — the sync writes them into the MDX body
+as a plain `## Transcript` section. See CLAUDE.md.
 
 ### Creating a Game/Topic Resource Page
 
