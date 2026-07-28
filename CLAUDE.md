@@ -54,9 +54,11 @@ This is intentional — keep it.
   substring count with **no word boundaries**, so a keyword that's a substring
   of a common word fires on every video — `ork` used to match "work" 903 times
   across 77% of the corpus. Prefer plurals, phrases, or proper nouns.
-- **`scripts/auto-tag-posts.js`** — bulk keyword tagger, **not wired to any npm
-  script and superseded by the manual prompt**. Running it would rewrite tags
-  across existing posts from keywords alone. Left in place but do not run it.
+- Retired 2026-07-28: `scripts/auto-tag-posts.js`. A bulk keyword tagger that
+  rewrote tags across *existing* posts from keyword matches alone. It was never
+  wired to an npm script, but with tagging now manual it was one stray
+  invocation away from undoing hand-tagged frontmatter across the corpus.
+  Deleted rather than documented-around.
 - **`scripts/backfill-transcripts.js`** — re-fetches transcripts for vlogs that
   are missing a `## Transcript` section. YouTube auto-captions (ASR) usually
   aren't ready in the first hours after upload, so videos synced too early get
