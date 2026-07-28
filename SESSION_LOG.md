@@ -4,6 +4,98 @@ Append-only. **Newest entry first.** Pre-existing planning history lives in `roa
 
 ---
 
+## 2026-07-28 — Swup killed three components' JS; vlog tagging goes manual; drafts were public. Three deploys
+
+Started as `/orient` + the auto-tagger remap, and turned into a hunt for a class of bug. Everything below is **live**: three batched merges, one build each — **`43c5e8f`** (handler fixes, tag-keywords remap, manual tagging), **`e1811b9`** (draft filter), **`286cb82`** (component cleanup).
+
+### The video player, and what it actually was
+
+Matt reported the player dead on a vlog page. It wasn't YouTube, a CSP, or the embed — the server-side HTML was correct, the thumbnail 200'd, and the click handler was present and well-formed.
+
+The handler was a component `<script>`, so it rendered **inside `<div id="swup">`**. Swup swaps that container's contents in as parsed markup, and **scripts that arrive that way never execute** (DOMParser-created scripts are non-executable by spec; this is why `@swup/scripts-plugin` exists). So the player worked on a hard load and was inert on any page reached by clicking. Worse, it stayed inert for the whole session: the script never ran, so `initLiteYouTube` was never defined and its own `swup:page:view` re-init never registered either.
+
+**This is a class of bug, not one bug.** Eight scripts sit inside `#swup`. Most survive by accident — they're on every page, so they run on the first hard load and their `swup:page:view` listener persists. The ones that break are the **post-only** ones, absent from the page you first load:
+
+| Component | Symptom on a navigated-to post |
+|---|---|
+| `LiteYouTube` | play button inert |
+| `Comments` | comments never load, form does nothing |
+| `BackToTop` | dead — *plus* it captured the button once at load, so even when it ran, the first swap left it toggling a detached node |
+| reading progress | same root cause, not yet fixed |
+
+All three named ones now live in `BaseLayout` **outside** the container, delegated from `document`. Verified structurally in the built HTML rather than by eye: parsed the `#swup` span and asserted each handler's byte offset falls outside it, on both the homepage and a post page. The homepage row is the meaningful one — previously none of the three existed there at all.
+
+### tag-keywords.json remapped, then demoted
+
+The remap flagged as urgent last session: **99 targets → the 69 live tags**, exactly 1:1 with the registry. Retired tags' keywords folded into whatever they 301 to in `public/_redirects`; 8 targets that were never in the registry at all (`orgoth`, `the-last-watch`, `orc-skin`, `pale-flesh`, `goblin-skin`, `campaign`, `strategy`, `fractured-isles` — zero corpus uses) merged or dropped.
+
+**A second, worse problem surfaced while validating.** Matching is a plain substring count with **no word boundaries**, and the old list was badly exposed. Measured across all 272 vlogs:
+
+| keyword | reality |
+|---|---|
+| `ork` | 903 hits, **77% of files** — "work", "working", "workspace" |
+| `ice` | 559 hits, 49% — "nice", "price", "service" |
+| `table` | 389, 40% · `clean` | 322, 38% |
+| `board` | 306, 26% — "cardboard" · `orc` | 239, 31% — "force", "torch" |
+| `tip` | 223, 28% — "multiple" · `cast` | 219, 24% — "podcast" |
+| `face` | 204, 25% — "surface" · `rust` | 129, 14% — "trust" |
+
+`ork` alone was enough to push `orcs-and-goblins` into the top 7 of most videos. Now plurals, phrases, or proper nouns, with the trap documented in a `_rules` block mirroring `transcript-normalize.json`.
+
+Validated by running the real `extractTags` over all 272 vlogs: no off-registry tag produced, all 69 fire at least once, nothing matches in >45% of files except `paint`/`painting`/`build`.
+
+**Matt then corrected a framing of mine**, rightly: he'd already fixed all the post tags, so where was the mismatch? The confusion was worth resolving explicitly — three separate things, only one of which was stale:
+
+- `tags.json` (registry) — collapsed to 69 ✅
+- post frontmatter — hand-fixed, verified 69/69 exact 1:1 ✅
+- `tag-keywords.json` — last touched in `16fc61c`, **before** the collapse commits ❌
+
+The third is read only when sync generates a **new** post, and sync skips videos that already have a file. So the corpus was clean and would have stayed clean until the next video synced — decay is prospective, one post at a time, which is why nothing looked wrong.
+
+### Tagging is now manual (Matt's call)
+
+Given video cadence is dropping, Matt chose to provide tags by hand at sync time. Picked **"suggest, then edit"** over a blank picker: keyword matching survives as a *prefill only*, and nothing reaches frontmatter without someone pressing Enter.
+
+New: **`scripts/lib/prompt-tags.js`**. Enter accepts, `?` lists the 69 by category, `s` leaves untagged. Input validated against `tags.json`; near-misses get a did-you-mean (Levenshtein); **retired tags are rejected with the tag they became**, read out of `public/_redirects` rather than a new hardcoded list — those 301s are already the canonical record, so it stays correct for free.
+
+```
+Tags [...]: zenithal goblins showcase
+  ✗ "zenithal" was retired — it's airbrushing now
+  ✗ "goblins" was retired — it's orcs-and-goblins now
+  ✗ "showcase" was retired with no replacement
+```
+
+**Two constraints held deliberately.** (1) It can never block a build: no TTY (Netlify, CI, `--no-prompt`) means no prompt and the post is created with **no** tags — suggestions must not leak through that path, since silently-written guesses are the failure mode being removed. Same logic as transcripts: the Netlify post is ephemeral, the committed local one wins. (2) The per-video loop is wrapped in `try/finally` so a mid-sync throw can't leave the readline handle open and hang the build.
+
+`extractTags` renamed `suggestTags` to keep the demotion honest at the call site. Verified against the real API with `--no-prompt`: 271 videos, all already posted, clean exit, nothing written.
+
+**`scripts/auto-tag-posts.js` deleted** (294 lines, at Matt's instruction). It bulk-rewrote tags across *existing* posts from keywords alone and was never wired to an npm script — one stray invocation from undoing the hand-tagging. This closes `roadmap/tags.md` Phase 3, solved by removing auto-tagging rather than tuning it: validating against `tags.json` gives the "only emit registry tags" guarantee by construction, so the planned weighted scoring isn't needed.
+
+### Draft posts were publicly reachable — and in the sitemap
+
+Chasing a throwaway observation (sync reported **272 posts vs 271 videos**) found a real defect. The gap was `example-with-media.mdx`, a scaffolding demo post embedding `dQw4w9WgXcQ` — the Rickroll, not a channel video. **No video of Matt's was unpublished**; an earlier framing of mine said otherwise and was wrong.
+
+But it was `draft: true` and returning **200 live**. `getStaticPaths` in `blog/[...slug].astro` called `getCollection('blog')` with **no draft filter**. Every other collection (`games`, `news`, `studios`, `people`) already filtered; the blog's own page route was the exception.
+
+Containment was partly good — drafts were correctly absent from the index, RSS, tag/category pages, pagefind, and the `.md` GEO renderings, so nothing linked to them. But **the sitemap is generated from emitted routes**, so Google was being pointed straight at `/blog/example-with-media/` and `/blog/vlogs/monster-friends-energy-counter/` (Matt's own deliberately-drafted vlog, publicly readable).
+
+Fixed with the filter; demo post deleted. Verified live: both 404, sitemap down to 430 URLs with zero draft entries, 286 real posts unaffected.
+
+`ImageGallery.astro` and `VideoTranscript.astro` were that post's only callers and are now deleted too, README updated to match. `VideoTranscript` was never part of the vlog pipeline at all — transcripts go into the MDX body as a plain `## Transcript` section — so it was dead from the start.
+
+### Mistake worth recording
+
+`git add -A` on the last commit swept in `.claude/commands/orient.md` and `.claude/commands/wrap.md`, untracked since session start and outside the requested scope. They are now tracked and pushed. Flagged to Matt; untracking + a `.gitignore` entry is a one-liner if he'd rather keep them local. Name paths explicitly, not `-A`.
+
+### Still open
+
+- **Reading progress bar** has the same Swup root cause as the three fixed components. Not fixed.
+- **`.claude/` now tracked** — untrack if unwanted.
+- Hero images for Gloam + DWARF news posts; **DWARF play-through write-up**, still carrying its "this week" promise from 07-22.
+- The manual tag prompt is deployed but unexercised — no new videos yet.
+
+---
+
 ## 2026-07-22 (cont.) — Tag taxonomy collapsed 304 → 69, redirects shipped, DWARF news post; two deploys
 
 Continuation of the entry below. Everything from both entries is now **live** — two batched merges, one build each: **`08f351e`** (description pass, polished transcripts, ASR sweep, tag collapse, redirects) and **`e4e35b7`** (registry cleanup, DWARF post).
