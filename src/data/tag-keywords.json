@@ -1,21 +1,80 @@
 {
-  "description": "Keyword mappings for auto-detecting tags from transcripts. Keywords are case-insensitive.",
+  "description": "Keyword mappings for auto-detecting tags from transcripts. Keywords are case-insensitive. Every key MUST be a live tag in tags.json — sync-vlogs.js writes these straight into post frontmatter, so a key that isn't in the registry re-creates a retired tag.",
+  "_rules": [
+    "Keys are the 69 live tags in src/data/tags.json, and nothing else. Adding a key that isn't in the registry is how the taxonomy regrows junk.",
+    "These only ever PREFILL the prompt in scripts/lib/prompt-tags.js — nothing here reaches frontmatter without a human accepting it. Keep them good anyway: a bad suggestion accepted on autopilot is the same junk tag.",
+    "Matching is a plain case-insensitive substring count (see suggestTags in scripts/sync-vlogs.js) — there are no word boundaries. A keyword that is a substring of a common word is a false positive on every video: 'orc' matches 'force', 'ork' matches 'work', 'rust' matches 'trust', 'event' matches 'eventually', 'tip' matches 'multiple', 'face' matches 'surface', 'iron' matches 'environment', 'cast' matches 'podcast', 'ice' matches 'nice'. Prefer the plural, a two-word phrase, or a proper noun.",
+    "Scores are raw match counts and only the top 7 tags survive, so a long list of rare proper nouns is safe but a short list of chatty words is not.",
+    "Retired tags live on as 301s in public/_redirects. When a tag is retired, fold its still-useful keywords into the tag it redirects to rather than deleting them."
+  ],
   "keywords": {
-    "warmachine": [
-      "warmachine",
-      "war machine",
-      "steamforged",
-      "warjack",
-      "warcaster",
-      "steamroller",
-      "mk4",
-      "mkiv"
+    "card-games": [
+      "magic the gathering",
+      "magic: the gathering",
+      "mtg",
+      "one piece tcg",
+      "trading card",
+      "booster pack",
+      "booster box",
+      "commander deck",
+      "sealed format"
     ],
-    "trench-crusade": [
-      "trench crusade",
-      "trench warfare",
-      "heretic",
-      "crusader"
+    "dolmenwood": [
+      "dolmenwood",
+      "dolmen wood",
+      "necrotic gnome",
+      "breggle"
+    ],
+    "dungeons-and-dragons": [
+      "dungeons and dragons",
+      "dungeons & dragons",
+      "d&d",
+      "dnd",
+      "dark sun"
+    ],
+    "historical-miniatures": [
+      "historical wargam",
+      "historical miniature",
+      "napoleonic",
+      "medieval",
+      "ancients",
+      "dark ages",
+      "normans",
+      "norman conquest",
+      "bayeux"
+    ],
+    "indie-miniatures": [
+      "indie miniature",
+      "indie sculptor",
+      "indie game",
+      "small studio",
+      "andrew may",
+      "demon prints",
+      "gardens of hecate",
+      "legends games"
+    ],
+    "infinity": [
+      "infinity",
+      "corvus belli"
+    ],
+    "inq28": [
+      "inq28",
+      "inq 28",
+      "inquisitor 28",
+      "narrative 40k"
+    ],
+    "kal-arath": [
+      "kal arath",
+      "kal-arath",
+      "kalarath",
+      "prima materia"
+    ],
+    "kingdom-death": [
+      "kingdom death",
+      "kdm",
+      "hunt phase",
+      "settlement phase",
+      "showdown"
     ],
     "mage-knight": [
       "mage knight",
@@ -23,6 +82,13 @@
       "mage-knight",
       "wizkids",
       "combat dial"
+    ],
+    "midgard": [
+      "midgard"
+    ],
+    "motley-crews": [
+      "motley crews",
+      "motley crew"
     ],
     "necromunda": [
       "necromunda",
@@ -35,239 +101,169 @@
       "cawdor",
       "orlock"
     ],
-    "crown-and-skull": [
+    "relicblade": [
+      "relicblade",
+      "relic blade",
+      "metal king studio"
+    ],
+    "solo-rpg": [
+      "solo rpg",
+      "solo roleplay",
+      "solo role-play",
+      "solo play",
+      "solo game",
+      "solo session",
+      "oracle dice",
+      "journaling game",
+      "gm-less",
+      "gmless",
+      "rangers of shadow deep",
+      "forbidden psalm"
+    ],
+    "trench-crusade": [
+      "trench crusade",
+      "trench warfare",
+      "trench pilgrim",
+      "heretic",
+      "crusader",
+      "communicant",
+      "flagellant",
+      "penitent",
+      "book of antithesis"
+    ],
+    "ttrpg": [
+      "ttrpg",
+      "tabletop rpg",
+      "tabletop role-playing",
+      "roleplaying game",
+      "role-playing game",
+      "character creation",
       "crown and skull",
       "crown & skull",
-      "brandish gilhelm"
-    ],
-    "motley-crews": [
-      "motley crews",
-      "motley crew"
+      "brandish gilhelm",
+      "the one ring",
+      "old school essentials",
+      "old-school essentials"
     ],
     "warhammer": [
       "warhammer",
       "age of sigmar",
       "aos",
       "warhammer fantasy",
+      "the old world",
       "games workshop",
-      "gw"
+      "games-workshop"
     ],
-    "dolmenwood": [
-      "dolmenwood",
-      "dolmen wood",
-      "necrotic gnome"
-    ],
-    "kingdom-death": [
-      "kingdom death",
-      "kdm"
-    ],
-    "kdm-hesychia": [
-      "hesychia",
-      "hesychía"
-    ],
-    "menoth": [
+    "warmachine": [
+      "warmachine",
+      "war machine",
+      "steamforged",
+      "warjack",
+      "warcaster",
+      "steamroller",
+      "mk4",
+      "mkiv",
+      "cygnar",
+      "khador",
+      "kador",
+      "circle orboros",
+      "circle oroboros",
+      "fifth division",
       "menoth",
       "protectorate",
       "kreoss",
-      "harbinger",
-      "testament",
       "feora",
       "severius",
-      "choir"
+      "orgoth",
+      "warwitch",
+      "cylena",
+      "lanyssa",
+      "mordryth",
+      "thyra"
+    ],
+    "children-of-gomb": [
+      "children of gomb",
+      "gomb",
+      "hobgoblin",
+      "daemon prince"
+    ],
+    "crucible-guard": [
+      "crucible guard",
+      "crucible-guard"
     ],
     "dusk": [
-      "dusk",
+      "dusk elves",
       "house kallyss",
       "ghyrrshyld",
       "aeternae",
       "soulless"
     ],
-    "orgoth": [
-      "orgoth",
-      "sea king",
-      "tyrant",
-      "warwitch"
+    "kdm-hesychia": [
+      "hesychia",
+      "hesychía"
     ],
-    "trench-pilgrims": [
-      "trench pilgrim",
-      "pilgrim",
-      "communicant",
-      "flagellant",
-      "penitent"
+    "monolith-bearer": [
+      "monolith bearer",
+      "monolith-bearer"
+    ],
+    "monster-friends": [
+      "monster friends",
+      "monster friend"
     ],
     "orcs-and-goblins": [
-      "orc",
-      "ork",
+      "orcs and goblins",
+      "orcs",
+      "orruk",
       "goblin",
-      "grot",
+      "grots",
       "squig",
+      "mangler squig",
       "greenskin",
-      "boyz",
       "waaagh",
       "night goblin",
-      "black orc"
+      "black orc",
+      "savage orc",
+      "orc boy"
     ],
-    "the-last-watch": [
-      "last watch",
-      "cylena",
-      "lanyssa",
-      "nyss",
-      "mordryth",
-      "ryva",
-      "vyr"
-    ],
-    "painting": [
-      "paint",
-      "painted",
-      "painting",
-      "brush",
-      "palette"
-    ],
-    "glazing": [
-      "glaze",
-      "glazing",
-      "glazed",
-      "transparent layer",
-      "translucent"
-    ],
-    "dry-brushing": [
-      "dry brush",
-      "drybrush",
-      "dry-brush",
-      "drybrushing"
+    "smashbash": [
+      "smashbash",
+      "smash bash"
     ],
     "airbrushing": [
       "airbrush",
       "air brush",
-      "airbrush",
       "iwata",
       "badger",
-      "compressor"
-    ],
-    "nmm": [
-      "nmm",
-      "non-metallic metal",
-      "non metallic metal",
-      "true metallic metal",
-      "tmm"
-    ],
-    "contrast-paints": [
-      "contrast paint",
-      "speedpaint",
-      "speed paint",
-      "xpress color",
-      "contrast medium"
-    ],
-    "basing": [
-      "base",
-      "basing",
-      "bases",
-      "flock",
-      "tufts",
-      "static grass",
-      "texture paste"
-    ],
-    "weathering": [
-      "weather",
-      "weathering",
-      "weathered",
-      "chipping",
-      "streaking",
-      "grime"
-    ],
-    "rust-effects": [
-      "rust",
-      "rusty",
-      "rusted",
-      "dirty down rust",
-      "oxide",
-      "corrosion"
-    ],
-    "snow-effects": [
-      "snow",
-      "snowy",
-      "winter",
-      "frost",
-      "ice",
-      "valhallan blizzard"
-    ],
-    "orc-skin": [
-      "orc skin",
-      "ork skin",
-      "orc flesh",
-      "green skin",
-      "greenskin flesh"
-    ],
-    "pale-flesh": [
-      "pale skin",
-      "pale flesh",
-      "pallid",
-      "undead skin",
-      "vampire skin",
-      "sickly"
-    ],
-    "goblin-skin": [
-      "goblin skin",
-      "goblin flesh",
-      "grot skin",
-      "night goblin"
-    ],
-    "preshading": [
-      "preshade",
-      "preshading",
-      "pre-shade",
-      "pre-shading",
-      "sketch style"
-    ],
-    "zenithal": [
+      "compressor",
+      "creos",
       "zenithal",
       "zenithal prime",
       "zenithal highlight",
-      "overhead light"
+      "preshade",
+      "pre-shade",
+      "preshading",
+      "pre-shading",
+      "sketch style",
+      "primer",
+      "priming",
+      "rattlecan",
+      "spray prime",
+      "stynylrez"
     ],
-    "edge-highlighting": [
-      "edge highlight",
-      "edge-highlight",
-      "line highlight"
-    ],
-    "blending": [
-      "blend",
-      "blending",
-      "wet blend",
-      "feathering",
-      "two brush blending",
-      "loaded brush"
-    ],
-    "washes": [
-      "wash",
-      "shade",
-      "nuln oil",
-      "agrax",
-      "reikland",
-      "drakenhof"
-    ],
-    "speed-painting": [
-      "speed paint",
-      "speedpaint",
-      "batch paint",
-      "army paint",
-      "quick paint",
-      "tabletop ready",
-      "tabletop standard"
-    ],
-    "skin-tones": [
-      "skin tone",
-      "flesh tone",
-      "human skin",
-      "caucasian",
-      "dark skin"
-    ],
-    "leather": [
-      "leather",
-      "belt",
-      "strap",
-      "pouch",
-      "holster"
+    "basing": [
+      "basing",
+      "bases",
+      "base coat",
+      "flock",
+      "tufts",
+      "static grass",
+      "texture paste",
+      "gamers grass",
+      "movement tray",
+      "magnet",
+      "magnetize",
+      "magnetizing",
+      "rare earth"
     ],
     "cloth": [
       "cloth",
@@ -278,31 +274,162 @@
       "loincloth",
       "tabard"
     ],
-    "wood": [
-      "wood",
+    "contrast-paints": [
+      "contrast paint",
+      "speedpaint",
+      "speed paint",
+      "xpress color",
+      "contrast medium"
+    ],
+    "crafts": [
+      "bookbinding",
+      "book binding",
+      "paper marbling",
+      "laser engraving",
+      "laser engraver",
+      "papercraft",
+      "zine",
+      "diy"
+    ],
+    "dry-brushing": [
+      "dry brush",
+      "drybrush",
+      "dry-brush",
+      "drybrushing"
+    ],
+    "glazing": [
+      "glaze",
+      "glazing",
+      "glazed",
+      "transparent layer",
+      "translucent",
+      "blending",
+      "wet blend",
+      "feathering",
+      "two brush blending",
+      "loaded brush"
+    ],
+    "leather": [
+      "leather",
+      "belt",
+      "strap",
+      "pouch",
+      "holster"
+    ],
+    "metallics": [
+      "metallic",
+      "metallics",
+      "true metallic",
+      "chainmail",
+      "brass",
+      "bronze",
+      "silver",
+      "copper",
+      "gold",
+      "steel",
+      "patina",
+      "verdigris",
+      "liquid chrome",
+      "molotow",
+      "chrome pen"
+    ],
+    "nmm": [
+      "nmm",
+      "non-metallic metal",
+      "non metallic metal",
+      "true metallic metal",
+      "tmm"
+    ],
+    "painting": [
+      "paint",
+      "painted",
+      "painting",
+      "brush",
+      "palette",
+      "edge highlight",
+      "edge-highlight",
+      "line highlight",
+      "brush control",
+      "freehand",
+      "marble effect",
+      "belt buckle",
       "wooden",
-      "grain",
-      "bark",
+      "wood grain",
       "timber",
       "plank"
     ],
-    "metal": [
-      "metal",
-      "steel",
-      "iron",
-      "bronze",
-      "gold",
-      "silver",
-      "copper",
-      "armor",
-      "armour"
+    "sculpting": [
+      "sculpt",
+      "sculpting",
+      "sculpted",
+      "sculptor",
+      "sculpey",
+      "green stuff",
+      "greenstuff",
+      "green-stuff",
+      "kneadatite",
+      "modeling compound",
+      "modelling compound"
     ],
-    "eyes": [
-      "eye",
+    "skin-tones": [
+      "skin tone",
+      "flesh tone",
+      "human skin",
+      "dark skin",
+      "pale skin",
+      "pale flesh",
+      "pallid",
+      "undead skin",
+      "vampire skin",
+      "orc skin",
+      "goblin skin",
+      "green skin",
       "eyes",
-      "face",
-      "faces",
       "pupils"
+    ],
+    "snow-effects": [
+      "snow",
+      "snowy",
+      "winter",
+      "frost",
+      "crushed glass",
+      "valhallan blizzard"
+    ],
+    "speed-painting": [
+      "speed paint",
+      "speedpaint",
+      "batch paint",
+      "army paint",
+      "quick paint",
+      "tabletop ready",
+      "tabletop standard"
+    ],
+    "washes": [
+      "wash",
+      "shade",
+      "nuln oil",
+      "agrax",
+      "reikland",
+      "drakenhof",
+      "oil wash",
+      "oil paint wash",
+      "oil pin wash"
+    ],
+    "weathering": [
+      "weather",
+      "weathering",
+      "weathered",
+      "chipping",
+      "streaking",
+      "grime",
+      "rusty",
+      "rusted",
+      "rusting",
+      "rust effect",
+      "dirty down rust",
+      "oxide",
+      "corrosion",
+      "gore"
     ],
     "3d-printing": [
       "3d print",
@@ -313,30 +440,10 @@
       "elegoo",
       "anycubic",
       "photon",
-      "mars",
       "saturn",
       "slicer",
       "chitubox",
       "lychee"
-    ],
-    "resin-casting": [
-      "casting",
-      "cast",
-      "silicone mold",
-      "mould",
-      "smooth-on",
-      "resin cast",
-      "vacuum chamber",
-      "pressure pot"
-    ],
-    "kitbashing": [
-      "kitbash",
-      "kit bash",
-      "conversion",
-      "convert",
-      "converting",
-      "bits",
-      "chopping"
     ],
     "building": [
       "build",
@@ -345,68 +452,66 @@
       "assembly",
       "construct",
       "glue",
-      "plastic cement"
+      "plastic cement",
+      "sprue",
+      "mould line",
+      "mold line",
+      "gap fill",
+      "milliput"
     ],
-    "priming": [
-      "prime",
-      "priming",
-      "primer",
-      "rattlecan",
-      "spray prime",
-      "stynylrez",
-      "vallejo primer"
+    "kitbashing": [
+      "kitbash",
+      "kit bash",
+      "conversion",
+      "convert",
+      "converting",
+      "bits box",
+      "bitz",
+      "chopping"
+    ],
+    "resin-casting": [
+      "casting",
+      "resin cast",
+      "silicone mold",
+      "silicone mould",
+      "mold making",
+      "mould making",
+      "make a mold",
+      "smooth-on",
+      "vacuum chamber",
+      "pressure pot",
+      "demold"
+    ],
+    "stripping": [
+      "stripping",
+      "stripped",
+      "strip paint",
+      "paint removal",
+      "isopropyl",
+      "simple green",
+      "la's totally awesome"
     ],
     "terrain": [
       "terrain",
       "scenery",
-      "board",
-      "table",
-      "building",
       "ruins",
-      "scatter"
-    ],
-    "model-prep": [
-      "prep",
-      "clean",
-      "cleaning",
-      "mould line",
-      "mold line",
-      "gap fill",
-      "green stuff",
-      "milliput",
-      "sprue"
-    ],
-    "magnetizing": [
-      "magnet",
-      "magnetize",
-      "magnetizing",
-      "magnetic",
-      "rare earth"
-    ],
-    "stripping": [
-      "strip",
-      "stripping",
-      "stripped",
-      "isopropyl",
-      "simple green",
-      "la's totally awesome",
-      "paint removal"
-    ],
-    "hobby-tools": [
-      "hobby knife",
-      "clippers",
-      "file",
-      "drill",
-      "pin vise",
-      "wet palette",
-      "brush cleaner"
+      "scatter",
+      "diorama",
+      "game board",
+      "board building",
+      "foam",
+      "hot wire",
+      "heat gun",
+      "mdf",
+      "basalt",
+      "led light"
     ],
     "workspace": [
-      "desk",
       "workspace",
       "hobby space",
-      "lamp",
-      "daylight",
+      "hobby desk",
+      "workbench",
+      "daylight lamp",
       "organization",
       "storage"
     ],
@@ -417,233 +522,47 @@
       "played a game",
       "we played"
     ],
-    "event-photos": [
-      "event",
-      "tournament",
-      "convention",
-      "photos from",
-      "lgs",
-      "local game store"
-    ],
-    "unboxing": [
-      "unbox",
-      "unboxing",
-      "mail day",
-      "just arrived",
-      "package",
-      "haul"
-    ],
-    "hobby-motivation": [
-      "motivation",
-      "motivated",
-      "struggle",
-      "hobby block",
-      "burnout",
-      "inspiration",
-      "why we hobby",
-      "keep going"
-    ],
-    "tips": [
-      "tip",
-      "tips",
-      "advice",
-      "trick",
-      "tricks",
-      "hack",
-      "hacks",
-      "pro tip"
-    ],
-    "showcase": [
-      "showcase",
-      "finished",
-      "completed",
-      "done with",
-      "final result",
-      "glamour shot"
-    ],
-    "work-in-progress": [
-      "wip",
-      "work in progress",
-      "working on",
-      "progress update",
-      "still working"
-    ],
-    "live-stream": [
-      "live stream",
-      "livestream",
-      "streaming",
-      "live now",
-      "going live"
-    ],
-    "rpg-session": [
-      "session",
-      "campaign",
-      "rpg",
-      "roleplay",
-      "role play",
-      "character creation",
-      "solo rpg"
-    ],
     "buying-selling": [
-      "buy",
-      "sell",
       "selling",
-      "trade",
+      "buying",
       "trading",
       "ebay",
       "facebook marketplace",
       "miniswap",
       "r/miniswap"
     ],
-    "tutorial": [
-      "tutorial",
-      "how to",
-      "step-by-step",
-      "step by step"
+    "collection": [
+      "my collection",
+      "the collection",
+      "backlog",
+      "pile of shame",
+      "pile of opportunity",
+      "shelf of",
+      "first miniature"
     ],
-    "vlog": [
-      "vlog",
-      "video blog"
+    "commission": [
+      "commission",
+      "commissioned",
+      "commission work"
     ],
-    "resources": [
-      "resources",
-      "resource",
-      "reference material"
+    "competition": [
+      "competition",
+      "painting competition",
+      "golden demon",
+      "call to arms",
+      "hobby challenge",
+      "contest"
     ],
-    "campaign": [
-      "campaign"
-    ],
-    "wargaming": [
-      "wargaming",
-      "wargame",
-      "war gaming",
-      "war game"
-    ],
-    "strategy": [
-      "strategy",
-      "strategic",
-      "tactics",
-      "tactical"
-    ],
-    "old-school-essentials": [
-      "old school essentials",
-      "old-school essentials"
-    ],
-    "dungeons-and-dragons": [
-      "dungeons and dragons",
-      "dungeons & dragons",
-      "d&d",
-      "dnd"
-    ],
-    "fractured-isles": [
-      "fractured isles",
-      "fractured-isles"
-    ],
-    "kal-arath": [
-      "kal arath",
-      "kal-arath",
-      "kalarath"
-    ],
-    "prima-materia": [
-      "prima materia",
-      "prima-materia",
-      "oracle dice"
-    ],
-    "ttrpg": [
-      "ttrpg",
-      "tabletop rpg",
-      "tabletop role-playing",
-      "roleplaying game",
-      "role-playing game"
-    ],
-    "infinity": [
-      "infinity",
-      "corvus belli"
-    ],
-    "inq28": [
-      "inq28",
-      "inq 28",
-      "inquisitor 28",
-      "narrative 40k"
-    ],
-    "old-world": [
-      "old world",
-      "the old world",
-      "warhammer fantasy"
-    ],
-    "relicblade": [
-      "relicblade",
-      "relic blade",
-      "metal king studio"
-    ],
-    "midgard": [
-      "midgard"
-    ],
-    "board-games": [
-      "board game",
-      "boardgame",
-      "board games"
-    ],
-    "crucible-guard": [
-      "crucible guard",
-      "crucible-guard"
-    ],
-    "children-of-gomb": [
-      "children of gomb",
-      "gomb"
-    ],
-    "goblins": [
-      "goblin",
-      "goblins"
-    ],
-    "normans": [
-      "normans",
-      "norman conquest",
-      "bayeux"
-    ],
-    "sculpting": [
-      "sculpt",
-      "sculpting",
-      "sculpted",
-      "sculptor",
-      "sculpey"
-    ],
-    "conversion": [
-      "conversion",
-      "converting",
-      "converted",
-      "convert"
-    ],
-    "green-stuff": [
-      "green stuff",
-      "greenstuff",
-      "green-stuff",
-      "kneadatite"
-    ],
-    "mold-making": [
-      "mold making",
-      "mould making",
-      "silicone mold",
-      "silicone mould",
-      "resin mold",
-      "make a mold"
-    ],
-    "oil-wash": [
-      "oil wash",
-      "oil washes",
-      "oil paint wash",
-      "oil pin wash"
-    ],
-    "movement-trays": [
-      "movement tray",
-      "movement trays",
-      "movement-tray"
-    ],
-    "review": [
-      "product review",
-      "honest review",
-      "review of",
-      "first impressions"
+    "event-recap": [
+      "the event",
+      "hobby event",
+      "convention",
+      "tournament",
+      "lgs",
+      "local game store",
+      "adepticon",
+      "gencon",
+      "gen con"
     ],
     "giveaway": [
       "giveaway",
@@ -651,9 +570,64 @@
       "giving away",
       "raffle"
     ],
-    "competition": [
-      "competition",
-      "painting competition"
+    "hobby-motivation": [
+      "motivation",
+      "motivated",
+      "hobby block",
+      "burnout",
+      "inspiration",
+      "why we hobby",
+      "keep going",
+      "mental health",
+      "community"
+    ],
+    "resources": [
+      "resources",
+      "resource",
+      "reference material"
+    ],
+    "review": [
+      "product review",
+      "honest review",
+      "review of",
+      "first impressions"
+    ],
+    "tutorial": [
+      "tutorial",
+      "how to",
+      "step-by-step",
+      "step by step",
+      "tips",
+      "pro tip",
+      "quick tip",
+      "advice",
+      "trick",
+      "tricks",
+      "color recipe",
+      "colour recipe"
+    ],
+    "unboxing": [
+      "unbox",
+      "unboxing",
+      "mail day",
+      "just arrived",
+      "haul",
+      "booster opening"
+    ],
+    "army-painter": [
+      "army painter",
+      "the army painter",
+      "warpaints"
+    ],
+    "dirty-down": [
+      "dirty down",
+      "dirtydown"
+    ],
+    "lego": [
+      "lego set",
+      "lego build",
+      "legos",
+      "lego brick"
     ],
     "scale-75": [
       "scale 75",
@@ -661,26 +635,12 @@
       "scalecolor",
       "scale color"
     ],
+    "streaking-grime": [
+      "streaking grime",
+      "ak interactive streaking"
+    ],
     "vallejo": [
       "vallejo"
-    ],
-    "army-painter": [
-      "army painter",
-      "the army painter",
-      "warpaints"
-    ],
-    "liquid-chrome": [
-      "liquid chrome",
-      "molotow",
-      "chrome pen"
-    ],
-    "hobgoblin": [
-      "hobgoblin"
-    ],
-    "orcs": [
-      "orcs",
-      "greenskin",
-      "greenskins"
     ]
   }
 }

@@ -28,8 +28,37 @@ This is intentional — keep it.
 `prebuild` runs: `sync-vlogs.js → backfill-transcripts.js → download-hero-images.js`
 
 - **`scripts/sync-vlogs.js`** — fetches new channel videos (YouTube Data API),
-  generates MDX in `src/content/blog/vlogs/`, auto-tags, downloads thumbnails,
-  and fetches the transcript. Only processes videos not already present.
+  generates MDX in `src/content/blog/vlogs/`, prompts for tags, downloads
+  thumbnails, and fetches the transcript. Only processes videos not already
+  present.
+- **`scripts/lib/prompt-tags.js`** — the tag prompt. **Tagging is manual**
+  (Matt, 07-28): keyword matching only *prefills a suggestion*, and nothing
+  reaches frontmatter without someone pressing Enter on it. Enter accepts the
+  suggestion, `?` lists the 69 live tags by category, `s` leaves the post
+  untagged. Input is validated against `src/data/tags.json`; a retired tag is
+  rejected with the tag it became (read out of `public/_redirects`, which is
+  the canonical "this became that" record), and a near-miss gets a
+  did-you-mean. Untagged posts are listed in the closing report.
+
+  Why manual: auto-tagging was set to rebuild the junk taxonomy the 07-22
+  collapse removed, one new vlog at a time, and nobody would have noticed until
+  the registry drifted again. Video cadence is dropping, so the per-video cost
+  is now small.
+
+  **The prompt must never block a build.** Without a TTY (Netlify's prebuild,
+  CI, or `--no-prompt`) it is skipped and the post is created with **no** tags
+  rather than guessed ones. That's safe for the same reason transcripts are:
+  Netlify-built vlog posts are ephemeral, and the committed local file wins.
+- **`src/data/tag-keywords.json`** — suggestion keywords, keyed by the 69 live
+  tags and nothing else. Read the `_rules` before editing. Matching is a plain
+  substring count with **no word boundaries**, so a keyword that's a substring
+  of a common word fires on every video — `ork` used to match "work" 903 times
+  across 77% of the corpus. Prefer plurals, phrases, or proper nouns.
+- Retired 2026-07-28: `scripts/auto-tag-posts.js`. A bulk keyword tagger that
+  rewrote tags across *existing* posts from keyword matches alone. It was never
+  wired to an npm script, but with tagging now manual it was one stray
+  invocation away from undoing hand-tagged frontmatter across the corpus.
+  Deleted rather than documented-around.
 - **`scripts/backfill-transcripts.js`** — re-fetches transcripts for vlogs that
   are missing a `## Transcript` section. YouTube auto-captions (ASR) usually
   aren't ready in the first hours after upload, so videos synced too early get

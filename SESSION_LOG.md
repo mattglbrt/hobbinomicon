@@ -4,6 +4,63 @@ Append-only. **Newest entry first.** Pre-existing planning history lives in `roa
 
 ---
 
+## 2026-07-22 (cont.) — Tag taxonomy collapsed 304 → 69, redirects shipped, DWARF news post; two deploys
+
+Continuation of the entry below. Everything from both entries is now **live** — two batched merges, one build each: **`08f351e`** (description pass, polished transcripts, ASR sweep, tag collapse, redirects) and **`e4e35b7`** (registry cleanup, DWARF post).
+
+### Tag cleanup — the main event
+
+Matt returned a cleaned tag matrix plus a written cleanup guide. I built the matrix for him first, and the first attempt was wrong: I produced a binary post × tag grid (317 columns), when what he wanted was `tag_1..tag_N` columns with the tag *names* in the cells so he could clear a cell and hand it back. The second shape was 16 columns and is the one to rebuild if this is ever needed again.
+
+**Validated before touching anything.** The CSV declared 69 tags and 996 uses; its guide's taxonomy tables agreed exactly — no undocumented tags, no count mismatches, no duplicate tags within a row, every slug resolving to a real file. Applied, then re-verified: all 288 posts round-trip against the CSV.
+
+Result: **304 tags → 69**, **1,445 uses → 996**. 258 posts changed, 30 already matched.
+
+One discrepancy, harmless: the guide's *before* figures read 290 tags / 1,355 uses; disk state was 304 / 1,445. Only the before-numbers differ, so whatever snapshot produced them was stale. The after-state is exact.
+
+Tag arrays now use `JSON.stringify` formatting, matching `sync-vlogs.js`. The corpus had been split 233 spaced / 39 unspaced; it is now uniform, so future syncs stop producing diff noise.
+
+### Registry and a bug that was hiding a whole category
+
+`src/data/tags.json` went 99 → 114 → **69**: added the 15 tags the new taxonomy used but never registered (`solo-rpg`, at 28 posts, was the largest), then removed the 45 left unused. It is now exactly 1:1 with the corpus. Project tags file under `faction`, following `children-of-gomb` and `kdm-hesychia`, so no new category was invented.
+
+**Pre-existing bug found and fixed:** `categoryOrder` in `tags/index.astro` and `explore.astro` omitted `"brand"`, so brand-category tags never rendered on either page. Four were already invisible; the new taxonomy has seven, so the whole Products & Brands group would have silently vanished.
+
+### Redirects — 474 rules
+
+Collapsing the taxonomy left 237 tag URLs and 237 per-tag RSS feeds at 404. `public/_redirects` now carries explicit 301s: 160 merged tags point at their new home, 77 dropped ones go to the tag index, feeds to `/rss.xml`.
+
+**Design decision:** explicit rules rather than a `/tags/*` catch-all. A catch-all would depend on Netlify shadowing (a static file winning over a non-forced rule) to avoid swallowing the 69 live pages, which is too subtle to bet the tag section on. Exact paths also cannot prefix-collide, which matters concretely here: `orcs` is retired while `orcs-and-goblins` is live, and a careless `/tags/orcs*` would have hijacked the biggest tag on the site.
+
+Verified: every dead tag has exactly one rule, none shadows a live tag, every target resolves, no duplicate sources, and the file survives into `dist/_redirects` with nothing appended by the adapter.
+
+**Eight redirect sources are my calls, not Matt's.** Twenty-one old tags appeared in neither of the guide's lists. Eight had an unambiguous home (`metallic`→`metallics`, `tufts`→`basing`, `mdf`/`heat-gun`/`led-lights`→`terrain`, `modeling-compound`→`sculpting`, `one-ring`→`ttrpg`, `thyra`→`warmachine`); the other thirteen were too ambiguous and go to the index.
+
+### DWARF news post
+
+`src/content/news/dwarf-solo-hex-crawl-released.mdx`. itch.io rate-limited both WebFetch and curl (429), so the page was read in Chrome; every fact comes from the page itself.
+
+- `source: "authored"` rather than `curated` — curated renders a "Via itch.io. Read original" block, implying the writeup came from them.
+- The page's setting description ends on a crude, profanity-heavy joke. Per `voice.md` the post gestures at it rather than reproducing it.
+- No hero image (the only art is Tavern Lore's; hosting it is a rights question) and no `relatedGame`/`relatedStudio` — Matt explicitly deferred creating directory entries.
+- I drafted an opinion in Matt's voice about the hunting/fishing angle and flagged it for review; he confirmed the fishing is genuinely what caught his eye, and asked to add that he's playing it this week with a write-up to follow.
+
+### The thing that undermines all of it if left alone
+
+`src/data/tag-keywords.json` drives auto-tagging on vlog sync. It has **99 targets, 45 of which are now-retired tags** (`vlog`, `goblins`, `orcs`, `zenithal`, `tips`, `conversion`, …), and **15 live tags have no keyword rule at all**. The next vlog sync will start reintroducing retired tags. This is precisely the "junk regrows daily" problem `roadmap/tags.md` flagged, and the collapse has made it urgent rather than theoretical.
+
+Not fixed — the session was wrapping — but it is the top of the Next list.
+
+### Still open
+
+- **Auto-tagger remap** (above). Highest priority; the cleanup decays without it.
+- **Hero images for the Gloam and DWARF news posts.** Both run without one. Constrained by the no-AI-art rule: options are Matt's own photo or asking the creators for permission to use their key art.
+- **DWARF play-through write-up**, promised in the post as "this week."
+- Directory entries for DWARF / Tavern Lore, deferred by Matt.
+- The 13 ambiguous tag redirects pointing at the index, refinable any time.
+
+---
+
 ## 2026-07-22 — Description pass finished at 269/269; two transcripts polished; back-catalogue description sweep
 
 Cleared the top two items off the board, then chased the follow-ups they exposed. Everything is committed and pushed to `dev`. **Nothing is deployed** — no `dev` → `main` merge this session, so none of it is live yet.

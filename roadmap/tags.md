@@ -61,15 +61,19 @@ zero unknown tags that aren't deliberate: merge variants into canonical form,
 3. Spot-check the CSV, then `node scripts/tags-apply.js` (dry run) and
    `node scripts/tags-apply.js --apply`.
 
-### Phase 3 — Fix the generator so it stays clean
-Rework auto-tagging in `scripts/sync-vlogs.js` (and `auto-tag-posts.js`):
-- Only emit tags present in `tags.json`.
-- Weight matches: title ×5, description ×3, YouTube `#hashtags` in the
-  description ×5 (they're the author's own labels), transcript ×1 — and
-  require more than a lone transcript mention to qualify.
-- Cap at 5 tags, minimum-score threshold; better to under-tag than junk-tag
-  (the windowed transcript backfill doesn't touch tags, so nothing self-heals
-  bad ones later).
+### Phase 3 — Fix the generator so it stays clean — **DONE 07-28, differently**
+Solved by removing auto-tagging rather than tuning it. `sync-vlogs.js` now
+prompts for tags per video (`scripts/lib/prompt-tags.js`); keyword matching
+only prefills a suggestion, and nothing reaches frontmatter without a human
+accepting it. Input is validated against `tags.json`, so the "only emit tags
+present in the registry" requirement holds by construction. `auto-tag-posts.js`
+is deleted.
+
+The scoring rework below (title ×5, hashtags ×5, minimum-score threshold) was
+never built and is no longer needed — a human reading the suggestion does that
+job better than weights would. What *does* still matter is suggestion quality,
+since a bad suggestion accepted on autopilot is the same junk tag: see the
+`_rules` in `tag-keywords.json`.
 
 ### Phase 4 — Guardrail
 Add an unknown-tag check to `scripts/validate-schema.js` (or prebuild) that
