@@ -4,7 +4,7 @@
  * Sync YouTube channel videos to blog posts
  * - Fetches videos via YouTube Data API v3 (native fetch)
  * - Downloads transcripts via youtube-transcript-plus
- * - Auto-tags using src/data/tag-keywords.json
+ * - Prompts for tags per video (keywords only suggest — see lib/prompt-tags.js)
  * - Downloads YouTube thumbnails as featured images
  * - Outputs MDX files to src/content/blog/vlogs/
  */
@@ -16,6 +16,7 @@ import dotenv from 'dotenv';
 import { formatTranscriptParagraphs } from './lib/format-transcript.js';
 import { getTranscriptResult, reportBlocked } from './lib/fetch-transcript.js';
 import { excerptFromDescription, excerptFromTranscript } from './lib/excerpt.js';
+import { createTagPrompter } from './lib/prompt-tags.js';
 
 dotenv.config();
 
@@ -24,7 +25,15 @@ const CONTENT_DIR = path.join(__dirname, '../src/content/blog');
 const VLOGS_DIR = path.join(CONTENT_DIR, 'vlogs');
 const HERO_CACHE_DIR = path.join(__dirname, '../src/assets/images/hero-cache');
 const TAG_KEYWORDS_PATH = path.join(__dirname, '../src/data/tag-keywords.json');
+const TAG_REGISTRY_PATH = path.join(__dirname, '../src/data/tags.json');
+const REDIRECTS_PATH = path.join(__dirname, '../public/_redirects');
 const SYNC_LOG_PATH = path.join(__dirname, '.sync-log.json');
+
+// Tags are chosen by hand at sync time. Prompting needs a real terminal, so a
+// build server (or --no-prompt) creates the post untagged rather than blocking
+// or guessing — see lib/prompt-tags.js for why guessing is the worse option.
+const NO_PROMPT = process.argv.includes('--no-prompt');
+const INTERACTIVE = Boolean(process.stdin.isTTY && process.stdout.isTTY) && !NO_PROMPT;
 
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 const CHANNEL_ID = process.env.YOUTUBE_CHANNEL_ID;
@@ -93,9 +102,11 @@ async function getPlaylistVideos(playlistId) {
   return videos;
 }
 
-// ─── Auto-Tagging ──────────────────────────────────────────────
+// ─── Tag Suggestions ───────────────────────────────────────────
+// These are a starting point for the prompt, never the final answer. Nothing
+// returned here reaches frontmatter without someone pressing Enter on it.
 
-function extractTags(text) {
+function suggestTags(text) {
   if (!text || Object.keys(tagKeywords).length === 0) return [];
 
   const normalizedText = text.toLowerCase();
@@ -291,72 +302,86 @@ async function main() {
 
   console.log(`${newVideos.length} new videos to sync:\n`);
 
+  const prompter = createTagPrompter({
+    registryPath: TAG_REGISTRY_PATH,
+    redirectsPath: REDIRECTS_PATH,
+    interactive: INTERACTIVE,
+  });
+
+  if (!INTERACTIVE) {
+    console.log(
+      NO_PROMPT
+        ? 'Running with --no-prompt: new posts will be created untagged.\n'
+        : 'No TTY, so tags cannot be prompted for: new posts will be created untagged.\n'
+    );
+  }
+
   const syncLog = loadSyncLog();
   let created = 0;
   let errors = 0;
   let blocked = 0;
 
-  for (const video of newVideos) {
-    try {
-      console.log(`  ${video.title}`);
+  try {
+    for (const video of newVideos) {
+      try {
+        console.log(`  ${video.title}`);
 
-      // Fetch transcript
-      const result = await getTranscriptResult(video.id);
-      const transcript = result.text;
-      if (result.status === 'ok') {
-        console.log('    Transcript found');
-      } else if (result.status === 'blocked') {
-        blocked++;
-        console.log('    Transcript BLOCKED (not missing) — this post will have no body');
-      } else if (result.status === 'error') {
-        console.log(`    Transcript fetch failed: ${result.reason}`);
-      } else {
-        console.log('    No captions on YouTube for this video');
+        // Fetch transcript
+        const result = await getTranscriptResult(video.id);
+        const transcript = result.text;
+        if (result.status === 'ok') {
+          console.log('    Transcript found');
+        } else if (result.status === 'blocked') {
+          blocked++;
+          console.log('    Transcript BLOCKED (not missing) — this post will have no body');
+        } else if (result.status === 'error') {
+          console.log(`    Transcript fetch failed: ${result.reason}`);
+        } else {
+          console.log('    No captions on YouTube for this video');
+        }
+
+        // Tag. Footer stripped here too: it names games ("Kal Arath", "TSPN")
+        // and would otherwise suggest whatever the footer happens to link to.
+        const combinedText = [video.title, stripFooter(video.description), transcript || ''].join(' ');
+        const tags = await prompter.promptForTags(video, suggestTags(combinedText));
+
+        // Download thumbnail
+        const hasHeroImage = await downloadThumbnail(video.id);
+        console.log(hasHeroImage ? '    Thumbnail downloaded' : '    No thumbnail available');
+
+        // Generate MDX
+        const mdxContent = generateMdx(video, transcript, tags, hasHeroImage);
+
+        // Write file (handle slug collisions)
+        const slug = slugify(video.title);
+        let filePath = path.join(VLOGS_DIR, `${slug}.mdx`);
+        let counter = 1;
+        while (fs.existsSync(filePath)) {
+          filePath = path.join(VLOGS_DIR, `${slug}-${counter}.mdx`);
+          counter++;
+        }
+
+        fs.writeFileSync(filePath, mdxContent);
+        console.log(`    Created: ${path.basename(filePath)}\n`);
+
+        // Update sync log
+        syncLog.synced[video.id] = {
+          title: video.title,
+          filename: path.basename(filePath),
+          syncedAt: new Date().toISOString(),
+        };
+
+        created++;
+
+        // Rate limiting
+        await new Promise(resolve => setTimeout(resolve, 500));
+      } catch (error) {
+        console.error(`    Error: ${error.message}\n`);
+        errors++;
       }
-
-      // Auto-tag
-      // Footer stripped here too: it names games ("Kal Arath", "TSPN") and would
-      // otherwise auto-tag every video with whatever the footer links to.
-      const combinedText = [video.title, stripFooter(video.description), transcript || ''].join(' ');
-      const tags = extractTags(combinedText);
-      if (tags.length > 0) {
-        console.log(`    Tags: ${tags.join(', ')}`);
-      }
-
-      // Download thumbnail
-      const hasHeroImage = await downloadThumbnail(video.id);
-      console.log(hasHeroImage ? '    Thumbnail downloaded' : '    No thumbnail available');
-
-      // Generate MDX
-      const mdxContent = generateMdx(video, transcript, tags, hasHeroImage);
-
-      // Write file (handle slug collisions)
-      const slug = slugify(video.title);
-      let filePath = path.join(VLOGS_DIR, `${slug}.mdx`);
-      let counter = 1;
-      while (fs.existsSync(filePath)) {
-        filePath = path.join(VLOGS_DIR, `${slug}-${counter}.mdx`);
-        counter++;
-      }
-
-      fs.writeFileSync(filePath, mdxContent);
-      console.log(`    Created: ${path.basename(filePath)}\n`);
-
-      // Update sync log
-      syncLog.synced[video.id] = {
-        title: video.title,
-        filename: path.basename(filePath),
-        syncedAt: new Date().toISOString(),
-      };
-
-      created++;
-
-      // Rate limiting
-      await new Promise(resolve => setTimeout(resolve, 500));
-    } catch (error) {
-      console.error(`    Error: ${error.message}\n`);
-      errors++;
     }
+  } finally {
+    prompter.close();
   }
 
   saveSyncLog(syncLog);
@@ -364,6 +389,15 @@ async function main() {
   console.log('---');
   console.log(`Created: ${created} new blog posts`);
   if (errors > 0) console.log(`Errors: ${errors}`);
+
+  if (prompter.untagged.length > 0) {
+    console.log('');
+    console.log(`${prompter.untagged.length} post(s) have NO tags:`);
+    for (const title of prompter.untagged) console.log(`  - ${title}`);
+    console.log('Add tags by hand in src/content/blog/vlogs/, or re-run the sync');
+    console.log('in a terminal after deleting the file.');
+  }
+
   reportBlocked(blocked, 'npm run sync-vlogs');
 }
 
