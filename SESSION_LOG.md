@@ -4,6 +4,59 @@ Append-only. **Newest entry first.** Pre-existing planning history lives in `roa
 
 ---
 
+## 2026-07-31 — Monster Friends rulebook v1.3 update; reading progress bar fixed, Swup sweep closed. Two deploys
+
+Short session, both items shipped. **`947994f`** (news post update) and **`f9c12b7`** (progress bar), one build each.
+
+### Wave 2 news post — the rules finally landed
+
+Matt asked for a July 31 update on `news/monster-friends-wave-2-released.mdx`: the 1.3 rulebook and Wave 2 monsters are live for download.
+
+**Checked it rather than transcribing it**, and that was worth doing. The rulebook page's own copy still reads **"MONSTER FRIENDS (BETA 1.1) · updated 04.2026"** on the download button, so taking the page at face value would have said the opposite of the truth. The Google Drive files behind those buttons are `Monster Friends Battle For New Florida Core Rules v1_3.pdf` (created Jul 30, 20:22 EDT) and `...Monster Cards v1_3.pdf` (Jul 31, 01:48 EDT). The label is stale, the files are current.
+
+Rendered the 31-page cards PDF to check what's actually in it (it's Photoshop output, so `pdftotext` only got fragments). **14 cards**: Brew Bat, Bucket Troll, Doctor Speeding Ticket, Gnorc Big Bomber, Gnorc Pillager, Mr. Devil, Outhouse Mimic, Penguin Rogue, Schnoz, Snapping Turtle Knight, Tumble Stone (Large + Small), Walrus Champion, Wimpy Guard.
+
+Cross-referenced against the post's own Wave 2 lineup: **every Wave 2 release now has a card.** Brew Bat, Gnorc Big Bomber, Outhouse Mimic and the Tumble Stones (the "Face Stones 4-Pack" in the post) join Doctor Speeding Ticket and Walrus Champion from the July 16 batch, and Mr. Devil is in there so the Summer Cook Out sculpt is covered. The whole wave is playable — which is the actual news, and it's a claim the post can now make on evidence.
+
+Followed the existing `## Update (July 16)` pattern rather than rewriting the original "we're still waiting on the rules" section — the post is a dated record and reads better as one. `updatedDate` → 2026-07-31. Checked the game directory page too; it has no version-specific copy, so nothing to change there.
+
+**One line to watch:** the post tells readers to ignore the "BETA 1.1" button label. If Orc the Brand fixes it, that line wants deleting.
+
+### Reading progress bar — the last of the 07-28 class
+
+Same root cause as the three components fixed on 07-28, and the last one on the list.
+
+The irony: **the script was already written to be swap-safe.** It re-queried the bar and `.blog-content` on every tick, and guarded against double-binding, with a comment explaining why. None of it mattered. It lived in `BlogLayout`, which renders inside `<div id="swup">`, so on a post reached by clicking it had never executed *anywhere* and the scroll listener was never bound. It only worked if you hard-loaded a post first.
+
+**A second bug rode along in the same block.** That script also tagged `.blog-content img` with `data-lightbox`. `Lightbox` itself is delegated and sits outside the container, so it was fine — but on any clicked-to post the images were never tagged, so clicking them did nothing. Moving the block fixes both. Also guarded a zero/negative divisor: on a post shorter than the viewport the old maths wrote a negative width.
+
+**The sweep is now genuinely closed, and the reason is worth keeping.** Scanned all 455 built pages for `<script>` tags still inside `#swup`. Three remain — `Header`, `DarkModeToggle`, `NewsletterSignup` — and they're safe:
+
+| | ships on | first hard load | after a swap |
+|---|---|---|---|
+| Header / DarkModeToggle / NewsletterSignup | every page | always runs, registers `swup:page:view` on `document` | self-heals |
+| reading progress (before) | blog posts only | never ran if you entered from elsewhere | nothing to heal |
+
+That's the whole distinction, and it's now a comment in `BaseLayout` so the next sweep doesn't re-derive it. The 07-28 entry's "most survive by accident" note was right; this pins down exactly which accident.
+
+Verified by byte offset against the built HTML, same method as 07-28: bar, `.blog-content` and `#back-to-top` inside the container, scripts outside, script now on all 455 pages instead of posts only, old function gone from the build.
+
+**Not verified in a real browser.** The Chrome extension isn't connected, and installing Playwright purely for this check wasn't worth the download. The structural evidence is strong but it is not a click-through. Worth one minute on the live site.
+
+### Housekeeping
+
+- **No new vlogs** (Matt). So `npm run refresh-vlogs` — ranked #3 last session — is moot: sync skips videos that already have a file, so with no uploads there's nothing to pull. **The manual tag prompt remains unexercised**, now for a second session.
+- Named paths explicitly on every `git add` this session, per the 07-28 note.
+
+### Still open
+
+- **`.claude/commands/{orient,wrap}.md` still tracked** — carried over from 07-28, one-line fix whenever Matt wants it.
+- **DWARF play-through write-up** — still carrying its "this week" promise from 07-22. Now the clear top item.
+- Hero images for Gloam + DWARF news posts.
+- Browser click-through on the progress bar fix.
+
+---
+
 ## 2026-07-28 — Swup killed three components' JS; vlog tagging goes manual; drafts were public. Three deploys
 
 Started as `/orient` + the auto-tagger remap, and turned into a hunt for a class of bug. Everything below is **live**: three batched merges, one build each — **`43c5e8f`** (handler fixes, tag-keywords remap, manual tagging), **`e1811b9`** (draft filter), **`286cb82`** (component cleanup).
