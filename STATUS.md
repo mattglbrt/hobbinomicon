@@ -3,7 +3,7 @@
 ## Now
 Live on Astro 6 (README still says Astro 5 — stale). v2 baseline shipped: three-entity directory, format-based game URLs, News pillar, SEO/perf pass, search improvements, GEO output (`/llms.txt`, `/llms-full.txt`, `.md` renderings). YouTube description pass 269/269. Tag taxonomy 69, registry 1:1 with the corpus.
 
-**`main` is at `5333dd3`. `dev` is in sync — everything is deployed.** Three builds today. The **Swup script-inside-`#swup` sweep is closed**: the reading progress bar was the last post-only script, and a scan of all 455 built pages confirmed the three remaining in-container scripts (Header, DarkModeToggle, NewsletterSignup) are safe because they ship on every page. The **Monster Friends Wave 2 news post** now carries a July 31 update — rulebook v1.3 is out and every Wave 2 monster has a card.
+**`main` is at `5333dd3`; `dev` carries only this wrap entry on top.** Three builds today, all user-facing work deployed. The **Swup script-inside-`#swup` sweep is closed**: the reading progress bar was the last post-only script, and a scan of all 455 built pages confirmed the three remaining in-container scripts (Header, DarkModeToggle, NewsletterSignup) are safe because they ship on every page. The **Monster Friends Wave 2 news post** now carries a July 31 update — rulebook v1.3 is out and every Wave 2 monster has a card.
 
 Still true: **transcripts only reach the live site from a local sync** — YouTube blocks caption fetches from Netlify's IPs, so `npm run refresh-vlogs` is load-bearing (see `_system/RECURRING.md`).
 
@@ -31,6 +31,7 @@ Still true: **transcripts only reach the live site from a local sync** — YouTu
 - 07-21 (pm/evening) — GEO output built, deployed, verified live (`17ce0c7`). Found transcripts never reach the site from Netlify builds (YouTube blocks datacenter IPs; silent for six weeks). Created `_system/RECURRING.md`.
 
 ## Open questions
+- **`SESSION_LOG.md` is at 48KB** — compact per `_system/PLAYBOOK.md` §8 next session, before it crosses the ~50KB line.
 - **The Wave 2 post tells readers to ignore the "BETA 1.1" button label** on orcthebrand.com. If Orc the Brand fixes their copy, delete that line.
 - **Is `vlogs/monster-friends-energy-counter` meant to stay drafted?** It was publicly readable until the 07-28 fix and is now a 404. If it should be live, clear `draft: true` rather than reverting the filter.
 - **Normalize the 192 timezone-less `pubDate` values?** They read `"YYYY-MM-DD HH:MM:SS"`, which JS parses as *local* time, so those posts resolve to a different instant on Netlify (UTC) than locally, shifting ordering in RSS, the blog index, and GEO outputs. Legacy data, not a live regression. Cosmetic-only.
