@@ -410,6 +410,71 @@ const metaDescription =
       })();
     </script>
 
+    <!-- Reading progress + lightbox tagging on post images: same relocation,
+         both used to live in BlogLayout. That layout renders inside #swup, so
+         on a post reached by clicking rather than by hard load the scroll
+         listener was never bound and the post's images never got tagged for
+         the lightbox. The bar and .blog-content are re-queried every tick
+         because Swup replaces them on each swap.
+
+         Header, DarkModeToggle and NewsletterSignup still have scripts inside
+         #swup and that's fine: they render on every page, so a hard load of
+         any page executes them once and registers their swup:page:view
+         listeners on document, which survives every later swap. This one was
+         different because it only shipped on blog posts, so entering a post
+         by clicking meant its script had never run anywhere. -->
+    <script is:inline>
+      (function() {
+        function updateProgress() {
+          var bar = document.querySelector('.reading-progress');
+          var content = document.querySelector('.blog-content');
+          if (!bar || !content) return;
+
+          // Short posts can be shorter than the viewport, which makes the
+          // divisor zero or negative and the width nonsense.
+          var scrollable = content.offsetHeight - window.innerHeight;
+          if (scrollable <= 0) {
+            bar.style.width = '0%';
+            return;
+          }
+
+          var scrolled = Math.max(0, -content.getBoundingClientRect().top);
+          bar.style.width = Math.min(100, (scrolled / scrollable) * 100) + '%';
+        }
+
+        function tagBlogImages() {
+          document.querySelectorAll('.blog-content img:not([data-lightbox])').forEach(function(img) {
+            img.setAttribute('data-lightbox', '');
+            img.setAttribute('data-lightbox-group', 'blog-content');
+            img.style.cursor = 'zoom-in';
+          });
+        }
+
+        function init() {
+          updateProgress();
+          tagBlogImages();
+        }
+
+        var ticking = false;
+        window.addEventListener('scroll', function() {
+          if (!ticking) {
+            window.requestAnimationFrame(function() {
+              updateProgress();
+              ticking = false;
+            });
+            ticking = true;
+          }
+        }, { passive: true });
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', init);
+        } else {
+          init();
+        }
+        document.addEventListener('swup:page:view', init);
+      })();
+    </script>
+
     <!-- Comments: moved out of the component for the same reason. The init
          below already re-queries everything on swup:page:view and no-ops when
          there's no .comments-section, but inside #swup it never got to run at
