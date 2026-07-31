@@ -47,10 +47,10 @@ Verified by byte offset against the built HTML, same method as 07-28: bar, `.blo
 
 - **No new vlogs** (Matt). So `npm run refresh-vlogs` — ranked #3 last session — is moot: sync skips videos that already have a file, so with no uploads there's nothing to pull. **The manual tag prompt remains unexercised**, now for a second session.
 - Named paths explicitly on every `git add` this session, per the 07-28 note.
+- **`.claude/commands/` untracked** (`6d37f95`), closing the 07-28 mistake. `git rm --cached` only, so both files stay on disk and the slash commands keep working. Also ignored `.claude/settings.local.json` — machine-local state that was sitting untracked and would have been the next thing a stray `-A` swept up. **Scoped to those two paths rather than all of `.claude/`**, so a skill or agent definition worth sharing later can still be committed deliberately. Side effect worth knowing: the two files are now gone from GitHub, so they no longer sync to another checkout.
 
 ### Still open
 
-- **`.claude/commands/{orient,wrap}.md` still tracked** — carried over from 07-28, one-line fix whenever Matt wants it.
 - **DWARF play-through write-up** — still carrying its "this week" promise from 07-22. Now the clear top item.
 - Hero images for Gloam + DWARF news posts.
 - Browser click-through on the progress bar fix.
