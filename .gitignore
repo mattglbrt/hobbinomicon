@@ -69,3 +69,9 @@ scripts/.playlists-created.json
 scripts/.descriptions-updated.json
 tag-matrix.csv
 tag-summary.csv
+
+# Claude Code local tooling — session commands and machine-local settings.
+# The commands were tracked by accident (a stray `git add -A` on 07-28) and
+# untracked on 07-31. Other .claude/ paths stay shareable if ever wanted.
+.claude/commands/
+.claude/settings.local.json
