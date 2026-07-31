@@ -322,52 +322,7 @@ const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
     }
   </style>
 
-  <script>
-    // Bind the scroll listener only once (window persists across Swup
-    // navigations); re-query the live bar/content on every tick since
-    // #swup replaces them with a new post's markup on each swap.
-    function initReadingProgress() {
-      if ((window as any).__readingProgressBound) return;
-      (window as any).__readingProgressBound = true;
-
-      let ticking = false;
-      window.addEventListener('scroll', () => {
-        if (!ticking) {
-          requestAnimationFrame(() => {
-            const bar = document.querySelector('.reading-progress') as HTMLElement;
-            const content = document.querySelector('.blog-content') as HTMLElement;
-            if (bar && content) {
-              const rect = content.getBoundingClientRect();
-              const total = content.offsetHeight;
-              const scrolled = Math.max(0, -rect.top);
-              const progress = Math.min(100, (scrolled / (total - window.innerHeight)) * 100);
-              bar.style.width = `${progress}%`;
-            }
-            ticking = false;
-          });
-          ticking = true;
-        }
-      }, { passive: true });
-    }
-
-    function initBlogLightbox() {
-      document.querySelectorAll('.blog-content img:not([data-lightbox])').forEach(img => {
-        img.setAttribute('data-lightbox', '');
-        img.setAttribute('data-lightbox-group', 'blog-content');
-        img.style.cursor = 'zoom-in';
-      });
-    }
-
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', () => { initReadingProgress(); initBlogLightbox(); });
-    } else {
-      initReadingProgress();
-      initBlogLightbox();
-    }
-    // Re-initialize after Swup navigation — the article lives inside #swup
-    // and gets destroyed/recreated on every swap. initReadingProgress()
-    // no-ops after the first call (guarded above); initBlogLightbox() must
-    // re-run to tag the new post's images.
-    document.addEventListener('swup:page:view', () => { initReadingProgress(); initBlogLightbox(); });
-  </script>
+  <!-- The reading-progress and lightbox-tagging scripts moved to BaseLayout
+       (outside #swup) on 07-31. Anything script-shaped that lives in here
+       never executes on a post reached by in-site navigation. -->
 </BaseLayout>
