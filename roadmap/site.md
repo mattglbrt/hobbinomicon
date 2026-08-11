@@ -36,13 +36,23 @@ The v2 vision items that are wired in schema but not yet visible, plus immediate
 
 ### Funnel mechanic v1 — "If you like X, try Y"
 
-Single biggest visible gap from v2 vision. Schema is ready; rendering is not.
+Built 2026-08-11. Every published game now carries a funnel; the backfill is
+optional polish rather than a prerequisite.
 
 - [x] Schema field `relatedGames` (array of game references) exists today
 - [x] Bridge tags in shared vocabulary (skirmish, narrative, low-model-count, solo-friendly, cheap-to-start, OSR-adjacent, etc.)
-- [ ] Render `relatedGames` as a section on individual game pages
-- [ ] Fall back to tag-based suggestions when `relatedGames` is empty, so new games get "people who like this also liked…" for free
-- [ ] Backfill `relatedGames` on existing game entries (one editorial pass)
+- [x] Render `relatedGames` as a section on individual game pages — full-width
+      card grid after the body (`FunnelSection.astro`), matching the directory
+      cards. Replaced the old sidebar link list, which had never rendered
+      because no game had `relatedGames` set.
+- [x] Fall back to scored suggestions when `relatedGames` is empty
+      (`src/utils/funnel.ts`) — scores on `format`/`solo`/`miniatureAgnostic`/
+      tier/cost band plus IDF-weighted shared tags, not tags alone
+- [x] `hideFunnel` escape hatch for entries with no honest comparison yet —
+      set on **Warmachine**, the only large-scale-army game
+- [ ] Backfill `relatedGames` on existing game entries (one editorial pass).
+      **TSPN** most wants one: it's the only `narrative`-format game, so its
+      three suggestions all read "Solo-friendly" and nothing else.
 
 ### Newsletter content / cadence
 

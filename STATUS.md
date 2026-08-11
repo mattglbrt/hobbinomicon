@@ -8,13 +8,12 @@ Live on Astro 6 (README still says Astro 5 — stale). v2 baseline shipped: thre
 Still true: **transcripts only reach the live site from a local sync** — YouTube blocks caption fetches from Netlify's IPs, so `npm run refresh-vlogs` is load-bearing (see `_system/RECURRING.md`).
 
 ## Next (ranked)
-1. **DWARF play-through write-up.** The 07-22 news post promised it "this week" — two windows have now closed. Highest priority because it's a public promise, not a maintenance task. No competing code work left in the queue.
+1. **Funnel backfill (editorial).** The mechanic is built and every game has suggestions. Warmachine is switched off via `hideFunnel: true` until there's a comparison worth making. **TSPN** is the one that most wants a hand-picked `relatedGames` — it's the only narrative-format entry, so its three suggestions all read just "Solo-friendly".
 2. **Hero images for the Gloam and DWARF news posts.** Both run without one. No-AI-art rule applies: Matt's own photo, or ask the creators for permission to use their key art — the ask also opens a contact.
-3. **Funnel mechanic v1** ("if you like X, try Y") — biggest visible gap from the v2 vision; schema ready, rendering + tag-fallback + backfill not. The 69-tag taxonomy makes tag-fallback far more tractable.
-4. Newsletter: pick provider (Buttondown/ConvertKit/DIY — coordinate with AITD), cadence, archive page. Form is wired, engine missing.
-5. Monster Friends project entry + backfill `project:` on posts.
-6. **Port the GEO pattern to mattglbrt.com** (AITD done 07-22).
-7. One-minute browser click-through on the progress bar fix (homepage → click a post → scroll; images should lightbox). Verified structurally, not in a browser.
+3. Newsletter: pick provider (Buttondown/ConvertKit/DIY — coordinate with AITD), cadence, archive page. Form is wired, engine missing.
+4. Monster Friends project entry + backfill `project:` on posts.
+5. **Port the GEO pattern to mattglbrt.com** (AITD done 07-22).
+6. One-minute browser click-through on the progress bar fix (homepage → click a post → scroll; images should lightbox). Verified structurally, not in a browser.
 
 **Note:** `npm run refresh-vlogs` has dropped off this list — Matt has posted no new videos, and sync skips videos that already have a file. It returns the day there's an upload, and that will be the first real exercise of the manual tag prompt.
 
@@ -35,7 +34,7 @@ Still true: **transcripts only reach the live site from a local sync** — YouTu
 - **The Wave 2 post tells readers to ignore the "BETA 1.1" button label** on orcthebrand.com. If Orc the Brand fixes their copy, delete that line.
 - **Is `vlogs/monster-friends-energy-counter` meant to stay drafted?** It was publicly readable until the 07-28 fix and is now a 404. If it should be live, clear `draft: true` rather than reverting the filter.
 - **Normalize the 192 timezone-less `pubDate` values?** They read `"YYYY-MM-DD HH:MM:SS"`, which JS parses as *local* time, so those posts resolve to a different instant on Netlify (UTC) than locally, shifting ordering in RSS, the blog index, and GEO outputs. Legacy data, not a live regression. Cosmetic-only.
-- **Directory entries for DWARF / Tavern Lore?** Deferred by Matt 07-22. Worth revisiting after the play-through, since `solo-rpg` is now the third-biggest tag.
+- **Directory entries for DWARF / Tavern Lore?** Deferred by Matt 07-22. Still open, and `solo-rpg` is now the third-biggest tag. (The DWARF play-through write-up is off the board — Matt posts it when he does it.)
 - Thirteen tag redirects point at the index because they were too ambiguous to place (`showcase`, `tools`, `maps`, `rahara`, …). Refinable any time; one line each in `public/_redirects`.
 - Eight redirect mappings were inference, not from Matt's guide (`metallic`→`metallics`, `tufts`→`basing`, `mdf`/`heat-gun`/`led-lights`→`terrain`, `modeling-compound`→`sculpting`, `one-ring`→`ttrpg`, `thyra`→`warmachine`). Worth a glance.
 - A few regenerated meta descriptions are thin where the transcript opens weakly (`rambling-about-competitive-vs-fun-games`, `coffee-cup`). Hand-written blurbs would beat auto-generated.

@@ -109,6 +109,47 @@ If a fetch is ever blocked, both scripts now print a loud banner rather than
 filing it under "no captions." A proxy would let Netlify do this itself; that
 was considered and deferred (cost + complexity) rather than overlooked.
 
+## The funnel ("if you like X, try Y")
+
+`src/utils/funnel.ts` + `src/components/FunnelSection.astro`, rendered as a
+full-width card section after the body on every game page.
+
+- **Editorial picks win.** `relatedGames` in frontmatter comes first, in order,
+  and is never filtered — no score threshold, no out-of-print exclusion. If
+  Matt says try it, the site says try it.
+- **Remaining slots are scored** from the rest of the directory, so a game with
+  no `relatedGames` still gets an onward path. Out-of-print games are excluded
+  *as suggestions* (pointing at something nobody can buy is a dead end) but
+  still *receive* a funnel — a graveyard entry is the best possible place for
+  one.
+- **Scoring leans on structured fields, not tags.** `format` (4), `solo` (3),
+  `miniatureAgnostic` (3), tier (1), cost band (1), plus shared tags weighted
+  by inverse document frequency and capped at 3. The cap matters: game tags are
+  ad-hoc (`grimdark`, `bounty-hunters`, `mage-knight`) and on a ten-game corpus
+  a shared `fantasy` means almost nothing — half the directory carries it —
+  while a one-off tag would otherwise outrank a format match.
+- **Below `MIN_SCORE` (3), nothing renders.** No padding with "latest" or
+  "pinned" filler. Showing an empty section beats shipping a non-sequitur, and
+  a bare format match already clears the bar.
+- The visible reason line under each card ("Skirmish · Mini-agnostic · Cheap to
+  start") is what makes it a funnel rather than a list of links. Keep it.
+
+Cards reuse `ImageCard` with the same props as `GameGrid`, so a suggestion
+looks like the thing it links to.
+
+`hideFunnel: true` in a game's frontmatter suppresses the section on that
+game's page. Set on Warmachine (2026-08-11): it is the only large-scale-army
+entry, so scored suggestions have no format peer and fall back to thin tag
+overlap. Clearing the flag or adding `relatedGames` brings it back.
+
+**Checking this in a browser: build and serve `dist`, don't use `astro dev`.**
+Card images are `loading="lazy"`, and on the dev server they are also
+transformed on demand, so a screenshot taken right after scrolling catches them
+mid-load and the cards read as empty gradients. That is not a missing-image
+bug — nine of eleven games have a `heroImage`. Note `astro preview` does not
+work here either (the Netlify adapter rejects it); `python3 -m http.server`
+inside `dist/` does.
+
 ## YouTube description footer pass
 
 `scripts/update-descriptions.cjs` is the **only** description writer. It appends
