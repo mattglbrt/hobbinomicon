@@ -16,6 +16,8 @@ import ImageCard from '../../components/ImageCard.astro';
 import LiteYouTube from '../../components/LiteYouTube.astro';
 import NewsletterSignup from '../../components/NewsletterSignup.astro';
 import SearchMeta from '../../components/SearchMeta.astro';
+import FunnelSection from '../../components/FunnelSection.astro';
+import { getFunnelSuggestions } from '../../utils/funnel';
 import gameVideos from '../../data/game-videos.json';
 
 const newsKindLabels: Record<string, string> = {
@@ -51,10 +53,16 @@ const designers = await Promise.all(
   game.data.designers.map((ref) => getEntry(ref))
 );
 
-// Resolve related games
-const relatedGames = await Promise.all(
-  game.data.relatedGames.map((ref) => getEntry(ref))
-);
+// Funnel: editorial `relatedGames` first, then scored suggestions from the
+// rest of the directory so every game gets an onward path even when nobody
+// has hand-picked one. Scoring lives in utils/funnel.ts.
+const allGames = await getCollection('games');
+const relatedGames = (
+  await Promise.all(game.data.relatedGames.map((ref) => getEntry(ref)))
+).filter((g): g is NonNullable<typeof g> => Boolean(g));
+const funnelSuggestions = game.data.hideFunnel
+  ? []
+  : getFunnelSuggestions(game, allGames, relatedGames);
 
 // Living feed: only blog posts tagged with this game's slug.
 // Generic tags like 'narrative' or 'fantasy' on the game itself drive the
@@ -95,8 +103,7 @@ const hasReferenceCard = Boolean(studio) || designers.length > 0 || referenceLin
 const hasSidebar =
   hasReferenceCard ||
   game.data.podcasts.length > 0 ||
-  game.data.creators.length > 0 ||
-  relatedGames.length > 0;
+  game.data.creators.length > 0;
 
 const statusLabel: Record<string, string> = {
   active: 'Active',
@@ -365,25 +372,11 @@ const gameSpecs = [
               </div>
             )}
 
-            {relatedGames.length > 0 && (
-              <div class="bg-ink/5 dark:bg-ink-dark/5 p-6 rounded-lg">
-                <h2 class="text-sm font-heading uppercase tracking-[0.2em] text-ink/70 dark:text-ink-dark/70 mb-4">
-                  If you like this, try
-                </h2>
-                <ul class="space-y-2 text-sm">
-                  {relatedGames.map((rg) => (
-                    <li>
-                      <a href={`/games/${rg.id}/`} class="text-ink dark:text-ink-dark hover:underline font-medium">
-                        {rg.data.title} →
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
           </aside>
           )}
         </div>
+
+        <FunnelSection suggestions={funnelSuggestions} sourceTitle={game.data.title} />
 
         {videos.length > 0 && (
           <section class="mt-20 pt-12 border-t border-ink/10 dark:border-ink-dark/10">

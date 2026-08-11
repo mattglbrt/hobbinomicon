@@ -1,0 +1,56 @@
+---
+/**
+ * FunnelSection Component
+ * The "if you like X, try Y" block on a game page.
+ *
+ * Cards match the /games directory grid (GameGrid) so a suggestion looks like
+ * the thing it links to. The one difference: the subtitle carries the *reason*
+ * the game is being suggested rather than its description, because the reason
+ * is what turns a list of links into a funnel.
+ */
+import ImageCard from './ImageCard.astro';
+import { getHeroImage } from '../utils/getHeroImage';
+import type { FunnelSuggestion } from '../utils/funnel';
+
+interface Props {
+  suggestions: FunnelSuggestion[];
+  /** Title of the game being viewed, used in the heading. */
+  sourceTitle: string;
+}
+
+const { suggestions, sourceTitle } = Astro.props;
+---
+
+{suggestions.length > 0 && (
+  <section class="mt-20 pt-12 border-t border-ink/10 dark:border-ink-dark/10" data-pagefind-ignore>
+    <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mb-2">
+      If you like {sourceTitle}, try
+    </h2>
+    <p class="text-ink/70 dark:text-ink-dark/70 mb-8">
+      Other games in the directory that scratch the same itch.
+    </p>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {suggestions.map(({ game, reason }) => {
+        const cardImage = game.data.thumbnailImage || game.data.heroImage;
+        const resolvedImage = cardImage ? getHeroImage(cardImage) : null;
+        const resolvedLogo = game.data.logo ? getHeroImage(game.data.logo) : null;
+        const cardAlt = game.data.thumbnailImageAlt || game.data.heroImageAlt || game.data.title;
+        return (
+          <ImageCard
+            href={`/games/${game.id}/`}
+            image={resolvedImage}
+            imageAlt={cardAlt}
+            title={game.data.title}
+            subtitle={reason || undefined}
+            badge={game.data.status === 'oop' ? 'Out of Print' : undefined}
+            logoOverlay={resolvedLogo}
+            fallbackLetter={game.data.title.charAt(0)}
+            aspectRatio="16/9"
+            variant="overlay"
+            titleBelow
+          />
+        );
+      })}
+    </div>
+  </section>
+)}

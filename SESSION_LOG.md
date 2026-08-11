@@ -4,9 +4,9 @@ Append-only. **Newest entry first.** Pre-existing planning history lives in `roa
 
 ---
 
-## 2026-07-31 — Monster Friends rulebook v1.3 update; reading progress bar fixed, Swup sweep closed. Two deploys
+## 2026-07-31 — Monster Friends rulebook v1.3 update; reading progress bar fixed, Swup sweep closed. Three deploys
 
-Short session, both items shipped. **`947994f`** (news post update) and **`f9c12b7`** (progress bar), one build each.
+Short session, everything shipped. **`947994f`** (news post update), **`f9c12b7`** (progress bar), **`5333dd3`** (docs + `.claude/` untracking), one build each.
 
 ### Wave 2 news post — the rules finally landed
 
@@ -47,7 +47,17 @@ Verified by byte offset against the built HTML, same method as 07-28: bar, `.blo
 
 - **No new vlogs** (Matt). So `npm run refresh-vlogs` — ranked #3 last session — is moot: sync skips videos that already have a file, so with no uploads there's nothing to pull. **The manual tag prompt remains unexercised**, now for a second session.
 - Named paths explicitly on every `git add` this session, per the 07-28 note.
-- **`.claude/commands/` untracked** (`6d37f95`), closing the 07-28 mistake. `git rm --cached` only, so both files stay on disk and the slash commands keep working. Also ignored `.claude/settings.local.json` — machine-local state that was sitting untracked and would have been the next thing a stray `-A` swept up. **Scoped to those two paths rather than all of `.claude/`**, so a skill or agent definition worth sharing later can still be committed deliberately. Side effect worth knowing: the two files are now gone from GitHub, so they no longer sync to another checkout.
+- **`.claude/commands/` untracked** (`6d37f95` + `2fa62f0`), closing the 07-28 mistake. `git rm --cached` only, so both files stay on disk and the slash commands keep working. Also ignored `.claude/settings.local.json` — machine-local state that was sitting untracked and would have been the next thing a stray `-A` swept up. **Scoped to those two paths rather than all of `.claude/`**, so a skill or agent definition worth sharing later can still be committed deliberately. Side effect worth knowing: the two files are now gone from GitHub, so they no longer sync to another checkout.
+
+### Two mistakes on the untracking, both caught and fixed
+
+Worth recording because the second one is a trap that will recur.
+
+**The `.gitignore` rules shipped a commit late.** `git rm --cached` stages the file removals but not the `.gitignore` edit, and that edit was never added — so `6d37f95` untracked the files without the rules meant to stop it happening again. Caught on the pre-merge `git status` and fixed in `2fa62f0`. The `git check-ignore` verification run at the time was real but could only prove the *working-tree* file worked; it can't detect that the file is uncommitted.
+
+**Untracking a file and then switching branches deletes it locally.** `git rm --cached` correctly left both commands on disk. Then `git switch main` — where they were still tracked — restored them as tracked files, and merging the deletion removed them from the working tree. They were gone. Restored from `4d3a042` with `git show <rev>:<path> >` (not `git checkout --`, which would re-stage them), verified against the originals, and they're now on disk, untracked, ignored.
+
+**The safe order is merge first, then untrack from the merged branch.** Untracking on a side branch and merging later means one branch switch destroys the file.
 
 ### Still open
 

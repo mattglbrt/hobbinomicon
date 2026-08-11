@@ -79,6 +79,11 @@ const games = defineCollection({
 
     // Funnel
     relatedGames: z.array(reference('games')).default([]),
+    // Suppress the "if you like X, try Y" section entirely on this game's page.
+    // For entries where the directory has no honest comparison to offer yet —
+    // scored suggestions would be reaching. Clearing the flag (or adding
+    // relatedGames) brings the section back.
+    hideFunnel: z.boolean().default(false),
     // Slugs of former project series whose build posts now live on this game
     // page (the Projects section was retired; content relocated here).
     relatedProjects: z.array(z.string()).default([]),
