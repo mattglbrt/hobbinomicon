@@ -4,6 +4,28 @@ Append-only. **Newest entry first.** Pre-existing planning history lives in `roa
 
 ---
 
+## 2026-08-13 — AI disclosure reframed as a promise; shipped
+
+Short session, one change, deployed. **`8ba7eba`** on dev, merged **`f2391f2`** to main, one build.
+
+Matt asked for the footer's **"AI Disclosure"** link to read **"100% Human Made Content & Art"** while still pointing at `/ai-disclosure/`. The framing is the point: the old label leads with the caveat, the new one leads with the promise, and the promise is the brand position (`../CLAUDE.md` hard rule: *"All artwork and creative content by Matt Gilbert — no AI-generated art"*).
+
+Three things followed from the relabel, each raised and each approved before doing it:
+
+- **The page had to be retitled too.** Clicking a link that promises human-made work and landing on an `<h1>` reading "AI Disclosure" is a mismatch the reader notices. `LegalPageLayout` feeds `title` to both the `<h1>` and the `<title>` tag, so one prop change fixed both.
+- **The heading needed a size.** At the layout's `text-5xl md:text-6xl`, the longer title ran to three lines. Rather than shrink every legal page, `LegalPageLayout` gained an optional **`titleSize`** prop defaulting to the existing classes; only the disclosure page passes `text-4xl md:text-5xl`. Also added `text-balance`, which is free — it only affects headings that actually wrap, so Privacy Policy and Terms of Service render identically. Verified that in `dist/`, not by eye.
+- **Two typos in the page copy** — "assit" → "assist", "peice" → "piece". Reader-facing text on the page that makes the site's central credibility claim, so worth the thirty seconds.
+
+**URL unchanged**, so no redirect. Grepped `src/`, `public/` and the Astro config: the footer was the *only* link to that page anywhere in the repo.
+
+**Build verification without burning the YouTube quota.** `npm run build` fires `prebuild` (vlog sync → transcripts → heroes), which hits the YouTube API and is pointless for two string literals. Calling **`npx astro build` directly bypasses the npm prebuild hook** and still produces a real `dist/`. Worth remembering as the default for verifying presentation-layer changes here.
+
+**The merge carried more than this change.** `main` was two commits behind — the 08-11 wrap (`SESSION_LOG` compaction into `SESSION_LOG_ARCHIVE.md`, `STATUS.md` refresh) had been committed to dev but never merged. So `f2391f2` published those too. Docs only, no effect on the built site, but a reminder that the batched-deploy workflow means dev can quietly accumulate: check what a merge actually contains before pushing, not after.
+
+Not verified: the live page after the deploy. Structurally confirmed in `dist/` only.
+
+---
+
 ## 2026-08-11 — Funnel mechanic v1 built and deployed; then a full YouTube data analysis and a three-channel strategy
 
 Two halves. Code first (**`df70292`** on dev, merged **`864effa`** to main, one build), then a long analytical session that produced strategy documents rather than commits.
