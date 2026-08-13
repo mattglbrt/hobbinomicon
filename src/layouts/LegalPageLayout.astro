@@ -6,9 +6,11 @@ import Footer from '../components/Footer.astro';
 interface Props {
   title: string;
   lastUpdated: string;
+  /** Override the h1 size when a long title would otherwise run to three lines. */
+  titleSize?: string;
 }
 
-const { title, lastUpdated } = Astro.props;
+const { title, lastUpdated, titleSize = 'text-5xl md:text-6xl' } = Astro.props;
 ---
 
 <BaseLayout title={`${title} | The Hobbinomicon`}>
@@ -16,7 +18,7 @@ const { title, lastUpdated } = Astro.props;
 
   <main class="min-h-screen bg-parchment dark:bg-parchment-dark">
     <div class="max-w-4xl mx-auto px-6 py-24">
-      <h1 class="text-5xl md:text-6xl font-heading font-bold text-ink dark:text-ink-dark mb-8">{title}</h1>
+      <h1 class:list={[titleSize, 'font-heading font-bold text-ink dark:text-ink-dark mb-8 text-balance']}>{title}</h1>
       <p class="text-ink/70 dark:text-ink-dark/70 mb-12">Last Updated: {lastUpdated}</p>
 
       <div class="prose prose-lg max-w-none">
