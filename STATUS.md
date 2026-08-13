@@ -8,8 +8,7 @@ Live on Astro 6 (README still says Astro 5 — stale). v2 baseline shipped: thre
 Still true: **transcripts only reach the live site from a local sync** — YouTube blocks caption fetches from Netlify's IPs, so `npm run refresh-vlogs` is load-bearing (see `_system/RECURRING.md`).
 
 ## Next (ranked)
-1. **Add the Yellow Imp disclosure line** wherever the directory renders a `verdict` — store go-live is **Aug 18, five days out**. Cheap now, expensive to retrofit once the store is public. The only item here with a real deadline.
-2. **Funnel backfill (editorial).** Mechanic is done; only hand-picked `relatedGames` remain. **TSPN** wants it most — only narrative-format entry, so all three of its suggestions read just "Solo-friendly". Warmachine needs either peer large-scale-army entries or hand-picked picks before `hideFunnel` comes off.
+1. **Funnel backfill (editorial).** Mechanic is done; only hand-picked `relatedGames` remain. **TSPN** wants it most — only narrative-format entry, so all three of its suggestions read just "Solo-friendly". Warmachine needs either peer large-scale-army entries or hand-picked picks before `hideFunnel` comes off.
 3. **Act on the channel strategy** — near-term items are the Warmachine launch stream, the `@mattglbrt` handle switch, and standing up the Reels cadence on `@hobbinomicon`. None are code in this repo.
 4. **Hero images for the Gloam and DWARF news posts.** Both run without one. No-AI-art rule applies: Matt's own photo, or ask the creators for permission.
 5. Newsletter: pick provider (Buttondown/ConvertKit/DIY — coordinate with AITD), cadence, archive page. Form is wired, engine missing.
@@ -32,6 +31,7 @@ Still true: **transcripts only reach the live site from a local sync** — YouTu
 - 07-28 — **Swup was silently killing post-only component scripts** (`LiteYouTube`, `Comments`, `BackToTop`). `tag-keywords.json` remapped 99 → 69 and substring false positives fixed (`ork` matched "work" 903 times). **Tagging switched to a manual prompt**; `auto-tag-posts.js` deleted. **Draft posts were public and in the sitemap** — `getStaticPaths` lacked the draft filter; fixed.
 
 ## Open questions
+- **Yellow Imp disclosure line: dropped 08-13, and here's the trigger that would revive it.** Proposed 08-11 on the theory that reviewing games while selling minis to their players is a conflict. Checked: Yellow Imp's `game_compatibility` is Hobgoblin / Greathelm / One Page Rules, none of which the directory reviews, and it publishes none of these games. No overlap, so no disclosure. It becomes real only if Yellow Imp stocks product tied to a reviewed game, or a reviewed publisher becomes a supplier or sponsor. **Separate and more likely: free review copies from studios** — that's a material connection to the thing being reviewed, and it's Matt's call whether any have arrived.
 - **Funnel: is a score threshold of 3 right?** It holds for a 10-game corpus. As the directory grows the IDF weights shift and the cap may want revisiting.
 - **Does the longer footer label wrap awkwardly on mobile?** "100% Human Made Content & Art" is much longer than its Info-column neighbours. Shortening to "100% Human Made" or pulling it onto its own footer line are both one-liners if it reads badly.
 - **Publish commission price ranges on mattglbrt.com, or stay quote-only?** Recommended: publish. One config value either way. (Not this repo, but it's the open decision from the 08-11 scope work.)
