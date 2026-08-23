@@ -5,9 +5,10 @@ Live on Astro 6 (README still says Astro 5 — stale). v2 baseline shipped: thre
 
 **`main` is at `f2391f2`; `dev` at `8ba7eba`; branches not diverged.** One build today, carrying a small content change: the footer's AI-disclosure link and the page it lands on now both read **"100% Human Made Content & Art"** — same `/ai-disclosure/` URL, promise-first framing instead of caveat-first. `LegalPageLayout` gained an optional `titleSize` prop so the longer title doesn't resize the other legal pages.
 
-Still true: **transcripts only reach the live site from a local sync** — YouTube blocks caption fetches from Netlify's IPs, so `npm run refresh-vlogs` is load-bearing (see `_system/RECURRING.md`).
+Still true: **transcripts only reach the live site from a local sync** — YouTube blocks caption fetches from Netlify's IPs, so `npm run refresh-vlogs` is load-bearing (see `~/Documents/dev/_system/RECURRING.md`).
 
 ## Next (ranked)
+0. **Standing: link all BONEZONE content to the hub post.** `/news/bonezone-2026-open/` is canonical; every Royal Herald vlog, progress post and follow-up points at it (Matt, 08-23). Synced vlogs arrive with no links in the body, so this is a manual edit after each `npm run refresh-vlogs`. Rule lives in `CLAUDE.md`; runs until at least 31 Oct.
 1. **Funnel backfill (editorial).** Mechanic is done; only hand-picked `relatedGames` remain. **TSPN** wants it most — only narrative-format entry, so all three of its suggestions read just "Solo-friendly". Warmachine needs either peer large-scale-army entries or hand-picked picks before `hideFunnel` comes off.
 3. **Act on the channel strategy** — near-term items are the Warmachine launch stream, the `@mattglbrt` handle switch, and standing up the Reels cadence on `@hobbinomicon`. None are code in this repo.
 4. **Hero images for the Gloam and DWARF news posts.** Both run without one. No-AI-art rule applies: Matt's own photo, or ask the creators for permission.
