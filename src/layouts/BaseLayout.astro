@@ -618,6 +618,82 @@ const metaDescription =
       })();
     </script>
 
+    <!-- Countdown: same relocation as Comments above. The Countdown component
+         renders inside #swup and only ships on the posts that use it, so a
+         script in the component would never run at all on a post reached by
+         clicking. Re-queries and restarts the interval on every swap, and
+         no-ops when the page has no [data-countdown]. -->
+    <script is:inline>
+      (function() {
+        var timer = null;
+
+        function paint(el) {
+          var deadline = Date.parse(el.dataset.countdownDeadline);
+          if (isNaN(deadline)) return false;
+
+          var remaining = Math.max(0, deadline - Date.now());
+          var digits = el.querySelector('[data-countdown-digits]');
+          var expiredMsg = el.querySelector('[data-countdown-expired]');
+
+          if (remaining === 0) {
+            if (digits) digits.classList.add('hidden');
+            if (expiredMsg) expiredMsg.classList.remove('hidden');
+            return false;
+          }
+
+          if (digits) digits.classList.remove('hidden');
+          if (expiredMsg) expiredMsg.classList.add('hidden');
+
+          var seconds = Math.floor(remaining / 1000);
+          var values = {
+            days: Math.floor(seconds / 86400),
+            hours: Math.floor(seconds / 3600) % 24,
+            minutes: Math.floor(seconds / 60) % 60,
+            seconds: seconds % 60,
+          };
+
+          Object.keys(values).forEach(function(key) {
+            var slot = el.querySelector('[data-countdown-unit="' + key + '"]');
+            if (slot) slot.textContent = String(values[key]);
+          });
+
+          return true;
+        }
+
+        // Returns true while at least one countdown on the page is still running.
+        function paintAll() {
+          var live = false;
+          document.querySelectorAll('[data-countdown]').forEach(function(el) {
+            if (paint(el)) live = true;
+          });
+          return live;
+        }
+
+        function tick() {
+          // Every deadline has passed: stop burning a timer once a second.
+          if (!paintAll() && timer !== null) {
+            clearInterval(timer);
+            timer = null;
+          }
+        }
+
+        function initCountdowns() {
+          if (timer !== null) {
+            clearInterval(timer);
+            timer = null;
+          }
+          if (paintAll()) timer = setInterval(tick, 1000);
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', initCountdowns);
+        } else {
+          initCountdowns();
+        }
+        document.addEventListener('swup:page:view', initCountdowns);
+      })();
+    </script>
+
     <!-- ScrollReveal: IntersectionObserver for scroll-triggered animations -->
     <script is:inline>
       (function() {
