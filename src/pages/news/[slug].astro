@@ -10,7 +10,7 @@ import StructuredData from '../../components/StructuredData.astro';
 import NewsletterSignup from '../../components/NewsletterSignup.astro';
 import SearchMeta from '../../components/SearchMeta.astro';
 import { formatDateLong } from '../../utils/formatDate';
-import { getHeroImage, isImageMetadata } from '../../utils/getHeroImage';
+import { getHeroImage, getHeroImageUrl, isImageMetadata } from '../../utils/getHeroImage';
 
 export async function getStaticPaths() {
   const news = await getCollection('news', ({ data }) => !data.draft);
@@ -38,6 +38,10 @@ const kindLabels: Record<string, string> = {
   other: 'News',
 };
 
+// Social/structured-data image must be the *built* asset URL. Heroes live in
+// src/assets, so the raw `/images/...` frontmatter path 404s once deployed;
+// getHeroImageUrl resolves it to the emitted /_astro/ file. Same as BlogLayout.
+const socialImage = item.data.heroImage ? getHeroImageUrl(item.data.heroImage) : undefined;
 const resolvedHero = item.data.heroImage ? getHeroImage(item.data.heroImage) : null;
 const heroIsOptimized = resolvedHero && isImageMetadata(resolvedHero);
 ---
@@ -45,7 +49,7 @@ const heroIsOptimized = resolvedHero && isImageMetadata(resolvedHero);
 <BaseLayout
   title={`${item.data.title} | The Hobbinomicon`}
   description={item.data.description}
-  image={item.data.heroImage}
+  image={socialImage}
   ogType="article"
   publishedTime={item.data.pubDate}
   modifiedTime={item.data.updatedDate}
@@ -67,7 +71,7 @@ const heroIsOptimized = resolvedHero && isImageMetadata(resolvedHero);
     data={{
       title: item.data.title,
       description: item.data.description,
-      image: item.data.heroImage ? new URL(item.data.heroImage, 'https://hobbinomicon.com').toString() : undefined,
+      image: socialImage ? new URL(socialImage, 'https://hobbinomicon.com').toString() : undefined,
       datePublished: item.data.pubDate,
       dateModified: item.data.updatedDate,
       category: kindLabels[item.data.kind],
