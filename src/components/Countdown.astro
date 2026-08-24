@@ -1,0 +1,112 @@
+---
+/**
+ * Countdown — days/hours/minutes/seconds until a fixed deadline.
+ *
+ * Used in post bodies (MDX) for things with a hard closing date: competition
+ * entries, jam submissions, campaign end dates.
+ *
+ * Two things worth knowing before you edit this:
+ *
+ * 1. **No script here on purpose.** This renders inside `#swup`, and Swup swaps
+ *    content in as parsed markup, so a script in this file would never execute
+ *    on a page reached by clicking rather than by hard load. The tick lives in
+ *    `BaseLayout.astro`, outside `#swup`, and re-queries on `swup:page:view`.
+ *    Same relocation as LiteYouTube and Comments.
+ *
+ * 2. **The digits are server-rendered from build time**, then corrected by JS
+ *    on the first tick. That gives no-JS readers and the pre-hydration frame a
+ *    plausible number instead of a row of dashes. It goes stale between
+ *    builds, which is survivable because the site rebuilds daily (the
+ *    scheduled Netlify function) and because `note` prints the actual deadline
+ *    in words right underneath. Don't rely on the digits alone to carry the
+ *    date.
+ */
+interface Props {
+  /** Deadline as ISO 8601 with an explicit offset, e.g. "2026-10-31T23:59:00Z". */
+  deadline: string;
+  /** Heading above the digits. */
+  label?: string;
+  /** The deadline written out for humans, printed under the digits. */
+  note?: string;
+  /** Shown instead of the digits once the deadline has passed. */
+  expiredText?: string;
+  class?: string;
+}
+
+const {
+  deadline,
+  label = 'Time left',
+  note,
+  expiredText = 'Entries are closed.',
+  class: className,
+} = Astro.props;
+
+const target = new Date(deadline);
+if (Number.isNaN(target.getTime())) {
+  throw new Error(
+    `Countdown: could not parse deadline "${deadline}". Use ISO 8601 with an explicit offset, e.g. "2026-10-31T23:59:00Z".`
+  );
+}
+
+const remaining = Math.max(0, target.getTime() - Date.now());
+const expired = remaining === 0;
+
+const seconds = Math.floor(remaining / 1000);
+const units = [
+  { key: 'days', label: 'Days', value: Math.floor(seconds / 86400) },
+  { key: 'hours', label: 'Hours', value: Math.floor(seconds / 3600) % 24 },
+  { key: 'minutes', label: 'Mins', value: Math.floor(seconds / 60) % 60 },
+  { key: 'seconds', label: 'Secs', value: seconds % 60 },
+];
+---
+
+<div
+  class:list={[
+    'not-prose my-8 p-6 md:p-8 rounded-lg bg-ink/5 dark:bg-ink-dark/10 border-l-4 border-ink/30 dark:border-ink-dark/30',
+    className,
+  ]}
+  data-countdown
+  data-countdown-deadline={target.toISOString()}
+>
+  <h2 class="text-xs font-heading uppercase tracking-[0.2em] text-ink/70 dark:text-ink-dark/70 mb-4">
+    {label}
+  </h2>
+
+  <!-- The digits update every second, so they're hidden from assistive tech;
+       the <time> below carries the deadline as readable text instead. -->
+  <div
+    class:list={['grid grid-cols-4 gap-2 md:gap-4', expired && 'hidden']}
+    data-countdown-digits
+    aria-hidden="true"
+  >
+    {units.map((unit) => (
+      <div class="text-center">
+        <div
+          class="text-3xl md:text-5xl font-display font-bold text-ink dark:text-ink-dark tabular-nums leading-none"
+          data-countdown-unit={unit.key}
+        >
+          {unit.value}
+        </div>
+        <div class="mt-2 text-[0.65rem] md:text-xs font-heading uppercase tracking-[0.15em] text-ink/60 dark:text-ink-dark/60">
+          {unit.label}
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <p
+    class:list={[
+      'text-base font-serif text-ink dark:text-ink-dark',
+      !expired && 'hidden',
+    ]}
+    data-countdown-expired
+  >
+    {expiredText}
+  </p>
+
+  {note && (
+    <p class="mt-4 text-sm text-ink/70 dark:text-ink-dark/70 font-serif">
+      <time datetime={target.toISOString()}>{note}</time>
+    </p>
+  )}
+</div>

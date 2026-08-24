@@ -175,11 +175,27 @@ so the pass is safely re-runnable and self-healing.
   `description:` frontmatter in MDX from transcripts — nothing to do with
   YouTube-side descriptions.
 
+## BONEZONE 2026 is a hub — link everything to it
+
+`src/content/news/bonezone-2026-open.mdx` (`/news/bonezone-2026-open/`) is the
+canonical page for Matt's BONEZONE 2026 entry. **Every other piece of BONEZONE
+content on the site links back to it** (Matt, 08-23): Royal Herald painting
+vlogs, progress posts, the finished-model post, any follow-up news. One hub,
+spokes pointing in.
+
+That matters most for **synced vlogs**, which arrive as generated MDX with no
+links in the body. When a vlog is about the Royal Herald or the competition, add
+the link by hand after `npm run refresh-vlogs` — the sync will not do it for
+you, and a Netlify-built vlog post is ephemeral, so the edit has to be committed.
+
+Competition closes 31 October 2026 (23:59 UK). After that the hub still holds:
+point results and post-mortems at it too, rather than starting a second page.
+
 ---
 
 ## Session workflow (Everyway standard — added 2026-07-21)
 
-This repo follows the standard in `../_system/PLAYBOOK.md` (MDG Growth root; venture context in `../CLAUDE.md`).
+This repo follows the standard in `~/Documents/dev/_system/PLAYBOOK.md` (MDG Growth root; venture context in `../CLAUDE.md`).
 
 - **Start:** `/orient` — read `STATUS.md`. Roadmaps (`roadmap/*.md`) stay the deep planning docs; STATUS.md is the one-page rollup.
 - **End:** `/wrap` — append a `SESSION_LOG.md` entry (newest first), refresh `STATUS.md`, update `../PROJECTS.md` row if the picture changed.
