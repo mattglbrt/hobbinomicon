@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content';
 import { renderMarkdownDoc, textResponse } from '../../utils/markdownExport';
 import { newsDoc, type News } from '../../utils/geoContent';
 
-/** Markdown rendering of a News item: /news/deathbringer-backerkit-live.md */
+/** Markdown rendering of a News item: /news/dwarf-solo-hex-crawl-released.md */
 export async function getStaticPaths() {
   const items = await getCollection('news', ({ data }) => !data.draft);
   return items.map((item) => ({ params: { slug: item.id }, props: { item } }));

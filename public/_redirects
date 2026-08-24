@@ -488,3 +488,9 @@
 /rss/wargaming.xml  /rss.xml  301
 /rss/warping.xml  /rss.xml  301
 /rss/work-in-progress.xml  /rss.xml  301
+
+# Removed 2026-08-24: the Deathbringer BackerKit post was deleted at Matt's
+# request. The URL was live, so it 301s to the news index rather than 404ing
+# for anyone holding an old link. Same treatment as the dropped tag pages.
+/news/deathbringer-backerkit-live  /news/  301
+/news/deathbringer-backerkit-live.md  /news/  301
