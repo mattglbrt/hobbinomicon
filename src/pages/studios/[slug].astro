@@ -10,7 +10,7 @@ import StructuredData from '../../components/StructuredData.astro';
 import SearchMeta from '../../components/SearchMeta.astro';
 import { formatDateLong } from '../../utils/formatDate';
 import { sortByDate } from '../../utils/collections';
-import { getHeroImage } from '../../utils/getHeroImage';
+import { getHeroImage, getHeroImageUrl } from '../../utils/getHeroImage';
 
 export async function getStaticPaths() {
   const studios = await getCollection('studios', ({ data }) => !data.draft);
@@ -21,6 +21,11 @@ export async function getStaticPaths() {
 }
 
 const { studio } = Astro.props;
+
+// Social/structured-data image must be the *built* asset URL. Heroes live in
+// src/assets, so the raw `/images/...` frontmatter path 404s once deployed;
+// getHeroImageUrl resolves it to the emitted /_astro/ file. Same as BlogLayout.
+const socialImage = studio.data.heroImage ? getHeroImageUrl(studio.data.heroImage) : undefined;
 const { Content } = await render(studio);
 
 // Reverse-lookups: games published by this studio, people affiliated with this studio
@@ -56,7 +61,7 @@ const referenceLinks = [
 <BaseLayout
   title={`${studio.data.name} | The Hobbinomicon`}
   description={studio.data.description}
-  image={studio.data.heroImage}
+  image={socialImage}
 >
   <StructuredData
     type="breadcrumb"

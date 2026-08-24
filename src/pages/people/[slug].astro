@@ -10,7 +10,7 @@ import ImageCard from '../../components/ImageCard.astro';
 import StructuredData from '../../components/StructuredData.astro';
 import { formatDateLong } from '../../utils/formatDate';
 import { sortByDate } from '../../utils/collections';
-import { getHeroImage } from '../../utils/getHeroImage';
+import { getHeroImage, getHeroImageUrl } from '../../utils/getHeroImage';
 
 export async function getStaticPaths() {
   const people = await getCollection('people', ({ data }) => !data.draft);
@@ -21,6 +21,11 @@ export async function getStaticPaths() {
 }
 
 const { person } = Astro.props;
+
+// Social/structured-data image must be the *built* asset URL. Heroes live in
+// src/assets, so the raw `/images/...` frontmatter path 404s once deployed;
+// getHeroImageUrl resolves it to the emitted /_astro/ file. Same as BlogLayout.
+const socialImage = person.data.heroImage ? getHeroImageUrl(person.data.heroImage) : undefined;
 const { Content } = await render(person);
 
 // Affiliated studios (forward-lookup from frontmatter)
@@ -64,7 +69,7 @@ const roleLabels: Record<string, string> = {
 <BaseLayout
   title={`${person.data.name} | The Hobbinomicon`}
   description={person.data.bio}
-  image={person.data.heroImage}
+  image={socialImage}
 >
   <StructuredData
     type="breadcrumb"
@@ -82,7 +87,7 @@ const roleLabels: Record<string, string> = {
       name: person.data.name,
       description: person.data.bio,
       url: `https://hobbinomicon.com/people/${person.id}/`,
-      image: person.data.heroImage ? new URL(person.data.heroImage, 'https://hobbinomicon.com').toString() : undefined,
+      image: socialImage ? new URL(socialImage, 'https://hobbinomicon.com').toString() : undefined,
       jobTitles: person.data.roles.map((r) => roleLabels[r]),
       affiliations: studios.map((s) => ({
         name: s.data.name,

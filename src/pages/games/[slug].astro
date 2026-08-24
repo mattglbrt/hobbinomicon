@@ -10,7 +10,7 @@ import PostCard from '../../components/PostCard.astro';
 import StructuredData from '../../components/StructuredData.astro';
 import { formatDateLong } from '../../utils/formatDate';
 import { getPublishedPosts, sortByDate } from '../../utils/collections';
-import { getHeroImage, isImageMetadata } from '../../utils/getHeroImage';
+import { getHeroImage, getHeroImageUrl, isImageMetadata } from '../../utils/getHeroImage';
 import GameSpecs from '../../components/GameSpecs.astro';
 import ImageCard from '../../components/ImageCard.astro';
 import LiteYouTube from '../../components/LiteYouTube.astro';
@@ -112,6 +112,10 @@ const statusLabel: Record<string, string> = {
   announced: 'Announced',
 };
 
+// Social/structured-data image must be the *built* asset URL. Heroes live in
+// src/assets, so the raw `/images/...` frontmatter path 404s once deployed;
+// getHeroImageUrl resolves it to the emitted /_astro/ file. Same as BlogLayout.
+const socialImage = game.data.heroImage ? getHeroImageUrl(game.data.heroImage) : undefined;
 const resolvedLogo = game.data.logo ? getHeroImage(game.data.logo) : null;
 const logoIsOptimized = resolvedLogo && isImageMetadata(resolvedLogo);
 
@@ -150,7 +154,7 @@ const gameSpecs = [
 <BaseLayout
   title={`${game.data.title} | The Hobbinomicon`}
   description={game.data.description}
-  image={game.data.heroImage}
+  image={socialImage}
 >
   {heroImg && (
     <link slot="head" rel="preload" as="image" imagesrcset={heroImg.srcSet.attribute} imagesizes="100vw" fetchpriority="high" />
@@ -171,7 +175,7 @@ const gameSpecs = [
       name: game.data.title,
       description: game.data.description,
       url: `https://hobbinomicon.com/games/${game.id}/`,
-      image: game.data.heroImage ? new URL(game.data.heroImage, 'https://hobbinomicon.com').toString() : undefined,
+      image: socialImage ? new URL(socialImage, 'https://hobbinomicon.com').toString() : undefined,
       datePublished: game.data.pubDate,
       dateModified: game.data.updatedDate,
       releaseYear: game.data.releaseYear,
