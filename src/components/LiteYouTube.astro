@@ -20,7 +20,16 @@ const thumbImage = isImageMetadata(cached) ? cached : null;
 const thumbUrl = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
 ---
 
-<div class="lite-yt group relative w-full overflow-hidden rounded-lg shadow-lg" style="aspect-ratio: 16 / 9;">
+{/*
+  not-prose is load-bearing. Rendered inside ProseContent, Tailwind Typography's
+  base `prose img` rule puts a 2em margin on the thumbnail. The thumbnail is
+  absolutely positioned with inset-0, and a margin still offsets an absolutely
+  positioned box, so it dropped 32px below the top of the frame and overflowed
+  the bottom by the same amount (clipped by overflow-hidden). The result was a
+  blank band above the image and a cropped bottom, which read as the container
+  being too tall. The container was always 16:9; the image inside it wasn't.
+*/}
+<div class="lite-yt not-prose group relative w-full overflow-hidden rounded-lg shadow-lg" style="aspect-ratio: 16 / 9;">
   <button
     type="button"
     class="lite-yt-trigger absolute inset-0 h-full w-full cursor-pointer"
