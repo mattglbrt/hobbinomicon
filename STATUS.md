@@ -1,47 +1,50 @@
-# STATUS — The Hobbinomicon · updated 2026-08-13
+# STATUS — The Hobbinomicon · updated 2026-08-25
 
 ## Now
-Live on Astro 6 (README still says Astro 5 — stale). v2 baseline shipped: three-entity directory, format-based game URLs, News pillar, SEO/perf pass, search improvements, GEO output (`/llms.txt`, `/llms-full.txt`, `.md` renderings). YouTube description pass 269/269. Tag taxonomy 69, registry 1:1 with the corpus. Funnel mechanic v1 live on all 10 published games (Warmachine off via `hideFunnel`).
+Live on Astro 6. v2 baseline holding: three-entity directory, format-based game URLs, News pillar, SEO/perf pass, GEO output (`/llms.txt`, `/llms-full.txt`, `.md` renderings). Tag taxonomy 69, registry 1:1. Funnel v1 on all 10 published games (Warmachine off via `hideFunnel`).
 
-**`main` is at `f2391f2`; `dev` at `8ba7eba`; branches not diverged.** One build today, carrying a small content change: the footer's AI-disclosure link and the page it lands on now both read **"100% Human Made Content & Art"** — same `/ai-disclosure/` URL, promise-first framing instead of caveat-first. `LegalPageLayout` gained an optional `titleSize` prop so the longer title doesn't resize the other legal pages.
+**`main` at `5e82a0c`, `dev` at `57dd3f3`, level — nothing unmerged.** Last session shipped two news posts (BONEZONE 2026, Motley Crews Dreadwood), a reusable `Countdown` component, and fixed three bugs: **og:image was 404ing site-wide** on news/game/studio/person pages, YouTube embed thumbnails sat 32px low inside their frames, and Motley Crews had dropped off the homepage.
 
-Still true: **transcripts only reach the live site from a local sync** — YouTube blocks caption fetches from Netlify's IPs, so `npm run refresh-vlogs` is load-bearing (see `~/Documents/dev/_system/RECURRING.md`).
+Still true: **transcripts only reach the live site from a local sync** — YouTube blocks caption fetches from Netlify IPs, so `npm run refresh-vlogs` is load-bearing (see `~/Documents/dev/_system/RECURRING.md`).
 
 ## Next (ranked)
-0. **Standing: link all BONEZONE content to the hub post.** `/news/bonezone-2026-open/` is canonical; every Royal Herald vlog, progress post and follow-up points at it (Matt, 08-23). Synced vlogs arrive with no links in the body, so this is a manual edit after each `npm run refresh-vlogs`. Rule lives in `CLAUDE.md`; runs until at least 31 Oct.
-1. **Funnel backfill (editorial).** Mechanic is done; only hand-picked `relatedGames` remain. **TSPN** wants it most — only narrative-format entry, so all three of its suggestions read just "Solo-friendly". Warmachine needs either peer large-scale-army entries or hand-picked picks before `hideFunnel` comes off.
-3. **Act on the channel strategy** — near-term items are the Warmachine launch stream, the `@mattglbrt` handle switch, and standing up the Reels cadence on `@hobbinomicon`. None are code in this repo.
-4. **Hero images for the Gloam and DWARF news posts.** Both run without one. No-AI-art rule applies: Matt's own photo, or ask the creators for permission.
-5. Newsletter: pick provider (Buttondown/ConvertKit/DIY — coordinate with AITD), cadence, archive page. Form is wired, engine missing.
-6. Monster Friends project entry + backfill `project:` on posts.
-7. **Port the GEO pattern to mattglbrt.com** (AITD done 07-22).
-8. One-minute browser click-through covering both the 07-31 progress bar fix and today's disclosure page (homepage → click a post → scroll; images should lightbox). Both verified structurally, neither in a browser.
+0. **Standing: link all BONEZONE content to the hub** `/news/bonezone-2026-open/`. Synced vlogs arrive with no links in the body, so it's a manual edit after each `refresh-vlogs`, and must be committed. Rule lives in `CLAUDE.md`. Runs to 31 Oct.
+1. **Paint the Royal Herald.** Entry closes **31 Oct 23:59 GMT**. Recipe is the 07-10 skeleton vlog; this is also the test run for the 2027 Tomb Kings army.
+2. **Publish or bin `oldhammer-year-2027.mdx`.** Drafted, invisible. Clearing `draft: true` needs a fresh `pubDate` (currently 08-23) and a check that OWAC/40k2ndAC 2027 details have landed. Sign-ups open around Christmas.
+3. **Funnel backfill (editorial).** Mechanic done, only hand-picked `relatedGames` remain. **TSPN** wants it most (only narrative entry, all three suggestions read just "Solo-friendly"). Warmachine needs peers or picks before `hideFunnel` comes off.
+4. **Hero images for the Gloam and DWARF news posts.** Both run without one. No-AI-art rule applies: Matt's own photo, or ask the creators.
+5. **Act on the channel strategy** — Warmachine launch stream, `@mattglbrt` handle switch, Reels cadence on `@hobbinomicon`. None are code in this repo.
+6. Newsletter: pick provider (Buttondown/ConvertKit/DIY — coordinate with AITD), cadence, archive page. Form is wired, engine missing.
+7. Monster Friends project entry + backfill `project:` on posts.
+8. **Port the GEO pattern to mattglbrt.com** (AITD done 07-22).
+9. Browser click-through of the 07-31 progress bar fix and the 08-13 disclosure page. Both verified structurally, neither in a browser. (The Motley Crews page *was* browser-verified this session.)
 
-**Note:** `npm run refresh-vlogs` stays off this list until Matt posts a video — sync skips videos that already have a file. Its return will be the first real exercise of the manual tag prompt.
+**Note:** `refresh-vlogs` stays off this list until Matt posts a video. Its return is the first real exercise of the manual tag prompt.
 
 ## Blockers
 - Matt: wave-3 game one-liners (10 games) + wave-1 game-page inputs; MESBG tier call; The One Ring page-split call.
-- Comments moderation has no pending-notification (manual D1 SQL checks only).
-- YouTube OAuth needs re-auth roughly weekly before *write* API work. Reads (stats, catalogue) need only the API key. Staying unverified/local-only is a closed decision (07-21).
+- Comments moderation has no pending-notification (manual D1 SQL only).
+- YouTube OAuth re-auth roughly weekly before *write* API work. Reads need only the API key. Staying unverified/local-only is closed (07-21).
 
 ## Recently done
-- 08-13 — **AI disclosure reframed and deployed** (`8ba7eba` → `f2391f2`). Footer link + page `<h1>`/`<title>` now say "100% Human Made Content & Art"; URL unchanged, and the footer was the only link to that page in the repo. Added `titleSize` to `LegalPageLayout` (defaults to the old classes) plus `text-balance`, so the other legal pages render identically — checked in `dist/`. Fixed two typos in the page copy. **`npx astro build` bypasses the npm `prebuild` hook**, which is the cheap way to verify presentation changes without firing the YouTube sync. The merge also carried the 08-11 wrap commits that were still sitting on dev.
-- 08-11 — **Funnel mechanic v1 built, merged, deployed** (`df70292` → `864effa`). Scoring in `src/utils/funnel.ts`: structured fields (`format`/`solo`/`miniatureAgnostic`/tier/cost band) plus IDF-weighted shared tags **capped at 3**, because game tags are ad-hoc and a shared `fantasy` sits on half the directory. Below score 3 nothing renders. Editorial picks always win; OOP games are excluded as suggestions but still receive a funnel. **STATUS had this wrong** — rendering already existed as a sidebar list and had never appeared because no game has `relatedGames`. Added `hideFunnel` to the schema, set on Warmachine. **Also corrected a wrong call of mine**: I reported most games lack card images off a dev-server screenshot; nine of eleven have a `heroImage` and all render fine on a built site — lazy-loading caught mid-load. Documented, along with `astro preview` not working with the Netlify adapter.
-- 08-11 — **YouTube catalogue analysed** (271 videos, 33,044 views, median 38). Top-20s by views/likes/comments overlap on only 4 videos. Findings: the solo RPG kit video is 10% of all channel views; complete framings beat installments 40×; Shorts are reach without engagement; 20–45 min has the best like rate. Produced a three-channel strategy and a revised mattglbrt.com scope — cross-venture, outside this repo.
-- 07-31 — **Reading progress bar fixed**, closing the 07-28 Swup class. The script was written swap-safe and it didn't matter: living inside `#swup` meant it never executed at all on a clicked-to post. A second bug rode along — the same block tagged post images for the lightbox, so clicked-to posts had un-clickable images. Swept all 455 built pages. Deploys: `947994f`, `f9c12b7`, `5333dd3`.
-- 07-28 — **Swup was silently killing post-only component scripts** (`LiteYouTube`, `Comments`, `BackToTop`). `tag-keywords.json` remapped 99 → 69 and substring false positives fixed (`ork` matched "work" 903 times). **Tagging switched to a manual prompt**; `auto-tag-posts.js` deleted. **Draft posts were public and in the sitemap** — `getStaticPaths` lacked the draft filter; fixed.
+- 08-24/25 — **Two news posts + Countdown component + three bug fixes.** Full detail in SESSION_LOG. Headlines: og:image was broken on four detail templates (heroes live in `src/assets`, raw `/images/…` path 404s; `BlogLayout` already used `getHeroImageUrl`, the others didn't). YouTube thumbnails were offset 32px by Tailwind Typography's `prose img` margin — a margin still displaces an absolutely positioned box; fixed with `not-prose` on `LiteYouTube`. Deathbringer post deleted with 301s. BONEZONE hub rule recorded in `CLAUDE.md`.
+- 08-13 — AI disclosure reframed to "100% Human Made Content & Art", same URL. `titleSize` added to `LegalPageLayout`. **`npx astro build` bypasses the npm `prebuild` hook** — the cheap way to verify presentation changes without firing the YouTube sync.
+- 08-11 — Funnel mechanic v1 (IDF-weighted tags capped at 3, `MIN_SCORE` 3, editorial picks always win). YouTube catalogue analysed (271 videos); three-channel strategy produced.
+- 07-31 — Reading progress bar fixed; the script lived inside `#swup` and never ran on clicked-to posts. Same class of bug as the Countdown script placement.
 
 ## Open questions
-- **Yellow Imp disclosure line: dropped 08-13, and here's the trigger that would revive it.** Proposed 08-11 on the theory that reviewing games while selling minis to their players is a conflict. Checked: Yellow Imp's `game_compatibility` is Hobgoblin / Greathelm / One Page Rules, none of which the directory reviews, and it publishes none of these games. No overlap, so no disclosure. It becomes real only if Yellow Imp stocks product tied to a reviewed game, or a reviewed publisher becomes a supplier or sponsor. **Separate and more likely: free review copies from studios** — that's a material connection to the thing being reviewed, and it's Matt's call whether any have arrived.
-- **Funnel: is a score threshold of 3 right?** It holds for a 10-game corpus. As the directory grows the IDF weights shift and the cap may want revisiting.
-- **Does the longer footer label wrap awkwardly on mobile?** "100% Human Made Content & Art" is much longer than its Info-column neighbours. Shortening to "100% Human Made" or pulling it onto its own footer line are both one-liners if it reads badly.
-- **Publish commission price ranges on mattglbrt.com, or stay quote-only?** Recommended: publish. One config value either way. (Not this repo, but it's the open decision from the 08-11 scope work.)
-- **The Wave 2 post tells readers to ignore the "BETA 1.1" button label** on orcthebrand.com. If Orc the Brand fixes their copy, delete that line.
-- **Is `vlogs/monster-friends-energy-counter` meant to stay drafted?** Publicly readable until the 07-28 fix, now a 404. If it should be live, clear `draft: true`.
-- **Normalize the 192 timezone-less `pubDate` values?** They parse as *local* time, so those posts resolve to a different instant on Netlify (UTC) than locally, shifting RSS and index ordering. Legacy data, cosmetic-only.
-- **Directory entries for DWARF / Tavern Lore?** Deferred by Matt 07-22. `solo-rpg` is the third-biggest tag.
-- Thirteen tag redirects point at the index because they were too ambiguous to place (`showcase`, `tools`, `maps`, `rahara`, …). One line each in `public/_redirects`.
-- Eight redirect mappings were inference, not from Matt's guide (`metallic`→`metallics`, `tufts`→`basing`, `mdf`/`heat-gun`/`led-lights`→`terrain`, `one-ring`→`ttrpg`, `thyra`→`warmachine`). Worth a glance.
-- Should `/llms.txt` be linked from the site (footer, or `<link rel="alternate">`)? Discovery is crawler-side only.
-- Delete the now-unused `descriptions/` corpus (232 files) and `descriptions_pushed.json`? Both gitignored, both dead.
-- Worth a transcript proxy so Netlify can fetch captions itself? (Deferred on cost/complexity.)
+- **Motley Crews Advanced has no published ruleset.** The store page references it; nothing is linked. Matt supplied the rules verbally (Dreadwood team, 10 terrain pieces vs 2, any 5 classes, max 1 per class). Revisit if `_nubmark` publishes.
+- **`pinned: true` is dead on the homepage.** Set on Motley Crews, but "Games worth knowing about" sorts on `updatedDate || pubDate` only. Either wire `pinned` into that sort or stop relying on it.
+- **og:image serves the full-size original**, not a 1200×630 variant (Dreadwood's is 1.1MB). Inside every platform limit, so previews work, but heavier than needed. Would need `getImage()`.
+- **Embedded non-vlog videos pull thumbnails from `i.ytimg.com`.** `hero-cache` only covers synced vlogs, so `_nubmark`'s two videos make a third-party request at 4:3 and get cropped. Extend the cache script?
+- **Deathbringer: 301 to `/news/` or a hard 404?** Currently 301, matching the dropped-tag convention.
+- The `.md` GEO rendering emits markdown images' raw `../../assets/…` paths — dead links for crawlers. `stripMdx` handles JSX, not markdown images.
+- Funnel threshold of 3: right for 10 games, may want revisiting as the directory grows.
+- Does the longer "100% Human Made Content & Art" footer label wrap badly on mobile?
+- Wave 2 post tells readers to ignore the "BETA 1.1" button on orcthebrand.com — delete if they fix it.
+- Is `vlogs/monster-friends-energy-counter` meant to stay drafted?
+- Normalize the 192 timezone-less `pubDate` values? Legacy, cosmetic, but they shift RSS/index order between local and UTC.
+- Directory entries for DWARF / Tavern Lore? Deferred by Matt 07-22; `solo-rpg` is the third-biggest tag.
+- Housekeeping backlog: 13 ambiguous tag redirects point at the index; 8 redirect mappings were inference not Matt's guide; should `/llms.txt` be linked from the site; delete the dead `descriptions/` corpus (232 gitignored files); worth a transcript proxy so Netlify can fetch captions itself (deferred on cost).
+
+**SESSION_LOG.md is 48KB** — compact per PLAYBOOK §8 at the next wrap that pushes it over ~50KB.
