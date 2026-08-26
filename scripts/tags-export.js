@@ -4,7 +4,7 @@
  * Export every blog post's tags to a CSV for manual cleanup.
  *
  * Columns: id, category, pubDate, title, tags
- *  - `id` is the path relative to src/content/blog (e.g. vlogs/foo.mdx). It is
+ *  - `id` is the path relative to its collection (e.g. foo.mdx). It is
  *    the stable key used to map edits back to files — DO NOT edit it.
  *  - `tags` is a comma-separated list inside a quoted CSV cell. Edit this column
  *    only. An empty cell means "no tags".

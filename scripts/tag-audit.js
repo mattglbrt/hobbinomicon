@@ -40,7 +40,7 @@ const CSV = args.has('--csv');
 const tagsConfig = JSON.parse(fs.readFileSync(TAGS_JSON, 'utf-8'));
 const knownTags = new Set(Object.keys(tagsConfig.tags));
 
-// ─── Walk content/blog ──────────────────────────────────────────────
+// ─── Walk the content collections ───────────────────────────────────
 function findFiles(dir, out = []) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const fullPath = path.join(dir, entry.name);
