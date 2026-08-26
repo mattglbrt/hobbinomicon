@@ -29,19 +29,35 @@ export interface HubGroup {
   planned?: string[];
 }
 
+/**
+ * The army the hub owner is actually painting, as opposed to the factions they
+ * paint single models from in order to make a guide. Those are different
+ * things and the page should not pretend otherwise.
+ */
+export interface HubSpotlight {
+  label: string;
+  name: string;
+  planned?: string[];
+  guides: { entry: CollectionEntry<'guides'>; href: string }[];
+}
+
 interface Props {
   title: string;
   tagline: string;
   description: string;
   url: string;
   groupLabel: string;
+  groupBlurb?: string;
   groups: HubGroup[];
+  spotlight?: HubSpotlight | null;
   startHere: { entry: CollectionEntry<'guides'>; href: string }[];
   news?: CollectionEntry<'news'>[];
   funnel?: { game: CollectionEntry<'games'>; reason: string }[];
   game?: CollectionEntry<'games'> | null;
   channelUrl?: string;
   ctaText?: string;
+  ctaDescription?: string;
+  ctaSubtitle?: string;
 }
 
 const {
@@ -50,13 +66,17 @@ const {
   description,
   url,
   groupLabel,
+  groupBlurb,
   groups,
+  spotlight = null,
   startHere,
   news = [],
   funnel = [],
   game = null,
   channelUrl,
   ctaText,
+  ctaDescription,
+  ctaSubtitle,
 } = Astro.props;
 
 const canonical = new URL(url, Astro.site ?? Astro.url).toString();
@@ -113,18 +133,57 @@ const totalGuides = groups.reduce((n, g) => n + g.guides.length, 0);
         </section>
       )}
 
-      {/* The hand-written body: "my armies", or whatever the hub needs to say. */}
-      <section class="mt-16 max-w-3xl">
-        <ProseContent>
-          <slot />
-        </ProseContent>
-      </section>
+      {spotlight ? (
+        <section class="mt-16 rounded-lg border-2 border-ink/20 dark:border-ink-dark/20 bg-ink/[0.03] dark:bg-ink-dark/[0.03] p-8">
+          <p class="font-heading text-sm uppercase tracking-[0.2em] text-ink/60 dark:text-ink-dark/60">
+            {spotlight.label}
+          </p>
+          <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mt-1 mb-6">
+            {spotlight.name}
+          </h2>
+
+          <div class="max-w-3xl">
+            <ProseContent>
+              <slot />
+            </ProseContent>
+          </div>
+
+          {spotlight.guides.length > 0 && (
+            <div class="grid gap-4 mt-8">
+              {spotlight.guides.map(({ entry, href }) => (
+                <ListCard
+                  href={href}
+                  title={entry.data.title}
+                  description={entry.data.description}
+                  meta={formatDateLong(entry.data.pubDate)}
+                  image={getHeroImageUrl(entry.data.heroImage, entry.data.youtubeId)}
+                />
+              ))}
+            </div>
+          )}
+
+          {spotlight.guides.length === 0 && spotlight.planned?.length ? (
+            <p class="mt-6 text-sm text-ink/70 dark:text-ink-dark/70">
+              On the desk: {spotlight.planned.join(', ')}.
+            </p>
+          ) : null}
+        </section>
+      ) : (
+        <section class="mt-16 max-w-3xl">
+          <ProseContent>
+            <slot />
+          </ProseContent>
+        </section>
+      )}
 
       {groups.length > 0 && (
         <section class="mt-20 pt-12 border-t border-ink/10 dark:border-ink-dark/10">
-          <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mb-8">
+          <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mb-2">
             {groupLabel}
           </h2>
+          {groupBlurb && (
+            <p class="text-ink/70 dark:text-ink-dark/70 mb-8">{groupBlurb}</p>
+          )}
           <div class="space-y-12">
             {groups.map((group) => (
               <div>
@@ -207,6 +266,8 @@ const totalGuides = groups.reduce((n, g) => n + g.guides.length, 0);
       <YouTubeCTA
         title={ctaText ?? `More ${title} on YouTube`}
         channelUrl={channelUrl}
+        description={ctaDescription}
+        subtitle={ctaSubtitle}
       />
     </div>
 

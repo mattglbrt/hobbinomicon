@@ -9,9 +9,13 @@ import { getFunnelSuggestions } from '../utils/funnel';
  * roadmap/rebuild/04-hubs-content-plan.md, which is Matt's own list — do not
  * reorder or invent members here.
  */
+const MY_ARMY = {
+  name: 'Old Umbrey',
+  planned: ['Lissya', 'Primeval', 'Vorony', 'Chosen of the Witch'],
+};
+
 const FACTIONS: { name: string; planned: string[] }[] = [
   { name: 'Crucible Guard', planned: ['Gearheart', 'Toro', 'Apollo'] },
-  { name: 'Old Umbrey', planned: ['Lissya', 'Primeval', 'Vorony', 'Chosen of the Witch'] },
   { name: 'Grymkin', planned: ['Heretic', 'Old Witch', 'Cage Rager', 'Crabbit', 'Slaughterhouse', 'Dreadrot'] },
   { name: 'Infernals', planned: ['Zataroth', 'a heavy', 'a light', 'cultist', 'destroyer', 'Kithguard', 'Kraghorn'] },
   { name: 'Convergence of Cyriss', planned: ['Directrix', 'Lucant'] },
@@ -19,9 +23,24 @@ const FACTIONS: { name: string; planned: string[] }[] = [
   { name: 'Thornfall Alliance', planned: ['Midas', 'Sturm & Drang or Carver'] },
 ];
 
+// The Warmachine channel, not the main one — it carries Warmachine content
+// only, and the CTA says so rather than letting a subscriber assume otherwise.
+const WARMACHINE_CHANNEL =
+  'https://www.youtube.com/@TheHobbinomiconWarmachine?utm_source=hobbinomicon&utm_medium=hub';
+
 const gameSlugs = new Set((await getCollection('games')).map((g) => g.id));
 const guides = (await getGuides()).filter((g) => g.data.hub === 'warmachine');
 const link = (entry: (typeof guides)[number]) => ({ entry, href: guideUrlWith(entry, gameSlugs) });
+
+// The army Matt is painting in full, kept separate from the factions he paints
+// single models from to make a guide. Conflating the two is how a hub ends up
+// claiming seven armies nobody has finished.
+const spotlight = {
+  label: 'The army I am painting',
+  name: MY_ARMY.name,
+  planned: MY_ARMY.planned,
+  guides: guides.filter((g) => g.data.faction === MY_ARMY.name).map(link),
+};
 
 const groups: HubGroup[] = FACTIONS.map((f) => ({
   name: f.name,
@@ -32,7 +51,11 @@ const groups: HubGroup[] = FACTIONS.map((f) => ({
 // Anything without a faction still belongs on the page. Most Warmachine
 // guides carry no faction because they are about a technique or the hobby
 // rather than an army; setting `faction` on those would be a lie.
-const unfiled = guides.filter((g) => !g.data.faction || !FACTIONS.some((f) => f.name === g.data.faction));
+const unfiled = guides.filter(
+  (g) =>
+    g.data.faction !== MY_ARMY.name &&
+    (!g.data.faction || !FACTIONS.some((f) => f.name === g.data.faction))
+);
 if (unfiled.length) {
   groups.push({
     name: 'Not faction-specific',
@@ -75,35 +98,39 @@ const funnel =
 
 <HubLayout
   title="Warmachine"
-  tagline="Steamjacks, warcasters, and a faction backlog that keeps growing. The recipes I use, the armies I actually play, and where to go when you want something smaller."
-  description="Warmachine painting guides by faction, army projects, and news — plus the indie skirmish games worth trying if you like painting steamjacks."
+  tagline="I love Warmachine for the tight, competitive rules, but I am not good enough to write strategy guides. So here are painting guides instead."
+  description="Warmachine painting guides by faction, army projects, and news"
   url="/warmachine/"
   groupLabel="Painting guides by faction"
+  groupBlurb="Single models from the other factions, painted to work out a scheme. These are recipes, not armies."
+  spotlight={spotlight}
   groups={groups}
   startHere={startHere}
   news={news}
   funnel={funnel}
   game={game ?? null}
+  channelUrl={WARMACHINE_CHANNEL}
   ctaText="More Warmachine on YouTube"
+  ctaDescription="A second channel, Warmachine only. Faction schemes, army projects and event coverage, with none of the daily vlog in the way."
+  ctaSubtitle="Warmachine only. The daily vlog stays on the main channel."
 >
-  {/* MATT: this body is the "My armies" section and it is yours to write —
-      nothing here should be in my voice. 04-hubs-content-plan.md has your
-      faction list to work from. Two other calls on this page:
+  {/* MATT: this section is yours to write and it is the one place on the hub
+      that should sound like you. What I have put here is only the facts you
+      gave me — Old Umbrey is the army you are painting in full, other factions
+      get single models so you can make a guide. Rewrite it.
 
-        1. START_HERE_SLUGS at the top is empty, so "Start here" is currently
-           the three newest guides. 04-hubs suggests the Crucible Guard scheme
-           guide, how to prepare bases for an entire army, and buying/selling/
-           trading. Fill in the three ids and it stops guessing.
+      Two other calls still open on this page:
+
+        1. START_HERE_SLUGS at the top is empty, so "Start here" is the three
+           newest guides rather than your picks. 04-hubs suggests the Crucible
+           Guard scheme guide, army-wide base prep, and buying/selling/trading.
         2. The funnel reads relatedGames off src/content/games/warmachine.mdx,
-           which is empty and has hideFunnel set. 04-hubs suggests Trench
-           Crusade, Relicblade and Motley Crews. Setting them turns the funnel
-           on here and on the game page at once. */}
-
-  <h2>My armies</h2>
+           which is empty and has hideFunnel set, so no funnel renders. 04-hubs
+           suggests Trench Crusade, Relicblade and Motley Crews. */}
 
   <p>
-    Seven factions, one at a time. The rule I set myself: finish one before
-    starting the next, because a faction with three painted units is worth more
-    than seven with one each.
+    Old Umbrey is the one I am painting all the way through. Everything else on
+    this page is a single model from another faction, painted far enough to work
+    out a scheme and write it down.
   </p>
 </HubLayout>

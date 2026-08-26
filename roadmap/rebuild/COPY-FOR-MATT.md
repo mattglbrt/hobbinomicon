@@ -1,5 +1,8 @@
 # Copy I wrote that a reader will see
 
+> **Status:** sections **A and B are done** — Matt's edits applied 2026-08-26,
+> see the "Applied" notes inline. **C onward is still open.**
+
 Everything on the site that is my words rather than yours, pulled from the
 source as it stands on `dev`. Edit in place and hand it back — I'll put each
 block where its ID says it goes.
@@ -20,14 +23,14 @@ truncates it; meta `description` wants ≤155. I've flagged those.
 
 ## A — Home page
 
-### [A1] The H1. The single most important line on the site.
-> Find your next indie wargame, then learn to paint it
+### [A1] The H1. **APPLIED.**
+> Find your next indie wargame. Learn how to play and paint it.
 
 ### [A2] The line above it (kept from the old hero — your words, listed so you can see the pairing)
 > HOBBYING FROM THE DEEP END OF THE DUNGEON
 
-### [A3] Hero paragraph, under the H1
-> A directory of the small games the big publishers ignore, and the guides to get them onto your table and painted. Skirmish, army-scale, solo, and the weird stuff in between.
+### [A3] Hero paragraph, under the H1. **APPLIED** (spacing after two commas normalised).
+> A directory of small and indie tabletop wargames, and the guides to get them on your table. Skirmish, army-scale, solo stuff, and the weird stuff in between.
 
 ### [A4] Browser tab + Google result title *(currently 71 chars — over the 60 limit, will truncate)*
 > The Hobbinomicon — find your next indie wargame, then learn to paint it
@@ -35,19 +38,19 @@ truncates it; meta `description` wants ≤155. I've flagged those.
 ### [A5] Google result description *(currently 178 chars — over the 155 limit, will truncate)*
 > A directory of indie wargames the big publishers ignore, and the painting guides to get them on your table. Skirmish, army-scale, solo, and the weird stuff in between.
 
-### [A6] Guides section, eyebrow + heading
-> **Eyebrow:** Learn to paint it
+### [A6] Guides section, eyebrow + heading. **APPLIED.**
+> **Eyebrow:** Learn to paint and play it
 > **Heading:** Guides
 
 ### [A7] On-ramp section, eyebrow + heading
 > **Eyebrow:** Already playing something big?
 > **Heading:** Start where you are
 
-### [A8] Warmachine card, on the home page
-> Steamjacks, warcasters, and a faction backlog I keep adding to. Start here if you already know the game.
+### [A8] Warmachine card, on the home page. **APPLIED.**
+> Hobby and painting guides dedicated to Warmachine.
 
-### [A9] Warhammer card, on the home page
-> 40k, The Old World and Spearhead. The recipes that travel, and where to go next when you want something smaller.
+### [A9] Warhammer card, on the home page. **APPLIED** ("occassionally" → "occasionally", "games workshop" → "Games Workshop").
+> 40k, The Old World, and Spearhead. I do occasionally paint Games Workshop stuff still.
 
 ---
 
