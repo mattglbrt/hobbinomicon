@@ -2,8 +2,8 @@
 title: "Warmachine Resources"
 description: "Essential tools, guides, and community resources for Warmachine players and hobbyists"
 pubDate: 2025-11-23
-category: "Resources"
-tags: ["warmachine", "resources", "wargaming"]
+category: "Articles"
+tags: ["warmachine", "resources"]
 heroImage: "/images/warmachinefeatured.jpeg"
 heroImageAlt: "Warmachine resources and guides"
 hideRelatedPosts: true
@@ -11,7 +11,6 @@ resourceType: "hub"
 ---
 
 import TaggedPostsList from '../../../components/TaggedPostsList.astro';
-import GameProjectsList from '../../../components/GameProjectsList.astro';
 import ResourceCard from '../../../components/ResourceCard.astro';
 import ResourceSection from '../../../components/ResourceSection.astro';
 
@@ -143,12 +142,8 @@ Your hub for all things Warmachine! Find essential tools, community resources, a
   />
 </ResourceSection>
 
-<ResourceSection title="My Warmachine Projects">
-  <GameProjectsList game="warmachine" />
-</ResourceSection>
-
 <ResourceSection title="My Warmachine Content">
-  <TaggedPostsList tag="warmachine" excludeCategory="Resources" excludeProjectPosts={true} limit={4} />
+  <TaggedPostsList tag="warmachine" excludeProjectPosts={true} limit={4} />
 </ResourceSection>
 
 ---

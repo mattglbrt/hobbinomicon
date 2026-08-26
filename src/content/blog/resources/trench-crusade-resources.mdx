@@ -2,8 +2,8 @@
 title: "Trench Crusade Resources"
 description: "Essential tools, guides, and community resources for Trench Crusade players and hobbyists"
 pubDate: 2025-11-23
-category: "Resources"
-tags: ["trench-crusade", "resources", "wargaming"]
+category: "Articles"
+tags: ["trench-crusade", "resources"]
 heroImage: "/images/hereticsvsnewantioch.jpg"
 heroImageAlt: "Trench Crusade resources and guides"
 hideRelatedPosts: true
@@ -11,7 +11,6 @@ resourceType: "hub"
 ---
 
 import TaggedPostsList from '../../../components/TaggedPostsList.astro';
-import GameProjectsList from '../../../components/GameProjectsList.astro';
 import ResourceCard from '../../../components/ResourceCard.astro';
 import ResourceSection from '../../../components/ResourceSection.astro';
 
@@ -91,12 +90,8 @@ Your hub for all things Trench Crusade! Find essential tools, community resource
   />
 </ResourceSection>
 
-<ResourceSection title="My Trench Crusade Projects">
-  <GameProjectsList game="trench crusade" />
-</ResourceSection>
-
 <ResourceSection title="My Trench Crusade Content">
-  <TaggedPostsList tag="trench crusade" excludeCategory="Resources" excludeProjectPosts={true} limit={4} />
+  <TaggedPostsList tag="trench-crusade" excludeProjectPosts={true} limit={4} />
 </ResourceSection>
 
 ---
