@@ -1,86 +1,78 @@
-# Copy I wrote that a reader will see
+# Copy still needing you
 
-> **Status:** **A and B applied** 2026-08-26 — see the notes inline. Still
-> needs Matt: **[A4]** and **[B5]** are wordings I wrote, and **[B3]** wants a
-> voice pass. **C onward is untouched.**
+**This doc is yours now — edit it directly.** I'll read it back and apply
+whatever's changed. Settled blocks have been removed; what's left is either
+still my words, or something you parked.
 
-Everything on the site that is my words rather than yours, pulled from the
-source as it stands on `dev`. Edit in place and hand it back — I'll put each
-block where its ID says it goes.
-
-**How to use it:** every block has an ID like `[A1]`. Rewrite the text under it,
-delete what you don't want, or write `KEEP` if it's fine. Anything you leave
-untouched I'll assume is fine. If a block should not exist at all, write `CUT`.
+**How to use it:** every block has an ID like `[C1]`. Rewrite the text under it,
+or write `KEEP` if it's fine as it is, or `CUT` if the thing shouldn't exist.
+Anything you don't touch, I'll leave alone.
 
 **Not in here:** your game one-liners, verdicts, game and news bodies, guide
-titles and descriptions, transcripts — none of that was touched. The 288 posts
-moved with frontmatter changes only. Also not here: the four restored resource
-pages, which are your words from `48d6f7c`, restored verbatim.
+titles and descriptions, transcripts. None of that was touched — the 288
+migrated posts changed frontmatter only. Nor the restored resource pages, which
+are your words from `48d6f7c`, verbatim.
 
-**Length notes** matter in two places. `<title>` wants ≤60 characters or Google
-truncates it; meta `description` wants ≤155. I've flagged those.
+**Length limits:** `<title>` truncates past ~60 characters, meta `description`
+past ~155. Flagged where it matters.
+
+**Settled and live:** A1, A2, A3, A5, A6, A8, A9, B1, B2, B4 — applied
+2026-08-26, removed from this doc. `git log` has the before and after if you
+want to see one again.
 
 ---
 
-## A — Home page
+## A — Home page (two left)
 
-### [A1] The H1. **APPLIED.**
-> Find your next indie wargame. Learn how to play and paint it.
+### [A4] Browser tab + Google result title. **I wrote this at your direction — needs your eye.**
 
-### [A2] The line above it (kept from the old hero — your words, listed so you can see the pairing)
-> HOBBYING FROM THE DEEP END OF THE DUNGEON
-
-### [A3] Hero paragraph, under the H1. **APPLIED** (spacing after two commas normalised).
-> A directory of small and indie tabletop wargames, and the guides to get them on your table. Skirmish, army-scale, solo, and the weird stuff in between.
-
-### [A4] Browser tab + Google result title. **APPLIED** — rewritten to cover play *and* paint, and now 54 chars so it no longer truncates. **The wording is mine, so check it.**
+You asked me to make it cover play and paint. This is my wording, 54 characters
+so it no longer truncates:
 > The Hobbinomicon — find, play and paint indie wargames
 
-### [A5] Google result description. **APPLIED** — matches A3. 151 chars, under the limit.
-> A directory of small and indie tabletop wargames, and the guides to get them on your table. Skirmish, army-scale, solo, and the weird stuff in between.
+### [A7] On-ramp section heading. **You parked this** — "leave as is for now, I need to see it on the site."
 
-### [A6] Guides section, eyebrow + heading. **APPLIED.**
-> **Eyebrow:** Learn to paint and play it
-> **Heading:** Guides
-
-### [A7] On-ramp section, eyebrow + heading
+These sit above the two Warmachine/Warhammer cards on the home page:
 > **Eyebrow:** Already playing something big?
 > **Heading:** Start where you are
 
-### [A8] Warmachine card, on the home page. **APPLIED.**
-> Hobby and painting guides dedicated to Warmachine.
-
-### [A9] Warhammer card, on the home page. **APPLIED** ("occassionally" → "occasionally", "games workshop" → "Games Workshop").
-> 40k, The Old World, and Spearhead. I do occasionally paint Games Workshop stuff still.
-
 ---
 
-## B — Warmachine hub (`/warmachine/`)
+## B — Warmachine hub (`/warmachine/`) (two left)
 
-### [B1] Tagline, under the big title. **APPLIED.**
-> I love Warmachine for the tight, competitive rules, but I am not good enough to write strategy guides. So here are painting guides instead.
+### [B3] The Old Umbrey section. **Restructured to what you asked for; the words are still mine.**
 
-### [B2] Google result description. **APPLIED.**
-> Warmachine painting guides by faction, army projects, and news
+You said the personal-army section should be Old Umbrey only, separate from the
+factions you paint samples of. The page now has a bordered block above the
+faction grid holding all three of these, plus Old Umbrey's guides and its
+planned-model line ("On the desk: Lissya, Primeval, Vorony, Chosen of the
+Witch"). Old Umbrey is out of the faction grid so it isn't said twice.
 
-### [B3] **RESTRUCTURED, still needs your voice.** You asked for a dedicated section for the army you're actually painting, separate from the factions you paint samples of. The page now has one: a bordered "The army I am painting — Old Umbrey" block above the faction grid, carrying this text, Old Umbrey's guides, and its planned-models line. Old Umbrey is out of the grid so it isn't said twice.
+**B3a — the section label:**
+> The army I am painting
 
-The text below is **only the facts you gave me** — it still needs rewriting in your voice:
+**B3b — the body.** This is only the facts you gave me, written up. It's the
+most personal text on the hub and it should sound like you:
 > Old Umbrey is the one I am painting all the way through. Everything else on this page is a single model from another faction, painted far enough to work out a scheme and write it down.
 
-Two labels I invented for the new structure, which you should also check:
-> **Section label:** The army I am painting
-> **Faction grid blurb:** Single models from the other factions, painted to work out a scheme. These are recipes, not armies.
+**B3c — the faction grid blurb**, which now has to explain what the grid *is*,
+given the personal army moved out of it:
+> Single models from the other factions, painted to work out a scheme. These are recipes, not armies.
 
-### [B4] Section heading for the faction grid. **KEPT as is.**
-> Painting guides by faction
+### [B5] The YouTube CTA. **Heading is yours and unchanged. The two lines under it are mine.**
 
-### [B5] YouTube CTA. **APPLIED** — now points at `@TheHobbinomiconWarmachine`, not the main channel.
+It points at `@TheHobbinomiconWarmachine` now. The body and sub-line were the
+main channel's default copy ("Daily vlogs from the painting desk…") — exactly
+the confusion you wanted to avoid — so I replaced them:
 
-The heading is unchanged, but the body and sub-line were the *main* channel's default copy ("Daily vlogs from the painting desk…"), which is exactly the confusion you wanted to avoid. I wrote replacements — **these two lines are mine and need checking**:
-> **Heading:** More Warmachine on YouTube
-> **Body:** A second channel, Warmachine only. Faction schemes, army projects and event coverage, with none of the daily vlog in the way.
-> **Sub-line:** Warmachine only. The daily vlog stays on the main channel.
+**B5a — heading (unchanged, yours):**
+> More Warmachine on YouTube
+
+**B5b — body:**
+> A second channel, Warmachine only. Faction schemes, army projects and event coverage, with none of the daily vlog in the way.
+
+**B5c — sub-line, under the button:**
+> Warmachine only. The daily vlog stays on the main channel.
 
 ---
 
@@ -301,9 +293,9 @@ when it cites you, so it's worth getting right.
 
 ---
 
-## The four I'd change first, if you only do four
+## If you only do four
 
-1. **[B3] "My armies"** — a personal section written by someone who isn't you.
-2. **[C3] "Why this page exists"** — same problem, and it's the first thing a cold 40k visitor reads.
-3. **[H1] and [H2] the series descriptions** — they front sixteen and five episodes.
-4. **[A4] and [A5]** — both over Google's truncation limits, so they're getting cut mid-sentence in search results whatever they say.
+1. **[B3b]** the Old Umbrey body — the most personal text on the site that I wrote.
+2. **[C3]** "Why this page exists" — same problem, and it's the first thing a cold 40k visitor reads.
+3. **[H1] and [H2]** the series descriptions — they front sixteen and five episodes.
+4. **[B5b]/[B5c]** the new channel lines — they make a claim about your channels that should be yours to make.
