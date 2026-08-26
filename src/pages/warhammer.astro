@@ -18,8 +18,8 @@ const SYSTEM_ORDER = ['40k', 'the-old-world', 'spearhead', 'age-of-sigmar', 'kil
 
 const PLANNED: Partial<Record<(typeof SYSTEM_ORDER)[number], string[]>> = {
   // MATT: confirm the City of Ash team names when the box is in hand.
-  'spearhead': ['the City of Ash terrain build', 'both boxed teams'],
-  'the-old-world': ['Tomb Kings, for Oldhammer 2027'],
+  'spearhead': ['Tyrants Below'],
+  'the-old-world': ['Tomb Kings'],
   '40k': ['a Khorne Daemon army'],
 };
 
@@ -51,8 +51,8 @@ const news = (await getCollection('news', ({ data }) => !data.draft))
 
 <HubLayout
   title="Warhammer"
-  tagline="40k, The Old World and Spearhead. The recipes that carry over to anything you paint, and where to look when you want a game that fits on a smaller table."
-  description="Warhammer painting guides — 40k, The Old World and Spearhead — plus the indie wargames worth trying if you already paint Games Workshop models."
+  tagline="40k, The Old World, and Age of Sigmar Spearhead."
+  description="Warhammer painting guides — 40k, The Old World, and Spearhead. Plus the smaller wargames worth trying if you already paint Games Workshop models."
   url="/warhammer/"
   groupLabel="Guides by game"
   groups={groups}
@@ -73,9 +73,5 @@ const news = (await getCollection('news', ({ data }) => !data.draft))
 
   <h2>Why this page exists</h2>
 
-  <p>
-    Most people painting miniatures started with one of these. The techniques
-    carry over to everything else, so this is a good place to begin — and a
-    good place to find out what else is out there.
-  </p>
+  <p>Most people painting miniatures started with one of these.</p>
 </HubLayout>

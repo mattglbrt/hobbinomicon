@@ -41,7 +41,7 @@ export const GET: APIRoute = async () => {
     'The directory catalogues independent miniatures games, TTRPGs, and the studios',
     'and designers behind them, cross-linked as three entity types: Games, Studios,',
     'and People. Alongside it the site publishes step-by-step Guides to painting,',
-    'basing, terrain, kitbashing and getting started with a game; News on indie',
+    'basing, terrain, kitbashing, and getting started with a game; News on indie',
     'releases and crowdfunding; campaign Series played start to finish; and a daily',
     'hobby vlog. Written and produced by Matt Gilbert.',
     '',

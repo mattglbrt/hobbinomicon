@@ -28,13 +28,13 @@ want to see one again.
 
 You asked me to make it cover play and paint. This is my wording, 54 characters
 so it no longer truncates:
-> The Hobbinomicon — find, play and paint indie wargames
+> The Hobbinomicon — find, play, and paint indie wargames
 
 ### [A7] On-ramp section heading. **You parked this** — "leave as is for now, I need to see it on the site."
 
 These sit above the two Warmachine/Warhammer cards on the home page:
-> **Eyebrow:** Already playing something big?
-> **Heading:** Start where you are
+> **Eyebrow:** Competitive Games
+> **Heading:** Warmachine is my competitive game of choice, but I just can't give up on Warhammer.
 
 ---
 
@@ -49,15 +49,15 @@ planned-model line ("On the desk: Lissya, Primeval, Vorony, Chosen of the
 Witch"). Old Umbrey is out of the faction grid so it isn't said twice.
 
 **B3a — the section label:**
-> The army I am painting
+> My personal Warmachine Army Project
 
 **B3b — the body.** This is only the facts you gave me, written up. It's the
 most personal text on the hub and it should sound like you:
-> Old Umbrey is the one I am painting all the way through. Everything else on this page is a single model from another faction, painted far enough to work out a scheme and write it down.
+> I plan on playing Old Umbrey in 2027, so I am getting it painted now. I am committing to Old Umbrey as my faction for 2027, regardless of what happens with the balance patch.
 
 **B3c — the faction grid blurb**, which now has to explain what the grid *is*,
 given the personal army moved out of it:
-> Single models from the other factions, painted to work out a scheme. These are recipes, not armies.
+> These are recipes, and guides on how to paint the official box art schemes my way.
 
 ### [B5] The YouTube CTA. **Heading is yours and unchanged. The two lines under it are mine.**
 
@@ -69,35 +69,33 @@ the confusion you wanted to avoid — so I replaced them:
 > More Warmachine on YouTube
 
 **B5b — body:**
-> A second channel, Warmachine only. Faction schemes, army projects and event coverage, with none of the daily vlog in the way.
+> A second channel, Warmachine only. Faction schemes, army projects, and event coverage.
 
 **B5c — sub-line, under the button:**
-> Warmachine only. The daily vlog stays on the main channel.
+> Warmachine only.
 
 ---
 
 ## C — Warhammer hub (`/warhammer/`)
 
 ### [C1] Tagline
-> 40k, The Old World and Spearhead. The recipes that carry over to anything you paint, and where to look when you want a game that fits on a smaller table.
+> 40k, The Old World, and Age of Sigmar Spearhead.
 
 ### [C2] Google result description
-> Warhammer painting guides — 40k, The Old World and Spearhead — plus the indie wargames worth trying if you already paint Games Workshop models.
+> Warhammer painting guides — 40k, The Old World, and Spearhead. Plus the smaller wargames worth trying if you already paint Games Workshop models.
 
 ### [C3] The body. **Also fully mine — needs your voice.**
 > ## Why this page exists
 >
-> Most people painting miniatures started with one of these. The techniques carry over to everything else, so this is a good place to begin — and a good place to find out what else is out there.
+> Most people painting miniatures started with one of these. 
 
 ### [C4] Section heading for the system grid
 > Guides by game
 
 ### [C5] The "coming soon" lists. These appear under each empty section — the rule is that an empty section must say what's coming or not exist at all.
 > **40k:** On the desk: a Khorne Daemon army.
-> **The Old World:** On the desk: Tomb Kings, for Oldhammer 2027.
-> **Spearhead:** On the desk: the City of Ash terrain build, both boxed teams.
->
-> *(Spearhead team names are placeholders — you said the box isn't bought yet.)*
+> **The Old World:** On the desk: Tomb Kings.
+> **Spearhead:** On the desk: Tyrants Below
 
 ### [C6] YouTube button
 > More Warhammer on YouTube
@@ -120,21 +118,21 @@ the confusion you wanted to avoid — so I replaced them:
 ## E — Guides
 
 ### [E1] `/guides/` description, used as the page intro and the Google description
-> How to paint it, base it, build it and start playing it. Every guide here is a video I made, written up so you do not have to scrub through it.
+> How to paint it, base it, and start playing it. Every guide here is a video I made, written up so you do not have to scrub through it.
 
 ### [E2] The nine topic landing intros. Each one is the only prose on that page, so it's what stops it being a bare list.
 
 **Painting**
-> Recipes, colour choices and the order to put paint on in. Most of these are one model, start to finish, with the paints named.
+> Recipes, colour choices, and easy to follow techniques. Most of these are one model, start to finish, with the paints named.
 
 **Basing & Terrain**
-> Bases, boards and the scenery that goes on them. Cheap materials, mostly, because a table full of terrain adds up fast.
+> Bases, boards, and the scenery that goes on them. Cheap materials, mostly, because a table full of terrain adds up fast.
 
 **Airbrushing**
-> Priming, zenithals and basecoating with an airbrush, plus what to do when it clogs.
+> Everything to do with using an airbrush, especially what to do when it clogs.
 
 **Sculpting, Casting & 3D Printing**
-> Making models rather than buying them: green stuff, moulds and resin, and getting a printer to behave.
+> Making models rather than buying them: green stuff, moulds, and resin, and getting a printer to behave.
 
 **Kitbashing**
 > Cutting models up and gluing them back together wrong on purpose.
@@ -143,13 +141,13 @@ the confusion you wanted to avoid — so I replaced them:
 > Playing without a group. Oracles, journalling, and the kit that makes a solo session work.
 
 **Getting Started**
-> How to start playing a game, from what to buy first to what the rules actually ask of you.
+> How to start playing a game, from what to buy first to getting good.
 
 **Buying & Selling**
-> Buying, selling and trading miniatures without losing your shirt.
+> Buying, selling, and trading miniatures.
 
 **Reviews**
-> First looks, unboxings and whether the thing was worth the money.
+> First looks, unboxings, and whether the thing was worth the money.
 
 ### [E3] Topic display names — the words in the nav, breadcrumbs and headings
 > Painting · Basing & Terrain · Airbrushing · Sculpting, Casting & 3D Printing · Kitbashing · Solo RPG · Getting Started · Buying & Selling · Reviews
@@ -189,7 +187,7 @@ the confusion you wanted to avoid — so I replaced them:
 ## G — Vlog, Series, Articles
 
 ### [G1] `/vlog/` description
-> The daily hobby vlog, all of it. Painting sessions, mail days, false starts and the odd finished model.
+> The daily hobby vlog, all of it. Painting sessions, mail days, false starts, and the occasional finished model.
 
 ### [G2] The line above the vlog list
 > Showing 1–24 of 158 vlogs. Looking for a how-to? Those live in **the guides**.
@@ -235,16 +233,16 @@ the confusion you wanted to avoid — so I replaced them:
 > **Body:** Whole armies on the table. Bigger model counts, longer setup, and a game that fills an afternoon.
 
 ### [I3] Game page sections — these replace the old flat "Builds & Series" list
-> **Start here** — What to buy, what to read, and what the game actually asks of you.
+> **Start here** — What to buy, what to read, and how the game actually plays.
 > **Painting guides** — Recipes and schemes, paints named.
-> **Terrain & basing** — Bases, boards and the scenery to put them on.
+> **Terrain & basing** — Bases, boards, and the scenery to put them on.
 > **More guides** — *(no blurb)*
 > **Series** — *(no blurb)*
 > **Build logs** — The project, in order, start to finish.
 > **From the vlog** — *(no blurb; was "From the Hobbinomicon")*
 
 ### [I4] Age of Sigmar: Spearhead stub — drafted, won't publish until you clear it
-> **Description:** Boxed skirmish format for Age of Sigmar: two fixed warbands of about a dozen models, a small board, and a game that finishes inside an hour.
+> **Description:** Boxed skirmish format for Age of Sigmar: two fixed warbands of about a dozen models, a small board, and a game that finishes inside an hour or two.
 >
 > *Still needs from you: the verdict line, the "how to start" body, costToStart, boardSize, and the three funnel picks.*
 
@@ -253,12 +251,12 @@ the confusion you wanted to avoid — so I replaced them:
 ## J — Newsletter (`/newsletter/`)
 
 ### [J1] The promise, used as the page intro and the Google description
-> New indie wargames, Kickstarters worth backing, and one painting guide. Every two weeks, no more than that.
+> New indie wargames, Kickstarters worth backing, and some painting guides. Every month, no more than that - first issue coming soon.
 
 ### [J2] Page body
 > ## What you get
 >
-> Three things, every other week. A game from the directory worth a look, whatever is live on Kickstarter that is not a cash grab, and one painting guide from the site.
+> I am working on this, who knows what you will get.
 >
 > ## What you don't get
 >
@@ -299,3 +297,23 @@ when it cites you, so it's worth getting right.
 2. **[C3]** "Why this page exists" — same problem, and it's the first thing a cold 40k visitor reads.
 3. **[H1] and [H2]** the series descriptions — they front sixteen and five episodes.
 4. **[B5b]/[B5c]** the new channel lines — they make a claim about your channels that should be yours to make.
+
+---
+
+## Corrected on the way in
+
+Three typos, fixed rather than shipped. Say so if any were deliberate:
+
+- **[A7]** "warhammer" → "Warhammer"
+- **[B3a]** "Warmchine" → "Warmachine"
+- **[G1]** "ocassional" → "occasional"
+
+Plus four Oxford commas, per the rule you just set: **[B5b]**, **[C2]**,
+**[E2 Sculpting]** and **[I3 Terrain & basing]**.
+
+## Still unreviewed — my words
+
+**D** (shared hub furniture), **F** (the guide page template, on all 111
+guides), **H** (both series descriptions), **K** (small UI strings), **L**
+(the `/llms.txt` summary). **H** is the one I'd do next: those two lines front
+sixteen and five episodes.

@@ -36,7 +36,7 @@ const link = (entry: (typeof guides)[number]) => ({ entry, href: guideUrlWith(en
 // single models from to make a guide. Conflating the two is how a hub ends up
 // claiming seven armies nobody has finished.
 const spotlight = {
-  label: 'The army I am painting',
+  label: 'My personal Warmachine Army Project',
   name: MY_ARMY.name,
   planned: MY_ARMY.planned,
   guides: guides.filter((g) => g.data.faction === MY_ARMY.name).map(link),
@@ -102,7 +102,7 @@ const funnel =
   description="Warmachine painting guides by faction, army projects, and news"
   url="/warmachine/"
   groupLabel="Painting guides by faction"
-  groupBlurb="Single models from the other factions, painted to work out a scheme. These are recipes, not armies."
+  groupBlurb="These are recipes, and guides on how to paint the official box art schemes my way."
   spotlight={spotlight}
   groups={groups}
   startHere={startHere}
@@ -111,8 +111,8 @@ const funnel =
   game={game ?? null}
   channelUrl={WARMACHINE_CHANNEL}
   ctaText="More Warmachine on YouTube"
-  ctaDescription="A second channel, Warmachine only. Faction schemes, army projects and event coverage, with none of the daily vlog in the way."
-  ctaSubtitle="Warmachine only. The daily vlog stays on the main channel."
+  ctaDescription="A second channel, Warmachine only. Faction schemes, army projects, and event coverage."
+  ctaSubtitle="Warmachine only."
 >
   {/* MATT: this section is yours to write and it is the one place on the hub
       that should sound like you. What I have put here is only the facts you
@@ -129,8 +129,8 @@ const funnel =
            suggests Trench Crusade, Relicblade and Motley Crews. */}
 
   <p>
-    Old Umbrey is the one I am painting all the way through. Everything else on
-    this page is a single model from another faction, painted far enough to work
-    out a scheme and write it down.
+    I plan on playing Old Umbrey in 2027, so I am getting it painted now. I am
+    committing to Old Umbrey as my faction for 2027, regardless of what happens
+    with the balance patch.
   </p>
 </HubLayout>

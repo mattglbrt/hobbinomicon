@@ -126,15 +126,15 @@ export type Topic = keyof typeof TOPICS;
  * Written for a reader who arrived from a search, not for a crawler.
  */
 export const TOPIC_INTROS: Record<Topic, string> = {
-  'painting': 'Recipes, colour choices and the order to put paint on in. Most of these are one model, start to finish, with the paints named.',
-  'basing-and-terrain': 'Bases, boards and the scenery that goes on them. Cheap materials, mostly, because a table full of terrain adds up fast.',
-  'airbrushing': 'Priming, zenithals and basecoating with an airbrush, plus what to do when it clogs.',
-  'sculpting-casting-3d-printing': 'Making models rather than buying them: green stuff, moulds and resin, and getting a printer to behave.',
+  'painting': 'Recipes, colour choices, and easy to follow techniques. Most of these are one model, start to finish, with the paints named.',
+  'basing-and-terrain': 'Bases, boards, and the scenery that goes on them. Cheap materials, mostly, because a table full of terrain adds up fast.',
+  'airbrushing': 'Everything to do with using an airbrush, especially what to do when it clogs.',
+  'sculpting-casting-3d-printing': 'Making models rather than buying them: green stuff, moulds, and resin, and getting a printer to behave.',
   'kitbashing': 'Cutting models up and gluing them back together wrong on purpose.',
   'solo-rpg': 'Playing without a group. Oracles, journalling, and the kit that makes a solo session work.',
-  'getting-started': 'How to start playing a game, from what to buy first to what the rules actually ask of you.',
-  'buying-and-selling': 'Buying, selling and trading miniatures without losing your shirt.',
-  'review': 'First looks, unboxings and whether the thing was worth the money.',
+  'getting-started': 'How to start playing a game, from what to buy first to getting good.',
+  'buying-and-selling': 'Buying, selling, and trading miniatures.',
+  'review': 'First looks, unboxings, and whether the thing was worth the money.',
 };
 
 export const HUBS = { warmachine: 'Warmachine', warhammer: 'Warhammer' } as const;
