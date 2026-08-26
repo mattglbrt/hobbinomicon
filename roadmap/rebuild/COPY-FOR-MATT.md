@@ -242,6 +242,15 @@ the confusion you wanted to avoid — so I replaced them:
 > **From the vlog** — *(no blurb; was "From the Hobbinomicon")*
 
 ### [I4] Age of Sigmar: Spearhead stub — drafted, won't publish until you clear it
+
+**[I4b] The resources line is mine** — added 2026-08-26 with the cheatsheet link
+you sent. The subreddit itself went into the reference card as `subredditUrl`,
+following the Trench Crusade convention; the cheatsheets are one thread, so they
+sit in the body instead:
+> ## Resources
+>
+> [One-page cheatsheets](https://www.reddit.com/r/AOSSpearhead/comments/1q839qa/onepage_cheatsheets/) — reference sheets from r/AOSSpearhead. Worth printing before your first game.
+
 > **Description:** Boxed skirmish format for Age of Sigmar: two fixed warbands of about a dozen models, a small board, and a game that finishes inside an hour or two.
 >
 > *Still needs from you: the verdict line, the "how to start" body, costToStart, boardSize, and the three funnel picks.*
