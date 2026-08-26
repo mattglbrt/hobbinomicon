@@ -1,14 +1,22 @@
-# STATUS — The Hobbinomicon · updated 2026-08-25
+# STATUS — The Hobbinomicon · updated 2026-08-26
 
 ## Now
-Live on Astro 6. v2 baseline holding: three-entity directory, format-based game URLs, News pillar, SEO/perf pass, GEO output (`/llms.txt`, `/llms-full.txt`, `.md` renderings). Tag taxonomy 69, registry 1:1. Funnel v1 on all 10 published games (Warmachine off via `hideFunnel`).
+**The re-architecture has started.** Plan and per-URL migration map live in `roadmap/rebuild/`; running record in `roadmap/rebuild/PROGRESS.md`. Positioning: *find your next indie wargame, then learn to paint it* — two surfaces, `/games/` and `/guides/`, with `/warmachine/` and `/warhammer/` as mainstream on-ramps that funnel sideways into indie. Nothing gets noindexed and nothing leaves the index.
 
-**`main` at `5e82a0c`, `dev` at `57dd3f3`, level — nothing unmerged.** Last session shipped two news posts (BONEZONE 2026, Motley Crews Dreadwood), a reusable `Countdown` component, and fixed three bugs: **og:image was 404ing site-wide** on news/game/studio/person pages, YouTube embed thumbnails sat 32px low inside their frames, and Motley Crews had dropped off the homepage.
+**Phase 0 (audit & safety net) is done and green, awaiting Matt's sign-off before Phase 1.** `main` at `5e82a0c` (tagged `pre-rebuild`), `dev` at `26b6fb2` — five commits unmerged. What landed:
+
+- **`npm run verify-migration`** is now the gate every later phase passes through: all 431 URLs in the pre-rebuild sitemap must serve 200 or take exactly one 301 to a page that exists. Currently 431/431, 0 chains. It fails loudly on 404s, 301s-into-404s and chains, and was tested against known-bad input rather than assumed correct.
+- **`npm run generate-redirects`** builds the rule block from the three `url-map-*.csv` files. Redirects are generated, never hand-written. Byte-identical to the reviewed `_redirects.rebuild`; `--write` is idempotent and never touches the 496 tag rules below it.
+- **The six resource pages deleted in `48d6f7c` are back** at their old `/blog/resources/` URLs, plus 22 legacy redirects. 28 of the 58 URLs Google still shows now resolve; the rest need Phase 2's routes. Three of the restored pages were throwing away 18 clicks between them.
+- **Fixed a live bug:** the Mage Knight hub's "My Mage Knight Content" section has been showing its empty state since July (`tag="mage knight"` never matched the `mage-knight` slug).
+
+Previous baseline still holds: three-entity directory, format-based game URLs, News pillar, GEO output (`/llms.txt`, `/llms-full.txt`, `.md` renderings). Tag taxonomy 69, registry 1:1. Funnel v1 on all 10 published games (Warmachine off via `hideFunnel`).
 
 Still true: **transcripts only reach the live site from a local sync** — YouTube blocks caption fetches from Netlify IPs, so `npm run refresh-vlogs` is load-bearing (see `~/Documents/dev/_system/RECURRING.md`).
 
 ## Next (ranked)
-0. **Standing: link all BONEZONE content to the hub** `/news/bonezone-2026-open/`. Synced vlogs arrive with no links in the body, so it's a manual edit after each `refresh-vlogs`, and must be committed. Rule lives in `CLAUDE.md`. Runs to 31 Oct.
+0. **Sign off Phase 0, then start Phase 1** (content model & moves: `guides` + `series` collections, `blog` → `vlog`, `games.format` → `army`, `scripts/migrate-content.mjs`). Do not start it until Matt confirms. Five decisions are waiting in `PROGRESS.md` § "Decisions for Matt" — none of them block Phase 1.
+0b. **Standing: link all BONEZONE content to the hub** `/news/bonezone-2026-open/`. Synced vlogs arrive with no links in the body, so it's a manual edit after each `refresh-vlogs`, and must be committed. Rule lives in `CLAUDE.md`. Runs to 31 Oct.
 1. **Paint the Royal Herald.** Entry closes **31 Oct 23:59 GMT**. Recipe is the 07-10 skeleton vlog; this is also the test run for the 2027 Tomb Kings army.
 2. **Publish or bin `oldhammer-year-2027.mdx`.** Drafted, invisible. Clearing `draft: true` needs a fresh `pubDate` (currently 08-23) and a check that OWAC/40k2ndAC 2027 details have landed. Sign-ups open around Christmas.
 3. **Funnel backfill (editorial).** Mechanic done, only hand-picked `relatedGames` remain. **TSPN** wants it most (only narrative entry, all three suggestions read just "Solo-friendly"). Warmachine needs peers or picks before `hideFunnel` comes off.
@@ -27,6 +35,7 @@ Still true: **transcripts only reach the live site from a local sync** — YouTu
 - YouTube OAuth re-auth roughly weekly before *write* API work. Reads need only the API key. Staying unverified/local-only is closed (07-21).
 
 ## Recently done
+- 08-26 — **Rebuild Phase 0: audit & safety net.** `verify-migration.mjs` (the gate) and `generate-redirects.mjs` (redirects are generated from the url-map CSVs, never hand-written). `pre-rebuild` tag on `main`. Six resource pages restored from `48d6f7c`; 22 legacy redirects shipped; 28 of 58 legacy 404s recovered. GSC cross-check flipped zero rows — the 95/158 promote-guide split already covers every vlog with 3+ clicks. Full record in `roadmap/rebuild/PROGRESS.md`.
 - 08-24/25 — **Two news posts + Countdown component + three bug fixes.** Full detail in SESSION_LOG. Headlines: og:image was broken on four detail templates (heroes live in `src/assets`, raw `/images/…` path 404s; `BlogLayout` already used `getHeroImageUrl`, the others didn't). YouTube thumbnails were offset 32px by Tailwind Typography's `prose img` margin — a margin still displaces an absolutely positioned box; fixed with `not-prose` on `LiteYouTube`. Deathbringer post deleted with 301s. BONEZONE hub rule recorded in `CLAUDE.md`.
 - 08-13 — AI disclosure reframed to "100% Human Made Content & Art", same URL. `titleSize` added to `LegalPageLayout`. **`npx astro build` bypasses the npm `prebuild` hook** — the cheap way to verify presentation changes without firing the YouTube sync.
 - 08-11 — Funnel mechanic v1 (IDF-weighted tags capped at 3, `MIN_SCORE` 3, editorial picks always win). YouTube catalogue analysed (271 videos); three-channel strategy produced.
@@ -45,6 +54,7 @@ Still true: **transcripts only reach the live site from a local sync** — YouTu
 - Is `vlogs/monster-friends-energy-counter` meant to stay drafted?
 - Normalize the 192 timezone-less `pubDate` values? Legacy, cosmetic, but they shift RSS/index order between local and UTC.
 - Directory entries for DWARF / Tavern Lore? Deferred by Matt 07-22; `solo-rpg` is the third-biggest tag.
+- **Splat ordering in `_redirects.rebuild`:** `/blog/*` precedes `/blog/campaigns/*` and `/blog/characters/*`, so those two never fire. Harmless today (every such URL Google knows has an explicit rule above them), but say the word and the generator reorders specific-before-general.
 - Housekeeping backlog: 13 ambiguous tag redirects point at the index; 8 redirect mappings were inference not Matt's guide; should `/llms.txt` be linked from the site; delete the dead `descriptions/` corpus (232 gitignored files); worth a transcript proxy so Netlify can fetch captions itself (deferred on cost).
 
 **SESSION_LOG.md is 48KB** — compact per PLAYBOOK §8 at the next wrap that pushes it over ~50KB.
