@@ -1,7 +1,8 @@
 # Copy I wrote that a reader will see
 
-> **Status:** sections **A and B are done** — Matt's edits applied 2026-08-26,
-> see the "Applied" notes inline. **C onward is still open.**
+> **Status:** **A and B applied** 2026-08-26 — see the notes inline. Three
+> blocks still need Matt: **[A4]/[A5]** length, **[B3]** voice pass, **[B5]**
+> the two lines I wrote for the new channel. **C onward is untouched.**
 
 Everything on the site that is my words rather than yours, pulled from the
 source as it stands on `dev`. Edit in place and hand it back — I'll put each
@@ -56,22 +57,30 @@ truncates it; meta `description` wants ≤155. I've flagged those.
 
 ## B — Warmachine hub (`/warmachine/`)
 
-### [B1] Tagline, under the big title
-> Steamjacks, warcasters, and a faction backlog that keeps growing. The recipes I use, the armies I actually play, and where to go when you want something smaller.
+### [B1] Tagline, under the big title. **APPLIED.**
+> I love Warmachine for the tight, competitive rules, but I am not good enough to write strategy guides. So here are painting guides instead.
 
-### [B2] Google result description
-> Warmachine painting guides by faction, army projects, and news — plus the indie skirmish games worth trying if you like painting steamjacks.
+### [B2] Google result description. **APPLIED.**
+> Warmachine painting guides by faction, army projects, and news
 
-### [B3] The "My armies" body. **This is the one I'd most want in your voice** — it's the personal section of the page and it currently reads like me.
-> ## My armies
->
-> Seven factions, one at a time. The rule I set myself: finish one before starting the next, because a faction with three painted units is worth more than seven with one each.
+### [B3] **RESTRUCTURED, still needs your voice.** You asked for a dedicated section for the army you're actually painting, separate from the factions you paint samples of. The page now has one: a bordered "The army I am painting — Old Umbrey" block above the faction grid, carrying this text, Old Umbrey's guides, and its planned-models line. Old Umbrey is out of the grid so it isn't said twice.
 
-### [B4] Section heading for the faction grid
+The text below is **only the facts you gave me** — it still needs rewriting in your voice:
+> Old Umbrey is the one I am painting all the way through. Everything else on this page is a single model from another faction, painted far enough to work out a scheme and write it down.
+
+Two labels I invented for the new structure, which you should also check:
+> **Section label:** The army I am painting
+> **Faction grid blurb:** Single models from the other factions, painted to work out a scheme. These are recipes, not armies.
+
+### [B4] Section heading for the faction grid. **KEPT as is.**
 > Painting guides by faction
 
-### [B5] YouTube button at the bottom
-> More Warmachine on YouTube
+### [B5] YouTube CTA. **APPLIED** — now points at `@TheHobbinomiconWarmachine`, not the main channel.
+
+The heading is unchanged, but the body and sub-line were the *main* channel's default copy ("Daily vlogs from the painting desk…"), which is exactly the confusion you wanted to avoid. I wrote replacements — **these two lines are mine and need checking**:
+> **Heading:** More Warmachine on YouTube
+> **Body:** A second channel, Warmachine only. Faction schemes, army projects and event coverage, with none of the daily vlog in the way.
+> **Sub-line:** Warmachine only. The daily vlog stays on the main channel.
 
 ---
 
