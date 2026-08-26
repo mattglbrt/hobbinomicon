@@ -146,8 +146,10 @@ function collect() {
 }
 
 /**
- * Render the block. `keep` filters explicit rules; catch-alls are unforced and
- * always safe, so they ride along.
+ * Render the block. `keep` filters explicit rules and catch-alls alike — an
+ * unforced catch-all is shadowed by a real file, but where there is no file it
+ * still fires, so `/blog/campaigns/* -> /series/` is a 301 into a 404 until
+ * /series/ is built.
  */
 function render({ posts, pages, legacy, guides }, keep = () => true) {
   const out = [
@@ -167,7 +169,9 @@ function render({ posts, pages, legacy, guides }, keep = () => true) {
   out.push('', '# legacy 404s still in Google (from GSC 16-month export)');
   section(legacy);
   out.push('', '# catch-alls (unforced, last)');
-  for (const [from, to] of CATCH_ALLS) out.push(`${from}  ${to}  301`);
+  for (const [from, to] of CATCH_ALLS) {
+    if (keep({ from, to, source: 'catch-all' })) out.push(`${from}  ${to}  301`);
+  }
 
   return out.join('\n') + '\n';
 }
@@ -215,20 +219,42 @@ if (has('--write')) {
   let block = full;
 
   if (has('--only-live')) {
-    const resolves = new Map();
-    for (const r of all) {
-      if (!resolves.has(r.to)) resolves.set(r.to, existsInDist(r.to));
-    }
-    const liveFroms = new Set(all.filter((r) => resolves.get(r.to)).map((r) => r.from));
-    block = render(maps, (r) => liveFroms.has(r.from));
+    // Two independent reasons to hold a rule back until the rebuild builds
+    // its target:
+    //   * the target does not exist yet — the rule would 301 into a 404
+    //   * the source still serves a page — a forced rule shadows a live page,
+    //     which is how you would silently un-restore the six resource pages
+    // Both are Phase-0-only concerns. The full block ships in Phase 2, when
+    // the moves and the forced rules land in the same commit.
+    const shippable = (r) => {
+      if (!existsInDist(r.to)) return { ok: false, why: `target missing: ${r.to}` };
+      if (!r.from.includes('*') && existsInDist(r.from)) {
+        return { ok: false, why: `source still live: ${r.from}` };
+      }
+      return { ok: true };
+    };
 
-    const heldRules = all.filter((r) => !liveFroms.has(r.from));
-    console.log(`--only-live: ${all.length - heldRules.length} rules shipped, ${heldRules.length} held back.`);
-    const byTarget = new Map();
-    for (const r of heldRules) byTarget.set(r.to, (byTarget.get(r.to) ?? 0) + 1);
-    console.log('  held back, by missing target:');
-    for (const [to, n] of [...byTarget].sort((x, y) => y[1] - x[1])) {
-      console.log(`    ${String(n).padStart(4)}  ${to}`);
+    const verdicts = new Map(all.map((r) => [r.from, shippable(r)]));
+    const catchAllOk = (r) => existsInDist(r.to);
+    block = render(maps, (r) =>
+      r.source === 'catch-all' ? catchAllOk(r) : verdicts.get(r.from)?.ok
+    );
+
+    const held = all.filter((r) => !verdicts.get(r.from).ok);
+    const heldCatchAlls = CATCH_ALLS.filter(([, to]) => !existsInDist(to));
+    console.log(
+      `--only-live: ${all.length - held.length} of ${all.length} explicit rules shipped, ` +
+        `${held.length} held back; ${CATCH_ALLS.length - heldCatchAlls.length} of ${CATCH_ALLS.length} catch-alls shipped.`
+    );
+
+    const reasons = new Map();
+    for (const r of held) {
+      const key = verdicts.get(r.from).why.startsWith('source') ? 'source still live' : 'target not built yet';
+      reasons.set(key, (reasons.get(key) ?? 0) + 1);
+    }
+    for (const [why, n] of reasons) console.log(`    ${String(n).padStart(4)}  ${why}`);
+    for (const r of held.filter((x) => verdicts.get(x.from).why.startsWith('source'))) {
+      console.log(`          kept live: ${r.from}`);
     }
   }
 
