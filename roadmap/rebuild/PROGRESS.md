@@ -6,8 +6,8 @@ One section per phase. Written at the end of each phase, before the merge to
 | Phase | State | Merged to `main` |
 |---|---|---|
 | 0 — Audit & safety net | **complete, signed off** | not yet |
-| 1 — Content model & moves | **complete, awaiting sign-off** | not yet (must ship with Phase 2) |
-| 2 — Routes, templates & redirects | not started | |
+| 1 — Content model & moves | **complete** | not yet (ships with Phase 2) |
+| 2 — Routes, templates & redirects | **complete, awaiting sign-off** | not yet |
 | 3 — Content upgrade: guides | not started | |
 | 3b — Evergreen list articles | not started | |
 | 4 — On-ramp hubs & funnel | not started | |
@@ -357,3 +357,106 @@ right once: `easy-mode-goblin-faces`, `how-to-paint-pale-orc-flesh`,
 in Phase 0, and the legacy map — written before that — folds four of them into
 hubs.** Keeping them is what non-negotiable 8 asks for and it is reversible.
 Say the word and any of them folds with a 301 instead.
+
+
+---
+
+## Phase 2 — Routes, templates & redirects
+
+Branch `dev`, commits `8da7311`, `6aa29e0`, plus the browser-pass fixes.
+**This is the first phase that is deployable**, and it ships Phase 1 with it.
+
+### Acceptance
+
+| Criterion | Result |
+|---|---|
+| `npx astro build` green | **yes**, 441 pages |
+| `verify-migration.mjs` green | **431 / 431**, 121 unchanged + 310 single 301s, 0 chains, 0 missing |
+| `npm run validate-schema` green | **yes**, 442 pages, 0 required missing |
+| No page shows an empty section heading | **yes** — scanned every built page; the only hits were nested headings and tables |
+| Browser click-through of nav + footer | **yes** — home, both hubs, a guide, and the transcript `<details>` |
+| Lighthouse mobile ≥95 | **cannot run yet — see below** |
+
+### Lighthouse
+
+Not installed locally, and `CLAUDE.md` makes PageSpeed Insights *mobile* the
+ground truth rather than a local run — which needs a public URL, so it cannot
+happen until this merges. The structural proxies are all clean:
+
+* CSS still inlined, **zero** render-blocking stylesheets.
+* Every in-flow image carries width and height. The only dimensionless `<img>`
+  is the hidden lightbox element, which is pre-existing and out of flow.
+* Page weights are unchanged against the pre-rebuild pages: 177–217 KB of HTML,
+  same band as before.
+* `og:image` got *lighter* — 1200×630 WebP instead of the full-size original.
+
+**Run PSI mobile on `/`, a guide, a game and `/warmachine/` immediately after
+the deploy.** If anything has slipped it will be the guide template, which is
+the only one with a new above-the-fold shape.
+
+### What shipped
+
+Deleted `/blog/`, `/categories/`, `/explore/`, `/videos/`,
+`/games/large-scale-army/`, `/games/mass-battle/`. Added `/guides/` (index,
+9 topic landings, detail + `.md` twin), `/vlog/` (paginated 24, detail + twin),
+`/series/` (index, 2 hubs, episodes + twins), `/articles/`, `/games/army/`,
+`/games/{game}/{guide}/`, `/warmachine/`, `/warhammer/`, `/newsletter/`.
+
+`GuideLayout` gives a tutorial a shape a diary entry does not have: a
+search-intent H1 with the YouTube title as a subhead, a meta pill row,
+`MaterialsCard` (whose affiliate disclosure is part of the component, so there
+is no way to render a paid link without it), `StepsList`, and `HowTo` +
+`VideoObject` + `BreadcrumbList` JSON-LD. The transcript collapses into a
+`<details>` on guides and stays open on vlogs — on a vlog the transcript *is*
+the post.
+
+`src/utils/content.ts` owns the URL rules. One collection now renders at three
+URL shapes and three places must agree: this file, the routes, and
+`generate-redirects.mjs`.
+
+### Five things the build did not catch
+
+The build was green while all of these were wrong. Each was caught by the
+migration gate or the link audit.
+
+1. **`/vlogs/*` in `netlify.toml` pointed at `/videos/`**, which this phase
+   deleted — a 301 into a 404. Exactly the chain flagged in Phase 0's notes.
+2. **`VlogLayout` built guide URLs as `/guides/{id}/`**, wrong for the 13 Mage
+   Knight guides that render under their game. It takes resolved hrefs now.
+3. **`/games/` still advertised two army-scale shelves** and filled one.
+4. **59 internal links still pointed at retired URLs.** Rewritten from the
+   url-map CSVs so links and redirects share one source of truth. Seven remain,
+   all pre-existing links to retired tag feeds that 301 correctly.
+5. **The Warmachine hub was rendering the funnel Matt had switched off.**
+   `hideFunnel` is set on Warmachine because it is the only army-scale entry,
+   so scored suggestions fall back to thin tag overlap. The hub honours it now:
+   no funnel until `relatedGames` is set, because "showing an empty section
+   beats shipping a non-sequitur" applies hardest on the page whose whole job
+   is pointing sideways.
+
+### Hub state
+
+Both clear the three-guide bar, so both launch.
+
+* **`/warmachine/`** — 5 guides. Crucible Guard has 2, filed from Matt's own
+  `crucible-guard` tag. The other six factions render their planned-model lists
+  from `04-hubs-content-plan.md`. Three guides are "Not faction-specific",
+  which is honest: they are about technique or the hobby, not an army.
+* **`/warhammer/`** — 9 guides, all currently under "Also painting" because
+  none carries `system` yet. 40k, The Old World and Spearhead render their
+  planned lists. No per-system routes were built; the enum reserves the slugs.
+
+### Still open, and why
+
+* **Lighthouse/PSI** — needs the deploy.
+* **`START_HERE_SLUGS` on `/warmachine/` is empty**, so "Start here" is the
+  three newest guides rather than Matt's picks. `04-hubs` suggests the Crucible
+  Guard scheme guide, army-wide base prep, and buying/selling/trading.
+* **Neither hub has a funnel** until `relatedGames` is set on `warmachine.mdx`.
+  Phase 4's job.
+* **Both hub bodies and both `series` descriptions are placeholders** in a
+  register that is not Matt's. They must be rewritten before this is public —
+  they are the only prose on the site I wrote that a reader will see.
+* **`system` unset on 9 Warhammer guides**, so the hub cannot group them.
+* **`/articles/rss-feeds/` links seven retired tag feeds.** They 301 correctly;
+  the page itself wants a pass in Phase 3b.

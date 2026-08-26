@@ -29,10 +29,15 @@ const groups: HubGroup[] = FACTIONS.map((f) => ({
   guides: guides.filter((g) => g.data.faction === f.name).map(link),
 }));
 
-// Anything without a faction set still belongs on the page.
+// Anything without a faction still belongs on the page. Most Warmachine
+// guides carry no faction because they are about a technique or the hobby
+// rather than an army; setting `faction` on those would be a lie.
 const unfiled = guides.filter((g) => !g.data.faction || !FACTIONS.some((f) => f.name === g.data.faction));
 if (unfiled.length) {
-  groups.push({ name: 'Everything else', guides: unfiled.map(link) });
+  groups.push({
+    name: 'Not faction-specific',
+    guides: unfiled.map(link),
+  });
 }
 
 // Start here: three hand-picked guides. Falls back to the newest so the
@@ -48,15 +53,24 @@ const news = (await getCollection('news', ({ data }) => !data.draft))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
   .slice(0, 4);
 
-// The funnel is fed from relatedGames on the game entry, exactly as a game
-// page's is, so Matt's editorial picks drive both surfaces from one place.
-const funnel = game
-  ? getFunnelSuggestions(
-      game,
-      allGames,
-      await Promise.all(game.data.relatedGames.map((ref) => getEntry(ref)))
-    )
+/**
+ * The funnel is fed from relatedGames on the game entry, so Matt's editorial
+ * picks drive the hub and the game page from one place.
+ *
+ * `hideFunnel` is honoured here too. It is set on Warmachine because it is the
+ * only army-scale entry, so scored suggestions have no format peer and fall
+ * back to thin tag overlap — a closed decision, and the hub is not a reason to
+ * reopen it. Until relatedGames is set the section renders nothing, which
+ * beats shipping a non-sequitur on the page whose whole job is pointing
+ * sideways. Phase 4 sets the three picks and clears the flag.
+ */
+const editorial = game
+  ? await Promise.all(game.data.relatedGames.map((ref) => getEntry(ref)))
   : [];
+const funnel =
+  game && (editorial.length > 0 || !game.data.hideFunnel)
+    ? getFunnelSuggestions(game, allGames, editorial)
+    : [];
 ---
 
 <HubLayout

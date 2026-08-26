@@ -3,11 +3,13 @@
 ## Now
 **The re-architecture has started.** Plan and per-URL migration map live in `roadmap/rebuild/`; running record in `roadmap/rebuild/PROGRESS.md`. Positioning: *find your next indie wargame, then learn to paint it* — two surfaces, `/games/` and `/guides/`, with `/warmachine/` and `/warhammer/` as mainstream on-ramps that funnel sideways into indie. Nothing gets noindexed and nothing leaves the index.
 
-**Phase 0 (audit & safety net) signed off. Phase 1 (content model & moves) is done; Phase 2 is next and must ship with it.** `main` at `5e82a0c` (tagged `pre-rebuild`), `dev` ahead — nothing merged yet.
+**Phases 0, 1 and 2 are done. The site builds and the migration gate is green — this is now deployable.** `main` at `5e82a0c` (tagged `pre-rebuild`), `dev` ahead — nothing merged yet.
 
-**The site does not build right now, on purpose.** Phase 1 renamed the `blog` collection to `vlog` and added `guides`/`series`, but built no routes; 13 files still call `getCollection('blog')`. Phase 2 builds the routes and makes it deployable. Worth knowing: `astro build` **exits 0** in this state and quietly emits 61 pages instead of 433 — `npm run verify-migration` is what catches it (372 MISSING, exit 1).
+441 pages build. **431/431 old URLs resolve in one hop** — 121 unchanged, 310 single 301s, zero chains. Schema clean across 442 pages. Nav is Games · Guides · Warmachine · Warhammer · News; `/blog/`, `/categories/`, `/explore/` and `/videos/` are gone.
 
-Phase 1 in one line: 294 files moved by `scripts/migrate-content.mjs` off `url-map-posts.csv`, 288/288 at their mapped paths, `astro sync` clean, 38 `MATT` flags listed in `PROGRESS.md`.
+**Before merging:** two hub bodies and two `series` descriptions are placeholders in a register that is not Matt's, and they are the only prose a reader will see that he did not write. Rewrite them first. Full list in `PROGRESS.md`.
+
+**Lighthouse is the one criterion still open** — it needs a public URL, so run PSI mobile on `/`, a guide, a game and `/warmachine/` right after the deploy. Structural proxies are clean: CSS still inlined, zero render-blocking stylesheets, every in-flow image dimensioned, page weights unchanged, and og:image is now a 1200×630 WebP instead of the full-size original.
 
 What Phase 0 landed:
 
