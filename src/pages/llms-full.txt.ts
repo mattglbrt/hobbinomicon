@@ -7,6 +7,8 @@ import {
   personDoc,
   newsDoc,
   postDoc,
+  guideDoc,
+  guideUrlFor,
   gameUrl,
   studioUrl,
   personUrl,
@@ -17,10 +19,10 @@ import {
 /**
  * /llms-full.txt — the site's core citable content concatenated as markdown.
  *
- * Directory entities, News, guides, and articles appear in full. The 250+ daily
+ * Directory entities, News, Guides, and articles appear in full. The 150+ daily
  * vlogs appear as title + description + link only; including their transcripts
  * would multiply the file size by roughly an order of magnitude for content a
- * model can fetch per-post at `/blog/vlogs/<slug>.md` when it actually needs it.
+ * model can fetch per-post at `/vlog/<slug>.md` when it actually needs it.
  */
 
 const SEP = '\n\n';
@@ -35,7 +37,8 @@ function doc(markdown: string, url: string): string {
 }
 
 export const GET: APIRoute = async () => {
-  const { games, studios, people, news, resources, articles, vlogs } = await getGeoContent();
+  const { games, studios, people, news, guides, articles, vlogs, gameSlugs } =
+    await getGeoContent();
 
   const parts: string[] = [
     [
@@ -74,9 +77,9 @@ export const GET: APIRoute = async () => {
     parts.push(doc(renderMarkdownDoc(newsDoc(item)), newsUrl(item)));
   }
 
-  parts.push(heading('Guides and resources', resources.length));
-  for (const post of resources) {
-    parts.push(doc(renderMarkdownDoc(postDoc(post)), postUrl(post)));
+  parts.push(heading('Guides', guides.length));
+  for (const guide of guides) {
+    parts.push(doc(renderMarkdownDoc(guideDoc(guide, gameSlugs)), guideUrlFor(guide, gameSlugs)));
   }
 
   parts.push(heading('Articles', articles.length));

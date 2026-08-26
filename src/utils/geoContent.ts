@@ -12,13 +12,31 @@ export type Game = CollectionEntry<'games'>;
 export type Studio = CollectionEntry<'studios'>;
 export type Person = CollectionEntry<'people'>;
 export type News = CollectionEntry<'news'>;
-export type Post = CollectionEntry<'blog'>;
+export type Post = CollectionEntry<'vlog'>;
+export type Guide = CollectionEntry<'guides'>;
 
 export const gameUrl = (g: Game) => canonical(`games/${g.id}`);
 export const studioUrl = (s: Studio) => canonical(`studios/${s.id}`);
 export const personUrl = (p: Person) => canonical(`people/${p.id}`);
 export const newsUrl = (n: News) => canonical(`news/${n.id}`);
-export const postUrl = (p: Post) => canonical(`blog/${p.id}`);
+/**
+ * The vlog collection renders at three URL shapes. Kept in step with
+ * src/utils/content.ts — if one changes, both change.
+ */
+export const postUrl = (p: Post) =>
+  p.data.series
+    ? canonical(`series/${p.data.series.id}/${p.id}`)
+    : p.data.kind === 'article'
+      ? canonical(`articles/${p.id}`)
+      : canonical(`vlog/${p.id}`);
+
+/** Guides nested under a game slug render beneath that game. */
+export const guideUrlFor = (g: Guide, gameSlugs: Set<string>) => {
+  const [first, ...rest] = g.id.split('/');
+  return rest.length && gameSlugs.has(first)
+    ? canonical(`games/${g.id}`)
+    : canonical(`guides/${g.id}`);
+};
 
 export async function gameDoc(game: Game): Promise<MarkdownDoc> {
   const d = game.data;
@@ -122,6 +140,8 @@ export function postDoc(post: Post): MarkdownDoc {
     tags: d.tags,
     extra: {
       category: d.category,
+      series: d.series?.id,
+      episode: d.episode !== undefined ? String(d.episode) : undefined,
       youtube: d.youtubeId ? `https://www.youtube.com/watch?v=${d.youtubeId}` : undefined,
     },
     body: post.body ?? '',
@@ -129,17 +149,52 @@ export function postDoc(post: Post): MarkdownDoc {
 }
 
 /**
+ * A guide's markdown rendering. Richer `extra` than a vlog's, because the
+ * structured fields are the point of the collection — an LLM asked "how do I
+ * paint X" should get the topic, the paints and the steps, not just prose.
+ */
+export function guideDoc(guide: Guide, gameSlugs: Set<string>): MarkdownDoc {
+  const d = guide.data;
+  return {
+    title: d.title,
+    description: d.description,
+    url: guideUrlFor(guide, gameSlugs),
+    date: d.pubDate,
+    updated: d.updatedDate,
+    tags: d.tags,
+    extra: {
+      topic: d.topic,
+      game: d.game?.id,
+      hub: d.hub,
+      system: d.system,
+      faction: d.faction,
+      difficulty: d.difficulty,
+      timeMinutes: d.timeMinutes ? String(d.timeMinutes) : undefined,
+      videoTitle: d.videoTitle !== d.title ? d.videoTitle : undefined,
+      materials: d.materials.length ? d.materials.map((m) => m.name).join(', ') : undefined,
+      steps: d.steps.length ? d.steps.map((s, i) => `${i + 1}. ${s}`).join(' ') : undefined,
+      youtube: d.youtubeId ? `https://www.youtube.com/watch?v=${d.youtubeId}` : undefined,
+    },
+    body: guide.body ?? '',
+  };
+}
+
+/**
  * Everything the GEO outputs index, already filtered for drafts and sorted.
- * Blog posts are split by their folder prefix: `vlogs/` is the daily vlog
- * archive, `resources/` and `articles/` are the written long-form.
+ * The vlog collection is split by what an entry is rather than where its file
+ * sits: `series` makes it an episode, `kind: 'article'` an essay, neither a
+ * vlog. Guides are their own collection and lead the output — they are the
+ * pages worth citing.
  */
 export async function getGeoContent() {
-  const [games, studios, people, news, posts] = await Promise.all([
+  const [games, studios, people, news, posts, guides, series] = await Promise.all([
     getCollection('games', ({ data }) => !data.draft),
     getCollection('studios', ({ data }) => !data.draft),
     getCollection('people', ({ data }) => !data.draft),
     getCollection('news', ({ data }) => !data.draft),
-    getCollection('blog', ({ data }) => !data.draft),
+    getCollection('vlog', ({ data }) => !data.draft),
+    getCollection('guides', ({ data }) => !data.draft),
+    getCollection('series', ({ data }) => !data.draft),
   ]);
 
   // Tie-break on id. Date-only pubDates all parse to UTC midnight, so same-day
@@ -164,8 +219,11 @@ export async function getGeoContent() {
     studios: [...studios].sort((a, b) => a.data.name.localeCompare(b.data.name)),
     people: [...people].sort((a, b) => a.data.name.localeCompare(b.data.name)),
     news: byDate(news),
-    resources: byDate(posts.filter((p) => p.id.startsWith('resources/'))),
-    articles: byDate(posts.filter((p) => p.id.startsWith('articles/'))),
-    vlogs: byDate(posts.filter((p) => p.id.startsWith('vlogs/'))),
+    guides: byDate(guides),
+    articles: byDate(posts.filter((p) => p.data.kind === 'article')),
+    episodes: byDate(posts.filter((p) => Boolean(p.data.series))),
+    series: [...series].sort((a, b) => a.data.name.localeCompare(b.data.name)),
+    vlogs: byDate(posts.filter((p) => !p.data.series && p.data.kind !== 'article')),
+    gameSlugs: new Set(games.map((g) => g.id)),
   };
 }

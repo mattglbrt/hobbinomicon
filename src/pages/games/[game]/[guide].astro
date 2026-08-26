@@ -1,0 +1,50 @@
+---
+import { getCollection, getEntry, render } from 'astro:content';
+import GuideLayout from '../../../layouts/GuideLayout.astro';
+import { getGuides, guideUrlWith } from '../../../utils/content';
+
+/**
+ * Resource pages that belong to a game render beneath it, so the 13 Mage
+ * Knight guides sit at /games/mage-knight/{slug}/ rather than orphaned under
+ * /guides/. The rule is the directory name: a guide in src/content/guides/x/
+ * where `x` is a game slug renders under that game.
+ *
+ * scripts/generate-redirects.mjs and src/utils/content.ts apply the same rule.
+ * All three have to agree or the redirect map points at URLs that were never
+ * built.
+ */
+export async function getStaticPaths() {
+  const games = new Set((await getCollection('games')).map((g) => g.id));
+  const guides = await getCollection('guides', ({ data }) => !data.draft);
+
+  return guides.flatMap((guide) => {
+    const [first, ...rest] = guide.id.split('/');
+    if (!rest.length || !games.has(first)) return [];
+    return [{ params: { game: first, guide: rest.join('/') }, props: guide }];
+  });
+}
+
+const guide = Astro.props;
+const { Content } = await render(guide);
+
+const games = new Set((await getCollection('games')).map((g) => g.id));
+const [gameSlug] = guide.id.split('/');
+
+let game = await getEntry('games', gameSlug);
+if (game?.data.draft) game = undefined;
+
+const all = await getGuides();
+const moreForGame = all
+  .filter((g) => g.id !== guide.id && g.id.startsWith(`${gameSlug}/`))
+  .slice(0, 6)
+  .map((entry) => ({ entry, href: guideUrlWith(entry, games) }));
+---
+
+<GuideLayout
+  guide={guide}
+  url={`/games/${guide.id}/`}
+  game={game ?? null}
+  moreForGame={moreForGame}
+>
+  <Content />
+</GuideLayout>

@@ -6,9 +6,19 @@ export interface BreadcrumbItem {
 
 interface Props {
   items: BreadcrumbItem[];
+  /**
+   * 'dark' is the original: white text for the dark PageHeader band.
+   * 'light' is for pages that put breadcrumbs straight onto parchment —
+   * guides and the on-ramp hubs, which have no dark header to sit in.
+   */
+  scheme?: 'dark' | 'light';
 }
 
-const { items } = Astro.props;
+const { items, scheme = 'dark' } = Astro.props;
+
+const muted = scheme === 'dark' ? 'text-white/60' : 'text-ink/60 dark:text-ink-dark/60';
+const hover = scheme === 'dark' ? 'hover:text-white' : 'hover:text-ink dark:hover:text-ink-dark';
+const current = scheme === 'dark' ? 'text-white' : 'text-ink dark:text-ink-dark';
 ---
 
 <nav aria-label="Breadcrumb" class="mb-6" data-pagefind-ignore>
@@ -16,7 +26,7 @@ const { items } = Astro.props;
     <li>
       <a
         href="/"
-        class="text-white/60 hover:text-white transition-colors flex items-center gap-1"
+        class={`${muted} ${hover} transition-colors flex items-center gap-1`}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -36,7 +46,7 @@ const { items } = Astro.props;
       const isLast = index === items.length - 1;
       return (
         <>
-          <li class="text-white/60" aria-hidden="true">
+          <li class={muted} aria-hidden="true">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               class="h-4 w-4"
@@ -50,13 +60,13 @@ const { items } = Astro.props;
           </li>
           <li>
             {isLast ? (
-              <span class="text-white font-semibold" aria-current="page">
+              <span class={`${current} font-semibold`} aria-current="page">
                 {item.label}
               </span>
             ) : (
               <a
                 href={item.href}
-                class="text-white/60 hover:text-white transition-colors"
+                class={`${muted} ${hover} transition-colors`}
               >
                 {item.label}
               </a>

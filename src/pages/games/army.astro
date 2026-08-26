@@ -9,23 +9,24 @@ import GameGrid from '../../components/GameGrid.astro';
 import StructuredData from '../../components/StructuredData.astro';
 import { sortGamesPinnedThenTitle } from '../../utils/collections';
 
+// Replaces /games/large-scale-army/ and /games/mass-battle/, which advertised
+// three army-scale shelves between them and filled one.
 const allGames = await getCollection('games', ({ data }) => !data.draft);
 const games = sortGamesPinnedThenTitle(
-  allGames.filter((g) => g.data.format === 'large-scale-army')
+  allGames.filter((g) => g.data.format === 'army')
 );
+
+const description = 'Games where you field a whole army. Bigger model counts, longer setup, and a table that takes a while to fill.';
 ---
 
-<BaseLayout
-  title="Large Scale Army Games | The Hobbinomicon"
-  description="Command-led miniature wargames bigger than skirmish but tighter than rank-and-flank. 15 to 30 models, a single commander, every activation matters."
->
+<BaseLayout title="Army-Scale Games | The Hobbinomicon" description={description}>
   <StructuredData
     type="breadcrumb"
     data={{
       breadcrumbs: [
         { name: 'Home', url: 'https://hobbinomicon.com/' },
         { name: 'Games', url: 'https://hobbinomicon.com/games/' },
-        { name: 'Large Scale Army', url: 'https://hobbinomicon.com/games/large-scale-army/' },
+        { name: 'Army-Scale', url: 'https://hobbinomicon.com/games/army/' },
       ],
     }}
   />
@@ -33,18 +34,18 @@ const games = sortGamesPinnedThenTitle(
 
   <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
     <PageHeader
-      title="Large Scale Army Games"
-      description="Command-led miniature wargames bigger than skirmish but tighter than rank-and-flank. 15 to 30 models, a single commander, every activation matters."
+      title="Army-Scale Games"
+      description={description}
       breadcrumbs={[
         { label: 'Games', href: '/games' },
-        { label: 'Large Scale Army', href: '/games/large-scale-army' },
+        { label: 'Army-Scale', href: '/games/army' },
       ]}
     />
 
     <ContentContainer class="py-16">
       <GameGrid
         games={games}
-        emptyTitle="No large scale army games yet"
+        emptyTitle="No army-scale games yet"
         emptyMessage="Working on it. The first batch will land soon."
       />
     </ContentContainer>

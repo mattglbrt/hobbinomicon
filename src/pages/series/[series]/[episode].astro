@@ -1,0 +1,50 @@
+---
+import { getCollection, getEntry, render } from 'astro:content';
+import VlogLayout from '../../../layouts/VlogLayout.astro';
+import { getEpisodes, getGuides } from '../../../utils/content';
+
+export async function getStaticPaths() {
+  const episodes = await getCollection('vlog', ({ data }) => !data.draft && Boolean(data.series));
+  return episodes.map((ep) => ({
+    params: { series: ep.data.series!.id, episode: ep.id },
+    props: ep,
+  }));
+}
+
+const post = Astro.props;
+const { Content, remarkPluginFrontmatter } = await render(post);
+const readingTime = remarkPluginFrontmatter?.readingTime ?? 1;
+
+const seriesId = post.data.series!.id;
+const siblings = await getEpisodes(seriesId);
+const idx = siblings.findIndex((e) => e.id === post.id);
+
+const seriesEntry = await getEntry('series', seriesId);
+const link = (e: typeof post) => ({ href: `/series/${seriesId}/${e.id}/`, title: e.data.title });
+
+// Episodes run forwards, unlike the vlog archive.
+const neighbours = {
+  previous: idx > 0 ? link(siblings[idx - 1]) : null,
+  next: idx >= 0 && idx < siblings.length - 1 ? link(siblings[idx + 1]) : null,
+};
+
+const guides = await getGuides();
+const relatedGuides = guides
+  .filter((g) => g.data.tags.some((t) => post.data.tags.includes(t)))
+  .slice(0, 3);
+---
+
+<VlogLayout
+  {...post.data}
+  slug={post.id}
+  readingTime={readingTime}
+  relatedGuides={relatedGuides}
+  neighbours={neighbours}
+  seriesContext={{
+    href: `/series/${seriesId}/`,
+    name: seriesEntry?.data.name ?? seriesId,
+    episodeCount: siblings.length,
+  }}
+>
+  <Content />
+</VlogLayout>

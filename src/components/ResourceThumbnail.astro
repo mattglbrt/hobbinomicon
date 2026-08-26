@@ -1,11 +1,12 @@
 ---
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
+import { vlogUrl } from '../utils/content';
 import { getHeroImage, isImageMetadata } from '../utils/getHeroImage';
 import { getYouTubeFallbackHandler } from '../utils/youtubeImageFallback';
 
 interface Props {
-  post: CollectionEntry<'blog'>;
+  post: CollectionEntry<'vlog'>;
   eager?: boolean;
 }
 
@@ -42,7 +43,7 @@ const isRemoteImage = !isOptimizedImage && typeof displayImage === 'string' && d
 </style>
 
 <article class="group">
-  <a href={`/blog/${id}/`} class="block relative overflow-hidden rounded-lg aspect-[16/9] resource-image hover:-translate-y-1 transition-all duration-300 hover:shadow-xl">
+  <a href={vlogUrl(post)} class="block relative overflow-hidden rounded-lg aspect-[16/9] resource-image hover:-translate-y-1 transition-all duration-300 hover:shadow-xl">
     <!-- Loading placeholder -->
     <div class="absolute inset-0 res-loading" data-placeholder></div>
 

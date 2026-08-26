@@ -1,7 +1,6 @@
 import type { CollectionEntry } from 'astro:content';
 
-type BlogPost = CollectionEntry<'blog'>;
-type Project = CollectionEntry<'projects'>;
+type BlogPost = CollectionEntry<'vlog'>;
 type Game = CollectionEntry<'games'>;
 
 /**
@@ -59,13 +58,6 @@ export function groupBy<T>(
 }
 
 /**
- * Group posts by category
- */
-export function groupByCategory(posts: BlogPost[]): Map<string, BlogPost[]> {
-  return groupBy(posts, post => post.data.category);
-}
-
-/**
  * Group posts by tags
  */
 export function groupByTags(posts: BlogPost[]): Map<string, BlogPost[]> {
@@ -92,20 +84,6 @@ export function getProjectPosts(
 }
 
 /**
- * Get unique categories with post counts, sorted by count
- */
-export function getCategoriesWithCounts(posts: BlogPost[]): { name: string; count: number; posts: BlogPost[] }[] {
-  const grouped = groupByCategory(posts);
-  return Array.from(grouped.entries())
-    .map(([name, categoryPosts]) => ({
-      name,
-      count: categoryPosts.length,
-      posts: sortByDate(categoryPosts),
-    }))
-    .sort((a, b) => b.count - a.count);
-}
-
-/**
  * Get unique tags with post counts, sorted by count
  */
 export function getTagsWithCounts(posts: BlogPost[]): { name: string; count: number; posts: BlogPost[] }[] {
@@ -124,13 +102,6 @@ export function getTagsWithCounts(posts: BlogPost[]): { name: string; count: num
  */
 export function getLatestPost(posts: BlogPost[]): BlogPost | undefined {
   return sortByDate(posts, 'desc')[0];
-}
-
-/**
- * Get unique category names sorted alphabetically
- */
-export function getUniqueCategories(posts: BlogPost[]): string[] {
-  return [...new Set(posts.map(post => post.data.category))].sort();
 }
 
 /**

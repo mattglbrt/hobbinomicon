@@ -13,6 +13,10 @@ One section per phase. Written at the end of each phase, before the merge to
 | 4 — On-ramp hubs & funnel | not started | |
 | 5 — Cutover & SEO | not started | |
 
+**After Phase 5 (Matt, 08-26):** fold the `roadmap/games.md` § "Directory
+to-do" recommendations into the content to-do list. Not before — the phases
+come first.
+
 ---
 
 ## Phase 0 — Audit & safety net

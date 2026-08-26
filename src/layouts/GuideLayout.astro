@@ -1,0 +1,295 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import BackToTop from '../components/BackToTop.astro';
+import StructuredData from '../components/StructuredData.astro';
+import Comments from '../components/Comments.astro';
+import ProseContent from '../components/ProseContent.astro';
+import SearchMeta from '../components/SearchMeta.astro';
+import LiteYouTube from '../components/LiteYouTube.astro';
+import MaterialsCard from '../components/MaterialsCard.astro';
+import StepsList from '../components/StepsList.astro';
+import ListCard from '../components/ListCard.astro';
+import YouTubeCTA from '../components/YouTubeCTA.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { getHeroImageUrl } from '../utils/getHeroImage';
+import { formatDateLong } from '../utils/formatDate';
+import { TOPICS, type Topic } from '../utils/content';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  guide: CollectionEntry<'guides'>;
+  url: string;
+  game?: CollectionEntry<'games'> | null;
+  moreForGame?: { entry: CollectionEntry<'guides'>; href: string }[];
+  siblings?: { entry: CollectionEntry<'guides'>; href: string }[];
+}
+
+const { guide, url, game = null, moreForGame = [], siblings = [] } = Astro.props;
+const d = guide.data;
+
+const topicLabel = TOPICS[d.topic as Topic];
+const heroUrl = getHeroImageUrl(d.heroImage, d.youtubeId);
+const canonical = new URL(url, Astro.site ?? Astro.url).toString();
+const imageUrl = heroUrl.startsWith('http')
+  ? heroUrl
+  : new URL(heroUrl, Astro.site ?? Astro.url).toString();
+
+// The YouTube title is written for a thumbnail. Show it only when the guide's
+// own title has diverged from it, so a reader who came from the video can tell
+// they are in the right place.
+const showVideoTitle = Boolean(d.videoTitle) && d.videoTitle !== d.title;
+
+const pills = [
+  topicLabel,
+  game?.data.title,
+  d.faction,
+  d.difficulty === 'beginner' ? null : d.difficulty,
+  d.timeMinutes ? `${d.timeMinutes} min` : null,
+].filter(Boolean) as string[];
+---
+
+<BaseLayout
+  title={d.title}
+  description={d.description}
+  image={heroUrl}
+  ogType="article"
+  publishedTime={d.pubDate}
+  modifiedTime={d.updatedDate}
+  author="Hobbinomicon"
+  tags={d.tags}
+  section={topicLabel}
+>
+  <StructuredData
+    type="breadcrumb"
+    data={{
+      breadcrumbs: [
+        { name: 'Home', url: 'https://hobbinomicon.com/' },
+        { name: 'Guides', url: 'https://hobbinomicon.com/guides/' },
+        { name: topicLabel, url: `https://hobbinomicon.com/guides/${d.topic}/` },
+        { name: d.title, url: canonical },
+      ],
+    }}
+  />
+  <StructuredData
+    type="blogPosting"
+    data={{
+      title: d.title,
+      description: d.description,
+      image: imageUrl,
+      datePublished: d.pubDate,
+      dateModified: d.updatedDate,
+      authorName: 'Hobbinomicon',
+      authorUrl: 'https://hobbinomicon.com/about/',
+      keywords: d.tags,
+      category: topicLabel,
+      url: canonical,
+    }}
+  />
+  {d.youtubeId && (
+    <StructuredData
+      type="videoObject"
+      data={{
+        name: d.videoTitle ?? d.title,
+        description: d.description,
+        thumbnailUrl: imageUrl,
+        uploadDate: d.pubDate,
+        youtubeId: d.youtubeId,
+      }}
+    />
+  )}
+  {d.steps.length > 0 && (
+    <StructuredData
+      type="howTo"
+      data={{
+        name: d.title,
+        description: d.description,
+        image: imageUrl,
+        url: canonical,
+        totalMinutes: d.timeMinutes,
+        supplies: d.materials.map((m) => m.name),
+        steps: d.steps,
+      }}
+    />
+  )}
+
+  <Header theme="light" />
+
+  <main
+    id="main-content"
+    class="min-h-screen bg-parchment dark:bg-parchment-dark"
+    data-pagefind-body
+    data-pagefind-meta="kind:Guide"
+    data-pagefind-filter="kind:Guide"
+    data-pagefind-weight="2"
+  >
+    <SearchMeta description={d.description} type={d.youtubeId ? 'video' : 'article'} />
+
+    <div class="reading-progress fixed top-0 left-0 h-[3px] bg-gradient-to-r from-ink/80 via-ink to-ink/80 dark:from-parchment-dark/80 dark:via-parchment-dark dark:to-parchment-dark/80 z-50 transition-none" style="width: 0%;"></div>
+
+    <article class="max-w-3xl mx-auto px-6 pt-32 md:pt-36 pb-16">
+      <div data-pagefind-ignore>
+        <Breadcrumbs
+          items={[
+            { label: 'Guides', href: '/guides' },
+            { label: topicLabel, href: `/guides/${d.topic}` },
+          ]}
+          scheme="light"
+        />
+      </div>
+
+      <h1
+        class="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-ink dark:text-ink-dark leading-tight mt-4"
+        style="line-height: 0.95;"
+        data-pagefind-meta="title"
+      >
+        {d.title}
+      </h1>
+
+      {showVideoTitle && (
+        <p class="mt-3 text-ink/60 dark:text-ink-dark/60 font-heading text-sm" data-pagefind-ignore>
+          From the video “{d.videoTitle}”
+        </p>
+      )}
+
+      <div class="flex flex-wrap gap-2 mt-6" data-pagefind-ignore>
+        {pills.map((p) => (
+          <span class="text-xs font-heading uppercase tracking-[0.15em] px-3 py-1 rounded-full bg-ink/10 dark:bg-ink-dark/10 text-ink/80 dark:text-ink-dark/80">
+            {p}
+          </span>
+        ))}
+      </div>
+
+      <div class="flex flex-wrap gap-3 items-center text-ink/60 dark:text-ink-dark/60 text-sm mt-4" data-pagefind-ignore>
+        <time datetime={d.pubDate.toISOString()} class="font-heading tracking-wide">
+          {formatDateLong(d.pubDate)}
+        </time>
+        {d.updatedDate && (
+          <>
+            <span class="text-ink/30 dark:text-ink-dark/30">/</span>
+            <span class="font-heading tracking-wide">Updated {formatDateLong(d.updatedDate)}</span>
+          </>
+        )}
+      </div>
+
+      <p class="text-xl md:text-2xl text-ink/80 dark:text-ink-dark/80 font-serif italic my-8 leading-relaxed border-l-4 border-ink/30 dark:border-ink-dark/30 pl-6" data-pagefind-weight="2">
+        {d.description}
+      </p>
+
+      {d.youtubeId && (
+        <div class="my-8">
+          <LiteYouTube videoId={d.youtubeId} title={d.videoTitle ?? d.title} />
+        </div>
+      )}
+
+      {/*
+        Authored content leads, the transcript trails. MaterialsCard and
+        StepsList come from frontmatter and are the recipe a reader actually
+        came for, so they sit above the prose; the rehype plugin collapses the
+        transcript into a <details> at the end of the body. Either way nothing
+        auto-generated is the first thing on the page, which is the point.
+      */}
+      <MaterialsCard materials={d.materials} />
+      <StepsList steps={d.steps} />
+
+      <ProseContent>
+        <slot />
+      </ProseContent>
+
+      {game && (
+        <p class="mt-10 text-sm" data-pagefind-ignore>
+          <a href={`/games/${game.id}/`} class="text-ink dark:text-ink-dark underline underline-offset-4 hover:no-underline">
+            {game.data.title} in the directory →
+          </a>
+        </p>
+      )}
+
+      {d.tags.length > 0 && (
+        <div class="flex flex-wrap gap-2 mt-8" data-pagefind-ignore>
+          {d.tags.map((tag) => (
+            <a
+              href={`/tags/${tag}/`}
+              class="text-sm px-3 py-1 bg-ink/5 dark:bg-ink-dark/5 hover:bg-ink/20 dark:hover:bg-ink-dark/20 text-ink dark:text-ink-dark rounded-full transition-colors"
+              data-pagefind-filter={`tag:${tag}`}
+            >
+              #{tag}
+            </a>
+          ))}
+        </div>
+      )}
+
+      {moreForGame.length > 0 && game && (
+        <section class="mt-16 pt-10 border-t-2 border-ink/15 dark:border-ink-dark/15" data-pagefind-ignore>
+          <h2 class="font-heading text-sm uppercase tracking-[0.2em] text-ink/70 dark:text-ink-dark/70 mb-6">
+            More for {game.data.title}
+          </h2>
+          <div class="grid gap-4">
+            {moreForGame.map(({ entry, href }) => (
+              <ListCard
+                href={href}
+                title={entry.data.title}
+                description={entry.data.description}
+                meta={formatDateLong(entry.data.pubDate)}
+                image={getHeroImageUrl(entry.data.heroImage, entry.data.youtubeId)}
+              />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {siblings.length > 0 && (
+        <section class="mt-14" data-pagefind-ignore>
+          <h2 class="font-heading text-sm uppercase tracking-[0.2em] text-ink/70 dark:text-ink-dark/70 mb-6">
+            More {topicLabel.toLowerCase()} guides
+          </h2>
+          <div class="grid gap-4">
+            {siblings.map(({ entry, href }) => (
+              <ListCard
+                href={href}
+                title={entry.data.title}
+                description={entry.data.description}
+                meta={formatDateLong(entry.data.pubDate)}
+                image={getHeroImageUrl(entry.data.heroImage, entry.data.youtubeId)}
+              />
+            ))}
+          </div>
+        </section>
+      )}
+
+      <Comments postSlug={guide.id} />
+    </article>
+
+    <div data-pagefind-ignore>
+      <YouTubeCTA
+        title="Watch the whole thing"
+        description="Every guide here started as a video. The channel has the full session, mistakes included."
+        buttonText="Watch on YouTube"
+      />
+    </div>
+
+    <BackToTop />
+  </main>
+  <Footer />
+
+  <style is:global>
+    .transcript-details {
+      margin-top: 3rem;
+      border-top: 1px solid rgb(0 0 0 / 0.1);
+      padding-top: 1.5rem;
+    }
+    .transcript-details > .transcript-summary {
+      cursor: pointer;
+      font-family: var(--font-heading, inherit);
+      font-size: 0.875rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      opacity: 0.7;
+      list-style: none;
+    }
+    .transcript-details > .transcript-summary::-webkit-details-marker { display: none; }
+    .transcript-details > .transcript-summary::before { content: '▸ '; }
+    .transcript-details[open] > .transcript-summary::before { content: '▾ '; }
+    .transcript-details > .transcript-body { margin-top: 1.5rem; }
+  </style>
+</BaseLayout>

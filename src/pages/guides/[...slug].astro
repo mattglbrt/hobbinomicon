@@ -1,0 +1,61 @@
+---
+import { getCollection, getEntry, render } from 'astro:content';
+import GuideLayout from '../../layouts/GuideLayout.astro';
+import { getGuides, guideUrlWith } from '../../utils/content';
+
+export async function getStaticPaths() {
+  const games = new Set((await getCollection('games')).map((g) => g.id));
+  const guides = await getCollection('guides', ({ data }) => !data.draft);
+
+  // A guide nested under a game slug renders at /games/{game}/{slug}/ instead,
+  // handled by pages/games/[game]/[guide].astro. Excluded here so the two
+  // routes cannot both claim the same entry.
+  return guides
+    .filter((g) => {
+      const [first, ...rest] = g.id.split('/');
+      return !(rest.length && games.has(first));
+    })
+    .map((guide) => ({ params: { slug: guide.id }, props: guide }));
+}
+
+const guide = Astro.props;
+const { Content } = await render(guide);
+
+const games = new Set((await getCollection('games')).map((g) => g.id));
+const all = await getGuides();
+
+let game = guide.data.game ? await getEntry(guide.data.game) : null;
+if (game?.data.draft) game = null;   // never link to a page that isn't built
+
+const moreForGame = game
+  ? all
+      .filter((g) => g.id !== guide.id && g.data.game?.id === game!.id)
+      .slice(0, 4)
+      .map((entry) => ({ entry, href: guideUrlWith(entry, games) }))
+  : [];
+
+// Only pad with topic siblings when the game block is thin, so the page never
+// shows two near-identical lists.
+const siblings =
+  moreForGame.length >= 2
+    ? []
+    : all
+        .filter(
+          (g) =>
+            g.id !== guide.id &&
+            g.data.topic === guide.data.topic &&
+            !moreForGame.some((m) => m.entry.id === g.id)
+        )
+        .slice(0, 4)
+        .map((entry) => ({ entry, href: guideUrlWith(entry, games) }));
+---
+
+<GuideLayout
+  guide={guide}
+  url={`/guides/${guide.id}/`}
+  game={game}
+  moreForGame={moreForGame}
+  siblings={siblings}
+>
+  <Content />
+</GuideLayout>

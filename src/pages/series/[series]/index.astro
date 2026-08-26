@@ -1,0 +1,104 @@
+---
+import { getCollection, getEntry, render } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+import PageHeader from '../../../components/PageHeader.astro';
+import ContentContainer from '../../../components/ContentContainer.astro';
+import ListCard from '../../../components/ListCard.astro';
+import ProseContent from '../../../components/ProseContent.astro';
+import StructuredData from '../../../components/StructuredData.astro';
+import { getEpisodes } from '../../../utils/content';
+import { getHeroImageUrl } from '../../../utils/getHeroImage';
+import { formatDateLong } from '../../../utils/formatDate';
+
+export async function getStaticPaths() {
+  const all = await getCollection('series', ({ data }) => !data.draft);
+  const withEpisodes = await Promise.all(
+    all.map(async (s) => ({ s, episodes: await getEpisodes(s.id) }))
+  );
+  // Never build a hub with nothing in it.
+  return withEpisodes
+    .filter(({ episodes }) => episodes.length > 0)
+    .map(({ s, episodes }) => ({ params: { series: s.id }, props: { series: s, episodes } }));
+}
+
+const { series, episodes } = Astro.props;
+const { Content } = await render(series);
+
+let game = series.data.game ? await getEntry(series.data.game) : null;
+if (game?.data.draft) game = null;
+
+const canonical = new URL(`/series/${series.id}/`, Astro.site ?? Astro.url).toString();
+---
+
+<BaseLayout
+  title={`${series.data.name} | The Hobbinomicon`}
+  description={series.data.description}
+  image={getHeroImageUrl(series.data.heroImage, undefined)}
+>
+  <StructuredData
+    type="breadcrumb"
+    data={{
+      breadcrumbs: [
+        { name: 'Home', url: 'https://hobbinomicon.com/' },
+        { name: 'Series', url: 'https://hobbinomicon.com/series/' },
+        { name: series.data.name, url: canonical },
+      ],
+    }}
+  />
+  <Header theme="light" />
+
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark" data-pagefind-body>
+    <PageHeader
+      title={series.data.name}
+      description={series.data.description}
+      breadcrumbs={[
+        { label: 'Series', href: '/series' },
+        { label: series.data.name, href: `/series/${series.id}` },
+      ]}
+    />
+
+    <ContentContainer class="py-16">
+      <div class="max-w-3xl">
+        <ProseContent>
+          <Content />
+        </ProseContent>
+      </div>
+
+      <div class="flex flex-wrap gap-x-6 gap-y-2 text-sm mt-6" data-pagefind-ignore>
+        {game && (
+          <a href={`/games/${game.id}/`} class="text-ink dark:text-ink-dark underline underline-offset-4 hover:no-underline">
+            {game.data.title} in the directory →
+          </a>
+        )}
+        {series.data.youtubePlaylist && (
+          <a href={series.data.youtubePlaylist} class="text-ink dark:text-ink-dark underline underline-offset-4 hover:no-underline" target="_blank" rel="noopener">
+            Watch the playlist on YouTube →
+          </a>
+        )}
+      </div>
+
+      <section class="mt-12">
+        <h2 class="font-heading text-sm uppercase tracking-[0.2em] text-ink/70 dark:text-ink-dark/70 mb-6">
+          {episodes.length} {episodes.length === 1 ? 'episode' : 'episodes'}, in order
+        </h2>
+        <div class="grid gap-4">
+          {episodes.map((ep) => (
+            <ListCard
+              href={`/series/${series.id}/${ep.id}/`}
+              title={ep.data.episode !== undefined
+                ? `${ep.data.episode}. ${ep.data.title}`
+                : ep.data.title}
+              description={ep.data.description}
+              meta={formatDateLong(ep.data.pubDate)}
+              image={getHeroImageUrl(ep.data.heroImage, ep.data.youtubeId)}
+            />
+          ))}
+        </div>
+      </section>
+    </ContentContainer>
+
+    <Footer />
+  </main>
+</BaseLayout>

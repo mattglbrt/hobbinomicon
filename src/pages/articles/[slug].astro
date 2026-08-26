@@ -1,0 +1,28 @@
+---
+import { getCollection, render } from 'astro:content';
+import VlogLayout from '../../layouts/VlogLayout.astro';
+import { getGuides } from '../../utils/content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('vlog', ({ data }) => !data.draft && data.kind === 'article');
+  return posts.map((post) => ({ params: { slug: post.id }, props: post }));
+}
+
+const post = Astro.props;
+const { Content, remarkPluginFrontmatter } = await render(post);
+const readingTime = remarkPluginFrontmatter?.readingTime ?? 1;
+
+const guides = await getGuides();
+const relatedGuides = post.data.hideRelatedPosts
+  ? []
+  : guides.filter((g) => g.data.tags.some((t) => post.data.tags.includes(t))).slice(0, 3);
+---
+
+<VlogLayout
+  {...post.data}
+  slug={post.id}
+  readingTime={readingTime}
+  relatedGuides={relatedGuides}
+>
+  <Content />
+</VlogLayout>

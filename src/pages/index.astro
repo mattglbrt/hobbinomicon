@@ -3,15 +3,15 @@ import { getCollection, getEntry } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import DirectoryHero from '../components/DirectoryHero.astro';
-import PostGridSection from '../components/PostGridSection.astro';
+import ListCard from '../components/ListCard.astro';
 import NewsletterSignup from '../components/NewsletterSignup.astro';
 import Footer from '../components/Footer.astro';
 import ContentContainer from '../components/ContentContainer.astro';
 import ImageCard from '../components/ImageCard.astro';
 import ViewAllLink from '../components/ViewAllLink.astro';
-import { getHeroImage } from '../utils/getHeroImage';
+import { getHeroImage, getHeroImageUrl } from '../utils/getHeroImage';
 import { sortByDate } from '../utils/collections';
-import { getVideoCollections } from '../utils/videoCollections';
+import { getGuides, guideUrlWith, TOPICS, type Topic } from '../utils/content';
 
 // ─── Directory: featured / recently added games ─────────────────────
 const allGames = await getCollection('games', ({ data }) => !data.draft);
@@ -40,22 +40,32 @@ const recentNewsCards = await Promise.all(
   })
 );
 
-// ─── Latest videos: newest posts from the topic collections only ────
-// (never the daily archive — collection membership is the quality filter).
-const collections = await getVideoCollections();
-const seen = new Set<string>();
-const collectionPosts = [];
-for (const c of collections) {
-  for (const p of c.posts) {
-    if (!seen.has(p.id)) { seen.add(p.id); collectionPosts.push(p); }
-  }
-}
-const latestVideos = sortByDate(collectionPosts).slice(0, 3);
+// ─── Learn to paint: the newest guides ──────────────────────────────
+const gameSlugs = new Set(allGames.map((g) => g.id));
+const latestGuides = (await getGuides()).slice(0, 6);
+
+// ─── On-ramp hubs. A hub only appears once it has guides behind it;
+// an empty on-ramp is worse than no on-ramp.
+const allGuides = await getGuides();
+const hubs = [
+  {
+    slug: 'warmachine',
+    name: 'Warmachine',
+    blurb: 'Steamjacks, warcasters, and a faction backlog I keep adding to. Start here if you already know the game.',
+  },
+  {
+    slug: 'warhammer',
+    name: 'Warhammer',
+    blurb: '40k, The Old World and Spearhead. The recipes that travel, and where to go next when you want something smaller.',
+  },
+]
+  .map((h) => ({ ...h, count: allGuides.filter((g) => g.data.hub === h.slug).length }))
+  .filter((h) => h.count >= 3);
 ---
 
 <BaseLayout
-  title="The Hobbinomicon — the indie wargames directory"
-  description="A directory and news desk for indie wargames — skirmish, mass battle, TTRPG, and the weird stuff in between. Browse by format, follow the news, and go deeper than the main lines."
+  title="The Hobbinomicon — find your next indie wargame, then learn to paint it"
+  description="A directory of indie wargames the big publishers ignore, and the painting guides to get them on your table. Skirmish, army-scale, solo, and the weird stuff in between."
 >
   <Header theme="dark" />
 
@@ -130,15 +140,55 @@ const latestVideos = sortByDate(collectionPosts).slice(0, 3);
       </section>
     )}
 
-    <!-- 4. Latest videos — deep dives & tutorials, capped at 3 -->
-    {latestVideos.length > 0 && (
-      <PostGridSection
-        title="Latest Videos"
-        eyebrow="Watch"
-        viewAllLink="/videos/"
-        posts={latestVideos}
-        layout="masonry"
-      />
+    <!-- 4. Learn to paint — the other half of the promise in the hero -->
+    {latestGuides.length > 0 && (
+      <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24" data-scroll-reveal>
+        <ContentContainer>
+          <div class="flex items-center justify-between mb-12">
+            <div>
+              <span class="block text-sm font-heading uppercase tracking-[0.3em] text-ink/40 dark:text-ink-dark/40 mb-2">Learn to paint it</span>
+              <h2 class="text-5xl md:text-7xl font-display font-bold text-ink dark:text-ink-dark">Guides</h2>
+            </div>
+            <ViewAllLink href="/guides/">All Guides →</ViewAllLink>
+          </div>
+          <div class="grid gap-4 md:grid-cols-2">
+            {latestGuides.map((g) => (
+              <ListCard
+                href={guideUrlWith(g, gameSlugs)}
+                title={g.data.title}
+                description={g.data.description}
+                meta={TOPICS[g.data.topic as Topic]}
+                image={getHeroImageUrl(g.data.heroImage, g.data.youtubeId)}
+              />
+            ))}
+          </div>
+        </ContentContainer>
+      </section>
+    )}
+
+    <!-- 5. On-ramps. These are the top of the funnel, not the destination:
+         both hubs exist to point sideways into the indie directory. -->
+    {hubs.length > 0 && (
+      <section class="bg-ink dark:bg-ink-dark py-16 md:py-24" data-scroll-reveal>
+        <ContentContainer>
+          <span class="block text-sm font-heading uppercase tracking-[0.3em] text-parchment/40 dark:text-parchment-dark/40 mb-2">Already playing something big?</span>
+          <h2 class="text-4xl md:text-6xl font-display font-bold text-parchment dark:text-parchment-dark mb-10">Start where you are</h2>
+          <div class="grid gap-6 md:grid-cols-2">
+            {hubs.map((h) => (
+              <a
+                href={`/${h.slug}/`}
+                class="block p-8 rounded-lg border border-white/15 hover:border-white/40 hover:bg-white/5 transition-colors"
+              >
+                <span class="block font-display text-3xl font-bold text-parchment dark:text-parchment-dark">{h.name}</span>
+                <span class="block mt-3 text-parchment/70 dark:text-parchment-dark/70 font-serif">{h.blurb}</span>
+                <span class="block mt-4 text-sm font-heading uppercase tracking-[0.2em] text-parchment/50 dark:text-parchment-dark/50">
+                  {h.count} guides →
+                </span>
+              </a>
+            ))}
+          </div>
+        </ContentContainer>
+      </section>
     )}
 
     <!-- 5. Newsletter — From the Workbench -->

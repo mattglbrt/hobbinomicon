@@ -14,10 +14,10 @@
  * available under `astro dev` — test search with `npm run build && npm run preview`.
  */
 import { getCollection } from 'astro:content';
-import { getPublishedPosts } from '../utils/collections';
+import { getVlogs, getGuides, guideUrlWith } from '../utils/content';
 
-const allPosts = await getCollection('blog');
-const publishedPosts = getPublishedPosts(allPosts);
+const publishedPosts = await getVlogs();
+const guides = await getGuides();
 
 const games = await getCollection('games', ({ data }) => !data.draft);
 const studios = await getCollection('studios', ({ data }) => !data.draft);
@@ -28,13 +28,12 @@ const news = await getCollection('news', ({ data }) => !data.draft);
 // topics (tags) become clickable chips ON results, to refine AFTER searching
 // rather than a wall of choices before typing.
 const videoCount = publishedPosts.filter((p) => p.data.youtubeId).length;
-const articleCount = publishedPosts.filter((p) => !p.data.youtubeId).length;
 const scopes = [
   { label: 'All', value: '' },
   games.length ? { label: 'Games', value: 'game' } : null,
+  guides.length ? { label: 'Guides', value: 'guide' } : null,
   news.length ? { label: 'News', value: 'news' } : null,
-  videoCount ? { label: 'Videos', value: 'video' } : null,
-  articleCount ? { label: 'Articles', value: 'article' } : null,
+  videoCount ? { label: 'Vlogs', value: 'video' } : null,
   studios.length ? { label: 'Studios', value: 'studio' } : null,
   people.length ? { label: 'People', value: 'person' } : null,
 ].filter((s): s is { label: string; value: string } => Boolean(s));
@@ -53,10 +52,14 @@ const browseGames = [...games]
     return bDate - aDate;
   })
   .slice(0, 3);
-const browseVideos = [...publishedPosts]
-  .filter((p) => p.data.youtubeId)
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 3);
+// Guides, not vlogs, are the default browse suggestion: someone who opens
+// search without typing is more likely to want a how-to than a mail-day.
+const gameSlugs = new Set(games.map((g) => g.id));
+const browseGuides = guides.slice(0, 3).map((g) => ({
+  href: guideUrlWith(g, gameSlugs),
+  title: g.data.title,
+  description: g.data.description,
+}));
 ---
 
 <style>
@@ -235,16 +238,16 @@ const browseVideos = [...publishedPosts]
               ))}
             </ul>
           )}
-          {browseVideos.length > 0 && (
+          {browseGuides.length > 0 && (
             <div class="px-4 pt-3 pb-1">
-              <div class="text-[10px] uppercase tracking-[0.2em] text-white/40 font-heading">Latest videos</div>
+              <div class="text-[10px] uppercase tracking-[0.2em] text-white/40 font-heading">Latest guides</div>
             </div>
             <ul class="mb-2">
-              {browseVideos.map((post) => (
+              {browseGuides.map((g) => (
                 <li>
-                  <a href={`/blog/${post.id}/`} class="block px-4 py-2 result-item">
-                    <div class="font-medium text-white/90">{post.data.title}</div>
-                    <div class="text-xs text-white/60 line-clamp-1">{post.data.description}</div>
+                  <a href={g.href} class="block px-4 py-2 result-item">
+                    <div class="font-medium text-white/90">{g.title}</div>
+                    <div class="text-xs text-white/60 line-clamp-1">{g.description}</div>
                   </a>
                 </li>
               ))}

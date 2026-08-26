@@ -4,6 +4,7 @@ import { getHeroImageUrl } from '../utils/getHeroImage';
 import { formatDateLong } from '../utils/formatDate';
 import ListCard from './ListCard.astro';
 import ViewAllLink from './ViewAllLink.astro';
+import { vlogUrl } from '../utils/content';
 
 interface Props {
   tag: string;
@@ -17,11 +18,11 @@ interface Props {
 
 const { tag, excludeSelf, excludeCategory, excludeProjectPosts = false, excludeHubs = true, limit, sortOrder = 'desc' } = Astro.props;
 
-const allPosts = await getCollection('blog');
+const allPosts = await getCollection('vlog');
 let taggedPosts = allPosts
   .filter(post => !post.data.draft)
   .filter(post => excludeSelf ? post.id !== excludeSelf : true)
-  .filter(post => excludeCategory ? post.data.category.toLowerCase() !== excludeCategory.toLowerCase() : true)
+  .filter(post => excludeCategory ? (post.data.category ?? '').toLowerCase() !== excludeCategory.toLowerCase() : true)
   .filter(post => excludeProjectPosts ? !post.data.project : true)
   .filter(post => excludeHubs ? post.data.resourceType !== 'hub' : true)
   .filter(post => post.data.tags?.some(t => t.toLowerCase().includes(tag.toLowerCase())))
@@ -42,7 +43,7 @@ if (limit) {
     <div class="grid gap-4">
       {taggedPosts.map(post => (
         <ListCard
-          href={`/blog/${post.id}/`}
+          href={vlogUrl(post)}
           image={getHeroImageUrl(post.data.heroImage, post.data.youtubeId)}
           imageAlt={post.data.title}
           title={post.data.title}

@@ -5,6 +5,7 @@ import BaseLayout from './BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import RelatedPosts from '../components/RelatedPosts.astro';
+import ListCard from '../components/ListCard.astro';
 import ProjectNavigation from '../components/ProjectNavigation.astro';
 import BackToTop from '../components/BackToTop.astro';
 import StructuredData from '../components/StructuredData.astro';
@@ -12,7 +13,6 @@ import Comments from '../components/Comments.astro';
 import ProseContent from '../components/ProseContent.astro';
 import SearchMeta from '../components/SearchMeta.astro';
 import { getEntry } from 'astro:content';
-import { collectionByVideoId } from '../utils/videoCollections';
 import gameVideos from '../data/game-videos.json';
 import { getHeroImage, getHeroImageUrl, isImageMetadata } from '../utils/getHeroImage';
 import { formatReadingTime } from '../utils/readingTime';
@@ -21,8 +21,8 @@ import { getYouTubeFallbackHandler } from '../utils/youtubeImageFallback';
 import type { CollectionEntry } from 'astro:content';
 
 interface ProjectNav {
-  previousPost: CollectionEntry<'blog'> | null;
-  nextPost: CollectionEntry<'blog'> | null;
+  previousPost: CollectionEntry<'vlog'> | null;
+  nextPost: CollectionEntry<'vlog'> | null;
   projectName: string;
   projectSlug: string;
 }
@@ -34,16 +34,32 @@ interface Props {
   updatedDate?: Date;
   heroImage?: string;
   heroImageAlt?: string;
-  category: string;
+  category?: string;
   tags: string[];
   youtubeId?: string;
   readingTime?: number;
-  relatedPosts?: CollectionEntry<'blog'>[];
+  relatedPosts?: CollectionEntry<'vlog'>[];
+  relatedGuides?: CollectionEntry<'guides'>[];
+  /**
+   * Prev/next as resolved links. The layout serves /vlog/ and
+   * /series/{series}/ alike, so it is given hrefs rather than entries — it has
+   * no business knowing which URL shape an entry renders at.
+   */
+  neighbours?: {
+    previous: { href: string; title: string } | null;
+    next: { href: string; title: string } | null;
+  };
+  /** Set on a series episode: renders the "Part of" line above the title. */
+  seriesContext?: { href: string; name: string; episodeCount: number } | null;
   projectNavigation?: ProjectNav | null;
   slug: string;
 }
 
-const { title, description, pubDate, updatedDate, heroImage, heroImageAlt, category, tags, youtubeId, readingTime, relatedPosts = [], projectNavigation = null, slug } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, heroImageAlt, category, tags, youtubeId, readingTime, relatedPosts = [], relatedGuides = [], neighbours, seriesContext = null, projectNavigation = null, slug } = Astro.props;
+
+// `category` is optional since the re-architecture — the collection is the
+// category now. Anything that used it for display falls back to the section.
+const sectionLabel = category ?? 'Vlog';
 
 const displayImage = getHeroImage(heroImage, youtubeId);
 const displayImageUrl = getHeroImageUrl(heroImage, youtubeId);
@@ -72,8 +88,8 @@ if (hasRealHero && isOptimizedImage) {
 const formattedDate = formatDateLong(pubDate);
 const formattedUpdatedDate = updatedDate ? formatDateLong(updatedDate) : null;
 
-// Video back-links: its topic collection and its related directory game.
-const videoCollection = youtubeId ? collectionByVideoId().get(youtubeId) : undefined;
+// Video back-links: the related directory game. (The topic-collection link
+// went with /videos/; guides now do that job, via relatedGuides below.)
 const gameVideoMap: Record<string, string> = {};
 for (const [g, vids] of Object.entries(gameVideos as Record<string, { id: string }[]>)) {
   for (const v of vids) if (!gameVideoMap[v.id]) gameVideoMap[v.id] = g;
@@ -124,7 +140,7 @@ const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
       authorName: 'Hobbinomicon',
       authorUrl: 'https://hobbinomicon.com/about/',
       keywords: tags,
-      category,
+      category: sectionLabel,
       wordCount: estimatedWordCount,
       url: canonicalUrl,
     }}
@@ -134,8 +150,12 @@ const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
     data={{
       breadcrumbs: [
         { name: 'Home', url: 'https://hobbinomicon.com/' },
-        { name: 'Blog', url: 'https://hobbinomicon.com/blog/' },
-        { name: category, url: `https://hobbinomicon.com/categories/${category.toLowerCase().replace(/\s+/g, '-')}/` },
+        ...(seriesContext
+          ? [
+              { name: 'Series', url: 'https://hobbinomicon.com/series/' },
+              { name: seriesContext.name, url: new URL(seriesContext.href, Astro.site ?? Astro.url).toString() },
+            ]
+          : [{ name: 'Vlog', url: 'https://hobbinomicon.com/vlog/' }]),
         { name: title, url: canonicalUrl },
       ],
     }}
@@ -153,7 +173,7 @@ const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
     />
   )}
   <Header />
-  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark" data-pagefind-body data-pagefind-meta={`category:${category}`} data-pagefind-filter={`category:${category}`}>
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark" data-pagefind-body data-pagefind-meta="kind:Vlog" data-pagefind-filter="kind:Vlog">
     <SearchMeta description={description} type={youtubeId ? "video" : "article"} />
     <!-- Standard Blog Post Layout -->
         <!-- Reading Progress Bar -->
@@ -214,9 +234,9 @@ const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
             <!-- data-pagefind-ignore keeps badge/date text out of search excerpts;
                  category still reaches the index via data-pagefind-meta on <main> -->
             <div class="mb-4" data-pagefind-ignore>
-              <span class="inline-block px-3 py-1 bg-ink/10 dark:bg-ink-dark/10 backdrop-blur-md text-ink/80 dark:text-ink-dark/80 text-xs font-heading uppercase tracking-[0.2em] rounded-full border border-ink/10 dark:border-ink-dark/10">
-                {category}
-              </span>
+              <a href={seriesContext?.href ?? '/vlog/'} class="inline-block px-3 py-1 bg-ink/10 dark:bg-ink-dark/10 backdrop-blur-md text-ink/80 dark:text-ink-dark/80 text-xs font-heading uppercase tracking-[0.2em] rounded-full border border-ink/10 dark:border-ink-dark/10">
+                {seriesContext ? seriesContext.name : sectionLabel}
+              </a>
             </div>
             <h1 class="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-ink dark:text-ink-dark mb-6 leading-tight" style="line-height: 0.9;" data-pagefind-meta="title">
               {title}
@@ -263,13 +283,8 @@ const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
           </ProseContent>
 
           <!-- Video back-links: topic collection + related directory game -->
-          {(videoCollection || relatedGame) && (
+          {relatedGame && (
             <div class="mt-12 pt-8 border-t border-ink/10 dark:border-ink-dark/10 flex flex-wrap gap-x-6 gap-y-2 text-sm" data-pagefind-ignore>
-              {videoCollection && (
-                <a href={`/videos/${videoCollection.slug}/`} class="text-ink dark:text-ink-dark underline underline-offset-4 hover:no-underline">
-                  Part of: {videoCollection.title} →
-                </a>
-              )}
               {relatedGame && (
                 <a href={`/games/${relatedGame.id}/`} class="text-ink dark:text-ink-dark underline underline-offset-4 hover:no-underline">
                   {relatedGame.data.title} in the directory →
@@ -293,6 +308,47 @@ const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
               projectName={projectNavigation.projectName}
               projectSlug={projectNavigation.projectSlug}
             />
+          )}
+
+          <!-- Guides for this. The block that stops a diary entry being a
+               dead end: a reader who liked the painting here can go and read
+               how it was done. Renders only when there is something to show. -->
+          {relatedGuides.length > 0 && (
+            <section class="mt-14 pt-10 border-t-2 border-ink/15 dark:border-ink-dark/15" data-pagefind-ignore>
+              <h2 class="font-heading text-sm uppercase tracking-[0.2em] text-ink/70 dark:text-ink-dark/70 mb-6">
+                Guides for this
+              </h2>
+              <div class="grid gap-4">
+                {relatedGuides.map((g) => (
+                  <ListCard
+                    href={`/guides/${g.id}/`}
+                    title={g.data.title}
+                    description={g.data.description}
+                    meta={formatDateLong(g.data.pubDate)}
+                    image={getHeroImageUrl(g.data.heroImage, g.data.youtubeId)}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
+
+          <!-- Prev/next within the same month, so the archive reads as a run
+               of days rather than a heap. -->
+          {(neighbours?.previous || neighbours?.next) && (
+            <nav class="mt-12 pt-8 border-t border-ink/10 dark:border-ink-dark/10 grid gap-4 sm:grid-cols-2 text-sm" data-pagefind-ignore>
+              {neighbours.previous ? (
+                <a href={neighbours.previous.href} class="group">
+                  <span class="block text-ink/50 dark:text-ink-dark/50 font-heading uppercase tracking-[0.15em] text-xs mb-1">Previous</span>
+                  <span class="text-ink dark:text-ink-dark group-hover:underline underline-offset-4">{neighbours.previous.title}</span>
+                </a>
+              ) : <span />}
+              {neighbours.next && (
+                <a href={neighbours.next.href} class="group sm:text-right">
+                  <span class="block text-ink/50 dark:text-ink-dark/50 font-heading uppercase tracking-[0.15em] text-xs mb-1">Next</span>
+                  <span class="text-ink dark:text-ink-dark group-hover:underline underline-offset-4">{neighbours.next.title}</span>
+                </a>
+              )}
+            </nav>
           )}
 
           <!-- Related Posts -->

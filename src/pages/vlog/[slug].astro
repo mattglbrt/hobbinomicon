@@ -1,0 +1,60 @@
+---
+import { getCollection, render } from 'astro:content';
+import VlogLayout from '../../layouts/VlogLayout.astro';
+import { getAllVlogEntries, getGuides } from '../../utils/content';
+
+export async function getStaticPaths() {
+  // Drafts must not get a page: the sitemap is generated from emitted routes,
+  // so an unfiltered draft points Google straight at it.
+  const posts = await getCollection('vlog', ({ data }) => !data.draft);
+  return posts
+    .filter((p) => !p.data.series && p.data.kind !== 'article')
+    .map((post) => ({ params: { slug: post.id }, props: post }));
+}
+
+const post = Astro.props;
+const { Content, remarkPluginFrontmatter } = await render(post);
+const readingTime = remarkPluginFrontmatter?.readingTime ?? 1;
+
+const all = await getAllVlogEntries();
+const guides = await getGuides();
+
+// "Guides for this" — what gives a diary entry somewhere to send a reader.
+// A guide about the same game wins; otherwise shared tags decide.
+const relatedGuides = guides
+  .map((g) => {
+    const shared = g.data.tags.filter((t) => post.data.tags.includes(t)).length;
+    const sameGame = g.data.game ? post.data.tags.includes(g.data.game.id) : false;
+    return { guide: g, score: (sameGame ? 5 : 0) + shared };
+  })
+  .filter((r) => r.score > 0)
+  .sort((a, b) => b.score - a.score)
+  .slice(0, 3)
+  .map((r) => r.guide);
+
+// Prev/next within the same month, so the archive reads as a run of days
+// rather than a heap.
+const sameMonth = all.filter(
+  (p) =>
+    !p.data.series &&
+    p.data.kind !== 'article' &&
+    p.data.pubDate.getUTCFullYear() === post.data.pubDate.getUTCFullYear() &&
+    p.data.pubDate.getUTCMonth() === post.data.pubDate.getUTCMonth()
+);
+const idx = sameMonth.findIndex((p) => p.id === post.id);
+const link = (e: typeof post) => ({ href: `/vlog/${e.id}/`, title: e.data.title });
+const neighbours = {
+  next: idx > 0 ? link(sameMonth[idx - 1]) : null, // sameMonth is newest-first
+  previous: idx >= 0 && idx < sameMonth.length - 1 ? link(sameMonth[idx + 1]) : null,
+};
+---
+
+<VlogLayout
+  {...post.data}
+  slug={post.id}
+  readingTime={readingTime}
+  relatedGuides={relatedGuides}
+  neighbours={neighbours}
+>
+  <Content />
+</VlogLayout>

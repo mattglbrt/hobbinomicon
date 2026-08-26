@@ -17,7 +17,10 @@ import LiteYouTube from '../../components/LiteYouTube.astro';
 import NewsletterSignup from '../../components/NewsletterSignup.astro';
 import SearchMeta from '../../components/SearchMeta.astro';
 import FunnelSection from '../../components/FunnelSection.astro';
+import ListCard from '../../components/ListCard.astro';
 import { getFunnelSuggestions } from '../../utils/funnel';
+import { getGuides, getSeries, getAllVlogEntries, guideUrlWith } from '../../utils/content';
+import { formatDateLong } from '../../utils/formatDate';
 import gameVideos from '../../data/game-videos.json';
 
 const newsKindLabels: Record<string, string> = {
@@ -64,20 +67,47 @@ const funnelSuggestions = game.data.hideFunnel
   ? []
   : getFunnelSuggestions(game, allGames, relatedGames);
 
-// Living feed: only blog posts tagged with this game's slug.
-// Generic tags like 'narrative' or 'fantasy' on the game itself drive the
-// funnel/discovery elsewhere; here we want strictly first-party content
-// about this specific game.
-const allBlog = await getCollection('blog');
-const publishedBlog = getPublishedPosts(allBlog);
-const matchingPosts = publishedBlog
-  .filter((post) => post.data.tags?.includes(game.id))
+// Guides for this game, grouped by what a reader wants rather than by date.
+// A game page used to show "Builds & Series" — a list of dated video titles —
+// which never told anyone there were nine painting guides here.
+const gameSlugs = new Set(allGames.map((g) => g.id));
+const allGuides = await getGuides();
+const gameGuides = allGuides.filter(
+  (g) => g.data.game?.id === game.id || g.id.startsWith(`${game.id}/`)
+);
+
+const guideLink = (g: (typeof allGuides)[number]) => ({
+  entry: g,
+  href: guideUrlWith(g, gameSlugs),
+});
+
+const startHere = gameGuides.filter((g) => g.data.topic === 'getting-started').map(guideLink);
+const paintingGuides = gameGuides
+  .filter((g) => ['painting', 'airbrushing'].includes(g.data.topic))
+  .map(guideLink);
+const terrainGuides = gameGuides
+  .filter((g) => g.data.topic === 'basing-and-terrain')
+  .map(guideLink);
+const otherGuides = gameGuides
+  .filter(
+    (g) =>
+      !['getting-started', 'painting', 'airbrushing', 'basing-and-terrain'].includes(g.data.topic)
+  )
+  .map(guideLink);
+
+// Series set on this game, plus the vlog archive entries tagged with it.
+const allSeries = await getSeries();
+const gameSeries = allSeries.filter((s) => s.data.game?.id === game.id);
+
+const vlogEntries = await getAllVlogEntries();
+const matchingPosts = vlogEntries
+  .filter((post) => !post.data.series && post.data.tags?.includes(game.id))
   .slice(0, 6);
 
 // Relocated project build series (the Projects section was retired). Ordered
 // chronologically so a build reads start-to-finish.
 const buildsPosts = game.data.relatedProjects.length
-  ? publishedBlog
+  ? vlogEntries
       .filter((post) => post.data.project && game.data.relatedProjects.includes(post.data.project))
       .sort((a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf())
   : [];
@@ -429,12 +459,62 @@ const gameSpecs = [
           </section>
         )}
 
+        {/* Guides, grouped by intent. Each block renders only when it has
+            something in it — an empty "Painting guides" heading is worse than
+            no heading. */}
+        {[
+          { title: 'Start here', blurb: 'What to buy, what to read, and what the game actually asks of you.', items: startHere },
+          { title: 'Painting guides', blurb: 'Recipes and schemes, paints named.', items: paintingGuides },
+          { title: 'Terrain & basing', blurb: 'Bases, boards and the scenery to put them on.', items: terrainGuides },
+          { title: 'More guides', blurb: null, items: otherGuides },
+        ]
+          .filter((s) => s.items.length > 0)
+          .map((section) => (
+            <section class="mt-20 pt-12 border-t border-ink/10 dark:border-ink-dark/10">
+              <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mb-2">
+                {section.title}
+              </h2>
+              {section.blurb && (
+                <p class="text-ink/70 dark:text-ink-dark/70 mb-8">{section.blurb}</p>
+              )}
+              <div class="grid gap-4 mt-6">
+                {section.items.map(({ entry, href }) => (
+                  <ListCard
+                    href={href}
+                    title={entry.data.title}
+                    description={entry.data.description}
+                    meta={formatDateLong(entry.data.pubDate)}
+                    image={getHeroImageUrl(entry.data.heroImage, entry.data.youtubeId)}
+                  />
+                ))}
+              </div>
+            </section>
+          ))}
+
+        {gameSeries.length > 0 && (
+          <section class="mt-20 pt-12 border-t border-ink/10 dark:border-ink-dark/10">
+            <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mb-8">
+              Series
+            </h2>
+            <div class="grid gap-4">
+              {gameSeries.map((s) => (
+                <ListCard
+                  href={`/series/${s.id}/`}
+                  title={s.data.name}
+                  description={s.data.description}
+                  image={getHeroImageUrl(s.data.heroImage, undefined)}
+                />
+              ))}
+            </div>
+          </section>
+        )}
+
         {buildsPosts.length > 0 && (
           <section class="mt-20 pt-12 border-t border-ink/10 dark:border-ink-dark/10">
             <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mb-2">
-              Builds &amp; Series
+              Build logs
             </h2>
-            <p class="text-ink/70 dark:text-ink-dark/70 mb-8">Build logs and painting guides, in order.</p>
+            <p class="text-ink/70 dark:text-ink-dark/70 mb-8">The project, in order, start to finish.</p>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {buildsPosts.map((post) => <PostCard post={post} />)}
             </div>
@@ -444,7 +524,7 @@ const gameSpecs = [
         {matchingPosts.length > 0 && (
           <section class="mt-20 pt-12 border-t border-ink/10 dark:border-ink-dark/10">
             <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mb-8">
-              From the Hobbinomicon
+              From the vlog
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {matchingPosts.map((post) => <PostCard post={post} />)}
