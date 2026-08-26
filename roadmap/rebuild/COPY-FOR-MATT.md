@@ -1,8 +1,8 @@
 # Copy I wrote that a reader will see
 
-> **Status:** **A and B applied** 2026-08-26 — see the notes inline. Three
-> blocks still need Matt: **[A4]/[A5]** length, **[B3]** voice pass, **[B5]**
-> the two lines I wrote for the new channel. **C onward is untouched.**
+> **Status:** **A and B applied** 2026-08-26 — see the notes inline. Still
+> needs Matt: **[A4]** and **[B5]** are wordings I wrote, and **[B3]** wants a
+> voice pass. **C onward is untouched.**
 
 Everything on the site that is my words rather than yours, pulled from the
 source as it stands on `dev`. Edit in place and hand it back — I'll put each
@@ -31,13 +31,13 @@ truncates it; meta `description` wants ≤155. I've flagged those.
 > HOBBYING FROM THE DEEP END OF THE DUNGEON
 
 ### [A3] Hero paragraph, under the H1. **APPLIED** (spacing after two commas normalised).
-> A directory of small and indie tabletop wargames, and the guides to get them on your table. Skirmish, army-scale, solo stuff, and the weird stuff in between.
+> A directory of small and indie tabletop wargames, and the guides to get them on your table. Skirmish, army-scale, solo, and the weird stuff in between.
 
-### [A4] Browser tab + Google result title *(currently 71 chars — over the 60 limit, will truncate)*
-> The Hobbinomicon — find your next indie wargame, then learn to paint it
+### [A4] Browser tab + Google result title. **APPLIED** — rewritten to cover play *and* paint, and now 54 chars so it no longer truncates. **The wording is mine, so check it.**
+> The Hobbinomicon — find, play and paint indie wargames
 
-### [A5] Google result description *(currently 178 chars — over the 155 limit, will truncate)*
-> A directory of indie wargames the big publishers ignore, and the painting guides to get them on your table. Skirmish, army-scale, solo, and the weird stuff in between.
+### [A5] Google result description. **APPLIED** — matches A3. 151 chars, under the limit.
+> A directory of small and indie tabletop wargames, and the guides to get them on your table. Skirmish, army-scale, solo, and the weird stuff in between.
 
 ### [A6] Guides section, eyebrow + heading. **APPLIED.**
 > **Eyebrow:** Learn to paint and play it
