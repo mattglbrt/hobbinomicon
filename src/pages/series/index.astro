@@ -1,0 +1,59 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import ContentContainer from '../../components/ContentContainer.astro';
+import ListCard from '../../components/ListCard.astro';
+import StructuredData from '../../components/StructuredData.astro';
+import { getSeries, getEpisodes } from '../../utils/content';
+import { getHeroImageUrl } from '../../utils/getHeroImage';
+
+const all = await getSeries();
+// A series with no episodes is not a series yet.
+const series = (
+  await Promise.all(
+    all.map(async (s) => ({ entry: s, count: (await getEpisodes(s.id)).length }))
+  )
+).filter((s) => s.count > 0);
+
+const description =
+  'Campaigns and live plays, run start to finish. Kingdom Death blind, Kal Arath solo, and whatever comes next.';
+---
+
+<BaseLayout title="Series | The Hobbinomicon" description={description}>
+  <StructuredData
+    type="breadcrumb"
+    data={{
+      breadcrumbs: [
+        { name: 'Home', url: 'https://hobbinomicon.com/' },
+        { name: 'Series', url: 'https://hobbinomicon.com/series/' },
+      ],
+    }}
+  />
+  <Header theme="light" />
+
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
+    <PageHeader
+      title="Series"
+      description={description}
+      breadcrumbs={[{ label: 'Series', href: '/series' }]}
+    />
+
+    <ContentContainer class="py-16">
+      <div class="grid gap-4">
+        {series.map(({ entry, count }) => (
+          <ListCard
+            href={`/series/${entry.id}/`}
+            title={entry.data.name}
+            description={entry.data.description}
+            meta={`${count} ${count === 1 ? 'episode' : 'episodes'}`}
+            image={getHeroImageUrl(entry.data.heroImage, undefined)}
+          />
+        ))}
+      </div>
+    </ContentContainer>
+
+    <Footer />
+  </main>
+</BaseLayout>

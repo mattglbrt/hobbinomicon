@@ -1,23 +1,24 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { vlogUrl } from '../utils/content';
 import { getHeroImageUrl } from '../utils/getHeroImage';
 import { formatDateShort } from '../utils/formatDate';
 
 interface Props {
-  previousPost: CollectionEntry<'blog'> | null;
-  nextPost: CollectionEntry<'blog'> | null;
+  previousPost: CollectionEntry<'vlog'> | null;
+  nextPost: CollectionEntry<'vlog'> | null;
   projectName: string;
   projectSlug: string | null;
 }
 
 const { previousPost, nextPost, projectName, projectSlug } = Astro.props;
 
-function getPostImage(post: CollectionEntry<'blog'>): string {
+function getPostImage(post: CollectionEntry<'vlog'>): string {
   return getHeroImageUrl(post.data.heroImage, post.data.youtubeId);
 }
 
 // Helper to safely get slug as string
-function getSlug(post: CollectionEntry<'blog'> | null): string {
+function getSlug(post: CollectionEntry<'vlog'> | null): string {
   if (!post) return '';
   return typeof post.id === 'string' ? post.id : String(post.id ?? '');
 }
@@ -44,7 +45,7 @@ function getSlug(post: CollectionEntry<'blog'> | null): string {
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       {previousPost && (
         <a
-          href={`/blog/${getSlug(previousPost)}/`}
+          href={previousPost ? vlogUrl(previousPost) : '#'}
           class="group block bg-ink/5 rounded-lg overflow-hidden hover:bg-ink/10 transition-colors"
         >
           <div class="aspect-video relative overflow-hidden">
@@ -73,7 +74,7 @@ function getSlug(post: CollectionEntry<'blog'> | null): string {
 
       {nextPost && (
         <a
-          href={`/blog/${getSlug(nextPost)}/`}
+          href={nextPost ? vlogUrl(nextPost) : '#'}
           class={`group block bg-ink/5 rounded-lg overflow-hidden hover:bg-ink/10 transition-colors ${!previousPost ? 'md:col-start-2' : ''}`}
         >
           <div class="aspect-video relative overflow-hidden">

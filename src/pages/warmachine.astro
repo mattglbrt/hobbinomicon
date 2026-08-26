@@ -1,0 +1,136 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import HubLayout, { type HubGroup } from '../layouts/HubLayout.astro';
+import { getGuides, getGames, guideUrlWith } from '../utils/content';
+import { getFunnelSuggestions } from '../utils/funnel';
+
+/**
+ * The Warmachine on-ramp. Faction order and the planned-model lists come from
+ * roadmap/rebuild/04-hubs-content-plan.md, which is Matt's own list — do not
+ * reorder or invent members here.
+ */
+const MY_ARMY = {
+  name: 'Old Umbrey',
+  planned: ['Lissya', 'Primeval', 'Vorony', 'Chosen of the Witch'],
+};
+
+const FACTIONS: { name: string; planned: string[] }[] = [
+  { name: 'Crucible Guard', planned: ['Gearheart', 'Toro', 'Apollo'] },
+  { name: 'Grymkin', planned: ['Heretic', 'Old Witch', 'Cage Rager', 'Crabbit', 'Slaughterhouse', 'Dreadrot'] },
+  { name: 'Infernals', planned: ['Zataroth', 'a heavy', 'a light', 'cultist', 'destroyer', 'Kithguard', 'Kraghorn'] },
+  { name: 'Convergence of Cyriss', planned: ['Directrix', 'Lucant'] },
+  { name: 'Dark Ops', planned: ['Thexus', 'Malfessor', 'Criterion', 'Drudge', 'Agitator'] },
+  { name: 'Thornfall Alliance', planned: ['Midas', 'Sturm & Drang or Carver'] },
+];
+
+// The Warmachine channel, not the main one — it carries Warmachine content
+// only, and the CTA says so rather than letting a subscriber assume otherwise.
+const WARMACHINE_CHANNEL =
+  'https://www.youtube.com/@TheHobbinomiconWarmachine?utm_source=hobbinomicon&utm_medium=hub';
+
+const gameSlugs = new Set((await getCollection('games')).map((g) => g.id));
+const guides = (await getGuides()).filter((g) => g.data.hub === 'warmachine');
+const link = (entry: (typeof guides)[number]) => ({ entry, href: guideUrlWith(entry, gameSlugs) });
+
+// The army Matt is painting in full, kept separate from the factions he paints
+// single models from to make a guide. Conflating the two is how a hub ends up
+// claiming seven armies nobody has finished.
+const spotlight = {
+  label: 'My personal Warmachine Army Project',
+  name: MY_ARMY.name,
+  planned: MY_ARMY.planned,
+  guides: guides.filter((g) => g.data.faction === MY_ARMY.name).map(link),
+};
+
+const groups: HubGroup[] = FACTIONS.map((f) => ({
+  name: f.name,
+  planned: f.planned,
+  guides: guides.filter((g) => g.data.faction === f.name).map(link),
+}));
+
+// Anything without a faction still belongs on the page. Most Warmachine
+// guides carry no faction because they are about a technique or the hobby
+// rather than an army; setting `faction` on those would be a lie.
+const unfiled = guides.filter(
+  (g) =>
+    g.data.faction !== MY_ARMY.name &&
+    (!g.data.faction || !FACTIONS.some((f) => f.name === g.data.faction))
+);
+if (unfiled.length) {
+  groups.push({
+    name: 'Not faction-specific',
+    guides: unfiled.map(link),
+  });
+}
+
+// Start here: three hand-picked guides. Falls back to the newest so the
+// section is never empty while Matt is choosing.
+const START_HERE_SLUGS: string[] = [];
+const picked = START_HERE_SLUGS.map((s) => guides.find((g) => g.id === s)).filter(Boolean);
+const startHere = (picked.length ? picked : guides.slice(0, 3)).map((g) => link(g!));
+
+const game = await getEntry('games', 'warmachine');
+const allGames = await getGames();
+const news = (await getCollection('news', ({ data }) => !data.draft))
+  .filter((n) => n.data.relatedGame?.id === 'warmachine')
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 4);
+
+/**
+ * The funnel is fed from relatedGames on the game entry, so Matt's editorial
+ * picks drive the hub and the game page from one place.
+ *
+ * `hideFunnel` is honoured here too. It is set on Warmachine because it is the
+ * only army-scale entry, so scored suggestions have no format peer and fall
+ * back to thin tag overlap — a closed decision, and the hub is not a reason to
+ * reopen it. Until relatedGames is set the section renders nothing, which
+ * beats shipping a non-sequitur on the page whose whole job is pointing
+ * sideways. Phase 4 sets the three picks and clears the flag.
+ */
+const editorial = game
+  ? await Promise.all(game.data.relatedGames.map((ref) => getEntry(ref)))
+  : [];
+const funnel =
+  game && (editorial.length > 0 || !game.data.hideFunnel)
+    ? getFunnelSuggestions(game, allGames, editorial)
+    : [];
+---
+
+<HubLayout
+  title="Warmachine"
+  tagline="I love Warmachine for the tight, competitive rules, but I am not good enough to write strategy guides. So here are painting guides instead."
+  description="Warmachine painting guides by faction, army projects, and news"
+  url="/warmachine/"
+  groupLabel="Painting guides by faction"
+  groupBlurb="These are recipes, and guides on how to paint the official box art schemes my way."
+  spotlight={spotlight}
+  groups={groups}
+  startHere={startHere}
+  news={news}
+  funnel={funnel}
+  game={game ?? null}
+  channelUrl={WARMACHINE_CHANNEL}
+  ctaText="More Warmachine on YouTube"
+  ctaDescription="A second channel, Warmachine only. Faction schemes, army projects, and event coverage."
+  ctaSubtitle="Warmachine only."
+>
+  {/* MATT: this section is yours to write and it is the one place on the hub
+      that should sound like you. What I have put here is only the facts you
+      gave me — Old Umbrey is the army you are painting in full, other factions
+      get single models so you can make a guide. Rewrite it.
+
+      Two other calls still open on this page:
+
+        1. START_HERE_SLUGS at the top is empty, so "Start here" is the three
+           newest guides rather than your picks. 04-hubs suggests the Crucible
+           Guard scheme guide, army-wide base prep, and buying/selling/trading.
+        2. The funnel reads relatedGames off src/content/games/warmachine.mdx,
+           which is empty and has hideFunnel set, so no funnel renders. 04-hubs
+           suggests Trench Crusade, Relicblade and Motley Crews. */}
+
+  <p>
+    I plan on playing Old Umbrey in 2027, so I am getting it painted now. I am
+    committing to Old Umbrey as my faction for 2027, regardless of what happens
+    with the balance patch.
+  </p>
+</HubLayout>

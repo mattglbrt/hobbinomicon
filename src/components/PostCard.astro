@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
+import { vlogUrl } from '../utils/content';
 import { getHeroImage, isImageMetadata } from '../utils/getHeroImage';
 import { formatDateShort } from '../utils/formatDate';
 import { getYouTubeFallbackHandler } from '../utils/youtubeImageFallback';
@@ -20,7 +21,7 @@ type IndividualProps = {
 };
 
 type PostObjectProps = {
-  post: CollectionEntry<'blog'>;
+  post: CollectionEntry<'vlog'>;
   slug?: never;
   title?: never;
   description?: never;
@@ -61,6 +62,8 @@ const displayImage = getHeroImage(heroImage, youtubeId);
 const isOptimizedImage = isImageMetadata(displayImage);
 const isRemoteImage = !isOptimizedImage && typeof displayImage === 'string' && displayImage.startsWith('http');
 
+const href = props.post ? vlogUrl(props.post) : `/vlog/${slug}/`;
+
 const formattedDate = formatDateShort(pubDate);
 ---
 
@@ -87,7 +90,7 @@ const formattedDate = formatDateShort(pubDate);
 </style>
 
 <article class="group">
-  <a href={`/blog/${slug}/`} class="block relative overflow-hidden rounded-lg aspect-[4/3] card-image">
+  <a href={href} class="block relative overflow-hidden rounded-lg aspect-[4/3] card-image">
     <!-- Loading placeholder -->
     <div class="absolute inset-0 card-loading" data-placeholder></div>
 

@@ -1,0 +1,73 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import ContentContainer from '../../components/ContentContainer.astro';
+import ListCard from '../../components/ListCard.astro';
+import StructuredData from '../../components/StructuredData.astro';
+import { getGuides, guideUrlWith, TOPICS, TOPIC_INTROS, type Topic } from '../../utils/content';
+import { getHeroImageUrl } from '../../utils/getHeroImage';
+import { formatDateLong } from '../../utils/formatDate';
+
+export async function getStaticPaths() {
+  const guides = await getGuides();
+  // Only topics that have guides get a page. A landing page for an empty
+  // topic is a thin page Google will treat as one.
+  return (Object.keys(TOPICS) as Topic[])
+    .map((topic) => ({ topic, entries: guides.filter((g) => g.data.topic === topic) }))
+    .filter(({ entries }) => entries.length > 0)
+    .map(({ topic, entries }) => ({ params: { topic }, props: { topic, entries } }));
+}
+
+const { topic, entries } = Astro.props;
+const games = new Set((await getCollection('games')).map((g) => g.id));
+
+const label = TOPICS[topic as Topic];
+const intro = TOPIC_INTROS[topic as Topic];
+---
+
+<BaseLayout title={`${label} Guides | The Hobbinomicon`} description={intro}>
+  <StructuredData
+    type="breadcrumb"
+    data={{
+      breadcrumbs: [
+        { name: 'Home', url: 'https://hobbinomicon.com/' },
+        { name: 'Guides', url: 'https://hobbinomicon.com/guides/' },
+        { name: label, url: `https://hobbinomicon.com/guides/${topic}/` },
+      ],
+    }}
+  />
+  <Header theme="light" />
+
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
+    <PageHeader
+      title={`${label} Guides`}
+      description={intro}
+      breadcrumbs={[
+        { label: 'Guides', href: '/guides' },
+        { label, href: `/guides/${topic}` },
+      ]}
+    />
+
+    <ContentContainer class="py-16">
+      <p class="text-ink/70 dark:text-ink-dark/70 text-sm mb-8">
+        {entries.length} {entries.length === 1 ? 'guide' : 'guides'}.
+      </p>
+      <div class="grid gap-4">
+        {entries.map((g) => (
+          <ListCard
+            href={guideUrlWith(g, games)}
+            title={g.data.title}
+            description={g.data.description}
+            meta={formatDateLong(g.data.pubDate)}
+            image={getHeroImageUrl(g.data.heroImage, g.data.youtubeId)}
+          />
+        ))}
+      </div>
+    </ContentContainer>
+
+    <Footer />
+  </main>
+</BaseLayout>

@@ -4,6 +4,58 @@ Append-only. **Newest entry first.** Pre-existing planning history lives in `roa
 
 ---
 
+## 2026-08-24/25 — Two news posts, a countdown component, a hub rule, and three real bugs
+
+Long content session that kept turning into engineering. **Eleven commits on dev, three merges to main** (`d4275dc`, `acc9cd2`, `5e82a0c`), three builds. Everything shipped; `dev` and `main` are level.
+
+### BONEZONE 2026 post + the Countdown component
+
+Matt is entering Richard Gray's annual skeleton painting comp and wanted a post with a live countdown to the deadline. Source page 403s to both WebFetch and curl, so the details came out of the browser.
+
+**The comp had not "just started."** It opened 1 August and today is the 23rd. Wrote it as open with ten weeks left rather than as a launch, and flagged the mismatch rather than papering over it.
+
+`src/components/Countdown.astro` + a tick script in `BaseLayout`. Two decisions worth keeping:
+
+- **The script lives in BaseLayout, outside `#swup`, not in the component.** A countdown only ships on the posts that use it, which is exactly the shape that broke `LiteYouTube`, `Comments` and the reading progress bar: Swup swaps content in as parsed markup, so a component-local script never executes on a page reached by clicking. Verified by *clicking through from /news/*, not by hard-loading — digits ticked, the interval cleared on navigate-away (net intervals back to 0), and the expired state swapped correctly against a faked past deadline.
+- **Digits are server-rendered from build time, then corrected by JS.** No-JS readers and the pre-hydration frame get a plausible number instead of dashes. They stale between builds, which the daily scheduled rebuild covers. The deadline is *also* written in prose, because `stripMdx` strips JSX components from the `.md` GEO rendering — the countdown must not be the only carrier of the date.
+
+Halloween 2026 falls after UK DST ends (25 Oct), so the deadline is 23:59 **GMT**, not BST.
+
+### The BONEZONE hub rule
+
+Matt: all BONEZONE content links back to `/news/bonezone-2026-open/`. Recorded in **`CLAUDE.md`** rather than only STATUS, because CLAUDE.md is auto-loaded and survives STATUS rewrites, and because the failure mode is specific: **synced vlogs arrive with no links in the body**, so every Royal Herald vlog needs the link added by hand after `refresh-vlogs`, and committed, since Netlify-built vlog posts are ephemeral.
+
+Applied it to the two pieces that already existed: `online-painting-competitions-2026.mdx` still said 2026 details "haven't been announced yet" (now filled in), and the skeleton-recipe vlog got a backlink.
+
+### Motley Crews: Dreadwood
+
+New `_nubmark` release. Post at `/news/motley-crews-denizens-of-dreadwood/`, plus a "What's new" section on the game page. Matt supplied the final copy; his version carried facts the sources did not — Advanced goes **2 terrain pieces to 10**, cows and terrain are pay-what-you-want, $15 buys a table plus all three official teams, new teams in development.
+
+**Deadwood vs Dreadwood:** the itch product title says Deadwood, the card file and video chapters say Dreadwood. Matt confirmed **Dreadwood**. Renamed the post; the itch URL genuinely contains `deadwood` and was deliberately left alone. Safe rename with no redirect — it had never reached main.
+
+**A correction of mine.** I changed the game page's "$10" to "$5 a set", assuming it was stale. It was not: sets are $5 and a two-player game needs two. Restored, and both mentions now state the per-set price *and* why it doubles, so the next reader does not repeat the mistake.
+
+Also caught from the video description and added: the **Maison Nébuleuse pre-order week, 24–31 August**, physical resin printed by Trashfire Studio. Time-sensitive, which is what drove merging rather than batching.
+
+### Three bugs, none of them the thing I was asked to do
+
+- **og:image was broken site-wide on four templates.** news, games, studios and people all passed the raw `heroImage` frontmatter path to BaseLayout and StructuredData. Heroes live in `src/assets`, so `/images/...` has no file behind it once deployed: every social preview and every structured-data image pointed at a 404. `BlogLayout` already resolved this via `getHeroImageUrl`; the detail templates never did, which is why blog posts previewed fine and news posts did not. Fixed all four.
+- **YouTube embed thumbnails sat 32px low.** Reported as "the container is too tall" — the container was always exactly 16:9. Tailwind Typography's base `prose img` rule margins the thumbnail, and **a margin still offsets an absolutely positioned box**, so it dropped below the frame top and overflowed the bottom into `overflow-hidden`. `not-prose` on the `LiteYouTube` root, fixed at the component so it covers every in-prose embed.
+- **Motley Crews had fallen off the homepage.** "Games worth knowing about" sorts indie-tier first then by `updatedDate || pubDate`, top 6; Motley Crews sat at #8 on its May pubDate. Added `updatedDate`, now #1. **Note `pinned: true` is set on that game and the homepage sort never reads it** — there is no durable pin, only date order.
+
+### Deletions and drafts
+
+- **Deathbringer post removed** at Matt's request: post, 700KB hero, and a stale doc-comment referencing it. Its URL and `.md` rendering both 301 to `/news/`, matching the dropped-tag convention. Verified gone from build, news index, sitemap, `llms.txt` and `llms-full.txt`.
+- **`oldhammer-year-2027.mdx` drafted** (`draft: true`, invisible to build/sitemap/indexes). 2027 as an Oldhammer year via OWAC and 40k2ndAC. Both source pages currently document the 2026 editions and Matt says they update in place. Two threads left visible in the copy rather than smoothed: the challenges **overlap** (two 1,000-point armies in parallel, on top of the Tomb Kings army), and **OWAC is Oldhammer 3rd/4th edition, not the current Warhammer: The Old World game** the BONEZONE kits belong to.
+
+### Artifacts
+
+`src/components/Countdown.astro` · `src/content/news/bonezone-2026-open.mdx` · `src/content/news/motley-crews-denizens-of-dreadwood.mdx` (+ two optimized images in `src/assets/images/news/`) · `src/content/blog/articles/oldhammer-year-2027.mdx` (draft) · edits to `BaseLayout.astro`, `LiteYouTube.astro`, four `[slug].astro` templates, `motley-crews.mdx`, `online-painting-competitions-2026.mdx`, `a-new-way-to-paint-skeletons.mdx`, `public/_redirects`, `CLAUDE.md`.
+
+Not verified: the live site after the final deploy. The countdown and the og:image tags were confirmed on a locally built site and, for the embed fix, measured in a browser before and after.
+
+---
+
 ## 2026-08-13 — AI disclosure reframed as a promise; shipped
 
 Short session, one change, deployed. **`8ba7eba`** on dev, merged **`f2391f2`** to main, one build.

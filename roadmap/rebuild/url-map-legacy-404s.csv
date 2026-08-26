@@ -1,0 +1,59 @@
+old_url,new_url,note
+/blog/resources/warriors-of-athena-figure-list/,/games/mage-knight/warriors-of-athena-figure-list/,RESTORE from git 48d6f7c
+/blog/resources/solo-coop-gaming-resources/,/guides/solo-coop-gaming-resources/,"restored Phase 0; kept as its own guide (CSV note said restore here)"
+/blog/resources/trench-crusade-resources/,/games/trench-crusade/,"folded into the game page 2026-08-26 at Matt's request"
+/blog/resources/warmachine-resources/,/games/warmachine/,"folded into the game page 2026-08-26 at Matt's request"
+/blog/resources/chainmail-miniatures-checklist/,/articles/chainmail-miniatures-checklist/,"restored Phase 0; a checklist is a list article"
+/blog/resources/competition-painting-guides/,/articles/online-painting-competitions-2026/,
+/blog/resources/painting-references-maximus-infinity/,/guides/painting-references-maximus-infinity/,"restored Phase 0; kept as its own guide"
+/getting-good-warmachine-the-lists/,/warmachine/,WordPress-era
+/getting-good-first-battle-report/,/warmachine/,WordPress-era
+/orcs-goblins/,/tags/orcs-and-goblins/,WordPress-era
+/trench-crusade-campaign-1/,/games/trench-crusade/,WordPress-era
+/portfolio/trench-crusade/,/games/trench-crusade/,
+/blog/campaigns/dolmenwood/,/tags/dolmenwood/,campaign hub removed; RESTORE optional
+/blog/campaigns/dolmenwood/season-1/prelude/,/tags/dolmenwood/,
+/blog/campaigns/kingdom-death/,/series/kingdom-death-monster/,
+/blog/campaigns/kingdom-death/settlement-1/,/series/kingdom-death-monster/,
+/blog/campaigns/crown-and-skull/the-last-watch/chapter-1/,/vlog/loose-ends-and-crown-and-skull-session-0/,
+/campaigns/,/series/,
+/blog/characters/dolmenwood/thorek-duskworn/,/tags/dolmenwood/,RESTORE optional
+/blog/characters/dolmenwood/eloryn-vale/,/tags/dolmenwood/,
+/blog/characters/eloryn-vale/,/tags/dolmenwood/,
+/blog/characters/dolmenwood/rollo/,/tags/dolmenwood/,
+/blog/characters/dolmenwood/garrin-vosk/,/tags/dolmenwood/,
+/blog/characters/dolmenwood/triste/,/tags/dolmenwood/,
+/blog/characters/crownandskull/mordryth/,/vlog/loose-ends-and-crown-and-skull-session-0/,
+/blog/characters/crownandskull/vyr/,/vlog/loose-ends-and-crown-and-skull-session-0/,
+/blog/characters/crownandskull/ryva/,/vlog/loose-ends-and-crown-and-skull-session-0/,
+/blog/characters/crownandskull/cylena/,/vlog/loose-ends-and-crown-and-skull-session-0/,
+/blog/characters/crownandskull/lanyssa/,/vlog/loose-ends-and-crown-and-skull-session-0/,
+/blog/vlogs/dolemwood-players-book-flip-through/,/guides/dolmenwood-players-book-flip-through/,typo slug variant
+/blog/vlogs/necromunda-kitbashing-giveaway-winners/,/guides/necromunda-kitbashing-and-giveaway-winners/,slug variant
+/blog/vlogs/how-to-paint-red---airbrush-vs-drybrush/,/guides/how-to-paint-red-airbrush-vs-drybrush/,slug variant
+/blog/vlogs/how-i-clean-resin-3d-print/,/guides/how-i-clean-my-resin-3d-prints/,slug variant
+/blog/vlogs/just-a-video-about-painting-a-belt-buckle/,/guides/painting-a-belt-buckle/,slug variant
+/blog/vlogs/how-to-paint-orc-skin/,/guides/how-to-paint-pale-orc-skin/,slug variant
+/blog/vlogs/my-favorite-bases-for-trench-crusade/,/guides/my-favorite-trench-crusade-bases/,slug variant
+/blog/vlogs/how-to-use-dirty-down-rust-creating-blood-gore---part-2/,/guides/how-to-use-dirty-down-rust-creating-blood-gore-part-2/,slug variant
+/blog/vlogs/solo-roleplaying-session-0-part-1-intro/,/guides/solo-roleplaying-session-0-part-1-intro-to-the-system/,slug variant
+/blog/vlogs/it-s-ok-to-not-paint-your-miniatures/,/vlog/its-ok-to-not-paint-your-miniatures/,slug variant
+/blog/vlogs/crown-and-skull-session-0/,/vlog/loose-ends-and-crown-and-skull-session-0/,slug variant
+/blog/vlogs/dolmenwood-pok-dex-project-ep-1/,/vlog/dolmenwood-pokedex-project-ep-1/,slug variant
+/blog/bokur-brawl-ig-lists/,/warmachine/,WordPress-era
+/categories/resources/,/guides/,
+/categories/tutorials/,/guides/,
+/categories/tips/,/guides/,
+/categories/news/,/news/,
+/categories/reviews/,/guides/review/,
+/category/videos/,/guides/,
+/category/trench-crusade/,/games/trench-crusade/,
+/category/trench-crusade/choir-of-saint-cecilia/,/games/trench-crusade/,
+/listing/museum-of-london/,/,
+/project-type/web-design/,/,
+/tags/hobby-zen/,/tags/hobby-motivation/,
+/tags/alternate-history/,/tags/trench-crusade/,
+/tags/warrior/,/tags/mage-knight/,
+/tags/strategy/,/tags/mage-knight/,
+/tags/solo-gaming/,/tags/solo-rpg/,
+/tags/relic-blade/,/tags/relicblade/,

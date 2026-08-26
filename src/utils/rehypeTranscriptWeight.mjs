@@ -7,6 +7,10 @@
  *
  * Transcripts stay in the index — a query that only appears in a transcript
  * still finds the post — they just can't outrank title/description/body hits.
+ *
+ * On guides it also collapses the section into a <details>. A guide leads with
+ * what Matt wrote; the transcript is the appendix that backs it up. Vlogs keep
+ * theirs open, because on a vlog the transcript IS the post.
  */
 
 const TRANSCRIPT_WEIGHT = '0.2';
@@ -18,7 +22,8 @@ function textOf(node) {
 }
 
 export function rehypeTranscriptWeight() {
-  return (tree) => {
+  return (tree, file) => {
+    const isGuide = String(file?.path ?? '').includes('/src/content/guides/');
     const children = tree.children;
     if (!Array.isArray(children)) return;
 
@@ -41,11 +46,40 @@ export function rehypeTranscriptWeight() {
     }
 
     const section = children.splice(start, end - start);
+
+    if (!isGuide) {
+      children.splice(start, 0, {
+        type: 'element',
+        tagName: 'section',
+        properties: { 'data-pagefind-weight': TRANSCRIPT_WEIGHT },
+        children: section,
+      });
+      return;
+    }
+
+    // Guides: drop the h2 (the <summary> replaces it) and collapse the rest.
+    const [, ...body] = section;
     children.splice(start, 0, {
       type: 'element',
-      tagName: 'section',
-      properties: { 'data-pagefind-weight': TRANSCRIPT_WEIGHT },
-      children: section,
+      tagName: 'details',
+      properties: {
+        class: 'transcript-details not-prose',
+        'data-pagefind-weight': TRANSCRIPT_WEIGHT,
+      },
+      children: [
+        {
+          type: 'element',
+          tagName: 'summary',
+          properties: { class: 'transcript-summary' },
+          children: [{ type: 'text', value: 'Full transcript of the video' }],
+        },
+        {
+          type: 'element',
+          tagName: 'div',
+          properties: { class: 'transcript-body prose dark:prose-invert max-w-none' },
+          children: body,
+        },
+      ],
     });
   };
 }

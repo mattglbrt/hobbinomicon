@@ -1,0 +1,73 @@
+---
+import { getCollection } from 'astro:content';
+import HubLayout, { type HubGroup } from '../layouts/HubLayout.astro';
+import { getGuides, guideUrlWith, SYSTEMS } from '../utils/content';
+
+/**
+ * The Warhammer on-ramp: one page for now, grouped by `system`.
+ *
+ * Deliberately NOT split into /warhammer/40k/ and friends yet. Every guide
+ * already carries `system`, whose values are the future URL slugs, so the
+ * split is a template addition with zero redirects when a system reaches
+ * roughly six guides. See 04-hubs-content-plan.md, "Hub naming".
+ *
+ * Spearhead is a section here, not a hub. It stays a planned-models list until
+ * City of Ash content exists.
+ */
+const SYSTEM_ORDER = ['40k', 'the-old-world', 'spearhead', 'age-of-sigmar', 'kill-team', 'necromunda', 'other'] as const;
+
+const PLANNED: Partial<Record<(typeof SYSTEM_ORDER)[number], string[]>> = {
+  // MATT: confirm the City of Ash team names when the box is in hand.
+  'spearhead': ['Tyrants Bellow'],
+  'the-old-world': ['Tomb Kings'],
+  '40k': ['a Khorne Daemon army'],
+};
+
+const gameSlugs = new Set((await getCollection('games')).map((g) => g.id));
+const guides = (await getGuides()).filter((g) => g.data.hub === 'warhammer');
+const link = (entry: (typeof guides)[number]) => ({ entry, href: guideUrlWith(entry, gameSlugs) });
+
+const groups: HubGroup[] = SYSTEM_ORDER
+  .map((sys) => ({
+    name: SYSTEMS[sys],
+    planned: PLANNED[sys],
+    guides: guides.filter((g) => g.data.system.includes(sys)).map(link),
+  }))
+  // A system with no guides only earns a slot if it has a planned list to show.
+  .filter((g) => g.guides.length > 0 || (g.planned?.length ?? 0) > 0);
+
+const unfiled = guides.filter((g) => g.data.system.length === 0);
+if (unfiled.length) {
+  groups.push({ name: 'Also painting', guides: unfiled.map(link) });
+}
+
+const startHere = guides.slice(0, 3).map(link);
+
+const news = (await getCollection('news', ({ data }) => !data.draft))
+  .filter((n) => (n.data.relatedGame?.id ?? '').includes('warhammer') || (n.data.relatedGame?.id ?? '').includes('sigmar'))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 4);
+---
+
+<HubLayout
+  title="Warhammer"
+  tagline="40k, The Old World, and Age of Sigmar Spearhead."
+  description="Warhammer painting guides — 40k, The Old World, and Spearhead. Plus the smaller wargames worth trying if you already paint Games Workshop models."
+  url="/warhammer/"
+  groupLabel="Guides by game"
+  groups={groups}
+  startHere={startHere}
+  news={news}
+  ctaText="More Warhammer on YouTube"
+>
+  {/* MATT: your words go here — what you are painting and why anyone landing
+      from a 40k search should stick around. This body is the only thing on the
+      page still in my register rather than yours.
+
+      `system` is set on every guide now, so the groups below are real. The
+      Spearhead group has one guide and Tyrants Bellow on the desk. */}
+
+  <h2>Why this page exists</h2>
+
+  <p>Most people painting miniatures started with one of these.</p>
+</HubLayout>

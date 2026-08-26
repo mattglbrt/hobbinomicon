@@ -1,0 +1,386 @@
+---
+import { Image, getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import BaseLayout from './BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import RelatedPosts from '../components/RelatedPosts.astro';
+import ListCard from '../components/ListCard.astro';
+import ProjectNavigation from '../components/ProjectNavigation.astro';
+import BackToTop from '../components/BackToTop.astro';
+import StructuredData from '../components/StructuredData.astro';
+import Comments from '../components/Comments.astro';
+import ProseContent from '../components/ProseContent.astro';
+import SearchMeta from '../components/SearchMeta.astro';
+import { getEntry } from 'astro:content';
+import gameVideos from '../data/game-videos.json';
+import { getHeroImage, getHeroImageUrl, isImageMetadata } from '../utils/getHeroImage';
+import { formatReadingTime } from '../utils/readingTime';
+import { formatDateLong } from '../utils/formatDate';
+import { getYouTubeFallbackHandler } from '../utils/youtubeImageFallback';
+import type { CollectionEntry } from 'astro:content';
+
+interface ProjectNav {
+  previousPost: CollectionEntry<'vlog'> | null;
+  nextPost: CollectionEntry<'vlog'> | null;
+  projectName: string;
+  projectSlug: string;
+}
+
+interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  updatedDate?: Date;
+  heroImage?: string;
+  heroImageAlt?: string;
+  category?: string;
+  tags: string[];
+  youtubeId?: string;
+  readingTime?: number;
+  relatedPosts?: CollectionEntry<'vlog'>[];
+  relatedGuides?: { entry: CollectionEntry<'guides'>; href: string }[];
+  /**
+   * Prev/next as resolved links. The layout serves /vlog/ and
+   * /series/{series}/ alike, so it is given hrefs rather than entries — it has
+   * no business knowing which URL shape an entry renders at.
+   */
+  neighbours?: {
+    previous: { href: string; title: string } | null;
+    next: { href: string; title: string } | null;
+  };
+  /** Set on a series episode: renders the "Part of" line above the title. */
+  seriesContext?: { href: string; name: string; episodeCount: number } | null;
+  projectNavigation?: ProjectNav | null;
+  slug: string;
+}
+
+const { title, description, pubDate, updatedDate, heroImage, heroImageAlt, category, tags, youtubeId, readingTime, relatedPosts = [], relatedGuides = [], neighbours, seriesContext = null, projectNavigation = null, slug } = Astro.props;
+
+// `category` is optional since the re-architecture — the collection is the
+// category now. Anything that used it for display falls back to the section.
+const sectionLabel = category ?? 'Vlog';
+
+const displayImage = getHeroImage(heroImage, youtubeId);
+const displayImageUrl = getHeroImageUrl(heroImage, youtubeId);
+const hasRealHero = Boolean(heroImage) || Boolean(youtubeId);
+const isOptimizedImage = isImageMetadata(displayImage);
+const isRemoteImage = !isOptimizedImage && typeof displayImage === 'string' && displayImage.startsWith('http');
+
+// Preload the hero (LCP element) so it's fetched immediately, not after CSS.
+// Generate it via getImage ONCE and reuse the exact same srcset for both the
+// preload and the rendered <img>, so the browser preloads the variant it
+// actually paints (a separate <Image> would hash differently and double-fetch).
+let heroImg: Awaited<ReturnType<typeof getImage>> | null = null;
+let heroPreloadHref = '';
+if (hasRealHero && isOptimizedImage) {
+  heroImg = await getImage({
+    src: displayImage as ImageMetadata,
+    widths: [640, 1024, 1920],
+    sizes: '100vw',
+    format: 'webp',
+    quality: 50,
+  });
+} else if (hasRealHero && isRemoteImage) {
+  heroPreloadHref = displayImage as string;
+}
+
+const formattedDate = formatDateLong(pubDate);
+const formattedUpdatedDate = updatedDate ? formatDateLong(updatedDate) : null;
+
+// Video back-links: the related directory game. (The topic-collection link
+// went with /videos/; guides now do that job, via relatedGuides below.)
+const gameVideoMap: Record<string, string> = {};
+for (const [g, vids] of Object.entries(gameVideos as Record<string, { id: string }[]>)) {
+  for (const v of vids) if (!gameVideoMap[v.id]) gameVideoMap[v.id] = g;
+}
+const relatedGameSlug = youtubeId ? gameVideoMap[youtubeId] : undefined;
+let relatedGame = relatedGameSlug ? await getEntry('games', relatedGameSlug) : null;
+// Don't link to draft games (their pages aren't built).
+if (relatedGame?.data.draft) relatedGame = null;
+
+// Build full image URL for structured data
+const imageUrl = displayImageUrl.startsWith('http')
+  ? displayImageUrl
+  : new URL(displayImageUrl, Astro.site || Astro.url).toString();
+
+// Build canonical URL for this post
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site || Astro.url).toString();
+
+// Estimate word count from reading time (assuming ~200 words per minute)
+const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  image={hasRealHero ? displayImageUrl : undefined}
+  ogSource={heroImage}
+  ogYoutubeId={youtubeId}
+  ogType="article"
+  publishedTime={pubDate}
+  modifiedTime={updatedDate}
+  author="Hobbinomicon"
+  tags={tags}
+  section={category}
+>
+  {heroImg && (
+    <link slot="head" rel="preload" as="image" imagesrcset={heroImg.srcSet.attribute} imagesizes="100vw" fetchpriority="high" />
+  )}
+  {heroPreloadHref && (
+    <link slot="head" rel="preload" as="image" href={heroPreloadHref} fetchpriority="high" />
+  )}
+  <!-- BlogPosting Structured Data -->
+  <StructuredData
+    type="blogPosting"
+    data={{
+      title,
+      description,
+      image: imageUrl,
+      datePublished: pubDate,
+      dateModified: updatedDate,
+      authorName: 'Hobbinomicon',
+      authorUrl: 'https://hobbinomicon.com/about/',
+      keywords: tags,
+      category: sectionLabel,
+      wordCount: estimatedWordCount,
+      url: canonicalUrl,
+    }}
+  />
+  <StructuredData
+    type="breadcrumb"
+    data={{
+      breadcrumbs: [
+        { name: 'Home', url: 'https://hobbinomicon.com/' },
+        ...(seriesContext
+          ? [
+              { name: 'Series', url: 'https://hobbinomicon.com/series/' },
+              { name: seriesContext.name, url: new URL(seriesContext.href, Astro.site ?? Astro.url).toString() },
+            ]
+          : [{ name: 'Vlog', url: 'https://hobbinomicon.com/vlog/' }]),
+        { name: title, url: canonicalUrl },
+      ],
+    }}
+  />
+  {youtubeId && (
+    <StructuredData
+      type="videoObject"
+      data={{
+        name: title,
+        description,
+        thumbnailUrl: imageUrl,
+        uploadDate: pubDate,
+        youtubeId,
+      }}
+    />
+  )}
+  <Header />
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark" data-pagefind-body data-pagefind-meta="kind:Vlog" data-pagefind-filter="kind:Vlog">
+    <SearchMeta description={description} type={youtubeId ? "video" : "article"} />
+    <!-- Standard Blog Post Layout -->
+        <!-- Reading Progress Bar -->
+        <div class="reading-progress fixed top-0 left-0 h-[3px] bg-gradient-to-r from-ink/80 via-ink to-ink/80 dark:from-parchment-dark/80 dark:via-parchment-dark dark:to-parchment-dark/80 z-50 transition-none" style="width: 0%;"></div>
+
+        <!-- Hero Image — Full-bleed with parallax -->
+        <div class="relative h-[60vh] md:h-[70vh] overflow-hidden blog-hero-wrapper">
+          <div class="absolute inset-0 blog-parallax-img" style="top: -10%; bottom: -10%; height: 120%;">
+            {heroImg ? (
+              <img
+                src={heroImg.src}
+                srcset={heroImg.srcSet.attribute}
+                sizes="100vw"
+                alt={heroImageAlt || title}
+                width="1920"
+                height="1080"
+                class="w-full h-full object-cover object-top"
+                loading="eager"
+                fetchpriority="high"
+                decoding="sync"
+              />
+            ) : isRemoteImage ? (
+              <img
+                src={displayImage}
+                alt={heroImageAlt || title}
+                class="w-full h-full object-cover object-top"
+                width="1920"
+                height="1080"
+                loading="eager"
+                fetchpriority="high"
+                decoding="sync"
+                data-youtube-id={youtubeId}
+                onerror={getYouTubeFallbackHandler('id')}
+              />
+            ) : (
+              <Image
+                src={displayImage}
+                alt={heroImageAlt || title}
+                width={1920}
+                height={1080}
+                class="w-full h-full object-cover object-top"
+                loading="eager"
+                decoding="sync"
+                format="webp"
+                quality={50}
+                widths={[640, 1024, 1920]}
+                sizes="100vw"
+              />
+            )}
+          </div>
+          <div class="absolute inset-0 bg-gradient-to-t from-parchment dark:from-parchment-dark via-ink/30 to-transparent"></div>
+          <div class="absolute inset-0 bg-gradient-to-br from-ink/20 via-transparent to-transparent"></div>
+        </div>
+
+        <!-- Title overlapping hero bottom edge -->
+        <div class="relative -mt-32 md:-mt-40 z-10 px-6">
+          <div class="max-w-4xl mx-auto">
+            <!-- data-pagefind-ignore keeps badge/date text out of search excerpts;
+                 category still reaches the index via data-pagefind-meta on <main> -->
+            <div class="mb-4" data-pagefind-ignore>
+              <a href={seriesContext?.href ?? '/vlog/'} class="inline-block px-3 py-1 bg-ink/10 dark:bg-ink-dark/10 backdrop-blur-md text-ink/80 dark:text-ink-dark/80 text-xs font-heading uppercase tracking-[0.2em] rounded-full border border-ink/10 dark:border-ink-dark/10">
+                {seriesContext ? seriesContext.name : sectionLabel}
+              </a>
+            </div>
+            <h1 class="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-ink dark:text-ink-dark mb-6 leading-tight" style="line-height: 0.9;" data-pagefind-meta="title">
+              {title}
+            </h1>
+            <div class="flex flex-wrap gap-4 items-center text-ink/70 dark:text-ink-dark/70 text-sm" data-pagefind-ignore>
+              <time datetime={pubDate.toISOString()} class="font-heading tracking-wide">{formattedDate}</time>
+              {readingTime && (
+                <>
+                  <span class="text-ink/30 dark:text-ink-dark/30">/</span>
+                  <span class="font-heading tracking-wide">{formatReadingTime(readingTime)}</span>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <!-- Content -->
+        <article class="max-w-3xl mx-auto px-6 py-12 md:py-16 blog-content">
+          <!-- Description -->
+          <p class="text-xl md:text-2xl text-ink/80 dark:text-ink-dark/80 font-serif italic mb-8 leading-relaxed border-l-4 border-ink/30 dark:border-ink-dark/30 pl-6" data-pagefind-weight="2">
+            {description}
+          </p>
+
+          <!-- Tags -->
+          <!-- data-pagefind-ignore drops the raw #tag text from the index/excerpts;
+               Pagefind still processes the data-pagefind-filter attributes inside -->
+          {tags.length > 0 && (
+            <div class="flex flex-wrap gap-2 mb-8" data-pagefind-ignore>
+              {tags.map((tag) => (
+                <a
+                  href={`/tags/${tag}/`}
+                  class="text-sm px-3 py-1 bg-ink/5 dark:bg-ink-dark/5 hover:bg-ink/20 dark:hover:bg-ink-dark/20 text-ink dark:text-ink-dark rounded-full transition-colors"
+                  data-pagefind-filter={`tag:${tag}`}
+                >
+                  #{tag}
+                </a>
+              ))}
+            </div>
+          )}
+
+          <!-- Blog Content -->
+          <ProseContent>
+            <slot />
+          </ProseContent>
+
+          <!-- Video back-links: topic collection + related directory game -->
+          {relatedGame && (
+            <div class="mt-12 pt-8 border-t border-ink/10 dark:border-ink-dark/10 flex flex-wrap gap-x-6 gap-y-2 text-sm" data-pagefind-ignore>
+              {relatedGame && (
+                <a href={`/games/${relatedGame.id}/`} class="text-ink dark:text-ink-dark underline underline-offset-4 hover:no-underline">
+                  {relatedGame.data.title} in the directory →
+                </a>
+              )}
+            </div>
+          )}
+
+          <!-- Updated Date -->
+          {formattedUpdatedDate && (
+            <p class="text-sm text-ink/70 italic mt-12 pt-8 border-t border-ink/10" data-pagefind-ignore>
+              Last updated: {formattedUpdatedDate}
+            </p>
+          )}
+
+          <!-- Project Navigation (Previous/Next in series) -->
+          {projectNavigation && (
+            <ProjectNavigation
+              previousPost={projectNavigation.previousPost}
+              nextPost={projectNavigation.nextPost}
+              projectName={projectNavigation.projectName}
+              projectSlug={projectNavigation.projectSlug}
+            />
+          )}
+
+          <!-- Guides for this. The block that stops a diary entry being a
+               dead end: a reader who liked the painting here can go and read
+               how it was done. Renders only when there is something to show. -->
+          {relatedGuides.length > 0 && (
+            <section class="mt-14 pt-10 border-t-2 border-ink/15 dark:border-ink-dark/15" data-pagefind-ignore>
+              <h2 class="font-heading text-sm uppercase tracking-[0.2em] text-ink/70 dark:text-ink-dark/70 mb-6">
+                Guides for this
+              </h2>
+              <div class="grid gap-4">
+                {relatedGuides.map(({ entry, href }) => (
+                  <ListCard
+                    href={href}
+                    title={entry.data.title}
+                    description={entry.data.description}
+                    meta={formatDateLong(entry.data.pubDate)}
+                    image={getHeroImageUrl(entry.data.heroImage, entry.data.youtubeId)}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
+
+          <!-- Prev/next within the same month, so the archive reads as a run
+               of days rather than a heap. -->
+          {(neighbours?.previous || neighbours?.next) && (
+            <nav class="mt-12 pt-8 border-t border-ink/10 dark:border-ink-dark/10 grid gap-4 sm:grid-cols-2 text-sm" data-pagefind-ignore>
+              {neighbours.previous ? (
+                <a href={neighbours.previous.href} class="group">
+                  <span class="block text-ink/50 dark:text-ink-dark/50 font-heading uppercase tracking-[0.15em] text-xs mb-1">Previous</span>
+                  <span class="text-ink dark:text-ink-dark group-hover:underline underline-offset-4">{neighbours.previous.title}</span>
+                </a>
+              ) : <span />}
+              {neighbours.next && (
+                <a href={neighbours.next.href} class="group sm:text-right">
+                  <span class="block text-ink/50 dark:text-ink-dark/50 font-heading uppercase tracking-[0.15em] text-xs mb-1">Next</span>
+                  <span class="text-ink dark:text-ink-dark group-hover:underline underline-offset-4">{neighbours.next.title}</span>
+                </a>
+              )}
+            </nav>
+          )}
+
+          <!-- Related Posts -->
+          {relatedPosts.length > 0 && (
+            <RelatedPosts posts={relatedPosts} />
+          )}
+
+          <!-- Comments -->
+          <Comments postSlug={slug} />
+        </article>
+
+    <!-- Back to Top Button -->
+    <BackToTop />
+  </main>
+  <Footer />
+
+  <style>
+    .blog-parallax-img {
+      will-change: transform;
+      transform: translateY(calc(var(--scroll-y, 0) * 0.3px));
+    }
+
+    @media (prefers-reduced-motion: reduce), (max-width: 768px) {
+      .blog-parallax-img {
+        transform: none !important;
+      }
+    }
+  </style>
+
+  <!-- The reading-progress and lightbox-tagging scripts moved to BaseLayout
+       (outside #swup) on 07-31. Anything script-shaped that lives in here
+       never executes on a post reached by in-site navigation. -->
+</BaseLayout>

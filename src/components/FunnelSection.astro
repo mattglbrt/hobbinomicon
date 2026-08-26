@@ -16,18 +16,21 @@ interface Props {
   suggestions: FunnelSuggestion[];
   /** Title of the game being viewed, used in the heading. */
   sourceTitle: string;
+  /** Override the heading. The on-ramp hubs phrase it round painting. */
+  heading?: string;
+  blurb?: string;
 }
 
-const { suggestions, sourceTitle } = Astro.props;
+const { suggestions, sourceTitle, heading, blurb } = Astro.props;
 ---
 
 {suggestions.length > 0 && (
   <section class="mt-20 pt-12 border-t border-ink/10 dark:border-ink-dark/10" data-pagefind-ignore>
     <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mb-2">
-      If you like {sourceTitle}, try
+      {heading ?? `If you like ${sourceTitle}, try`}
     </h2>
     <p class="text-ink/70 dark:text-ink-dark/70 mb-8">
-      Other games in the directory that scratch the same itch.
+      {blurb ?? 'Other games in the directory that scratch the same itch.'}
     </p>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {suggestions.map(({ game, reason }) => {

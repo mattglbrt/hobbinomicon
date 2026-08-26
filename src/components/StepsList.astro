@@ -1,0 +1,33 @@
+---
+/**
+ * The ordered steps of a guide. Rendered from frontmatter rather than the body
+ * so the same list feeds the HowTo JSON-LD without being written twice.
+ */
+interface Props {
+  steps: string[];
+  title?: string;
+}
+
+const { steps, title = 'The steps' } = Astro.props;
+---
+
+{steps.length > 0 && (
+  <section class="not-prose my-10">
+    <h2 class="font-heading text-sm uppercase tracking-[0.2em] text-ink/70 dark:text-ink-dark/70 mb-4">
+      {title}
+    </h2>
+    <ol class="space-y-4">
+      {steps.map((step, i) => (
+        <li class="flex gap-4">
+          <span
+            aria-hidden="true"
+            class="flex-shrink-0 w-8 h-8 rounded-full bg-ink/10 dark:bg-ink-dark/10 text-ink dark:text-ink-dark font-heading text-sm flex items-center justify-center"
+          >
+            {i + 1}
+          </span>
+          <p class="text-ink dark:text-ink-dark leading-relaxed pt-1">{step}</p>
+        </li>
+      ))}
+    </ol>
+  </section>
+)}

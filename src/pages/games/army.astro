@@ -1,0 +1,55 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import ContentContainer from '../../components/ContentContainer.astro';
+import GameGrid from '../../components/GameGrid.astro';
+import StructuredData from '../../components/StructuredData.astro';
+import { sortGamesPinnedThenTitle } from '../../utils/collections';
+
+// Replaces /games/large-scale-army/ and /games/mass-battle/, which advertised
+// three army-scale shelves between them and filled one.
+const allGames = await getCollection('games', ({ data }) => !data.draft);
+const games = sortGamesPinnedThenTitle(
+  allGames.filter((g) => g.data.format === 'army')
+);
+
+const description = 'Games where you field a whole army. Bigger model counts, longer setup, and a table that takes a while to fill.';
+---
+
+<BaseLayout title="Army-Scale Games | The Hobbinomicon" description={description}>
+  <StructuredData
+    type="breadcrumb"
+    data={{
+      breadcrumbs: [
+        { name: 'Home', url: 'https://hobbinomicon.com/' },
+        { name: 'Games', url: 'https://hobbinomicon.com/games/' },
+        { name: 'Army-Scale', url: 'https://hobbinomicon.com/games/army/' },
+      ],
+    }}
+  />
+  <Header theme="light" />
+
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
+    <PageHeader
+      title="Army-Scale Games"
+      description={description}
+      breadcrumbs={[
+        { label: 'Games', href: '/games' },
+        { label: 'Army-Scale', href: '/games/army' },
+      ]}
+    />
+
+    <ContentContainer class="py-16">
+      <GameGrid
+        games={games}
+        emptyTitle="No army-scale games yet"
+        emptyMessage="Working on it. The first batch will land soon."
+      />
+    </ContentContainer>
+
+    <Footer />
+  </main>
+</BaseLayout>

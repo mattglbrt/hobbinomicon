@@ -80,7 +80,18 @@ interface VideoObjectData {
   youtubeId: string;
 }
 
+interface HowToData {
+  name: string;
+  description: string;
+  image?: string;
+  url: string;
+  totalMinutes?: number;
+  supplies?: string[];
+  steps: string[];
+}
+
 type Props =
+  | { type: 'howTo'; data: HowToData }
   | { type: 'website'; data: WebSiteData }
   | { type: 'organization'; data: OrganizationData }
   | { type: 'blogPosting'; data: BlogPostingData }
@@ -228,6 +239,26 @@ function buildSchema(): Record<string, unknown> | null {
         uploadDate: d.uploadDate.toISOString(),
         embedUrl: `https://www.youtube.com/embed/${d.youtubeId}`,
         contentUrl: `https://www.youtube.com/watch?v=${d.youtubeId}`,
+      };
+    }
+
+    case 'howTo': {
+      const d = props.data;
+      return {
+        '@type': 'HowTo',
+        name: d.name,
+        description: d.description,
+        ...(d.image && { image: d.image }),
+        ...(d.totalMinutes && { totalTime: `PT${d.totalMinutes}M` }),
+        ...(d.supplies?.length && {
+          supply: d.supplies.map((name) => ({ '@type': 'HowToSupply', name })),
+        }),
+        step: d.steps.map((text, i) => ({
+          '@type': 'HowToStep',
+          position: i + 1,
+          text,
+          url: `${d.url}#step-${i + 1}`,
+        })),
       };
     }
 

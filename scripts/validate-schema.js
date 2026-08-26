@@ -25,6 +25,7 @@ const RULES = {
   NewsArticle:    { R: ['headline', 'datePublished', 'author', 'publisher'],                      r: ['image', 'dateModified', 'mainEntityOfPage'] },
   VideoObject:    { R: ['name', 'description', 'thumbnailUrl', 'uploadDate'],                     r: ['embedUrl', 'contentUrl', 'duration'] },
   Game:           { R: ['name'],                                                                  r: ['description', 'image', 'url', 'publisher', 'author'] },
+  HowTo:          { R: ['name', 'step'],                                                            r: ['description', 'image', 'totalTime'] },
   Person:         { R: ['name'],                                                                  r: ['description', 'url', 'image', 'sameAs'] },
 };
 

@@ -1,28 +1,17 @@
 import rss from '@astrojs/rss';
 import type { APIContext } from 'astro';
-import { getCollection } from 'astro:content';
-import { getPublishedPosts, groupByTags } from '../../utils/collections';
+import { groupTaggedItems } from '../../utils/content';
 import { getHeroImageUrl } from '../../utils/getHeroImage';
 import { getTagDisplay } from '../../utils/tags';
 
 export async function getStaticPaths() {
-  const allPosts = await getCollection('blog');
-  const publishedPosts = getPublishedPosts(allPosts);
-  const tagsMap = groupByTags(publishedPosts);
-
-  return Array.from(tagsMap.keys()).map((tag) => ({
-    params: { tag },
-  }));
+  const tagsMap = await groupTaggedItems();
+  return Array.from(tagsMap.keys()).map((tag) => ({ params: { tag } }));
 }
 
 export async function GET(context: APIContext) {
   const { tag } = context.params;
-  const allPosts = await getCollection('blog');
-  const publishedPosts = getPublishedPosts(allPosts);
-
-  const tagPosts = publishedPosts
-    .filter((post) => post.data.tags?.includes(tag!))
-    .slice(0, 50);
+  const tagPosts = ((await groupTaggedItems()).get(tag!) ?? []).slice(0, 50);
 
   const tagDisplay = getTagDisplay(tag!);
   const siteUrl = context.site!.toString().replace(/\/$/, '');
@@ -32,18 +21,15 @@ export async function GET(context: APIContext) {
     description: `Posts tagged "${tagDisplay}" on The Hobbinomicon`,
     site: context.site!,
     items: tagPosts.map((post) => {
-      const imageUrl = getHeroImageUrl(post.data.heroImage, post.data.youtubeId);
+      const imageUrl = getHeroImageUrl(post.heroImage, post.youtubeId);
       const fullImageUrl = imageUrl.startsWith('http') ? imageUrl : `${siteUrl}${imageUrl}`;
 
       return {
-        title: post.data.title,
-        pubDate: post.data.pubDate,
-        description: post.data.description,
-        link: `/blog/${post.id}/`,
-        categories: [
-          post.data.category,
-          ...(post.data.tags || []),
-        ].filter(Boolean),
+        title: post.title,
+        pubDate: post.pubDate,
+        description: post.description,
+        link: post.href,
+        categories: [post.kind, ...(post.tags || [])].filter(Boolean),
         enclosure: {
           url: fullImageUrl,
           length: 0,

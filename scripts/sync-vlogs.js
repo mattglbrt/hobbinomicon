@@ -6,7 +6,7 @@
  * - Downloads transcripts via youtube-transcript-plus
  * - Prompts for tags per video (keywords only suggest — see lib/prompt-tags.js)
  * - Downloads YouTube thumbnails as featured images
- * - Outputs MDX files to src/content/blog/vlogs/
+ * - Outputs MDX files to src/content/vlog/
  */
 
 import fs from 'fs';
@@ -21,8 +21,10 @@ import { createTagPrompter } from './lib/prompt-tags.js';
 dotenv.config();
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const CONTENT_DIR = path.join(__dirname, '../src/content/blog');
-const VLOGS_DIR = path.join(CONTENT_DIR, 'vlogs');
+const CONTENT_DIR = path.join(__dirname, '../src/content/vlog');
+// Vlogs used to sit in a `vlogs/` subfolder of the blog collection. The
+// collection is now `vlog` and it is flat, so the two are the same directory.
+const VLOGS_DIR = CONTENT_DIR;
 const HERO_CACHE_DIR = path.join(__dirname, '../src/assets/images/hero-cache');
 const TAG_KEYWORDS_PATH = path.join(__dirname, '../src/data/tag-keywords.json');
 const TAG_REGISTRY_PATH = path.join(__dirname, '../src/data/tags.json');
@@ -394,7 +396,7 @@ async function main() {
     console.log('');
     console.log(`${prompter.untagged.length} post(s) have NO tags:`);
     for (const title of prompter.untagged) console.log(`  - ${title}`);
-    console.log('Add tags by hand in src/content/blog/vlogs/, or re-run the sync');
+    console.log('Add tags by hand in src/content/vlog/, or re-run the sync');
     console.log('in a terminal after deleting the file.');
   }
 

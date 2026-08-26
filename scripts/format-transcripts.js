@@ -19,7 +19,14 @@ import { fileURLToPath } from 'url';
 import { formatTranscriptParagraphs } from './lib/format-transcript.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const VLOGS_DIR = path.join(__dirname, '../src/content/blog/vlogs');
+// The blog collection split into `vlog` and `guides` in the 2026-08
+// re-architecture. Both hold tagged content with transcripts, so anything that
+// walks one has to walk both or it silently covers half the corpus.
+const CONTENT_DIRS = [
+  path.join(__dirname, '../src/content/vlog'),
+  path.join(__dirname, '../src/content/guides'),
+].filter(fs.existsSync);
+const VLOGS_DIR = CONTENT_DIRS[0];
 
 const MARKER = '\n## Transcript\n';
 
@@ -27,10 +34,19 @@ let reformatted = 0;
 let skipped = 0;
 let noTranscript = 0;
 
-for (const name of fs.readdirSync(VLOGS_DIR)) {
-  if (!name.endsWith('.mdx') && !name.endsWith('.md')) continue;
+// Walk full paths, not bare names: the files come from two collections now,
+// so joining every name back onto one directory would miss half of them.
+const allFiles = CONTENT_DIRS.flatMap((dir) =>
+  fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) =>
+    e.isDirectory()
+      ? fs.readdirSync(path.join(dir, e.name)).map((n) => path.join(dir, e.name, n))
+      : [path.join(dir, e.name)]
+  )
+).sort();
 
-  const filePath = path.join(VLOGS_DIR, name);
+for (const filePath of allFiles) {
+  const name = path.basename(filePath);
+  if (!name.endsWith('.mdx') && !name.endsWith('.md')) continue;
   const content = fs.readFileSync(filePath, 'utf-8');
 
   const markerIndex = content.lastIndexOf(MARKER);

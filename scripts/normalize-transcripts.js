@@ -21,7 +21,13 @@ import { fileURLToPath } from 'url';
 import { normalizeTranscript, findCorrections } from './lib/normalize-transcript.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const VLOGS_DIR = path.join(__dirname, '../src/content/blog/vlogs');
+// Transcripts live in two collections since the 2026-08 re-architecture: the
+// vlog archive and the guides promoted out of it. Walking only one silently
+// left half the corpus unnormalised.
+const CONTENT_DIRS = [
+  path.join(__dirname, '../src/content/vlog'),
+  path.join(__dirname, '../src/content/guides'),
+];
 const DRY_RUN = process.argv.includes('--dry-run');
 
 const MARKER = '\n## Transcript\n';
@@ -30,9 +36,14 @@ let changed = 0;
 let scanned = 0;
 const totals = new Map();
 
-for (const name of fs.readdirSync(VLOGS_DIR).sort()) {
+const walk = (dir) =>
+  fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) =>
+    e.isDirectory() ? walk(path.join(dir, e.name)) : [path.join(dir, e.name)]
+  );
+
+for (const filePath of CONTENT_DIRS.filter(fs.existsSync).flatMap(walk).sort()) {
+  const name = path.basename(filePath);
   if (!/\.mdx?$/.test(name)) continue;
-  const filePath = path.join(VLOGS_DIR, name);
   const content = fs.readFileSync(filePath, 'utf-8');
 
   const at = content.indexOf(MARKER);

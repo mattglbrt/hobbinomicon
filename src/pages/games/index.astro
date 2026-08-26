@@ -17,11 +17,10 @@ const ttrpgs = sortGamesPinnedThenTitle(
 const skirmish = sortGamesPinnedThenTitle(
   allGames.filter((g) => g.data.format === 'skirmish')
 ).slice(0, 6);
-const largeScaleArmy = sortGamesPinnedThenTitle(
-  allGames.filter((g) => g.data.format === 'large-scale-army' && g.data.status !== 'oop')
-).slice(0, 6);
-const massBattle = sortGamesPinnedThenTitle(
-  allGames.filter((g) => g.data.format === 'mass-battle' && g.data.status !== 'oop')
+// One army-scale shelf, not two. The directory used to advertise "Large Scale
+// Army" and "Rank and Flank" and only ever fill the first.
+const army = sortGamesPinnedThenTitle(
+  allGames.filter((g) => g.data.format === 'army' && g.data.status !== 'oop')
 ).slice(0, 6);
 const narrative = sortGamesPinnedThenTitle(
   allGames.filter((g) => g.data.format === 'narrative' && g.data.status !== 'oop')
@@ -76,63 +75,23 @@ const soloCount = allGames.filter((g) => g.data.solo === true && g.data.status !
         />
       </section>
 
-      <!-- Large Scale Army -->
+      <!-- Army-Scale -->
       <section>
         <div class="flex items-baseline justify-between mb-2 gap-4">
           <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark">
-            <a href="/games/large-scale-army/" class="hover:underline underline-offset-4">Large Scale Army</a>
+            <a href="/games/army/" class="hover:underline underline-offset-4">Army-Scale</a>
           </h2>
-          <a href="/games/large-scale-army/" class="text-ink/70 dark:text-ink-dark/70 hover:text-ink dark:hover:text-ink-dark text-sm font-medium whitespace-nowrap">
+          <a href="/games/army/" class="text-ink/70 dark:text-ink-dark/70 hover:text-ink dark:hover:text-ink-dark text-sm font-medium whitespace-nowrap">
             View all →
           </a>
         </div>
         <p class="text-ink/70 dark:text-ink-dark/70 text-lg mb-8">
-          Full size army wargames.
+          Whole armies on the table. Bigger model counts, longer setup, and a game that fills an afternoon.
         </p>
         <GameGrid
-          games={largeScaleArmy}
+          games={army}
           emptyTitle="Nothing here yet"
-          emptyMessage="Large Scale Army coverage is coming."
-        />
-      </section>
-
-      <!-- Rank and Flank -->
-      <section>
-        <div class="flex items-baseline justify-between mb-2 gap-4">
-          <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark">
-            <a href="/games/mass-battle/" class="hover:underline underline-offset-4">Rank and Flank</a>
-          </h2>
-          <a href="/games/mass-battle/" class="text-ink/70 dark:text-ink-dark/70 hover:text-ink dark:hover:text-ink-dark text-sm font-medium whitespace-nowrap">
-            View all →
-          </a>
-        </div>
-        <p class="text-ink/70 dark:text-ink-dark/70 text-lg mb-8">
-          Rank-and-file and army-scale wargames. Push around your blocks of dudes.
-        </p>
-        <GameGrid
-          games={massBattle}
-          emptyTitle="Nothing here yet"
-          emptyMessage="Rank and Flank coverage is coming."
-        />
-      </section>
-
-      <!-- TTRPGs -->
-      <section>
-        <div class="flex items-baseline justify-between mb-2 gap-4">
-          <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark">
-            <a href="/games/ttrpgs/" class="hover:underline underline-offset-4">TTRPGs</a>
-          </h2>
-          <a href="/games/ttrpgs/" class="text-ink/70 dark:text-ink-dark/70 hover:text-ink dark:hover:text-ink-dark text-sm font-medium whitespace-nowrap">
-            View all →
-          </a>
-        </div>
-        <p class="text-ink/70 dark:text-ink-dark/70 text-lg mb-8">
-          Tabletop RPGs. Narrative, OSR, and the weirder corners.
-        </p>
-        <GameGrid
-          games={ttrpgs}
-          emptyTitle="Nothing here yet"
-          emptyMessage="TTRPGs are coming. The first batch is in the roadmap."
+          emptyMessage="Army-scale coverage is coming."
         />
       </section>
 

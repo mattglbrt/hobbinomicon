@@ -7,6 +7,7 @@ import {
   personUrl,
   newsUrl,
   postUrl,
+  guideUrlFor,
 } from '../utils/geoContent';
 
 /**
@@ -30,7 +31,8 @@ function section(heading: string, lines: string[]): string[] {
 }
 
 export const GET: APIRoute = async () => {
-  const { games, studios, people, news, resources, articles, vlogs } = await getGeoContent();
+  const { games, studios, people, news, guides, articles, episodes, series, vlogs, gameSlugs } =
+    await getGeoContent();
 
   const out: string[] = [
     '# The Hobbinomicon',
@@ -38,10 +40,10 @@ export const GET: APIRoute = async () => {
     '> The Hobbinomicon is an indie tabletop wargaming directory and hobby site.',
     'The directory catalogues independent miniatures games, TTRPGs, and the studios',
     'and designers behind them, cross-linked as three entity types: Games, Studios,',
-    'and People. Alongside it the site publishes News on indie releases and',
-    'crowdfunding, written guides and archived resources for specific games, and a',
-    'daily hobby vlog covering painting, terrain building, kitbashing, and solo play.',
-    'Written and produced by Matt Gilbert.',
+    'and People. Alongside it the site publishes step-by-step Guides to painting,',
+    'basing, terrain, kitbashing, and getting started with a game; News on indie',
+    'releases and crowdfunding; campaign Series played start to finish; and a daily',
+    'hobby vlog. Written and produced by Matt Gilbert.',
     '',
     'Markdown versions of every page below are available by appending `.md` to its',
     'URL. `/llms-full.txt` contains the full text of the core pages in one file.',
@@ -75,10 +77,12 @@ export const GET: APIRoute = async () => {
     )
   );
 
+  // Guides lead the list: they are the pages worth citing, and they carry the
+  // structured fields (topic, materials, steps) an answer would want.
   out.push(
     ...section(
-      'Guides and resources',
-      resources.map((p) => link(p.data.title, postUrl(p), p.data.description))
+      'Guides',
+      guides.map((g) => link(g.data.title, guideUrlFor(g, gameSlugs), g.data.description))
     )
   );
 
@@ -89,15 +93,25 @@ export const GET: APIRoute = async () => {
     )
   );
 
+  out.push(
+    ...section(
+      'Series',
+      series.map((s) => `- [${s.data.name}](${canonical(`series/${s.id}`)}): ${s.data.description.replace(/\s+/g, ' ').trim()}`)
+    )
+  );
+
   // Directory and hub pages are HTML-only listings; no `.md` twin, so link direct.
   out.push(
     ...section('Browse', [
       `- [Games directory](${canonical('games')})`,
+      `- [Guides](${canonical('guides')})`,
       `- [Studios directory](${canonical('studios')})`,
       `- [People directory](${canonical('people')})`,
       `- [News](${canonical('news')})`,
-      `- [Explore by category and tag](${canonical('explore')})`,
-      `- [Video archive](${canonical('videos')})`,
+      `- [Series](${canonical('series')})`,
+      `- [Articles](${canonical('articles')})`,
+      `- [Vlog archive](${canonical('vlog')})`,
+      `- [Browse by tag](${canonical('tags')})`,
       `- [About](${canonical('about')})`,
     ])
   );
@@ -114,10 +128,11 @@ export const GET: APIRoute = async () => {
 
   out.push(
     ...section('Optional', [
-      `- [Full vlog archive](${canonical('videos/archive')}): the remaining ${Math.max(
+      `- [Full vlog archive](${canonical('vlog')}): the remaining ${Math.max(
         vlogs.length - RECENT_VLOGS,
         0
       )} of ${vlogs.length} daily vlog posts, each with a transcript.`,
+      `- [Series episodes](${canonical('series')}): ${episodes.length} campaign and live-play episodes.`,
       `- [RSS feed](${canonical('rss.xml').replace(/\/$/, '')})`,
     ])
   );

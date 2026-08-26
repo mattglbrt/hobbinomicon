@@ -1,0 +1,92 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import ContentContainer from '../../components/ContentContainer.astro';
+import ListCard from '../../components/ListCard.astro';
+import StructuredData from '../../components/StructuredData.astro';
+import { getGuides, guideUrlWith, TOPICS, type Topic } from '../../utils/content';
+import { getHeroImageUrl } from '../../utils/getHeroImage';
+import { formatDateLong } from '../../utils/formatDate';
+
+const games = new Set((await getCollection('games')).map((g) => g.id));
+const guides = await getGuides();
+
+// Topics with nothing in them render nothing. An empty shelf on the landing
+// page is worse than a shorter list.
+const topics = (Object.keys(TOPICS) as Topic[])
+  .map((slug) => ({
+    slug,
+    label: TOPICS[slug],
+    count: guides.filter((g) => g.data.topic === slug).length,
+  }))
+  .filter((t) => t.count > 0);
+
+const latest = guides.slice(0, 12);
+
+const description =
+  'How to paint it, base it, and start playing it. Every guide here is a video I made, written up so you do not have to scrub through it.';
+---
+
+<BaseLayout title="Guides | The Hobbinomicon" description={description}>
+  <StructuredData
+    type="breadcrumb"
+    data={{
+      breadcrumbs: [
+        { name: 'Home', url: 'https://hobbinomicon.com/' },
+        { name: 'Guides', url: 'https://hobbinomicon.com/guides/' },
+      ],
+    }}
+  />
+  <Header theme="light" />
+
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
+    <PageHeader
+      title="Guides"
+      description={description}
+      breadcrumbs={[{ label: 'Guides', href: '/guides' }]}
+    />
+
+    <ContentContainer class="py-16">
+      <section>
+        <h2 class="font-heading text-sm uppercase tracking-[0.2em] text-ink/70 dark:text-ink-dark/70 mb-6">
+          By topic
+        </h2>
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {topics.map((t) => (
+            <a
+              href={`/guides/${t.slug}/`}
+              class="block p-6 rounded-lg border-2 border-ink/15 dark:border-ink-dark/15 hover:border-ink dark:hover:border-ink-dark transition-colors"
+            >
+              <span class="block font-heading text-xl text-ink dark:text-ink-dark">{t.label}</span>
+              <span class="block mt-1 text-sm text-ink/60 dark:text-ink-dark/60">
+                {t.count} {t.count === 1 ? 'guide' : 'guides'}
+              </span>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <section class="mt-16">
+        <h2 class="font-heading text-sm uppercase tracking-[0.2em] text-ink/70 dark:text-ink-dark/70 mb-6">
+          Latest guides
+        </h2>
+        <div class="grid gap-4">
+          {latest.map((g) => (
+            <ListCard
+              href={guideUrlWith(g, games)}
+              title={g.data.title}
+              description={g.data.description}
+              meta={`${TOPICS[g.data.topic as Topic]} · ${formatDateLong(g.data.pubDate)}`}
+              image={getHeroImageUrl(g.data.heroImage, g.data.youtubeId)}
+            />
+          ))}
+        </div>
+      </section>
+    </ContentContainer>
+
+    <Footer />
+  </main>
+</BaseLayout>

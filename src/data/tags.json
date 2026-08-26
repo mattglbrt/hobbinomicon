@@ -171,6 +171,11 @@
       "description": "Miniature base decoration techniques including texture, grass, rocks, and scenic elements.",
       "category": "technique"
     },
+    "chainmail": {
+      "display": "Chainmail",
+      "description": "Painting chainmail and ring mail armor, from drybrushed metallics to liquid chrome.",
+      "category": "technique"
+    },
     "cloth": {
       "display": "Cloth",
       "description": "Painting fabric and cloth materials on miniatures.",
@@ -203,7 +208,7 @@
     },
     "metallics": {
       "display": "Metallics",
-      "description": "True metallic paints and finishes: gold, brass, bronze, silver, chainmail, and patina.",
+      "description": "True metallic paints and finishes: gold, brass, bronze, silver, and patina.",
       "category": "technique"
     },
     "nmm": {

@@ -1,16 +1,17 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { vlogUrl } from '../utils/content';
 import { getHeroImageUrl } from '../utils/getHeroImage';
 
 interface Props {
-  post: CollectionEntry<'blog'>;
+  post: CollectionEntry<'vlog'>;
 }
 const { post } = Astro.props;
 const imageUrl = getHeroImageUrl(post.data.heroImage, post.data.youtubeId);
 ---
 
 <a
-  href={`/blog/${post.id}/`}
+  href={vlogUrl(post)}
   class="group block bg-white dark:bg-ink-dark/20 rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300"
 >
   <div class="relative aspect-video overflow-hidden">

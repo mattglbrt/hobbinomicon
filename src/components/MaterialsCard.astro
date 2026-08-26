@@ -1,0 +1,55 @@
+---
+/**
+ * The paints-and-tools list on a guide. This is the most natural affiliate
+ * surface on the site, so the disclosure is part of the component rather than
+ * something a template has to remember: if any entry is marked `affiliate`,
+ * the line appears. There is no way to render a paid link here without it.
+ */
+interface Material {
+  name: string;
+  url?: string;
+  affiliate?: boolean;
+}
+
+interface Props {
+  materials: Material[];
+  title?: string;
+}
+
+const { materials, title = 'What you need' } = Astro.props;
+const hasAffiliate = materials.some((m) => m.affiliate);
+---
+
+{materials.length > 0 && (
+  <aside class="not-prose my-10 rounded-lg border-2 border-ink/15 dark:border-ink-dark/15 bg-ink/[0.03] dark:bg-ink-dark/[0.03] p-6">
+    <h2 class="font-heading text-sm uppercase tracking-[0.2em] text-ink/70 dark:text-ink-dark/70 mb-4">
+      {title}
+    </h2>
+    <ul class="grid gap-2 sm:grid-cols-2">
+      {materials.map((m) => (
+        <li class="flex gap-2 text-ink dark:text-ink-dark">
+          <span aria-hidden="true" class="text-ink/40 dark:text-ink-dark/40">·</span>
+          {m.url ? (
+            <a
+              href={m.url}
+              class="underline underline-offset-4 hover:no-underline"
+              rel={m.affiliate ? 'sponsored nofollow noopener' : 'noopener'}
+              target="_blank"
+            >
+              {m.name}
+            </a>
+          ) : (
+            <span>{m.name}</span>
+          )}
+        </li>
+      ))}
+    </ul>
+    {hasAffiliate && (
+      <p class="mt-4 pt-4 border-t border-ink/10 dark:border-ink-dark/10 text-xs text-ink/60 dark:text-ink-dark/60">
+        Some links above are affiliate links. If you buy through one, I get a
+        small cut at no extra cost to you. It does not change what I recommend —
+        everything listed is what I actually used.
+      </p>
+    )}
+  </aside>
+)}
