@@ -34,7 +34,14 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const BLOG_DIR = path.join(__dirname, '../src/content/blog');
+// The blog collection split into `vlog` and `guides` in the 2026-08
+// re-architecture. Both hold tagged content with transcripts, so anything that
+// walks one has to walk both or it silently covers half the corpus.
+const CONTENT_DIRS = [
+  path.join(__dirname, '../src/content/vlog'),
+  path.join(__dirname, '../src/content/guides'),
+].filter(fs.existsSync);
+const BLOG_DIR = CONTENT_DIRS[0];
 
 const args = process.argv.slice(2);
 const DRY_RUN = args.includes('--dry-run');
@@ -108,7 +115,7 @@ let filesChecked = 0;
 let filesChanged = 0;
 const appliedCounts = new Map(); // mapping-key -> number of posts where it fired
 
-for (const file of findFiles(BLOG_DIR)) {
+for (const file of CONTENT_DIRS.flatMap((d) => findFiles(d))) {
   const content = fs.readFileSync(file, 'utf-8');
   const fmMatch = content.match(/^---\n([\s\S]*?)\n---/);
   if (!fmMatch) continue;
@@ -139,7 +146,7 @@ for (const file of findFiles(BLOG_DIR)) {
 
   filesChanged++;
 
-  const relPath = path.relative(BLOG_DIR, file);
+  const relPath = path.relative(CONTENT_DIRS.find((d) => file.startsWith(d)), file);
   const newTagsStr = `[${newTags.map((t) => `"${t}"`).join(', ')}]`;
 
   console.log(`${DRY_RUN ? '[would change]' : '[changed]'}  ${relPath}`);

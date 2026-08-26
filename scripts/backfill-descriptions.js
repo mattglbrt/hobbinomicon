@@ -20,7 +20,14 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const BLOG_DIR = path.join(__dirname, '../src/content/blog');
+// The blog collection split into `vlog` and `guides` in the 2026-08
+// re-architecture. Both hold tagged content with transcripts, so anything that
+// walks one has to walk both or it silently covers half the corpus.
+const CONTENT_DIRS = [
+  path.join(__dirname, '../src/content/vlog'),
+  path.join(__dirname, '../src/content/guides'),
+].filter(fs.existsSync);
+const BLOG_DIR = CONTENT_DIRS[0];
 const DRY_RUN = process.argv.includes('--dry-run');
 
 function walk(dir) {
@@ -66,7 +73,7 @@ for (const file of walk(BLOG_DIR)) {
   const body = content.slice(fm[0].length);
   const excerpt = deriveExcerpt(body);
   if (!excerpt) {
-    console.warn(`  ! no usable body text: ${path.relative(BLOG_DIR, file)}`);
+    console.warn(`  ! no usable body text: ${path.relative(CONTENT_DIRS.find((d) => file.startsWith(d)), file)}`);
     noBody++;
     continue;
   }
@@ -74,7 +81,7 @@ for (const file of walk(BLOG_DIR)) {
   const escaped = excerpt.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
   const newContent = content.replace(/^description:\s*""\s*$/m, `description: "${escaped}"`);
 
-  console.log(`  + ${path.relative(BLOG_DIR, file)}`);
+  console.log(`  + ${path.relative(CONTENT_DIRS.find((d) => file.startsWith(d)), file)}`);
   console.log(`      "${excerpt}"`);
   if (!DRY_RUN) fs.writeFileSync(file, newContent, 'utf-8');
   filled++;

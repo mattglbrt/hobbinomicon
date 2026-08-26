@@ -21,7 +21,14 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const BLOG_DIR = path.join(__dirname, '../src/content/blog');
+// The blog collection split into `vlog` and `guides` in the 2026-08
+// re-architecture. Both hold tagged content with transcripts, so anything that
+// walks one has to walk both or it silently covers half the corpus.
+const CONTENT_DIRS = [
+  path.join(__dirname, '../src/content/vlog'),
+  path.join(__dirname, '../src/content/guides'),
+].filter(fs.existsSync);
+const BLOG_DIR = CONTENT_DIRS[0];
 const TAGS_JSON = path.join(__dirname, '../src/data/tags.json');
 
 const args = new Set(process.argv.slice(2));
@@ -67,12 +74,12 @@ const tagMap = new Map(); // tag -> { count, files: string[] }
 let totalPosts = 0;
 let postsWithTags = 0;
 
-for (const file of findFiles(BLOG_DIR)) {
+for (const file of CONTENT_DIRS.flatMap((d) => findFiles(d))) {
   totalPosts++;
   const content = fs.readFileSync(file, 'utf-8');
   const tags = extractTags(content);
   if (tags.length > 0) postsWithTags++;
-  const relPath = path.relative(BLOG_DIR, file);
+  const relPath = path.relative(CONTENT_DIRS.find((d) => file.startsWith(d)), file);
   for (const tag of tags) {
     if (!tagMap.has(tag)) tagMap.set(tag, { count: 0, files: [] });
     const entry = tagMap.get(tag);
