@@ -95,7 +95,7 @@ the confusion you wanted to avoid — so I replaced them:
 ### [C5] The "coming soon" lists. These appear under each empty section — the rule is that an empty section must say what's coming or not exist at all.
 > **40k:** On the desk: a Khorne Daemon army.
 > **The Old World:** On the desk: Tomb Kings.
-> **Spearhead:** On the desk: Tyrants Below
+> **Spearhead:** On the desk: Tyrants Bellow
 
 ### [C6] YouTube button
 > More Warhammer on YouTube
