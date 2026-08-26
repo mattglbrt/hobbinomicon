@@ -36,7 +36,7 @@ import { formatTranscriptParagraphs } from './lib/format-transcript.js';
 import { getTranscriptResult, reportBlocked } from './lib/fetch-transcript.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const VLOGS_DIR = path.join(__dirname, '../src/content/blog/vlogs');
+const VLOGS_DIR = path.join(__dirname, '../src/content/vlog');
 
 const SCAN_ALL = process.argv.includes('--all');
 const WINDOW_DAYS = Number(process.env.BACKFILL_WINDOW_DAYS) || 21;

@@ -36,12 +36,13 @@ function getCollectionDates() {
     }
   }
 
-  processDir('./src/content/blog', 'blog/');
+  processDir('./src/content/vlog', 'vlog/');
+  processDir('./src/content/guides', 'guides/');
+  processDir('./src/content/series', 'series/');
   processDir('./src/content/games', 'games/');
   processDir('./src/content/studios', 'studios/');
   processDir('./src/content/people', 'people/');
   processDir('./src/content/news', 'news/');
-  processDir('./src/content/projects', 'projects/');
 
   return dates;
 }
@@ -79,8 +80,8 @@ export default defineConfig({
           '/404/',
         ];
         if (excludePatterns.some(pattern => page.includes(pattern))) return false;
-        // Exclude paginated index pages (e.g. /blog/2/, /vlogs/3/) — keep page 1.
-        if (/\/(blog|vlogs)\/\d+\/$/.test(page)) return false;
+        // Exclude paginated index pages (e.g. /vlog/2/) — keep page 1.
+        if (/\/(vlog|guides)\/\d+\/$/.test(page)) return false;
         return true;
       },
       serialize: (item) => {

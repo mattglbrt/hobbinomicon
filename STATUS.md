@@ -3,7 +3,13 @@
 ## Now
 **The re-architecture has started.** Plan and per-URL migration map live in `roadmap/rebuild/`; running record in `roadmap/rebuild/PROGRESS.md`. Positioning: *find your next indie wargame, then learn to paint it* — two surfaces, `/games/` and `/guides/`, with `/warmachine/` and `/warhammer/` as mainstream on-ramps that funnel sideways into indie. Nothing gets noindexed and nothing leaves the index.
 
-**Phase 0 (audit & safety net) is done and green, awaiting Matt's sign-off before Phase 1.** `main` at `5e82a0c` (tagged `pre-rebuild`), `dev` at `26b6fb2` — five commits unmerged. What landed:
+**Phase 0 (audit & safety net) signed off. Phase 1 (content model & moves) is done; Phase 2 is next and must ship with it.** `main` at `5e82a0c` (tagged `pre-rebuild`), `dev` ahead — nothing merged yet.
+
+**The site does not build right now, on purpose.** Phase 1 renamed the `blog` collection to `vlog` and added `guides`/`series`, but built no routes; 13 files still call `getCollection('blog')`. Phase 2 builds the routes and makes it deployable. Worth knowing: `astro build` **exits 0** in this state and quietly emits 61 pages instead of 433 — `npm run verify-migration` is what catches it (372 MISSING, exit 1).
+
+Phase 1 in one line: 294 files moved by `scripts/migrate-content.mjs` off `url-map-posts.csv`, 288/288 at their mapped paths, `astro sync` clean, 38 `MATT` flags listed in `PROGRESS.md`.
+
+What Phase 0 landed:
 
 - **`npm run verify-migration`** is now the gate every later phase passes through: all 431 URLs in the pre-rebuild sitemap must serve 200 or take exactly one 301 to a page that exists. Currently 431/431, 0 chains. It fails loudly on 404s, 301s-into-404s and chains, and was tested against known-bad input rather than assumed correct.
 - **`npm run generate-redirects`** builds the rule block from the three `url-map-*.csv` files. Redirects are generated, never hand-written. Byte-identical to the reviewed `_redirects.rebuild`; `--write` is idempotent and never touches the 496 tag rules below it.

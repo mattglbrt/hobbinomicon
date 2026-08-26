@@ -21,7 +21,7 @@ import { fileURLToPath } from 'url';
 import { normalizeTranscript, findCorrections } from './lib/normalize-transcript.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const VLOGS_DIR = path.join(__dirname, '../src/content/blog/vlogs');
+const VLOGS_DIR = path.join(__dirname, '../src/content/vlog');
 const DRY_RUN = process.argv.includes('--dry-run');
 
 const MARKER = '\n## Transcript\n';

@@ -1,11 +1,11 @@
 old_url,new_url,note
 /blog/resources/warriors-of-athena-figure-list/,/games/mage-knight/warriors-of-athena-figure-list/,RESTORE from git 48d6f7c
-/blog/resources/solo-coop-gaming-resources/,/guides/solo-rpg/,RESTORE as /guides/solo-coop-gaming-resources/ then point here
-/blog/resources/trench-crusade-resources/,/games/trench-crusade/,content already merged into game page
-/blog/resources/warmachine-resources/,/warmachine/,content → hub
-/blog/resources/chainmail-miniatures-checklist/,/games/graveyard/,RESTORE from git as /games/chainmail/ if you want the game entry; else graveyard
+/blog/resources/solo-coop-gaming-resources/,/guides/solo-coop-gaming-resources/,"restored Phase 0; kept as its own guide (CSV note said restore here)"
+/blog/resources/trench-crusade-resources/,/articles/trench-crusade-resources/,"restored Phase 0; kept as a page rather than folded into the game page"
+/blog/resources/warmachine-resources/,/articles/warmachine-resources/,"restored Phase 0; kept as a page rather than folded into the hub"
+/blog/resources/chainmail-miniatures-checklist/,/articles/chainmail-miniatures-checklist/,"restored Phase 0; a checklist is a list article"
 /blog/resources/competition-painting-guides/,/articles/online-painting-competitions-2026/,
-/blog/resources/painting-references-maximus-infinity/,/games/infinity/,
+/blog/resources/painting-references-maximus-infinity/,/guides/painting-references-maximus-infinity/,"restored Phase 0; kept as its own guide"
 /getting-good-warmachine-the-lists/,/warmachine/,WordPress-era
 /getting-good-first-battle-report/,/warmachine/,WordPress-era
 /orcs-goblins/,/tags/orcs-and-goblins/,WordPress-era

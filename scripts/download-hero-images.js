@@ -10,7 +10,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const CONTENT_DIR = path.join(__dirname, '../src/content/blog');
+const CONTENT_DIR = path.join(__dirname, '../src/content/vlog');
 const IMAGES_DIR = path.join(__dirname, '../src/assets/hero-cache');
 // Mirror path: sync-vlogs.js writes the no-prefix variant for posts whose
 // frontmatter uses heroImage="/images/hero-cache/<id>.jpg". Mirroring it

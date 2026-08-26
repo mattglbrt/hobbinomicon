@@ -5,8 +5,8 @@ One section per phase. Written at the end of each phase, before the merge to
 
 | Phase | State | Merged to `main` |
 |---|---|---|
-| 0 — Audit & safety net | **complete, awaiting sign-off** | not yet |
-| 1 — Content model & moves | not started | |
+| 0 — Audit & safety net | **complete, signed off** | not yet |
+| 1 — Content model & moves | **complete, awaiting sign-off** | not yet (must ship with Phase 2) |
 | 2 — Routes, templates & redirects | not started | |
 | 3 — Content upgrade: guides | not started | |
 | 3b — Evergreen list articles | not started | |
@@ -188,3 +188,168 @@ rules are the safer shape for forced rules during cutover.
 * A failed MDX build empties `dist/`, and the next `astro build` can report
   "0 page(s) built" off stale state. `rm -rf dist .astro` before trusting a
   build that follows a failure.
+
+
+---
+
+## Phase 1 — Content model & moves
+
+Branch `dev`. No templates: this phase moves files and changes the model, and
+**the site does not build at the end of it.** That is by design — the workup
+lands model, moves, routes and redirects across Phases 1–2 so the first deploy
+is URL-complete. **Phase 1 must not be merged to `main` on its own.**
+
+### Acceptance
+
+| Criterion | Result |
+|---|---|
+| `npx astro sync` passes schema validation, zero errors | **yes**, 7 collections |
+| `git status` shows only renames + frontmatter edits | **yes**, 293 renames + 1 rename git scored below its similarity threshold |
+| Every file in `url-map-posts.csv` at its mapped path | **288 / 288** |
+| `PROGRESS.md` lists every `<!-- MATT -->` | **yes**, 38 flags below |
+| `npm run validate-schema` green | **deferred to Phase 2** — it walks `dist/`, and `dist/` cannot be built until the routes exist |
+
+### The model
+
+`blog` → `vlog`, plus two new collections and two extended ones.
+
+* **`vlog`** (183) — the daily archive, the 19 series episodes, and 3 essays.
+  One collection, not three: they share a schema and a template lineage, and
+  the routes tell them apart. `series` + `episode` mark an episode, `kind:
+  'article'` marks an essay. `category` became optional — the collection is the
+  category now, and `/categories/` retires in Phase 2. Existing values are left
+  alone rather than stripped.
+* **`guides`** (111) — the 95 promoted posts, the 13 Mage Knight resource pages,
+  and 3 of the pages restored in Phase 0.
+* **`series`** (2) — Kingdom Death: Monster, Kal-Arath.
+* **`games`** — `format` merged `large-scale-army` and `mass-battle` into
+  `army`; `hub` added. Warmachine is now `format: army`, `hub: warmachine`.
+  `age-of-sigmar-spearhead.mdx` added as a `draft: true` stub with `hub:
+  warhammer`.
+
+Four fields the spec in `02-…md` §2 left out are carried on `guides` rather than
+dropped, because dropping them would have lost data: `project` (16 guides),
+`resourceType` (13), `projectSection` (4) and `hideRelatedPosts`. `games.relatedProjects`
+still points at project slugs, so `project` in particular had to survive.
+
+### The move
+
+`scripts/migrate-content.mjs`, driven entirely by `url-map-posts.csv`. It never
+picks a destination; the CSV does. Frontmatter it writes is mechanical — `topic`
+from tags, `hub` from tags, `game` from the CSV column but only when a directory
+entry exists, `videoTitle` from the old title. Everything needing judgement is a
+flag, not a guess. Moves go through `git mv`, so history follows.
+
+It is idempotent: a file already at its destination is skipped, so a partial run
+finishes by running again.
+
+### Two things that would have broken Phase 2
+
+**Relative imports.** 275 files moved up a directory level, so every
+`from '../../../components/YouTubeEmbed.astro'` became wrong. Rewritten to the
+correct depth per file; the 3 Mage Knight guides stay at three levels because
+they are nested one deeper. All 306 relative imports in `src/content` now
+resolve.
+
+**`astro build` exits 0 with the collection missing.** With `blog` gone and the
+old routes still calling `getCollection('blog')`, the build printed "The
+collection "blog" does not exist or is empty" 13 times, emitted **61 pages
+instead of 433**, and returned **exit code 0**. Nothing in the build would have
+stopped that reaching production. `verify-migration.mjs` caught it: 372 MISSING,
+exit 1. This is the failure mode the gate exists for, and it is worth
+remembering that the build alone is not a safety net.
+
+### Phase 2 work list, from the build
+
+13 files still call `getCollection('blog')`:
+`SearchModal.astro`, `TaggedPostsList.astro`, `blog/[...page].astro`,
+`blog/[...slug].astro`, `categories/[category].astro`, `categories/index.astro`,
+`explore.astro`, `games/[slug].astro`, `rss.xml.ts`, `rss/[tag].xml.ts`,
+`tags/[tag].astro`, `tags/index.astro`, `utils/videoCollections.ts`. Plus the
+type aliases in `filterDrafts.ts`, `collections.ts` and `geoContent.ts`.
+
+### Redirect generator changes
+
+* `legacySlug` rules are now **deduped against the CSVs**. `migrate-content.mjs`
+  sets `legacySlug` on everything it moves, and every move is already a CSV row,
+  so without the dedupe the block emitted all 288 rules twice. `legacySlug`
+  starts carrying its own weight in Phase 3, when a rewritten title changes a
+  slug the CSVs know nothing about.
+* A guide nested in a directory named after a game renders under that game —
+  `/games/mage-knight/army-checklist/`, not `/guides/mage-knight/…`. The
+  generator now knows that, so a Phase 3 slug change there produces the right
+  target. **Phase 2's routes must follow the same rule.**
+* `url-map-legacy-404s.csv`: five of the six restored pages had targets that
+  fold the page into a hub or game page. Repointed at the pages themselves.
+
+### Directory gaps this surfaced
+
+Four games are named in the migration map with no directory entry, so `game:`
+was left unset on those posts rather than emitting a reference that fails the
+build:
+
+| Game | Posts affected |
+|---|---|
+| `kingdom-death-monster` | 19 (the whole series) + 5 vlogs |
+| `warhammer-aos-40k` | 17 |
+| `dolmenwood` | 11 |
+| `necromunda` | 3 |
+
+Kingdom Death is the sharp one: it has a series hub, 16 episodes and no game
+page. `01-…md` §2a puts it plainly — game pages are 60% of clicks, and "every
+new game entry is worth more than ten videos."
+
+### MATT flags — 38
+
+**19 × topic guessed as "painting".** The tag gave no better signal. Every one
+is a promoted guide, so the topic is at least in the right family; these want a
+skim, not a rewrite. Phase 3 revisits each of them anyway.
+
+```
+2-color-nmm-easy-peasy-style              how-to-strip-metal-models-call-to-arms-vlog-prep-day-1
+dolmenwood-official-figures-…             how-to-use-dirty-down-rust-creating-blood-gore-part-2
+how-to-create-a-dolmenwood-character      i-built-90-goblins-in-5-days
+how-to-glaze-for-fun-and-profit           i-fixed-my-contrast-paint-problems
+how-to-marble-paper                       making-zines-is-easy-with-the-right-tools
+how-to-paint-pale-orc-flesh               paint-a-trench-pilgrim-warband-in-2-hours
+how-to-paint-pale-orc-skin-orktober-…     painting-butcher-klaus-minicrate
+how-to-paint-trench-crusade-communicant   spicing-up-some-relic-blade-tokens
+how-to-paint-trench-pilgrims-fast         the-jankiest-rust-tutorial-ever
+                                          two-minute-trench-crusade-battle-recap
+```
+
+**7 × `hub: warhammer`, `system` unset.** 40k, The Old World or Spearhead? The
+value reserves the future `/warhammer/{system}/` slug, so it is worth getting
+right once: `easy-mode-goblin-faces`, `how-to-paint-pale-orc-flesh`,
+`how-to-paint-pale-orc-skin-orktober-…`,
+`how-to-start-commission-painting-and-why-you-maybe-shouldn-t`,
+`i-built-90-goblins-in-5-days`, `midnight-kitbashing`, `preshading-90-goblins`.
+
+**5 × episode number not in the title.** `kal-arath-live-play-session-1`,
+`next-episode-of-kal-arath-is-almost-ready`,
+`kingdom-death-monster-antelope-fight`,
+`kingdom-death-monster-lantern-year-4-settlement-phase`,
+`kingdom-death-monster-lantern-year-5`. Ordering the series hub needs these.
+
+**7 × placement and content calls.**
+
+1. `games/age-of-sigmar-spearhead.mdx` — the stub. Needs your `verdict`, the
+   how-to-start body, `costToStart`/`boardSize`, and the three funnel picks
+   before `draft` comes off.
+2. `series/kingdom-death-monster.mdx` and 3. `series/kal-arath.mdx` — the
+   descriptions are placeholders in your register, not your words, and both use
+   the default hero image. Rewrite before `/series/` ships in Phase 2.
+4. `guides/painting-references-maximus-infinity.mdx` — kept as its own guide;
+   the legacy map would have folded it into `/games/infinity/`.
+5. `vlog/trench-crusade-resources.mdx` — kept as
+   `/articles/trench-crusade-resources/`; the legacy map says the content is
+   already merged into the game page and 301s it away.
+6. `vlog/warmachine-resources.mdx` — kept as `/articles/warmachine-resources/`;
+   the legacy map sends it to the hub, which lands in Phase 4.
+7. `vlog/chainmail-miniatures-checklist.mdx` — kept as a list article; the
+   legacy map offers the graveyard or a `/games/chainmail/` entry.
+
+4 through 7 are the same question in four places: **you restored these six pages
+in Phase 0, and the legacy map — written before that — folds four of them into
+hubs.** Keeping them is what non-negotiable 8 asks for and it is reversible.
+Say the word and any of them folds with a 301 instead.

@@ -85,6 +85,29 @@ function readMap(name) {
 /* ------------------------------------------------------- legacySlug ----- */
 
 /**
+ * Where a guide renders. Most sit at /guides/{id}/, but a guide nested in a
+ * directory named after a game is a resource page belonging to that game and
+ * renders under it — /games/mage-knight/army-checklist/, not
+ * /guides/mage-knight/army-checklist/. Phase 2's routes follow the same rule;
+ * if you change one, change both.
+ */
+function guideUrl(id) {
+  const [first, ...rest] = id.split('/');
+  if (rest.length && gameSlugs().has(first)) return `/games/${id}/`;
+  return `/guides/${id}/`;
+}
+
+let _gameSlugs;
+function gameSlugs() {
+  if (_gameSlugs) return _gameSlugs;
+  const dir = join(ROOT, 'src', 'content', 'games');
+  _gameSlugs = new Set(
+    existsSync(dir) ? readdirSync(dir).map((f) => f.replace(/\.mdx?$/, '')) : []
+  );
+  return _gameSlugs;
+}
+
+/**
  * Guides carry `legacySlug` when a title rewrite made the old slug wrong. The
  * collection does not exist until Phase 1; until then this returns nothing.
  */
@@ -108,7 +131,7 @@ function legacySlugRules() {
       const slug = `${prefix}${entry.name.replace(/\.mdx?$/, '')}`;
       out.push({
         from: `/${m[1].replace(/^\/|\/$/g, '')}/`,
-        to: `/guides/${slug}/`,
+        to: guideUrl(slug),
         source: 'legacySlug',
       });
     }
@@ -150,7 +173,15 @@ function collect() {
   const posts = readMap('url-map-posts.csv').map((r) => ({ from: r.old_url, to: r.new_url, source: 'posts' }));
   const pages = readMap('url-map-pages.csv').map((r) => ({ from: r.old_url, to: r.new_url, source: 'pages' }));
   const legacy = readMap('url-map-legacy-404s.csv').map((r) => ({ from: r.old_url, to: r.new_url, source: 'legacy' }));
-  return { posts, pages, legacy, guides: legacySlugRules() };
+
+  // Every Phase 1 move is already in the CSVs, and migrate-content.mjs sets
+  // legacySlug on the files it moves, so the two overlap completely today.
+  // Drop the overlap rather than emit each rule twice. legacySlug starts
+  // carrying its own weight in Phase 3, when a rewritten title changes a slug.
+  const mapped = new Set([...posts, ...pages, ...legacy].map((r) => r.from));
+  const guides = legacySlugRules().filter((r) => !mapped.has(r.from));
+
+  return { posts, pages, legacy, guides };
 }
 
 /**
