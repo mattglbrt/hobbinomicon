@@ -196,7 +196,7 @@ the confusion you wanted to avoid — so I replaced them:
 > Guides for this
 
 ### [G4] `/series/` description
-> Campaigns and live plays, run start to finish. Kingdom Death blind, Kal-Arath solo, and whatever comes next.
+> Campaigns and live plays, run start to finish. Kingdom Death blind, Kal Arath solo, and whatever comes next.
 
 ### [G5] `/articles/` description
 > Lists, essays and reference pages. The things that are neither a painting guide nor a day at the desk.
@@ -214,9 +214,9 @@ the confusion you wanted to avoid — so I replaced them:
 
 *(Also needs a hero image — it's on the site default. No AI art, so this wants a photo of yours.)*
 
-### [H2] Kal-Arath
-> **Name:** Kal-Arath — Live Play
-> **Description:** Solo live-play sessions of Kal-Arath, the sword-and-sorcery solo RPG, run at the table and recorded start to finish.
+### [H2] Kal Arath
+> **Name:** Kal Arath — Live Play
+> **Description:** Solo live-play sessions of Kal Arath, the sword-and-sorcery solo RPG, run at the table and recorded start to finish.
 
 *(Same — default hero image.)*
 
