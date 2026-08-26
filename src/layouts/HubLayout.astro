@@ -80,7 +80,11 @@ const {
 } = Astro.props;
 
 const canonical = new URL(url, Astro.site ?? Astro.url).toString();
-const totalGuides = groups.reduce((n, g) => n + g.guides.length, 0);
+// Count distinct guides, not group memberships: a guide that applies to three
+// systems appears in three groups and is still one guide.
+const totalGuides = new Set(
+  [...groups.flatMap((g) => g.guides), ...(spotlight?.guides ?? [])].map((x) => x.entry.id)
+).size;
 ---
 
 <BaseLayout title={`${title} | The Hobbinomicon`} description={description}>

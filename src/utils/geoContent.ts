@@ -166,7 +166,7 @@ export function guideDoc(guide: Guide, gameSlugs: Set<string>): MarkdownDoc {
       topic: d.topic,
       game: d.game?.id,
       hub: d.hub,
-      system: d.system,
+      system: d.system.length ? d.system.join(', ') : undefined,
       faction: d.faction,
       difficulty: d.difficulty,
       timeMinutes: d.timeMinutes ? String(d.timeMinutes) : undefined,

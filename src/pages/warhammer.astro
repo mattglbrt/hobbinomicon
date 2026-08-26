@@ -31,12 +31,12 @@ const groups: HubGroup[] = SYSTEM_ORDER
   .map((sys) => ({
     name: SYSTEMS[sys],
     planned: PLANNED[sys],
-    guides: guides.filter((g) => g.data.system === sys).map(link),
+    guides: guides.filter((g) => g.data.system.includes(sys)).map(link),
   }))
   // A system with no guides only earns a slot if it has a planned list to show.
   .filter((g) => g.guides.length > 0 || (g.planned?.length ?? 0) > 0);
 
-const unfiled = guides.filter((g) => !g.data.system);
+const unfiled = guides.filter((g) => g.data.system.length === 0);
 if (unfiled.length) {
   groups.push({ name: 'Also painting', guides: unfiled.map(link) });
 }

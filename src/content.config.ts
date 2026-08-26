@@ -79,13 +79,19 @@ const guides = defineCollection({
     game: reference('games').optional(),
     hub: z.enum(['warmachine', 'warhammer']).optional(),
 
-    // Which GW game, within the Warhammer hub. The values are the future
-    // /warhammer/{system}/ slugs, chosen once now so splitting the hub later
-    // is a template change and not a migration. Extend as games are added.
-    system: z.enum([
+    // Which GW games this applies to, within the Warhammer hub. The values are
+    // the future /warhammer/{system}/ slugs, chosen once now so splitting the
+    // hub later is a template change and not a migration. Extend as games are
+    // added.
+    //
+    // An array because a recipe is not always tied to one game: "How to Paint
+    // Pale Orc Skin" is 40k, The Old World and Spearhead alike, and filing it
+    // under one of them would hide it from the other two both on the hub today
+    // and on the per-system pages later.
+    system: z.array(z.enum([
       '40k', 'the-old-world', 'spearhead', 'age-of-sigmar',
       'kill-team', 'necromunda', 'other',
-    ]).optional(),
+    ])).default([]),
 
     faction: z.string().optional(),
     difficulty: z.enum(['beginner', 'intermediate', 'advanced']).default('beginner'),
