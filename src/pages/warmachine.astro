@@ -1,0 +1,95 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import HubLayout, { type HubGroup } from '../layouts/HubLayout.astro';
+import { getGuides, getGames, guideUrlWith } from '../utils/content';
+import { getFunnelSuggestions } from '../utils/funnel';
+
+/**
+ * The Warmachine on-ramp. Faction order and the planned-model lists come from
+ * roadmap/rebuild/04-hubs-content-plan.md, which is Matt's own list — do not
+ * reorder or invent members here.
+ */
+const FACTIONS: { name: string; planned: string[] }[] = [
+  { name: 'Crucible Guard', planned: ['Gearheart', 'Toro', 'Apollo'] },
+  { name: 'Old Umbrey', planned: ['Lissya', 'Primeval', 'Vorony', 'Chosen of the Witch'] },
+  { name: 'Grymkin', planned: ['Heretic', 'Old Witch', 'Cage Rager', 'Crabbit', 'Slaughterhouse', 'Dreadrot'] },
+  { name: 'Infernals', planned: ['Zataroth', 'a heavy', 'a light', 'cultist', 'destroyer', 'Kithguard', 'Kraghorn'] },
+  { name: 'Convergence of Cyriss', planned: ['Directrix', 'Lucant'] },
+  { name: 'Dark Ops', planned: ['Thexus', 'Malfessor', 'Criterion', 'Drudge', 'Agitator'] },
+  { name: 'Thornfall Alliance', planned: ['Midas', 'Sturm & Drang or Carver'] },
+];
+
+const gameSlugs = new Set((await getCollection('games')).map((g) => g.id));
+const guides = (await getGuides()).filter((g) => g.data.hub === 'warmachine');
+const link = (entry: (typeof guides)[number]) => ({ entry, href: guideUrlWith(entry, gameSlugs) });
+
+const groups: HubGroup[] = FACTIONS.map((f) => ({
+  name: f.name,
+  planned: f.planned,
+  guides: guides.filter((g) => g.data.faction === f.name).map(link),
+}));
+
+// Anything without a faction set still belongs on the page.
+const unfiled = guides.filter((g) => !g.data.faction || !FACTIONS.some((f) => f.name === g.data.faction));
+if (unfiled.length) {
+  groups.push({ name: 'Everything else', guides: unfiled.map(link) });
+}
+
+// Start here: three hand-picked guides. Falls back to the newest so the
+// section is never empty while Matt is choosing.
+const START_HERE_SLUGS: string[] = [];
+const picked = START_HERE_SLUGS.map((s) => guides.find((g) => g.id === s)).filter(Boolean);
+const startHere = (picked.length ? picked : guides.slice(0, 3)).map((g) => link(g!));
+
+const game = await getEntry('games', 'warmachine');
+const allGames = await getGames();
+const news = (await getCollection('news', ({ data }) => !data.draft))
+  .filter((n) => n.data.relatedGame?.id === 'warmachine')
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 4);
+
+// The funnel is fed from relatedGames on the game entry, exactly as a game
+// page's is, so Matt's editorial picks drive both surfaces from one place.
+const funnel = game
+  ? getFunnelSuggestions(
+      game,
+      allGames,
+      await Promise.all(game.data.relatedGames.map((ref) => getEntry(ref)))
+    )
+  : [];
+---
+
+<HubLayout
+  title="Warmachine"
+  tagline="Steamjacks, warcasters, and a faction backlog that keeps growing. The recipes I use, the armies I actually play, and where to go when you want something smaller."
+  description="Warmachine painting guides by faction, army projects, and news — plus the indie skirmish games worth trying if you like painting steamjacks."
+  url="/warmachine/"
+  groupLabel="Painting guides by faction"
+  groups={groups}
+  startHere={startHere}
+  news={news}
+  funnel={funnel}
+  game={game ?? null}
+  ctaText="More Warmachine on YouTube"
+>
+  {/* MATT: this body is the "My armies" section and it is yours to write —
+      nothing here should be in my voice. 04-hubs-content-plan.md has your
+      faction list to work from. Two other calls on this page:
+
+        1. START_HERE_SLUGS at the top is empty, so "Start here" is currently
+           the three newest guides. 04-hubs suggests the Crucible Guard scheme
+           guide, how to prepare bases for an entire army, and buying/selling/
+           trading. Fill in the three ids and it stops guessing.
+        2. The funnel reads relatedGames off src/content/games/warmachine.mdx,
+           which is empty and has hideFunnel set. 04-hubs suggests Trench
+           Crusade, Relicblade and Motley Crews. Setting them turns the funnel
+           on here and on the game page at once. */}
+
+  <h2>My armies</h2>
+
+  <p>
+    Seven factions, one at a time. The rule I set myself: finish one before
+    starting the next, because a faction with three painted units is worth more
+    than seven with one each.
+  </p>
+</HubLayout>

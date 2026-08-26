@@ -1,7 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import VlogLayout from '../../layouts/VlogLayout.astro';
-import { getAllVlogEntries, getGuides } from '../../utils/content';
+import { getAllVlogEntries, getGuides, guideUrlWith } from '../../utils/content';
 
 export async function getStaticPaths() {
   // Drafts must not get a page: the sitemap is generated from emitted routes,
@@ -17,6 +17,7 @@ const { Content, remarkPluginFrontmatter } = await render(post);
 const readingTime = remarkPluginFrontmatter?.readingTime ?? 1;
 
 const all = await getAllVlogEntries();
+const gameSlugs = new Set((await getCollection('games')).map((g) => g.id));
 const guides = await getGuides();
 
 // "Guides for this" — what gives a diary entry somewhere to send a reader.
@@ -30,7 +31,7 @@ const relatedGuides = guides
   .filter((r) => r.score > 0)
   .sort((a, b) => b.score - a.score)
   .slice(0, 3)
-  .map((r) => r.guide);
+  .map((r) => ({ entry: r.guide, href: guideUrlWith(r.guide, gameSlugs) }));
 
 // Prev/next within the same month, so the archive reads as a run of days
 // rather than a heap.

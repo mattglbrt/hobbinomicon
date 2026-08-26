@@ -1,4 +1,6 @@
 ---
+import { getImage } from 'astro:assets';
+import { getHeroImage, isImageMetadata } from '../utils/getHeroImage';
 import SkipLink from '../components/SkipLink.astro';
 import StructuredData from '../components/StructuredData.astro';
 import SearchModal from '../components/SearchModal.astro';
@@ -11,6 +13,15 @@ interface Props {
   title: string;
   description?: string;
   image?: string;
+  /**
+   * The raw frontmatter hero path, e.g. "/images/games/x.jpg". Callers hand
+   * `image` an already-emitted /_astro/ URL for the rendered page, which
+   * cannot be transformed again — this is the original, so the social card can
+   * be generated at 1200x630.
+   */
+  ogSource?: string;
+  /** YouTube id, when the hero is the cached video thumbnail. */
+  ogYoutubeId?: string;
   ogType?: 'website' | 'article';
   publishedTime?: Date;
   modifiedTime?: Date;
@@ -23,6 +34,8 @@ const {
   title,
   description = 'The Hobbinomicon - Hobbying from the deep end of the dungeon.',
   image = '/og-image.jpg',
+  ogSource,
+  ogYoutubeId,
   ogType = 'website',
   publishedTime,
   modifiedTime,
@@ -30,6 +43,38 @@ const {
   tags,
   section,
 } = Astro.props;
+
+/**
+ * og:image at the size the platforms actually want. Callers pass the same
+ * hero string the page renders; here it is resolved back to its ImageMetadata
+ * and emitted as a 1200x630 WebP. Previously this shipped the full-size
+ * original — inside every platform limit, but Dreadwood's was 1.1 MB for a
+ * card that gets displayed at 1200 wide.
+ *
+ * Remote images (YouTube thumbnails) and the static /og-image.jpg fall
+ * through unchanged; there is nothing local to transform.
+ */
+let ogImage = image;
+const ogCandidate = ogSource ?? (ogYoutubeId ? undefined : image);
+if (ogCandidate !== undefined || ogYoutubeId) {
+  const resolved = getHeroImage(ogCandidate, ogYoutubeId);
+  if (isImageMetadata(resolved)) {
+    try {
+      const card = await getImage({
+        src: resolved,
+        width: 1200,
+        height: 630,
+        fit: 'cover',
+        format: 'webp',
+        quality: 70,
+      });
+      ogImage = card.src;
+    } catch {
+      // A hero that cannot be transformed still deserves a card.
+      ogImage = image;
+    }
+  }
+}
 
 const canonicalURL = Astro.site
   ? new URL(Astro.url.pathname, Astro.site)
@@ -101,7 +146,9 @@ const metaDescription =
     <meta property="og:url" content={Astro.url} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={new URL(image, Astro.url)} />
+    <meta property="og:image" content={new URL(ogImage, Astro.url)} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:site_name" content="The Hobbinomicon" />
     <meta property="og:locale" content="en_US" />
     {ogType === 'article' && publishedTime && (
@@ -125,7 +172,7 @@ const metaDescription =
     <meta property="twitter:url" content={Astro.url} />
     <meta property="twitter:title" content={title} />
     <meta property="twitter:description" content={description} />
-    <meta property="twitter:image" content={new URL(image, Astro.url)} />
+    <meta property="twitter:image" content={new URL(ogImage, Astro.url)} />
     <meta property="twitter:creator" content="@hobbinomicon" />
 
     <title>{title}</title>

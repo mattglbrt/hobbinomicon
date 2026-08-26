@@ -39,7 +39,7 @@ interface Props {
   youtubeId?: string;
   readingTime?: number;
   relatedPosts?: CollectionEntry<'vlog'>[];
-  relatedGuides?: CollectionEntry<'guides'>[];
+  relatedGuides?: { entry: CollectionEntry<'guides'>; href: string }[];
   /**
    * Prev/next as resolved links. The layout serves /vlog/ and
    * /series/{series}/ alike, so it is given hrefs rather than entries — it has
@@ -115,6 +115,8 @@ const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
   title={title}
   description={description}
   image={hasRealHero ? displayImageUrl : undefined}
+  ogSource={heroImage}
+  ogYoutubeId={youtubeId}
   ogType="article"
   publishedTime={pubDate}
   modifiedTime={updatedDate}
@@ -319,13 +321,13 @@ const estimatedWordCount = readingTime ? readingTime * 200 : undefined;
                 Guides for this
               </h2>
               <div class="grid gap-4">
-                {relatedGuides.map((g) => (
+                {relatedGuides.map(({ entry, href }) => (
                   <ListCard
-                    href={`/guides/${g.id}/`}
-                    title={g.data.title}
-                    description={g.data.description}
-                    meta={formatDateLong(g.data.pubDate)}
-                    image={getHeroImageUrl(g.data.heroImage, g.data.youtubeId)}
+                    href={href}
+                    title={entry.data.title}
+                    description={entry.data.description}
+                    meta={formatDateLong(entry.data.pubDate)}
+                    image={getHeroImageUrl(entry.data.heroImage, entry.data.youtubeId)}
                   />
                 ))}
               </div>

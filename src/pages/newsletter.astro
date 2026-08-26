@@ -1,0 +1,59 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import PageHeader from '../components/PageHeader.astro';
+import ContentContainer from '../components/ContentContainer.astro';
+import NewsletterSignup from '../components/NewsletterSignup.astro';
+import StructuredData from '../components/StructuredData.astro';
+
+const description =
+  'New indie wargames, Kickstarters worth backing, and one painting guide. Every two weeks, no more than that.';
+---
+
+<BaseLayout title="Newsletter | The Hobbinomicon" description={description}>
+  <StructuredData
+    type="breadcrumb"
+    data={{
+      breadcrumbs: [
+        { name: 'Home', url: 'https://hobbinomicon.com/' },
+        { name: 'Newsletter', url: 'https://hobbinomicon.com/newsletter/' },
+      ],
+    }}
+  />
+  <Header theme="light" />
+
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
+    <PageHeader
+      title="Newsletter"
+      description={description}
+      breadcrumbs={[{ label: 'Newsletter', href: '/newsletter' }]}
+    />
+
+    <ContentContainer class="py-16" maxWidth="3xl">
+      <div class="prose dark:prose-invert max-w-none">
+        <h2>What you get</h2>
+        <p>
+          Three things, every other week. A game from the directory worth a look,
+          whatever is live on Kickstarter that is not a cash grab, and one
+          painting guide from the site.
+        </p>
+        <h2>What you don't get</h2>
+        <p>
+          Daily mail. Affiliate spam. Your address given to anyone.
+        </p>
+      </div>
+
+      {/* MATT: the archive lives here once a provider is picked. 01-…md
+          recommends Buttondown — cheapest, has an API, RSS-to-email, and an
+          archive page that can be embedded on this URL. Until then this page
+          is the signup and the promise, which is enough to launch with. */}
+
+      <div class="mt-12">
+        <NewsletterSignup variant="section" />
+      </div>
+    </ContentContainer>
+
+    <Footer />
+  </main>
+</BaseLayout>

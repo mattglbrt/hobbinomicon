@@ -1,0 +1,215 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import ContentContainer from '../components/ContentContainer.astro';
+import ListCard from '../components/ListCard.astro';
+import ImageCard from '../components/ImageCard.astro';
+import ProseContent from '../components/ProseContent.astro';
+import StructuredData from '../components/StructuredData.astro';
+import YouTubeCTA from '../components/YouTubeCTA.astro';
+import FunnelSection from '../components/FunnelSection.astro';
+import { getHeroImage, getHeroImageUrl } from '../utils/getHeroImage';
+import { formatDateLong } from '../utils/formatDate';
+import type { CollectionEntry } from 'astro:content';
+
+/**
+ * The on-ramp hubs at /warmachine/ and /warhammer/.
+ *
+ * These are not game pages. A game page is the canonical entity at
+ * /games/{slug}/; a hub is the marketing surface a cold visitor lands on when
+ * they search a mainstream game name. Its job is to answer that search well
+ * and then point sideways into the indie directory — which is what the funnel
+ * section at the bottom is for. It is the point of the page, not a footer.
+ */
+export interface HubGroup {
+  name: string;
+  guides: { entry: CollectionEntry<'guides'>; href: string }[];
+  /** Shown when a group has no guides yet. Never render an empty group without one. */
+  planned?: string[];
+}
+
+interface Props {
+  title: string;
+  tagline: string;
+  description: string;
+  url: string;
+  groupLabel: string;
+  groups: HubGroup[];
+  startHere: { entry: CollectionEntry<'guides'>; href: string }[];
+  news?: CollectionEntry<'news'>[];
+  funnel?: { game: CollectionEntry<'games'>; reason: string }[];
+  game?: CollectionEntry<'games'> | null;
+  channelUrl?: string;
+  ctaText?: string;
+}
+
+const {
+  title,
+  tagline,
+  description,
+  url,
+  groupLabel,
+  groups,
+  startHere,
+  news = [],
+  funnel = [],
+  game = null,
+  channelUrl,
+  ctaText,
+} = Astro.props;
+
+const canonical = new URL(url, Astro.site ?? Astro.url).toString();
+const totalGuides = groups.reduce((n, g) => n + g.guides.length, 0);
+---
+
+<BaseLayout title={`${title} | The Hobbinomicon`} description={description}>
+  <StructuredData
+    type="breadcrumb"
+    data={{
+      breadcrumbs: [
+        { name: 'Home', url: 'https://hobbinomicon.com/' },
+        { name: title, url: canonical },
+      ],
+    }}
+  />
+  <Header theme="dark" />
+
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark" data-pagefind-body>
+    <section class="bg-ink dark:bg-ink-dark pt-32 pb-16 md:pt-40 md:pb-20">
+      <ContentContainer maxWidth="4xl">
+        <h1 class="font-display font-bold text-parchment dark:text-parchment-dark leading-[0.95] text-5xl md:text-7xl mb-6">
+          {title}
+        </h1>
+        <p class="text-lg md:text-2xl text-parchment/70 dark:text-parchment-dark/70 font-serif max-w-3xl">
+          {tagline}
+        </p>
+        <p class="mt-6 text-sm font-heading uppercase tracking-[0.2em] text-parchment/40 dark:text-parchment-dark/40">
+          {totalGuides} {totalGuides === 1 ? 'guide' : 'guides'}
+        </p>
+      </ContentContainer>
+    </section>
+
+    <ContentContainer class="py-16">
+      {startHere.length > 0 && (
+        <section>
+          <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mb-2">
+            Start here
+          </h2>
+          <p class="text-ink/70 dark:text-ink-dark/70 mb-8">
+            If you read three things on this page, read these.
+          </p>
+          <div class="grid gap-4">
+            {startHere.map(({ entry, href }) => (
+              <ListCard
+                href={href}
+                title={entry.data.title}
+                description={entry.data.description}
+                meta={formatDateLong(entry.data.pubDate)}
+                image={getHeroImageUrl(entry.data.heroImage, entry.data.youtubeId)}
+              />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* The hand-written body: "my armies", or whatever the hub needs to say. */}
+      <section class="mt-16 max-w-3xl">
+        <ProseContent>
+          <slot />
+        </ProseContent>
+      </section>
+
+      {groups.length > 0 && (
+        <section class="mt-20 pt-12 border-t border-ink/10 dark:border-ink-dark/10">
+          <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mb-8">
+            {groupLabel}
+          </h2>
+          <div class="space-y-12">
+            {groups.map((group) => (
+              <div>
+                <h3 class="font-heading text-xl text-ink dark:text-ink-dark mb-1">{group.name}</h3>
+                <p class="text-sm text-ink/50 dark:text-ink-dark/50 mb-4">
+                  {group.guides.length > 0
+                    ? `${group.guides.length} ${group.guides.length === 1 ? 'guide' : 'guides'}`
+                    : 'Coming soon'}
+                </p>
+                {group.guides.length > 0 ? (
+                  <div class="grid gap-4">
+                    {group.guides.map(({ entry, href }) => (
+                      <ListCard
+                        href={href}
+                        title={entry.data.title}
+                        description={entry.data.description}
+                        meta={formatDateLong(entry.data.pubDate)}
+                        image={getHeroImageUrl(entry.data.heroImage, entry.data.youtubeId)}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  /* An empty group is only allowed to exist if it says what is
+                     coming. A bare "coming soon" is a dead end. */
+                  group.planned?.length ? (
+                    <div class="rounded-lg border-2 border-dashed border-ink/15 dark:border-ink-dark/15 p-6">
+                      <p class="text-sm text-ink/70 dark:text-ink-dark/70">
+                        On the desk: {group.planned.join(', ')}.
+                      </p>
+                    </div>
+                  ) : null
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {news.length > 0 && (
+        <section class="mt-20 pt-12 border-t border-ink/10 dark:border-ink-dark/10">
+          <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mb-8">
+            Latest news
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {news.map((n) => (
+              <ImageCard
+                href={`/news/${n.id}/`}
+                image={n.data.heroImage ? getHeroImage(n.data.heroImage) : null}
+                imageAlt={n.data.heroImageAlt || n.data.title}
+                title={n.data.title}
+                subtitle={n.data.description}
+                fallbackLetter={n.data.title.charAt(0)}
+                aspectRatio="16/9"
+                variant="stacked"
+              />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {game && (
+        <p class="mt-16 text-sm" data-pagefind-ignore>
+          <a href={`/games/${game.id}/`} class="text-ink dark:text-ink-dark underline underline-offset-4 hover:no-underline">
+            {game.data.title} in the directory →
+          </a>
+        </p>
+      )}
+    </ContentContainer>
+
+    {/* The whole point of the hub. */}
+    {funnel.length > 0 && (
+      <FunnelSection
+        suggestions={funnel}
+        sourceTitle={title}
+        heading={`If you paint ${title}, you'll love…`}
+      />
+    )}
+
+    <div data-pagefind-ignore>
+      <YouTubeCTA
+        title={ctaText ?? `More ${title} on YouTube`}
+        channelUrl={channelUrl}
+      />
+    </div>
+
+    <Footer />
+  </main>
+</BaseLayout>

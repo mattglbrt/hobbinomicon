@@ -185,6 +185,7 @@ const gameSpecs = [
   title={`${game.data.title} | The Hobbinomicon`}
   description={game.data.description}
   image={socialImage}
+  ogSource={game.data.heroImage}
 >
   {heroImg && (
     <link slot="head" rel="preload" as="image" imagesrcset={heroImg.srcSet.attribute} imagesizes="100vw" fetchpriority="high" />
