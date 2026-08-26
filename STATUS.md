@@ -29,9 +29,10 @@ Still true: **transcripts only reach the live site from a local sync** — YouTu
 4. **Hero images for the Gloam and DWARF news posts.** Both run without one. No-AI-art rule applies: Matt's own photo, or ask the creators.
 5. **Act on the channel strategy** — Warmachine launch stream, `@mattglbrt` handle switch, Reels cadence on `@hobbinomicon`. None are code in this repo.
 6. Newsletter: pick provider (Buttondown/ConvertKit/DIY — coordinate with AITD), cadence, archive page. Form is wired, engine missing.
-7. Monster Friends project entry + backfill `project:` on posts.
-8. **Port the GEO pattern to mattglbrt.com** (AITD done 07-22).
-9. Browser click-through of the 07-31 progress bar fix and the 08-13 disclosure page. Both verified structurally, neither in a browser. (The Motley Crews page *was* browser-verified this session.)
+7. **Directory to-do — 10 games with content but no page.** Queue with GSC evidence and priority in `roadmap/games.md` § "Directory to-do". Top of it: clear `draft: true` on Infinity (cheapest), then **Dolmenwood** (249 impressions, position 8.6 on "dolmenwood character creation", no page to land on), then Necromunda (172 impressions, position 8.3). Kingdom Death blocks the new `/series/` hub. Bellwoken sits at position 7.2 on its own brand name with nothing behind it.
+8. Monster Friends project entry + backfill `project:` on posts.
+9. **Port the GEO pattern to mattglbrt.com** (AITD done 07-22).
+10. Browser click-through of the 07-31 progress bar fix and the 08-13 disclosure page. Both verified structurally, neither in a browser. (The Motley Crews page *was* browser-verified this session.)
 
 **Note:** `refresh-vlogs` stays off this list until Matt posts a video. Its return is the first real exercise of the manual tag prompt.
 
@@ -59,7 +60,7 @@ Still true: **transcripts only reach the live site from a local sync** — YouTu
 - Wave 2 post tells readers to ignore the "BETA 1.1" button on orcthebrand.com — delete if they fix it.
 - Is `vlogs/monster-friends-energy-counter` meant to stay drafted?
 - Normalize the 192 timezone-less `pubDate` values? Legacy, cosmetic, but they shift RSS/index order between local and UTC.
-- Directory entries for DWARF / Tavern Lore? Deferred by Matt 07-22; `solo-rpg` is the third-biggest tag.
+- Directory entries for DWARF / Tavern Lore? Deferred by Matt 07-22; `solo-rpg` is the third-biggest tag. Now tracked in the `games.md` directory to-do.
 - Housekeeping backlog: 13 ambiguous tag redirects point at the index; 7 redirect mappings were inference not Matt's guide (`chainmail` resolved 08-26); should `/llms.txt` be linked from the site; delete the dead `descriptions/` corpus (232 gitignored files); worth a transcript proxy so Netlify can fetch captions itself (deferred on cost).
 
 **SESSION_LOG.md is 48KB** — compact per PLAYBOOK §8 at the next wrap that pushes it over ~50KB.
