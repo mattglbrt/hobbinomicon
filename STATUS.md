@@ -10,7 +10,7 @@
 - **The six resource pages deleted in `48d6f7c` are back** at their old `/blog/resources/` URLs, plus 22 legacy redirects. 28 of the 58 URLs Google still shows now resolve; the rest need Phase 2's routes. Three of the restored pages were throwing away 18 clicks between them.
 - **Fixed a live bug:** the Mage Knight hub's "My Mage Knight Content" section has been showing its empty state since July (`tag="mage knight"` never matched the `mage-knight` slug).
 
-Previous baseline still holds: three-entity directory, format-based game URLs, News pillar, GEO output (`/llms.txt`, `/llms-full.txt`, `.md` renderings). Tag taxonomy 69, registry 1:1. Funnel v1 on all 10 published games (Warmachine off via `hideFunnel`).
+Previous baseline still holds: three-entity directory, format-based game URLs, News pillar, GEO output (`/llms.txt`, `/llms-full.txt`, `.md` renderings). Tag taxonomy 70, registry 1:1 (`chainmail` restored 08-26 as a technique tag). Funnel v1 on all 10 published games (Warmachine off via `hideFunnel`).
 
 Still true: **transcripts only reach the live site from a local sync** — YouTube blocks caption fetches from Netlify IPs, so `npm run refresh-vlogs` is load-bearing (see `~/Documents/dev/_system/RECURRING.md`).
 

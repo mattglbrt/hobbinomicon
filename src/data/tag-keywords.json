@@ -265,6 +265,11 @@
       "magnetizing",
       "rare earth"
     ],
+    "chainmail": [
+      "chainmail",
+      "chain mail",
+      "ring mail"
+    ],
     "cloth": [
       "cloth",
       "fabric",
@@ -320,7 +325,6 @@
       "metallic",
       "metallics",
       "true metallic",
-      "chainmail",
       "brass",
       "bronze",
       "silver",

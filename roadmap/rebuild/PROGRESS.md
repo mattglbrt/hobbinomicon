@@ -124,22 +124,28 @@ had the identical bug. All three now list four posts.
    `.mdx`; `.astro` and `.md` files keep the HTML form.
 2. **Warriors of Athena: tag deleted.** The page keeps `tags: ["resources"]`
    only. No game entry, no tag. Flag cleared.
-3. **Chainmail is the game, not the armour.** `/tags/chainmail` and
-   `/rss/chainmail.xml` were repointed off `/tags/metallics/` — one of the eight
-   inferred July mappings — to `/tags/dungeons-and-dragons/` and its feed. The
-   checklist page keeps `tags: ["dungeons-and-dragons", "resources"]`. Flag
-   cleared.
+3. **Chainmail: both senses, settled.** The July collapse folded `chainmail`
+   into `metallics`, which read the word as the armour. The first call was that
+   the tag means the game; the pre-collapse data showed three of its four uses
+   were painting Norman mail, and Matt's revision was to keep the tag on those.
 
-   Worth knowing, because the historical data cuts the other way: of the four
-   posts that carried `chainmail` before the collapse, three are about painting
-   Norman mail — `probably-not-the-worst-chainmail-tutorial-ever` (tagged
-   `dry-brushing`, `liquid-chrome`, `normans`), `more-progress-on-the-normans`,
-   and `hobby-vlog-and-terrain-inspiration`. Only
-   `building-more-figures-for-trench-crusade` uses it in the game sense,
-   alongside `mage-knight`. Matt's ruling settles what the tag means, and none
-   of those posts carry it any more, so nothing breaks. The live consequence is
-   that "how to paint chainmail" is a real search query with no tag route to it.
-   That is a Phase 3 job for the guide's title and `topic`, not a tag job.
+   So `chainmail` is back in the registry as a **technique** tag (70 live tags,
+   registry still 1:1) and sits alongside `metallics` on
+   `probably-not-the-worst-chainmail-tutorial-ever`,
+   `more-progress-on-the-normans` and `hobby-vlog-and-terrain-inspiration`. The
+   `/tags/chainmail` and `/rss/chainmail.xml` 301s are deleted — the page is
+   real again, and `prompt-tags.js` reads `public/_redirects` as the canonical
+   "this became that" record, so leaving them would have made the tag prompt
+   reject `chainmail` as retired.
+
+   The Chainmail *game* checklist keeps `tags: ["dungeons-and-dragons",
+   "resources"]`. The tag is the armour; the game is served by
+   `dungeons-and-dragons`. Say so if you want the checklist carrying `chainmail`
+   too.
+
+   Housekeeping: `chainmail` was dropped from the `metallics` description and
+   from its keyword list so the two do not double-count in the tag prompt.
+
 4. **Splat ordering fixed.** `CATCH_ALLS` in the generator now sorts by prefix
    length descending, so `/blog/characters/*` and `/blog/campaigns/*` emit above
    `/blog/*` and actually fire. Sorting in code rather than trusting the
