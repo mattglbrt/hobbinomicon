@@ -794,9 +794,9 @@
 /tags/relic-blade/  /tags/relicblade/  301!
 
 # catch-alls (unforced, last)
-/blog/*  /guides/  301
-/videos/*  /guides/  301
+/blog/characters/*  /vlog/  301
+/blog/campaigns/*  /series/  301
 /categories/*  /guides/  301
 /category/*  /guides/  301
-/blog/campaigns/*  /series/  301
-/blog/characters/*  /vlog/  301
+/videos/*  /guides/  301
+/blog/*  /guides/  301

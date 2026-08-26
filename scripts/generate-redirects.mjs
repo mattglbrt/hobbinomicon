@@ -129,6 +129,14 @@ function rule(from, to, forced = true) {
   return lines;
 }
 
+/**
+ * Backstops for URLs the maps do not name. Authored most-general first for
+ * readability and emitted most-specific first, because Netlify is
+ * first-match-wins: with `/blog/*` above them, `/blog/campaigns/*` and
+ * `/blog/characters/*` never fire and an unknown campaign URL lands on the
+ * guides index instead of the series index. Sorting here rather than relying
+ * on the order below means adding a rule later cannot reintroduce that.
+ */
 const CATCH_ALLS = [
   ['/blog/*', '/guides/'],
   ['/videos/*', '/guides/'],
@@ -136,7 +144,7 @@ const CATCH_ALLS = [
   ['/category/*', '/guides/'],
   ['/blog/campaigns/*', '/series/'],
   ['/blog/characters/*', '/vlog/'],
-];
+].sort((a, b) => b[0].split('*')[0].length - a[0].split('*')[0].length);
 
 function collect() {
   const posts = readMap('url-map-posts.csv').map((r) => ({ from: r.old_url, to: r.new_url, source: 'posts' }));

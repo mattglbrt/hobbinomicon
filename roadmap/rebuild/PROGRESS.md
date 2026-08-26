@@ -24,7 +24,7 @@ Branch `dev`, commits `56c3166`, `ef7fc83`, `c77ad3e`, `26b6fb2`.
 | Criterion | Result |
 |---|---|
 | `verify-migration.mjs` green against the current build | **431 / 431 OK**, 0 missing, 0 chains |
-| Redirect generator byte-identical to `_redirects.rebuild` | **yes**, md5 `2ae618c9ed228d20ee8c2818b244bbd6` |
+| Redirect generator byte-identical to `_redirects.rebuild` | **yes**, md5 `adb4c7e940a96aa71c6cd4e3149c9f2f` |
 | `pre-rebuild` tag exists | **yes**, on `main` at `5e82a0c` |
 | Six resource pages build at their old URLs, legacy redirects live | **yes**, 6 × 200 + 22 × 301 |
 
@@ -117,30 +117,61 @@ had the identical bug. All three now list four posts.
   because the live version of that article is the site's third page by clicks
   (128), so this is the most valuable single URL still 404ing.
 
-### Decisions for Matt
+### Decisions — resolved by Matt, 2026-08-26
 
 1. **`{/* MATT */}`, not `<!-- MATT -->`, inside MDX.** MDX has no HTML comments
    and an `<!--` breaks the build. The convention holds for every later phase in
    `.mdx`; `.astro` and `.md` files keep the HTML form.
-2. **`warriors-of-athena-figure-list.mdx`** — the `warriors-of-athena` tag was
-   retired in July with no replacement, so the page now carries only `resources`.
-   Warriors of Athena has no game entry and no live tag. Directory entry, or is
-   `resources` enough?
-3. **`chainmail-miniatures-checklist.mdx`** — tagged `dungeons-and-dragons`. The
-   retired `chainmail` tag redirects to `/tags/metallics/`, which reads the word
-   as the armour rather than the game; one of the eight inferred mappings
-   `CLAUDE.md` already flags. `url-map-legacy-404s.csv` offers `/games/chainmail/`
-   or the graveyard.
-4. **Splat ordering in `_redirects.rebuild` is wrong but harmless.** `/blog/*`
-   precedes `/blog/campaigns/*` and `/blog/characters/*`, and Netlify is
-   first-match-wins, so those two never fire. Every campaign and character URL
-   Google knows about has an explicit forced rule above them, so this only
-   affects unknown URLs, which land on `/guides/` instead of `/series/`. Left
-   as-is because byte-identity with the reviewed block was the acceptance
-   criterion; say the word and the generator reorders specific-before-general.
+2. **Warriors of Athena: tag deleted.** The page keeps `tags: ["resources"]`
+   only. No game entry, no tag. Flag cleared.
+3. **Chainmail is the game, not the armour.** `/tags/chainmail` and
+   `/rss/chainmail.xml` were repointed off `/tags/metallics/` — one of the eight
+   inferred July mappings — to `/tags/dungeons-and-dragons/` and its feed. The
+   checklist page keeps `tags: ["dungeons-and-dragons", "resources"]`. Flag
+   cleared.
+
+   Worth knowing, because the historical data cuts the other way: of the four
+   posts that carried `chainmail` before the collapse, three are about painting
+   Norman mail — `probably-not-the-worst-chainmail-tutorial-ever` (tagged
+   `dry-brushing`, `liquid-chrome`, `normans`), `more-progress-on-the-normans`,
+   and `hobby-vlog-and-terrain-inspiration`. Only
+   `building-more-figures-for-trench-crusade` uses it in the game sense,
+   alongside `mage-knight`. Matt's ruling settles what the tag means, and none
+   of those posts carry it any more, so nothing breaks. The live consequence is
+   that "how to paint chainmail" is a real search query with no tag route to it.
+   That is a Phase 3 job for the guide's title and `topic`, not a tag job.
+4. **Splat ordering fixed.** `CATCH_ALLS` in the generator now sorts by prefix
+   length descending, so `/blog/characters/*` and `/blog/campaigns/*` emit above
+   `/blog/*` and actually fire. Sorting in code rather than trusting the
+   authored order means adding a rule later cannot reintroduce the bug.
+   `_redirects.rebuild` was regenerated: four lines moved, nothing else, md5
+   `2ae618c9…` → `adb4c7e9…`. The Phase 0 byte-identity criterion passed against
+   the original block before this intentional change.
 5. **`netlify.toml` still sends `/vlogs/*` to `/videos/`.** Fine today. In Phase
    2 `/videos/*` starts redirecting and that becomes a chain, so it gets
    repointed to `/vlog/` in the same commit.
+6. **`/blog/resources/competition-painting-guides/` stays 404** until Phase 2, on
+   Matt's call. Not restorable from git; its mapped target
+   `/articles/online-painting-competitions-2026/` arrives with the Phase 2
+   routes.
+
+### Netlify normalises trailing slashes
+
+`02-…md` §4 states that Netlify treats `/x` and `/x/` as separate for explicit
+rules, which is why the generator emits both variants. Checked against the live
+site rather than carried forward as an assumption:
+
+```
+/tags/age-of-sigmar   301 -> /tags/warhammer/
+/tags/age-of-sigmar/  301 -> /tags/warhammer/     (rule is written without the slash)
+/tags/hobby-zen       404                          (rule ships in this phase)
+```
+
+So the 496 hand-written tag rules, which only carry the bare form, are fine at
+the canonical slashed URL. The verifier had been reporting the slashed form of
+every retired tag as a 404; it now normalises, matching observed behaviour. The
+generator still emits both variants — it costs nothing and doubled explicit
+rules are the safer shape for forced rules during cutover.
 
 ### Notes carried into Phase 1
 

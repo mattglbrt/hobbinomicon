@@ -90,20 +90,34 @@ function parseNetlifyToml(text) {
  * Netlify path matching. Our rules use only the trailing splat; :params are
  * supported so a future hand-added rule does not silently fail to match here
  * while matching in production.
+ *
+ * Trailing slashes are normalised, because Netlify normalises them. Checked
+ * against the live site rather than assumed: /tags/age-of-sigmar/ 301s to
+ * /tags/warhammer/ off a rule written as /tags/age-of-sigmar with no slash.
+ * That matters because the 496 hand-written tag rules only carry the bare
+ * form, and treating the two as distinct reported the canonical slashed URL
+ * of every retired tag as a 404. (02-…md §4 assumes the opposite; the
+ * generator still emits both variants, which costs nothing and is the safer
+ * shape for forced rules during cutover.)
  */
 function matches(pattern, url) {
-  if (pattern === url) return true;
-  if (!pattern.includes('*') && !pattern.includes('/:')) return false;
+  const variants = url.endsWith('/') ? [url, url.slice(0, -1)] : [url, `${url}/`];
 
-  const rx = new RegExp(
-    '^' +
-      pattern
-        .split('*')[0]
-        .replace(/[.+?^${}()|[\]\\]/g, '\\$&')
-        .replace(/\/:[^/]+/g, '/[^/]+') +
-      (pattern.includes('*') ? '(.*)$' : '$')
-  );
-  return rx.test(url);
+  for (const u of variants) {
+    if (pattern === u) return true;
+    if (!pattern.includes('*') && !pattern.includes('/:')) continue;
+
+    const rx = new RegExp(
+      '^' +
+        pattern
+          .split('*')[0]
+          .replace(/[.+?^${}()|[\]\\]/g, '\\$&')
+          .replace(/\/:[^/]+/g, '/[^/]+') +
+        (pattern.includes('*') ? '(.*)$' : '$')
+    );
+    if (rx.test(u)) return true;
+  }
+  return false;
 }
 
 /* -------------------------------------------------------------- dist ---- */

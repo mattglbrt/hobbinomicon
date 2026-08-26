@@ -54,7 +54,6 @@ Still true: **transcripts only reach the live site from a local sync** — YouTu
 - Is `vlogs/monster-friends-energy-counter` meant to stay drafted?
 - Normalize the 192 timezone-less `pubDate` values? Legacy, cosmetic, but they shift RSS/index order between local and UTC.
 - Directory entries for DWARF / Tavern Lore? Deferred by Matt 07-22; `solo-rpg` is the third-biggest tag.
-- **Splat ordering in `_redirects.rebuild`:** `/blog/*` precedes `/blog/campaigns/*` and `/blog/characters/*`, so those two never fire. Harmless today (every such URL Google knows has an explicit rule above them), but say the word and the generator reorders specific-before-general.
-- Housekeeping backlog: 13 ambiguous tag redirects point at the index; 8 redirect mappings were inference not Matt's guide; should `/llms.txt` be linked from the site; delete the dead `descriptions/` corpus (232 gitignored files); worth a transcript proxy so Netlify can fetch captions itself (deferred on cost).
+- Housekeeping backlog: 13 ambiguous tag redirects point at the index; 7 redirect mappings were inference not Matt's guide (`chainmail` resolved 08-26); should `/llms.txt` be linked from the site; delete the dead `descriptions/` corpus (232 gitignored files); worth a transcript proxy so Netlify can fetch captions itself (deferred on cost).
 
 **SESSION_LOG.md is 48KB** — compact per PLAYBOOK §8 at the next wrap that pushes it over ~50KB.
