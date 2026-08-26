@@ -1,0 +1,48 @@
+old_url,new_url,status,note
+/blog/,/guides/,301,listing → guides
+/categories/,/guides/,301,
+/categories/articles/,/articles/,301,
+/categories/videos/,/guides/,301,
+/categories/vlogs/,/vlog/,301,
+/explore/,/guides/,301,
+/videos/,/guides/,301,
+/videos/miniature-painting-tutorials/,/guides/painting/,301,
+/videos/terrain-and-game-boards/,/guides/basing-and-terrain/,301,
+/videos/sculpting-casting-3d-printing/,/guides/sculpting-casting-3d-printing/,301,
+/videos/kitbashing-and-army-projects/,/guides/kitbashing/,301,
+/videos/solo-rpg-toolkit/,/guides/solo-rpg/,301,
+/videos/painting-trench-crusade/,/games/trench-crusade/,301,game hub lists its guides
+/videos/kingdom-death-monster/,/series/kingdom-death-monster/,301,
+/videos/unboxings-and-first-looks/,/guides/review/,301,
+/videos/hobby-opinions/,/articles/,301,
+/videos/archive/,/vlog/,301,
+/games/large-scale-army/,/games/army/,301,format merge
+/games/mass-battle/,/games/army/,301,format merge
+/videos/archive/2/,/vlog/,301,paginated archive
+/videos/archive/3/,/vlog/,301,paginated archive
+/videos/archive/4/,/vlog/,301,paginated archive
+/videos/archive/5/,/vlog/,301,paginated archive
+/videos/archive/6/,/vlog/,301,paginated archive
+/blog/2/,/vlog/,301,paginated blog
+/blog/3/,/vlog/,301,paginated blog
+/blog/4/,/vlog/,301,paginated blog
+/blog/5/,/vlog/,301,paginated blog
+/blog/6/,/vlog/,301,paginated blog
+/blog/7/,/vlog/,301,paginated blog
+/blog/8/,/vlog/,301,paginated blog
+/blog/9/,/vlog/,301,paginated blog
+/blog/10/,/vlog/,301,paginated blog
+/blog/11/,/vlog/,301,paginated blog
+/blog/12/,/vlog/,301,paginated blog
+/blog/13/,/vlog/,301,paginated blog
+/blog/14/,/vlog/,301,paginated blog
+/blog/15/,/vlog/,301,paginated blog
+/blog/16/,/vlog/,301,paginated blog
+/blog/17/,/vlog/,301,paginated blog
+/blog/18/,/vlog/,301,paginated blog
+/blog/19/,/vlog/,301,paginated blog
+/blog/20/,/vlog/,301,paginated blog
+/blog/21/,/vlog/,301,paginated blog
+/blog/22/,/vlog/,301,paginated blog
+/blog/23/,/vlog/,301,paginated blog
+/blog/24/,/vlog/,301,paginated blog
