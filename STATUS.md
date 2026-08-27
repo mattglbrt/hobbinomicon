@@ -7,6 +7,13 @@
 
 **The pass has not run: 0 of 271 videos updated.** Today's attempt authorized the wrong channel ("Curving Out", not Hobbinomicon), so all 190 writes came back 403 and the full 10,000-unit daily quota went on rejected calls. Nothing was written anywhere. Auth is now correct and verified; **quota resets 03:00 local**. A one-unit `assertRightChannel()` guard now runs before the first write so this cannot recur.
 
+**On `dev`, unmerged: the mobile UI pass and a thumbnail fix.** List
+thumbnails were 96px squares built from unprocessed full-size originals, and
+nine of them 404'd on the live site — `getHeroImageUrl()` hands components a
+`/_astro/` path Astro never emits. Card call sites now pass the image object, so
+the thumbnails are responsive webp, 16:9, and full width on mobile. `/guides/`
+at 390px went from ~1 MB of images to 107 KB. Sitewide image audit: 0 missing.
+
 Still true: **transcripts only reach the live site from a local sync** — YouTube blocks caption fetches from Netlify IPs, so `npm run refresh-vlogs` is load-bearing.
 
 ## Next (ranked)

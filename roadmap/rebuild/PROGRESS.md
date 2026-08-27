@@ -449,6 +449,35 @@ Both clear the three-guide bar, so both launch.
   none carries `system` yet. 40k, The Old World and Spearhead render their
   planned lists. No per-system routes were built; the enum reserves the slugs.
 
+### List thumbnails: a 404 nobody saw, hiding an optimisation nobody got
+
+`getHeroImageUrl()` returns `ImageMetadata.src`, which is
+`/_astro/<name>.<hash>.jpg`. Astro emits that original only when something
+references it *as an original*; a component handed the bare string never does,
+so the file was never written. Nine images 404'd across ~100 pages, on the live
+site as well as locally.
+
+The same bug had a second half. `ListCard` forks on `isImageMetadata`, and
+because every call site passed a string, the `<Image>` branch had never once
+run. List pages were shipping unprocessed full-size originals — median 104 KB —
+to fill a 96px square. Fixing the input fixed both: `/guides/` at 390px now
+loads 107 KB of images in total, against roughly 1 MB before, at eleven times
+the display area.
+
+Thumbnails are 16:9 now rather than square. They are video stills, and the
+square crop was discarding ~44% of the frame — most of what tells you what a
+vlog is about, which was Matt's complaint. Below 640px the card stacks and the
+image goes full width; above it, 192px beside the text.
+
+**The lesson worth keeping: a dead branch looks exactly like a working one.**
+Nothing errored, nothing warned, and the pages rendered. What caught it was
+auditing every image URL in `dist` against the files actually on disk — worth
+re-running after any change to image plumbing.
+
+Related: the `src/assets/images` glob listed `{jpg,jpeg,png,webp}`, so an avif
+studio logo silently degraded to a raw `/images/` path with no `public/` copy.
+An extension missing from that glob fails this way every time — quietly.
+
 ### Still open, and why
 
 * **Lighthouse/PSI** — needs the deploy.
