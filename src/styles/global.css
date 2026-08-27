@@ -2,3 +2,230 @@
 @tailwind components;
 @tailwind utilities;
 
+
+/* ─── Mobile UI baseline (2026-08-27) ──────────────────────────────────────
+   Site-wide rules for small viewports. Mobile-first: everything here is either
+   unconditional or inside a max-width query, so desktop is untouched.
+   GSC puts mobile CTR at roughly double desktop, so this is the primary
+   experience, not the fallback.
+   ────────────────────────────────────────────────────────────────────────── */
+
+@layer components {
+  /* One treatment for every icon button, in every component. Defined globally
+     because Astro scopes component styles and these buttons live in two
+     different files. */
+  .icon-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .icon-btn:hover {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.45);
+  }
+
+  /* A tap target you can actually hit. 44px is the WCAG 2.5.5 / HIG floor. */
+  .tap-44 {
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+@layer base {
+  /* Every interactive element gets a visible focus ring, not just a colour
+     shift — the previous styles relied on hover, which a touch device has. */
+  a:focus-visible,
+  button:focus-visible,
+  [role='button']:focus-visible,
+  input:focus-visible,
+  summary:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Nothing may push the page sideways. Long words in headings are the usual
+     culprit at 360px. */
+  html,
+  body {
+    overflow-x: clip;
+  }
+
+  h1, h2, h3 {
+    overflow-wrap: break-word;
+  }
+}
+
+@media (max-width: 767px) {
+  /* Section headings were fixed at text-5xl (48px), which wraps "Games worth
+     knowing about" to four lines at 360px and leaves no room beside it for the
+     view-all link. Clamp the size and stack the row. */
+  .section-head {
+    display: block;
+  }
+
+  .section-head h2 {
+    font-size: clamp(1.75rem, 7vw, 2.5rem) !important;
+    line-height: 1.15;
+    text-wrap: balance;
+  }
+
+  .section-head > a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-top: 0.5rem;
+    white-space: nowrap;
+  }
+
+  /* Icon buttons: one size, one treatment, all of them. The theme toggle used
+     to have no border while search and menu did. */
+  .icon-btn {
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+
+  /* Touch has no hover, so pressed state is the only feedback there is. */
+  .icon-btn:active,
+  .mobile-link:active {
+    background: rgba(255, 255, 255, 0.22);
+    transform: scale(0.97);
+  }
+
+  /* The header is a plain full-width bar on mobile rather than a floating
+     pill, which was spending ~32px of width and a lot of height on margin. */
+  .mobile-bar {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .mobile-bar .glass-nav {
+    border-left: 0;
+    border-right: 0;
+    border-top: 0;
+    border-radius: 0;
+    padding-top: max(0.5rem, env(safe-area-inset-top));
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+
+  /* Navigation links need a real target. Inline links inside prose are
+     deliberately left alone: WCAG 2.5.5 exempts them, and padding a link in
+     the middle of a sentence wrecks the line spacing around it. This is
+     scoped to nav, footer, breadcrumb and pagination only. */
+  footer nav a,
+  nav[aria-label='Breadcrumb'] a,
+  nav[aria-label='Pagination'] a,
+  nav[aria-label='Pagination'] span {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* Footer link columns: 14px is the floor for a UI label, and the rows need
+     to not touch each other once they are 44px tall. */
+  footer nav a {
+    font-size: 0.9375rem;
+  }
+
+  /* Footer social icons sat at 24-32px. */
+  footer a[aria-label] {
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Tag pills, the newsletter submit, the legal row, and the two logo links
+     (header and footer) were all short of 44px. */
+  a[href^='/tags/'],
+  .newsletter-form button,
+  .newsletter-form input,
+  footer a[href='/'],
+  header a[href='/'] {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  a[href^='/tags/'] {
+    justify-content: center;
+    padding-left: 0.875rem;
+    padding-right: 0.875rem;
+  }
+
+  /* The legal row at the very bottom. */
+  footer a[href='/disclaimer/'],
+  footer a[href='/privacy-policy/'],
+  footer a[href='/terms-of-service/'],
+  footer a[href='/ai-disclosure/'] {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* As a floating pill with a margin all round, a dark bar over a cream page
+     read as a deliberate floating element. Full-bleed it reads as a mismatched
+     band, so on mobile the bar inverts with the theme like everything else.
+     The buttons and logo invert with it. */
+  .dark .mobile-bar .glass-nav {
+    background: rgba(244, 236, 216, 0.88);
+    box-shadow: 0 1px 0 rgba(26, 22, 20, 0.12);
+  }
+
+  .dark .mobile-bar .icon-btn {
+    background: rgba(26, 22, 20, 0.06);
+    border-color: rgba(26, 22, 20, 0.3);
+    color: #1a1614;
+  }
+
+  .dark .mobile-bar .icon-btn:hover {
+    background: rgba(26, 22, 20, 0.14);
+    border-color: rgba(26, 22, 20, 0.45);
+  }
+
+  .dark .mobile-bar .icon-btn svg { color: #1a1614; }
+
+  .dark #mobile-menu { border-top-color: rgba(26, 22, 20, 0.15); }
+
+  .dark #mobile-menu .mobile-link {
+    background: rgba(26, 22, 20, 0.05);
+    border-color: rgba(26, 22, 20, 0.18);
+    color: #1a1614;
+  }
+
+  /* The game page reference card is a definition list of links — a navigation
+     list, not prose — so those get a real target too. */
+  dd a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* UI labels never below 14px. */
+  .mobile-link {
+    font-size: 1rem;
+    min-height: 48px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

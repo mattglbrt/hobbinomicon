@@ -75,7 +75,7 @@ function getPageUrl(page: number): string {
         <span class="hidden sm:inline">Prev</span>
       </a>
     ) : (
-      <span class="flex items-center gap-1 px-4 py-2 bg-ink/5 border-2 border-ink/10 text-ink/40 font-mono text-sm rounded cursor-not-allowed">
+      <span class="flex items-center gap-1 px-4 py-2 bg-ink/5 border-2 border-ink/10 text-ink/70 font-mono text-sm rounded cursor-not-allowed">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
         </svg>
@@ -87,7 +87,7 @@ function getPageUrl(page: number): string {
     <div class="flex items-center gap-1">
       {pageNumbers.map((page) => (
         page === '...' ? (
-          <span class="px-3 py-2 text-ink/40 font-mono text-sm">...</span>
+          <span class="px-3 py-2 text-ink/65 font-mono text-sm">...</span>
         ) : page === currentPage ? (
           <span
             class="px-4 py-2 bg-ink text-parchment font-mono text-sm rounded"
@@ -120,7 +120,7 @@ function getPageUrl(page: number): string {
         </svg>
       </a>
     ) : (
-      <span class="flex items-center gap-1 px-4 py-2 bg-ink/5 border-2 border-ink/10 text-ink/40 font-mono text-sm rounded cursor-not-allowed">
+      <span class="flex items-center gap-1 px-4 py-2 bg-ink/5 border-2 border-ink/10 text-ink/70 font-mono text-sm rounded cursor-not-allowed">
         <span class="hidden sm:inline">Next</span>
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />

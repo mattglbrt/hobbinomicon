@@ -16,7 +16,7 @@ interface Props {
 
 const { items, scheme = 'dark' } = Astro.props;
 
-const muted = scheme === 'dark' ? 'text-white/60' : 'text-ink/60 dark:text-ink-dark/60';
+const muted = scheme === 'dark' ? 'text-white/60' : 'text-ink/65 dark:text-ink-dark/65';
 const hover = scheme === 'dark' ? 'hover:text-white' : 'hover:text-ink dark:hover:text-ink-dark';
 const current = scheme === 'dark' ? 'text-white' : 'text-ink dark:text-ink-dark';
 ---

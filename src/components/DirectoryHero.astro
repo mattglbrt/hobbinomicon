@@ -11,17 +11,17 @@ const formats = [
 ];
 ---
 
-<section class="relative overflow-hidden bg-ink dark:bg-ink-dark pt-32 pb-20 md:pt-40 md:pb-28">
+<section class="hero relative overflow-hidden bg-ink dark:bg-ink-dark">
   <ContentContainer maxWidth="4xl" class="relative z-10 text-center">
-    <p class="text-sm font-heading uppercase tracking-[0.3em] text-parchment/50 dark:text-parchment-dark/50 mb-6">
+    <p class="hero-eyebrow font-heading uppercase text-parchment/70 dark:text-parchment-dark/70">
       Hobbying from the deep end of the dungeon
     </p>
 
-    <h1 class="font-display font-bold text-parchment dark:text-parchment-dark leading-[0.95] text-5xl md:text-7xl lg:text-8xl mb-6">
+    <h1 class="hero-title font-display font-bold text-parchment dark:text-parchment-dark">
       Find your next indie wargame. Learn how to play and paint it.
     </h1>
 
-    <p class="text-lg md:text-2xl text-parchment/70 dark:text-parchment-dark/70 max-w-2xl mx-auto mb-10 font-serif">
+    <p class="hero-sub text-parchment/80 dark:text-parchment-dark/80 mx-auto font-serif">
       A directory of small and indie tabletop wargames, and the guides to get them on your table. Skirmish, army-scale, solo, and the weird stuff in between.
     </p>
 
@@ -29,32 +29,189 @@ const formats = [
     <button
       type="button"
       data-search-trigger
-      class="group mx-auto mb-8 flex w-full max-w-lg items-center gap-3 rounded-xl border border-white/15 bg-white/5 px-5 py-4 text-left transition-colors hover:border-white/30 hover:bg-white/10"
-      aria-label="Search the directory"
+      class="hero-search group mx-auto flex w-full max-w-lg items-center gap-3 rounded-xl text-left"
     >
-      <svg class="h-5 w-5 shrink-0 text-parchment/60 dark:text-parchment-dark/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg class="h-5 w-5 shrink-0 text-parchment/70 dark:text-parchment-dark/70" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
       </svg>
-      <span class="flex-1 text-parchment/60 dark:text-parchment-dark/60">Search games, studios, and news…</span>
-      <kbd class="hidden sm:inline-block rounded border border-white/15 px-2 py-0.5 text-xs text-parchment/50 dark:text-parchment-dark/50">⌘K</kbd>
+      <span class="flex-1 text-parchment/70 dark:text-parchment-dark/70">Search games, studios, and news…</span>
+      <kbd class="hidden sm:inline-block rounded border border-white/25 px-2 py-0.5 text-xs text-parchment/60 dark:text-parchment-dark/60">⌘K</kbd>
     </button>
 
-    <!-- Browse by format -->
-    <div class="flex flex-wrap items-center justify-center gap-2">
-      <a
-        href="/games/"
-        class="inline-block rounded-full bg-parchment px-4 py-2 text-sm font-heading uppercase tracking-wider text-ink transition-transform hover:scale-105 dark:bg-parchment-dark dark:text-ink-dark"
-      >
-        Browse all games
-      </a>
-      {formats.map((f) => (
-        <a
-          href={f.href}
-          class="inline-block rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-parchment/80 transition-colors hover:border-white/30 hover:bg-white/10 dark:text-parchment-dark/80"
-        >
-          {f.label}
-        </a>
-      ))}
+    <!-- Primary action gets its own row so it never shares a line with a
+         filter chip, which is what made the old layout read as ragged. -->
+    <a href="/games/" class="hero-cta font-heading bg-parchment text-ink dark:bg-parchment-dark dark:text-ink-dark">Browse all games</a>
+
+    <!-- Browse by format. On mobile this is a snap-scrolling row rather than a
+         wrapping pile: five chips will not tile evenly at 360px whatever you
+         do with them, so let them run off the edge on purpose and fade. -->
+    <div class="chip-scroller-wrap">
+      <ul class="chip-scroller" aria-label="Browse games by format">
+        {formats.map((f) => (
+          <li>
+            <a href={f.href} class="chip font-heading text-parchment/90 dark:text-parchment-dark/90">{f.label}</a>
+          </li>
+        ))}
+      </ul>
     </div>
   </ContentContainer>
 </section>
+
+<style>
+  /* ── Rhythm ──────────────────────────────────────────────────────────────
+     One 8px scale, applied as margin-top on each element rather than a mix of
+     mb-6/mb-8/mb-10, which is what produced a tiny gap under the eyebrow and a
+     large one under the subhead. */
+  .hero {
+    padding-top: calc(56px + env(safe-area-inset-top) + 1.5rem);
+    padding-bottom: 2rem;
+  }
+
+  .hero-eyebrow {
+    font-size: 0.6875rem;      /* 11px */
+    letter-spacing: 0.12em;
+    line-height: 1.4;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .hero-title {
+    font-size: clamp(2rem, 8vw, 3.25rem);
+    line-height: 1.1;
+    margin-top: 0.75rem;
+    text-wrap: balance;
+  }
+
+  .hero-sub {
+    font-size: 1.0625rem;      /* 17px */
+    line-height: 1.5;
+    max-width: 34ch;
+    margin-top: 1rem;
+  }
+
+  /* ── Search ──────────────────────────────────────────────────────────────
+     The old border was rgba(255,255,255,.15) on near-black: about 1.3:1, so
+     effectively invisible. .35 clears 3:1 against the ink background. */
+  .hero-search {
+    margin-top: 1.5rem;
+    min-height: 52px;
+    padding: 0 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.08);
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+  }
+
+  .hero-search:hover {
+    border-color: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  .hero-search:active {
+    background: rgba(255, 255, 255, 0.16);
+  }
+
+  /* ── Primary CTA ─────────────────────────────────────────────────────────
+     Full width on mobile, on its own row. Matches the chips' typographic
+     treatment: both are heading-font, sentence case, same tracking. The old
+     mix of an uppercase wide-tracked button next to sentence-case chips read
+     as two different design systems. */
+  .hero-cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 48px;
+    margin-top: 1rem;
+    padding: 0 1.25rem;
+    border-radius: 9999px;
+    font-size: 1rem;
+    letter-spacing: 0.01em;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  .hero-cta:hover { opacity: 0.9; }
+  .hero-cta:active { transform: scale(0.98); }
+
+  /* ── Chips ───────────────────────────────────────────────────────────── */
+  .chip-scroller-wrap {
+    position: relative;
+    margin-top: 0.75rem;
+  }
+
+  .chip-scroller {
+    display: flex;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0 0 0.25rem;
+    list-style: none;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .chip-scroller::-webkit-scrollbar { display: none; }
+  .chip-scroller > li { scroll-snap-align: start; flex: 0 0 auto; }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 1rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.04);
+    font-size: 0.9375rem;      /* 15px */
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+  }
+
+  .chip:hover { border-color: rgba(255, 255, 255, 0.55); background: rgba(255, 255, 255, 0.1); }
+  .chip:active { background: rgba(255, 255, 255, 0.16); }
+
+  /* Edge fade signals there is more to the right. Pointer-events off so it
+     never eats a tap on the chip underneath it. */
+  .chip-scroller-wrap::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0.25rem;
+    width: 2.5rem;
+    pointer-events: none;
+    background: linear-gradient(to right, transparent, #1a1614);
+  }
+
+  /* The palette inverts in dark mode — the hero background goes from ink to
+     parchment — so the fade has to invert with it or it becomes a dark smear
+     across a cream background. */
+  :global(.dark) .chip-scroller-wrap::after {
+    background: linear-gradient(to right, transparent, #F4ECD8);
+  }
+
+  /* Borders drawn in white work on the ink background but vanish on parchment. */
+  :global(.dark) .hero-search,
+  :global(.dark) .chip {
+    border-color: rgba(26, 22, 20, 0.35);
+    background: rgba(26, 22, 20, 0.05);
+  }
+
+  :global(.dark) .hero-search:hover,
+  :global(.dark) .chip:hover {
+    border-color: rgba(26, 22, 20, 0.55);
+    background: rgba(26, 22, 20, 0.1);
+  }
+
+  /* ── Desktop: unchanged behaviour ────────────────────────────────────── */
+  @media (min-width: 768px) {
+    .hero { padding-top: 10rem; padding-bottom: 7rem; }
+    .hero-eyebrow { font-size: 0.875rem; letter-spacing: 0.3em; }
+    .hero-title { font-size: clamp(3.25rem, 7vw, 6rem); line-height: 0.95; margin-top: 1.5rem; }
+    .hero-sub { font-size: 1.5rem; max-width: 42rem; margin-top: 1.5rem; }
+    .hero-search { margin-top: 2.5rem; }
+    .hero-cta { width: auto; margin: 2rem auto 0; }
+    .chip-scroller { justify-content: center; flex-wrap: wrap; overflow-x: visible; }
+    .chip-scroller-wrap::after { display: none; }
+  }
+</style>
