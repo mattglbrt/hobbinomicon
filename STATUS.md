@@ -17,17 +17,17 @@ Still true: **transcripts only reach the live site from a local sync** — YouTu
 ## Next (ranked)
 0. **Phase 5 cutover, and it is time-sensitive.** Resubmit `sitemap-index.xml` in GSC (do NOT use Change of Address — same domain). Request indexing on `/`, `/games/`, `/guides/`, `/warmachine/`, `/warhammer/` and the top guides. Run `update-descriptions.cjs` so YouTube descriptions point at the new `/guides/` URLs — fresh external links speed re-crawl. Then watch GSC Coverage weekly: "Page with redirect" should rise then plateau, "Not found" should stay at zero for old URLs. Expect a 2–6 week dip before guides recover past baseline.
 1. **Matt's outstanding content calls** — `relatedGames` on `warmachine.mdx` (no hub funnel until then), `START_HERE_SLUGS`, both hub bodies and both series descriptions still in Claude's register, series hero images, and 17 low-stakes topic flags. All listed in `roadmap/rebuild/PROGRESS.md`.
-0b. **Standing: link all BONEZONE content to the hub** `/news/bonezone-2026-open/`. Synced vlogs arrive with no links in the body, so it's a manual edit after each `refresh-vlogs`, and must be committed. Rule lives in `CLAUDE.md`. Runs to 31 Oct.
-1. **Paint the Royal Herald.** Entry closes **31 Oct 23:59 GMT**. Recipe is the 07-10 skeleton vlog; this is also the test run for the 2027 Tomb Kings army.
-2. **Publish or bin `oldhammer-year-2027.mdx`.** Drafted, invisible. Clearing `draft: true` needs a fresh `pubDate` (currently 08-23) and a check that OWAC/40k2ndAC 2027 details have landed. Sign-ups open around Christmas.
-3. **Funnel backfill (editorial).** Mechanic done, only hand-picked `relatedGames` remain. **TSPN** wants it most (only narrative entry, all three suggestions read just "Solo-friendly"). Warmachine needs peers or picks before `hideFunnel` comes off.
-4. **Hero images for the Gloam and DWARF news posts.** Both run without one. No-AI-art rule applies: Matt's own photo, or ask the creators.
-5. **Act on the channel strategy** — Warmachine launch stream, `@mattglbrt` handle switch, Reels cadence on `@hobbinomicon`. None are code in this repo.
-6. Newsletter: pick provider (Buttondown/ConvertKit/DIY — coordinate with AITD), cadence, archive page. Form is wired, engine missing.
-7. **Directory to-do — 10 games with content but no page.** Queue with GSC evidence and priority in `roadmap/games.md` § "Directory to-do". Top of it: clear `draft: true` on Infinity (cheapest), then **Dolmenwood** (249 impressions, position 8.6 on "dolmenwood character creation", no page to land on), then Necromunda (172 impressions, position 8.3). Kingdom Death blocks the new `/series/` hub. Bellwoken sits at position 7.2 on its own brand name with nothing behind it.
-8. Monster Friends project entry + backfill `project:` on posts.
-9. **Port the GEO pattern to mattglbrt.com** (AITD done 07-22).
-10. Browser click-through of the 07-31 progress bar fix and the 08-13 disclosure page. Both verified structurally, neither in a browser. (The Motley Crews page *was* browser-verified this session.)
+2. **Standing: link all BONEZONE content to the hub** `/news/bonezone-2026-open/`. Synced vlogs arrive with no links in the body, so it's a manual edit after each `refresh-vlogs`, and must be committed. Rule lives in `CLAUDE.md`. Runs to 31 Oct.
+3. **Paint the Royal Herald.** Entry closes **31 Oct 23:59 GMT**. Recipe is the 07-10 skeleton vlog; this is also the test run for the 2027 Tomb Kings army.
+4. **Publish or bin `oldhammer-year-2027.mdx`.** Drafted, invisible. Clearing `draft: true` needs a fresh `pubDate` (currently 08-23) and a check that OWAC/40k2ndAC 2027 details have landed. Sign-ups open around Christmas.
+5. **Funnel backfill (editorial).** Mechanic done, only hand-picked `relatedGames` remain. **TSPN** wants it most (only narrative entry, all three suggestions read just "Solo-friendly"). Warmachine needs peers or picks before `hideFunnel` comes off.
+6. **Hero images for the Gloam and DWARF news posts.** Both run without one. No-AI-art rule applies: Matt's own photo, or ask the creators.
+7. **Act on the channel strategy** — Warmachine launch stream, `@mattglbrt` handle switch, Reels cadence on `@hobbinomicon`. None are code in this repo.
+8. Newsletter: pick provider (Buttondown/ConvertKit/DIY — coordinate with AITD), cadence, archive page. Form is wired, engine missing.
+9. **Directory to-do — 10 games with content but no page.** Queue with GSC evidence and priority in `roadmap/games.md` § "Directory to-do". Top of it: clear `draft: true` on Infinity (cheapest), then **Dolmenwood** (249 impressions, position 8.6 on "dolmenwood character creation", no page to land on), then Necromunda (172 impressions, position 8.3). Kingdom Death blocks the new `/series/` hub. Bellwoken sits at position 7.2 on its own brand name with nothing behind it.
+10. Monster Friends project entry + backfill `project:` on posts.
+11. **Port the GEO pattern to mattglbrt.com** (AITD done 07-22).
+12. Browser click-through of the 07-31 progress bar fix and the 08-13 disclosure page. Both verified structurally, neither in a browser. (The Motley Crews page *was* browser-verified this session.)
 
 **Note:** `refresh-vlogs` stays off this list until Matt posts a video. Its return is the first real exercise of the manual tag prompt.
 
