@@ -10,7 +10,12 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const CONTENT_DIR = path.join(__dirname, '../src/content/vlog');
+// Guides carry youtubeIds too, and their pages use the cached thumbnail.
+const CONTENT_DIRS = [
+  path.join(__dirname, '../src/content/vlog'),
+  path.join(__dirname, '../src/content/guides'),
+].filter(fs.existsSync);
+const CONTENT_DIR = CONTENT_DIRS[0];
 const IMAGES_DIR = path.join(__dirname, '../src/assets/hero-cache');
 // Mirror path: sync-vlogs.js writes the no-prefix variant for posts whose
 // frontmatter uses heroImage="/images/hero-cache/<id>.jpg". Mirroring it
@@ -112,7 +117,7 @@ async function getYouTubeThumbnail(youtubeId) {
 async function main() {
   console.log('🎬 Downloading YouTube thumbnails for hero images...\n');
 
-  const mdxFiles = findMdxFiles(CONTENT_DIR);
+  const mdxFiles = CONTENT_DIRS.flatMap((d) => findMdxFiles(d));
   let downloaded = 0;
   let skipped = 0;
   let errors = 0;
