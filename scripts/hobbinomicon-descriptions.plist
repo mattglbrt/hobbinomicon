@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Runs the YouTube description pass at 03:10 local, just past the
+  midnight-Pacific quota reset. Daily and idempotent: a full pass needs two
+  days of quota, and once every video carries the right description the run
+  updates nothing and costs ~15 read units.
+
+  Install:
+    chmod +x scripts/run-description-pass.sh
+    cp scripts/hobbinomicon-descriptions.plist ~/Library/LaunchAgents/
+    launchctl load ~/Library/LaunchAgents/hobbinomicon-descriptions.plist
+
+  Remove:
+    launchctl unload ~/Library/LaunchAgents/hobbinomicon-descriptions.plist
+    rm ~/Library/LaunchAgents/hobbinomicon-descriptions.plist
+
+  Watch:  tail -f scripts/.description-pass.log
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>hobbinomicon-descriptions</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/Users/mattglbrt/Documents/dev/mdggrowth/hobbinomicon/scripts/run-description-pass.sh</string>
+  </array>
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Hour</key><integer>3</integer>
+    <key>Minute</key><integer>10</integer>
+  </dict>
+  <key>RunAtLoad</key>
+  <false/>
+  <key>StandardOutPath</key>
+  <string>/Users/mattglbrt/Documents/dev/mdggrowth/hobbinomicon/scripts/.description-pass.launchd.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/mattglbrt/Documents/dev/mdggrowth/hobbinomicon/scripts/.description-pass.launchd.log</string>
+</dict>
+</plist>
