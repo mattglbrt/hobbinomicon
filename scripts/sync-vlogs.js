@@ -22,6 +22,14 @@ dotenv.config();
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const CONTENT_DIR = path.join(__dirname, '../src/content/vlog');
+// Where a synced post may ALREADY live. New posts are always written to
+// CONTENT_DIR, but ~95 of them were promoted into the guides collection in the
+// 2026-08 re-architecture. Scanning only vlog/ makes the sync think those
+// videos have no post and recreate all of them, every build.
+const EXISTING_DIRS = [
+  CONTENT_DIR,
+  path.join(__dirname, '../src/content/guides'),
+];
 // Vlogs used to sit in a `vlogs/` subfolder of the blog collection. The
 // collection is now `vlog` and it is flat, so the two are the same directory.
 const VLOGS_DIR = CONTENT_DIR;
@@ -174,15 +182,29 @@ function getExistingYouTubeIds() {
         const content = fs.readFileSync(fullPath, 'utf-8');
         const match = content.match(/^youtubeId:\s*"?([^"\n]+)"?/m);
         if (match) ids.add(match[1].trim());
+        // A post can carry more than one video: when two guides covering the
+        // same recipe are merged, the absorbed video survives as an embed in
+        // the body rather than in frontmatter. Without this the sync sees it
+        // as unsynced and recreates the post it was merged into.
+        for (const m of content.matchAll(/videoId=\{?["']([A-Za-z0-9_-]{6,})["']\}?/g)) {
+          ids.add(m[1]);
+        }
       }
     }
   }
 
-  scanDir(CONTENT_DIR);
+  for (const dir of EXISTING_DIRS) if (fs.existsSync(dir)) scanDir(dir);
   return ids;
 }
 
 // ─── MDX Generation ────────────────────────────────────────────
+//
+// The component import below is relative to where the post is written, which
+// is src/content/vlog/ — two levels under src/. It used to be three
+// (src/content/blog/vlogs/) and the extra ../ survived the 2026-08 move,
+// which meant the first sync after that move broke the Netlify build with
+// "Could not resolve ../../../components/YouTubeEmbed.astro". If the output
+// directory ever changes again, this string changes with it.
 
 function slugify(title) {
   return title
@@ -233,7 +255,7 @@ tags: ${tagsStr}`;
 
   content += `\n---
 
-import YouTubeEmbed from '../../../components/YouTubeEmbed.astro';
+import YouTubeEmbed from '../../components/YouTubeEmbed.astro';
 
 <YouTubeEmbed videoId="${video.id}" title="${safeTitle}" />
 `;

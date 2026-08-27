@@ -36,7 +36,11 @@ import { formatTranscriptParagraphs } from './lib/format-transcript.js';
 import { getTranscriptResult, reportBlocked } from './lib/fetch-transcript.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const VLOGS_DIR = path.join(__dirname, '../src/content/vlog');
+// Transcripts live in both collections since the re-architecture.
+const CONTENT_DIRS = [
+  path.join(__dirname, '../src/content/vlog'),
+  path.join(__dirname, '../src/content/guides'),
+].filter(fs.existsSync);
 
 const SCAN_ALL = process.argv.includes('--all');
 const WINDOW_DAYS = Number(process.env.BACKFILL_WINDOW_DAYS) || 21;
@@ -56,10 +60,18 @@ async function main() {
   let blocked = 0;
   const attempts = [];
 
-  for (const name of fs.readdirSync(VLOGS_DIR)) {
+  const entries = CONTENT_DIRS.flatMap((dir) =>
+    fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) =>
+      e.isDirectory()
+        ? fs.readdirSync(path.join(dir, e.name)).map((n) => path.join(dir, e.name, n))
+        : [path.join(dir, e.name)]
+    )
+  );
+  for (const entryPath of entries) {
+    const name = path.basename(entryPath);
     if (!name.endsWith('.mdx') && !name.endsWith('.md')) continue;
 
-    const filePath = path.join(VLOGS_DIR, name);
+    const filePath = entryPath;
     const content = fs.readFileSync(filePath, 'utf-8');
 
     // Already has a transcript — leave it alone.
