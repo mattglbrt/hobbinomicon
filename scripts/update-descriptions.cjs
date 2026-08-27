@@ -3,12 +3,16 @@
  *
  * - Idempotent: the footer starts with a ――― delimiter line; on rerun the old
  *   footer (delimiter to end) is stripped and rebuilt, so it never duplicates.
- * - Game-mapped videos (src/data/game-videos.json) get a game-specific first
- *   line linking their directory page instead of the generic directory.
+ * - Every footer carries exactly two site links: one guides-surface, one
+ *   games-surface. Each is deep-linked when we know where the video belongs
+ *   and falls back to the hub when we don't.
+ *     guides: the video's own guide page (matched on `youtubeId` in
+ *             src/content/guides) else /guides/
+ *     games:  the video's game page (src/data/game-videos.json) else /games/
  * - Scope guard: ONLY the description changes. Title/tags/categoryId are read
  *   from the live video and re-sent unchanged.
- * - Priority: playlisted + game-mapped videos first (evergreen), so a
- *   quota-limited day covers the videos that matter most. Resumable.
+ * - Priority: playlisted + game-mapped + guide-mapped videos first (evergreen),
+ *   so a quota-limited day covers the videos that matter most. Resumable.
  *
  * Requires OAuth write scope (youtube). Re-auth if needed:
  *   node scripts/youtube-auth.cjs
@@ -18,6 +22,8 @@
  *   node scripts/update-descriptions.cjs --dry-run --limit 5
  *   node scripts/update-descriptions.cjs --run           # execute (respects --max)
  *   node scripts/update-descriptions.cjs --run --max 190 # cap updates this run (quota)
+ *   node scripts/update-descriptions.cjs --verify-urls   # offline: check every
+ *                                          link this pass would emit exists in dist/
  */
 require('dotenv').config();
 const fs = require('fs');
@@ -30,10 +36,12 @@ const CREDENTIALS_DIR = path.join(ROOT, 'credentials');
 const GAME_VIDEOS = path.join(ROOT, 'src/data/game-videos.json');
 const RESOLVED = path.join(ROOT, 'scripts/.playlist-resolved.json');
 const GAMES_DIR = path.join(ROOT, 'src/content/games');
+const GUIDES_DIR = path.join(ROOT, 'src/content/guides');
 const UPDATED_LOG = path.join(ROOT, 'scripts/.descriptions-updated.json');
 
 const DELIM = '―――';
 const args = process.argv.slice(2);
+const VERIFY = args.includes('--verify-urls');
 const RUN = args.includes('--run');
 const DRY = !RUN || args.includes('--dry-run');
 const LIMIT = args.includes('--limit') ? Number(args[args.indexOf('--limit') + 1]) : 25;
@@ -61,21 +69,70 @@ function getAuthClient() {
   return o;
 }
 
-// slug -> title from game frontmatter (kept in sync with the directory).
+// slug -> title, for the games that actually have a page.
+//
+// Drafts are excluded: a draft game builds no page, so linking it from YouTube
+// is a 404. game-videos.json maps two live videos to `infinity`, which is still
+// drafted, and both were being sent there. Same rule the guide routes apply
+// ("never link to a page that isn't built").
 function gameTitles() {
   const map = {};
   for (const f of fs.readdirSync(GAMES_DIR)) {
     if (!f.endsWith('.mdx')) continue;
     const slug = f.replace(/\.mdx$/, '');
     const src = fs.readFileSync(path.join(GAMES_DIR, f), 'utf8');
-    const m = src.match(/^title:\s*"?(.+?)"?\s*$/m);
+    const fm = src.split(/^---$/m)[1] || '';
+    if (/^draft:\s*true\s*$/m.test(fm)) continue;
+    const m = fm.match(/^title:\s*"?(.+?)"?\s*$/m);
     if (m) map[slug] = m[1].trim();
   }
   return map;
 }
 
-function buildFooter(gameSlug, titles) {
+// videoId -> guide URL, matched on the guide's `youtubeId` frontmatter.
+//
+// The URL rule is guideUrlWith() in src/utils/content.ts: a guide filed under
+// a directory named for a game renders at /games/{game}/{slug}/, everything
+// else at /guides/{slug}/. That rule is duplicated in three places already
+// (the two routes, generate-redirects.mjs); this is the fourth, and all four
+// have to agree or these descriptions link at pages that were never built.
+// `--verify-urls` checks the output against dist/ for exactly that reason.
+function guideUrls() {
+  const games = new Set(
+    fs.readdirSync(GAMES_DIR).filter((f) => f.endsWith('.mdx')).map((f) => f.replace(/\.mdx$/, '')),
+  );
+  const map = {};
+  const walk = (dir, prefix = '') => {
+    for (const f of fs.readdirSync(dir)) {
+      const full = path.join(dir, f);
+      if (fs.statSync(full).isDirectory()) {
+        walk(full, `${prefix}${f}/`);
+        continue;
+      }
+      if (!/\.mdx?$/.test(f)) continue;
+      const id = prefix + f.replace(/\.mdx?$/, '');
+      const fm = fs.readFileSync(full, 'utf8').split(/^---$/m)[1] || '';
+      // A draft guide isn't built. Never point YouTube at a 404.
+      if (/^draft:\s*true\s*$/m.test(fm)) continue;
+      const vid = (fm.match(/^youtubeId:\s*"?([\w-]+)"?\s*$/m) || [])[1];
+      if (!vid || map[vid]) continue; // first match wins, as with game-videos
+      const [first, ...rest] = id.split('/');
+      map[vid] = rest.length && games.has(first) ? `/games/${id}/` : `/guides/${id}/`;
+    }
+  };
+  walk(GUIDES_DIR);
+  return map;
+}
+
+function buildFooter(gameSlug, guidePath, titles) {
   const lines = [DELIM];
+  // Guides surface, then games surface. Deep link where we know the page,
+  // hub where we don't — so every video links both halves of the site.
+  if (guidePath) {
+    lines.push(`📖 Written guide: https://hobbinomicon.com${guidePath}?${U}`);
+  } else {
+    lines.push(`📖 Painting and hobby guides: https://hobbinomicon.com/guides/?${U}`);
+  }
   if (gameSlug) {
     lines.push(
       `▶ ${titles[gameSlug] || gameSlug} on the Hobbinomicon: https://hobbinomicon.com/games/${gameSlug}/?${U}`,
@@ -114,9 +171,9 @@ function stripLegacyBlock(desc) {
 
 // The full description we want a video to end up with: cleaned original body
 // (footer stripped, typos fixed) + the standard footer.
-function desiredDescription(snippet, gameSlug, titles) {
+function desiredDescription(snippet, gameSlug, guidePath, titles) {
   const base = fixTypos(stripLegacyBlock(stripFooter(snippet.description)).trimEnd());
-  const footer = buildFooter(gameSlug, titles);
+  const footer = buildFooter(gameSlug, guidePath, titles);
   // A video with no body is footer-only: YouTube strips leading whitespace, so
   // prefixing "\n\n" here would never match what comes back and the video would
   // be rewritten on every pass.
@@ -132,19 +189,75 @@ function isQuotaError(e) {
   );
 }
 
-async function main() {
-  const yt = google.youtube({ version: 'v3', auth: getAuthClient() });
-  const titles = gameTitles();
+// Offline check: every URL this pass would put in front of YouTube must be a
+// page the last build actually emitted. Wrong link here = a 301 at best and a
+// 404 at worst, on a channel-wide external-link pass we only want to do once.
+function verifyUrls(guides, titles, videoToGame) {
+  const DIST = path.join(ROOT, 'dist');
+  if (!fs.existsSync(DIST)) {
+    console.error('No dist/ — run `npm run build` first, then --verify-urls.');
+    process.exit(1);
+  }
+  const urls = new Set(['/guides/', '/games/']);
+  for (const u of Object.values(guides)) urls.add(u);
+  for (const slug of Object.keys(titles)) urls.add(`/games/${slug}/`);
 
-  // Reverse map: videoId -> game slug (first match wins).
+  const missing = [];
+  for (const u of [...urls].sort()) {
+    if (!fs.existsSync(path.join(DIST, u, 'index.html'))) missing.push(u);
+  }
+  console.log(`Checked ${urls.size} URLs against dist/ (${Object.keys(guides).length} guide deep links).`);
+  if (missing.length) {
+    console.error(`\n${missing.length} MISSING:`);
+    for (const m of missing) console.error(`  ${m}`);
+    process.exit(1);
+  }
+  console.log('All resolve. Safe to run the pass.\n');
+
+  // The four footer shapes, on real videos, so the copy can be approved before
+  // anyone spends quota on it.
+  const withGuide = Object.keys(guides);
+  const withGame = Object.keys(videoToGame);
+  const samples = [
+    ['guide + game', withGuide.find((id) => videoToGame[id])],
+    ['guide only', withGuide.find((id) => !videoToGame[id])],
+    ['game only', withGame.find((id) => !guides[id])],
+    ['neither (most vlogs)', null],
+  ];
+  for (const [label, id] of samples) {
+    console.log('━'.repeat(72));
+    console.log(`${label}${id ? `  (${id})` : ''}`);
+    console.log(buildFooter(id ? videoToGame[id] : null, id ? guides[id] : null, titles));
+    console.log();
+  }
+  const counts = { guide: withGuide.length, game: withGame.length };
+  console.log('━'.repeat(72));
+  console.log(`${counts.guide} videos have a guide page, ${counts.game} have a game page.`);
+}
+
+async function main() {
+  const titles = gameTitles();
+  const guides = guideUrls();
+
+  // Reverse map: videoId -> game slug (first match wins). Games with no page
+  // (drafts) are dropped here rather than at render time, so those videos take
+  // the directory line instead of a dead deep link.
   const gameVideos = JSON.parse(fs.readFileSync(GAME_VIDEOS, 'utf8'));
   const videoToGame = {};
   for (const [slug, vids] of Object.entries(gameVideos)) {
+    if (!titles[slug]) continue;
     for (const v of vids) if (!videoToGame[v.id]) videoToGame[v.id] = slug;
   }
 
-  // Priority set = playlisted (evergreen) ∪ game-mapped.
-  const priority = new Set(Object.keys(videoToGame));
+  // Offline, no API, no auth — safe to run any time.
+  if (VERIFY) return verifyUrls(guides, titles, videoToGame);
+
+  const yt = google.youtube({ version: 'v3', auth: getAuthClient() });
+
+  // Priority set = playlisted (evergreen) ∪ game-mapped ∪ guide-mapped.
+  // Guide-mapped videos matter most in this pass: their pages moved, and a
+  // fresh external link is what gets them re-crawled.
+  const priority = new Set([...Object.keys(videoToGame), ...Object.keys(guides)]);
   if (fs.existsSync(RESOLVED)) {
     const r = JSON.parse(fs.readFileSync(RESOLVED, 'utf8'));
     for (const pl of r.playlists) for (const v of pl.videos) priority.add(v.id);
@@ -180,11 +293,15 @@ async function main() {
       if (shown >= LIMIT) break;
       const sn = snippets.get(id);
       const slug = videoToGame[id];
-      const next = desiredDescription(sn, slug, titles);
+      const guidePath = guides[id];
+      const next = desiredDescription(sn, slug, guidePath, titles);
       if (next === sn.description) continue; // already correct, skip in preview
       shown++;
+      const tag = [guidePath ? `guide: ${guidePath}` : null, slug ? `game: ${slug}` : null]
+        .filter(Boolean)
+        .join(' | ');
       console.log('━'.repeat(72));
-      console.log(`#${shown}  ${id}  ${slug ? `[game: ${slug}]` : '[generic]'}${priority.has(id) ? ' [priority]' : ''}`);
+      console.log(`#${shown}  ${id}  ${tag ? `[${tag}]` : '[generic]'}${priority.has(id) ? ' [priority]' : ''}`);
       console.log(`title: ${sn.title}`);
       console.log('\n--- BEFORE (tail) ---');
       console.log(sn.description.split('\n').slice(-6).join('\n') || '(empty)');
@@ -194,7 +311,7 @@ async function main() {
     }
     const needing = ordered.filter((id) => {
       const sn = snippets.get(id);
-      return desiredDescription(sn, videoToGame[id], titles) !== sn.description;
+      return desiredDescription(sn, videoToGame[id], guides[id], titles) !== sn.description;
     }).length;
     console.log('━'.repeat(72));
     console.log(`\nTotal videos: ${ordered.length} | need footer added/updated: ${needing} | priority (evergreen/mapped): ${[...priority].filter((id) => snippets.has(id)).length}`);
@@ -215,7 +332,7 @@ async function main() {
     // (re)written. This lets a footer-only pass get revisited to fix the typo.
     const sn = snippets.get(id);
     const slug = videoToGame[id];
-    const next = desiredDescription(sn, slug, titles);
+    const next = desiredDescription(sn, slug, guides[id], titles);
     if (next === sn.description) {
       already.add(id);
       continue; // already correct
