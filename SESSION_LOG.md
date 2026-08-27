@@ -4,6 +4,105 @@ Append-only. **Newest entry first.** Pre-existing planning history lives in `roa
 
 ---
 
+## 2026-08-27 — Mobile pass, then two bugs that had shipped invisible
+
+Started as the mobile UI/UX pass Matt asked for and turned into finding two
+classes of defect that were live on the site and that no gate we have would
+ever have caught. Three merges to `main`: `905f4ab` (mobile pass + thumbnails),
+`78427fb` (dark mode). Docs-only commits stayed on `dev` to save build credits.
+
+### The mobile pass
+
+Header height and icon inconsistency, the duplicate search entry point, hero
+sizing and dead space, search contrast, filter-chip raggedness, an 8px vertical
+rhythm, and a global baseline: 44px tap targets, `viewport-fit=cover`,
+`prefers-reduced-motion`, no horizontal overflow at 360px.
+
+Two findings inside it are worth keeping. **Scroll-reveal used
+`threshold: 0.1`**, so any section taller than the viewport never intersected
+10% of itself and its heading stayed at `opacity: 0` while fully on screen —
+fixed to `threshold: 0`. And fixing that **exposed contrast failures axe could
+not see**, because you cannot audit an invisible element: `ink/40` at 2.49:1,
+`ink/60` at 4.43:1, transcript summaries at 3.99:1, disabled pagination at
+2.12:1. The bug was hiding the bugs.
+
+`.icon-btn` also lived in `Header.astro`, and Astro scopes component styles, so
+it never reached `DarkModeToggle` — the toggle had no border. Moved to
+`global.css`.
+
+### Thumbnails, and the 404s behind them
+
+Matt asked for bigger thumbnails on `/guides/`, site-wide. The size was the
+smaller half of the problem.
+
+`getHeroImageUrl()` returns `ImageMetadata.src` — `/_astro/<name>.<hash>.jpg`.
+Astro emits that original only when something references it *as an original*,
+and a component handed the bare string never does. **Nine images 404'd across
+~100 pages, on the live site as well as locally.** Worse, `ListCard` forks on
+`isImageMetadata`, and since every call site passed a string, the `<Image>`
+branch had never run once: list pages were shipping unprocessed originals,
+median 104 KB, to fill a 96px square.
+
+Fixing the input fixed both. Card call sites now pass `getHeroImage()`;
+`getHeroImageUrl` stays where a string is genuinely wanted (og:image, RSS,
+JSON-LD). Thumbnails went 16:9 — they are video stills and the square crop was
+discarding ~44% of the frame — full-width on mobile, 192px beside the text
+above 640px. **`/guides/` at 390px: 96x96 → 318x179, and total image weight
+~1 MB → 107 KB.**
+
+The og:image half mattered more than expected: those pages were serving a
+**404 as their `og:image`**, so any share of them showed no preview card at
+all. Three checked, all 200 now.
+
+Also: the `src/assets/images` glob omitted `avif`, so a studio logo silently
+degraded to a raw `/images/` path with no `public/` copy. And a desktop
+regression from my own hero work — `display: flex` made "Browse all games" fill
+the row, since a block-level flex container ignores `width: auto`.
+
+New gate: **`npm run audit-images`** — every image URL in `dist` checked
+against the files on disk. No dependencies. 439 pages, 12,867 references, 0
+missing.
+
+### Dark mode: text the same colour as the page
+
+Matt: "under guides theres just images and no titles or descriptions in dark
+mode." Reproduced, and it was not low contrast — it was **1:1**.
+
+`ListCard`'s `light` scheme carried no `dark:` counterparts at all, so title,
+meta and description all rendered `text-ink`. The palette **inverts** rather
+than dims: `ink` is near-black in light mode and cream in dark, so a bare
+`text-ink` is the same near-black in both. Every list page.
+
+Three more had the mirror mistake — a background that inverts under hard-coded
+`text-white`, leaving white on cream: the `/tags/<tag>/` header, the contact
+submit button, and `Pagination` (which also punched white pills into the dark
+page and hid its disabled prev/next and ellipsis). `PageHeader` is the model:
+it does **not** invert its background, which is why most headers were fine.
+
+**The method changed the answer.** A regex over class strings flagged
+`ProseContent` and half a dozen others that are entirely fine, and would have
+sent me rewriting body copy that already worked. Rendering both themes and
+computing contrast against the *effective* background for every visible text
+node was right in both directions. 18 pages, both themes, clean.
+
+### The mistake I made
+
+I reported the dark-mode fix live when it was not. The marker I polled for
+(`dark:text-ink-dark/80`) already appeared on that page from `GuideLayout` and
+`BaseLayout`, so it matched the **old** deploy in 20 seconds. Production was
+still 1:1 when I called it fixed; measuring the live page is what caught it.
+**Verify a deploy by measuring the thing you changed, not by grepping for a
+string that may predate it.**
+
+### Open after this
+
+Nothing in code. Matt's content calls are unchanged, and the description pass
+is still waiting on quota. Flagged for Matt: the YouTube footer links the
+newsletter as `hobbinomicon.com/#newsletter` (homepage anchor) rather than the
+`/newsletter/` page that now exists — both resolve, so it is a preference.
+
+---
+
 ## 2026-08-27 — The description pass: right change, wrong channel, whole day's quota
 
 Phase 5 cutover work. The goal was item 0 on STATUS: run `update-descriptions.cjs` so YouTube descriptions point at the new `/guides/` URLs, because fresh external links are the cheapest way to speed re-crawl after the rebuild. **The code change is done and committed. The pass itself did not run — 0 of 271 videos updated.** Four commits on `dev` (`4d0bac5`, `d7814f3`, `d4ef725`, `3dc10fa`), no merge to main: these are local-only scripts, nothing deploys.

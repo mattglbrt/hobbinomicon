@@ -471,8 +471,9 @@ image goes full width; above it, 192px beside the text.
 
 **The lesson worth keeping: a dead branch looks exactly like a working one.**
 Nothing errored, nothing warned, and the pages rendered. What caught it was
-auditing every image URL in `dist` against the files actually on disk — worth
-re-running after any change to image plumbing.
+auditing every image URL in `dist` against the files actually on disk, which is
+now `npm run audit-images` — no dependencies, run it after any build that
+touches image plumbing.
 
 Related: the `src/assets/images` glob listed `{jpg,jpeg,png,webp}`, so an avif
 studio logo silently degraded to a raw `/images/` path with no `public/` copy.
@@ -497,9 +498,11 @@ white text stays correct in both themes.
 flagged `ProseContent` and half a dozen others that are entirely fine, and
 would have sent me editing body copy that already worked. Rendering both
 themes and computing contrast against the *effective* background for every
-visible text node gave the true answer in both directions. Worth re-running
-after any colour change; the audit's one blind spot is white text over a
-photograph, where the real backdrop is the image plus a scrim.
+visible text node gave the true answer in both directions. Worth repeating after any
+colour change, though unlike `audit-images` it was a throwaway script: it drives
+Playwright, which is not a dependency here (`npm i -D --no-save playwright`).
+Its one blind spot is white text over a photograph, where the real backdrop is
+the image plus a scrim, so those read as failures and are not.
 
 **And verify a deploy by measuring, not by grepping.** The marker string I
 first polled for (`dark:text-ink-dark/80`) already existed elsewhere on the
