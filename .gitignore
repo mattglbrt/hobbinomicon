@@ -75,7 +75,3 @@ tag-summary.csv
 # untracked on 07-31. Other .claude/ paths stay shareable if ever wanted.
 .claude/commands/
 .claude/settings.local.json
-
-# local YouTube description pass logs
-scripts/.description-pass.log
-scripts/.description-pass.launchd.log
