@@ -1,29 +1,22 @@
-# STATUS — The Hobbinomicon · updated 2026-08-26
+# STATUS — The Hobbinomicon · updated 2026-08-27
 
 ## Now
-**The re-architecture has started.** Plan and per-URL migration map live in `roadmap/rebuild/`; running record in `roadmap/rebuild/PROGRESS.md`. Positioning: *find your next indie wargame, then learn to paint it* — two surfaces, `/games/` and `/guides/`, with `/warmachine/` and `/warhammer/` as mainstream on-ramps that funnel sideways into indie. Nothing gets noindexed and nothing leaves the index.
+**The re-architecture is live.** Merged and deployed 2026-08-26; `main` at `f86252d`. PageSpeed Insights **mobile 100 on every page checked**, against a target of 95.
 
-**Phases 0, 1 and 2 are done. The site builds and the migration gate is green — this is now deployable.** `main` at `5e82a0c` (tagged `pre-rebuild`), `dev` ahead — nothing merged yet.
+Positioning shipped: *find your next indie wargame, learn how to play and paint it*. Two surfaces — `/games/` and `/guides/` — with `/warmachine/` and `/warhammer/` as on-ramps. Nav is Games · Guides · Warmachine · Warhammer · News. `/blog/`, `/videos/`, `/explore/` and `/categories/` are gone and 301 cleanly.
 
-441 pages build. **431/431 old URLs resolve in one hop** — 121 unchanged, 310 single 301s, zero chains. Schema clean across 442 pages. Nav is Games · Guides · Warmachine · Warhammer · News; `/blog/`, `/categories/`, `/explore/` and `/videos/` are gone.
+**Every one of the 431 pre-rebuild URLs resolves** — 121 unchanged, 310 single 301s, zero chains. Verified against production on a 40-URL sample as well as locally. All 58 legacy 404s Google was still showing now resolve too.
 
-**Before merging:** two hub bodies and two `series` descriptions are placeholders in a register that is not Matt's, and they are the only prose a reader will see that he did not write. Rewrite them first. Full list in `PROGRESS.md`.
+- **438 pages**, up from 431. **75 guides emit `HowTo`**, up from none — `01-…md` calls that the biggest rich-result win available.
+- **Collections:** vlog 190 · guides 101 · series 2 · games 12 · news 8 · people 8 · studios 6.
+- **`npm run verify-migration` is the gate.** Every phase passed through it; it caught things the build did not, including a state where `astro build` exited 0 while emitting 61 pages instead of 433.
+- **The first deploy failed.** `npx astro build` skips the `prebuild` chain, so two `sync-vlogs` bugs went unseen: it recreated 86 duplicate posts per build, and generated a three-deep component import for posts that now sit two deep. Both fixed. **The daily vlog-sync build had already been failing on this.** Lesson recorded in PROGRESS.md: anything touching a content path must be checked with `npm run build`, not `npx astro build`.
 
-**Lighthouse is the one criterion still open** — it needs a public URL, so run PSI mobile on `/`, a guide, a game and `/warmachine/` right after the deploy. Structural proxies are clean: CSS still inlined, zero render-blocking stylesheets, every in-flow image dimensioned, page weights unchanged, and og:image is now a 1200×630 WebP instead of the full-size original.
-
-What Phase 0 landed:
-
-- **`npm run verify-migration`** is now the gate every later phase passes through: all 431 URLs in the pre-rebuild sitemap must serve 200 or take exactly one 301 to a page that exists. Currently 431/431, 0 chains. It fails loudly on 404s, 301s-into-404s and chains, and was tested against known-bad input rather than assumed correct.
-- **`npm run generate-redirects`** builds the rule block from the three `url-map-*.csv` files. Redirects are generated, never hand-written. Byte-identical to the reviewed `_redirects.rebuild`; `--write` is idempotent and never touches the 496 tag rules below it.
-- **The six resource pages deleted in `48d6f7c` are back** at their old `/blog/resources/` URLs, plus 22 legacy redirects. 28 of the 58 URLs Google still shows now resolve; the rest need Phase 2's routes. Three of the restored pages were throwing away 18 clicks between them.
-- **Fixed a live bug:** the Mage Knight hub's "My Mage Knight Content" section has been showing its empty state since July (`tag="mage knight"` never matched the `mage-knight` slug).
-
-Previous baseline still holds: three-entity directory, format-based game URLs, News pillar, GEO output (`/llms.txt`, `/llms-full.txt`, `.md` renderings). Tag taxonomy 70, registry 1:1 (`chainmail` restored 08-26 as a technique tag). Funnel v1 on all 10 published games (Warmachine off via `hideFunnel`).
-
-Still true: **transcripts only reach the live site from a local sync** — YouTube blocks caption fetches from Netlify IPs, so `npm run refresh-vlogs` is load-bearing (see `~/Documents/dev/_system/RECURRING.md`).
+Still true: **transcripts only reach the live site from a local sync** — YouTube blocks caption fetches from Netlify IPs, so `npm run refresh-vlogs` is load-bearing.
 
 ## Next (ranked)
-0. **Sign off Phase 0, then start Phase 1** (content model & moves: `guides` + `series` collections, `blog` → `vlog`, `games.format` → `army`, `scripts/migrate-content.mjs`). Do not start it until Matt confirms. Five decisions are waiting in `PROGRESS.md` § "Decisions for Matt" — none of them block Phase 1.
+0. **Phase 5 cutover, and it is time-sensitive.** Resubmit `sitemap-index.xml` in GSC (do NOT use Change of Address — same domain). Request indexing on `/`, `/games/`, `/guides/`, `/warmachine/`, `/warhammer/` and the top guides. Run `update-descriptions.cjs` so YouTube descriptions point at the new `/guides/` URLs — fresh external links speed re-crawl. Then watch GSC Coverage weekly: "Page with redirect" should rise then plateau, "Not found" should stay at zero for old URLs. Expect a 2–6 week dip before guides recover past baseline.
+1. **Matt's outstanding content calls** — `relatedGames` on `warmachine.mdx` (no hub funnel until then), `START_HERE_SLUGS`, both hub bodies and both series descriptions still in Claude's register, series hero images, and 17 low-stakes topic flags. All listed in `roadmap/rebuild/PROGRESS.md`.
 0b. **Standing: link all BONEZONE content to the hub** `/news/bonezone-2026-open/`. Synced vlogs arrive with no links in the body, so it's a manual edit after each `refresh-vlogs`, and must be committed. Rule lives in `CLAUDE.md`. Runs to 31 Oct.
 1. **Paint the Royal Herald.** Entry closes **31 Oct 23:59 GMT**. Recipe is the 07-10 skeleton vlog; this is also the test run for the 2027 Tomb Kings army.
 2. **Publish or bin `oldhammer-year-2027.mdx`.** Drafted, invisible. Clearing `draft: true` needs a fresh `pubDate` (currently 08-23) and a check that OWAC/40k2ndAC 2027 details have landed. Sign-ups open around Christmas.
