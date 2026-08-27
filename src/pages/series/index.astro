@@ -7,7 +7,7 @@ import ContentContainer from '../../components/ContentContainer.astro';
 import ListCard from '../../components/ListCard.astro';
 import StructuredData from '../../components/StructuredData.astro';
 import { getSeries, getEpisodes } from '../../utils/content';
-import { getHeroImageUrl } from '../../utils/getHeroImage';
+import { getHeroImage } from '../../utils/getHeroImage';
 
 const all = await getSeries();
 // A series with no episodes is not a series yet.
@@ -48,7 +48,7 @@ const description =
             title={entry.data.name}
             description={entry.data.description}
             meta={`${count} ${count === 1 ? 'episode' : 'episodes'}`}
-            image={getHeroImageUrl(entry.data.heroImage, undefined)}
+            image={getHeroImage(entry.data.heroImage, undefined)}
           />
         ))}
       </div>

@@ -13,7 +13,7 @@ import StepsList from '../components/StepsList.astro';
 import ListCard from '../components/ListCard.astro';
 import YouTubeCTA from '../components/YouTubeCTA.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
-import { getHeroImageUrl } from '../utils/getHeroImage';
+import { getHeroImage, getHeroImageUrl } from '../utils/getHeroImage';
 import { formatDateLong } from '../utils/formatDate';
 import { TOPICS, type Topic } from '../utils/content';
 import type { CollectionEntry } from 'astro:content';
@@ -233,7 +233,7 @@ const pills = [
                 title={entry.data.title}
                 description={entry.data.description}
                 meta={formatDateLong(entry.data.pubDate)}
-                image={getHeroImageUrl(entry.data.heroImage, entry.data.youtubeId)}
+                image={getHeroImage(entry.data.heroImage, entry.data.youtubeId)}
               />
             ))}
           </div>
@@ -252,7 +252,7 @@ const pills = [
                 title={entry.data.title}
                 description={entry.data.description}
                 meta={formatDateLong(entry.data.pubDate)}
-                image={getHeroImageUrl(entry.data.heroImage, entry.data.youtubeId)}
+                image={getHeroImage(entry.data.heroImage, entry.data.youtubeId)}
               />
             ))}
           </div>

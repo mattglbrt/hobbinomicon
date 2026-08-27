@@ -7,7 +7,7 @@ import ContentContainer from '../../components/ContentContainer.astro';
 import ListCard from '../../components/ListCard.astro';
 import StructuredData from '../../components/StructuredData.astro';
 import { getArticles } from '../../utils/content';
-import { getHeroImageUrl } from '../../utils/getHeroImage';
+import { getHeroImage } from '../../utils/getHeroImage';
 import { formatDateLong } from '../../utils/formatDate';
 
 const articles = await getArticles();
@@ -42,7 +42,7 @@ const description =
             title={a.data.title}
             description={a.data.description}
             meta={formatDateLong(a.data.pubDate)}
-            image={getHeroImageUrl(a.data.heroImage, a.data.youtubeId)}
+            image={getHeroImage(a.data.heroImage, a.data.youtubeId)}
           />
         ))}
       </div>

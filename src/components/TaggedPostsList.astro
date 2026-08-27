@@ -1,6 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
-import { getHeroImageUrl } from '../utils/getHeroImage';
+import { getHeroImage } from '../utils/getHeroImage';
 import { formatDateLong } from '../utils/formatDate';
 import ListCard from './ListCard.astro';
 import ViewAllLink from './ViewAllLink.astro';
@@ -44,7 +44,7 @@ if (limit) {
       {taggedPosts.map(post => (
         <ListCard
           href={vlogUrl(post)}
-          image={getHeroImageUrl(post.data.heroImage, post.data.youtubeId)}
+          image={getHeroImage(post.data.heroImage, post.data.youtubeId)}
           imageAlt={post.data.title}
           title={post.data.title}
           description={post.data.description}

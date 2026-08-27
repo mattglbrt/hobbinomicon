@@ -9,7 +9,7 @@ import ProseContent from '../components/ProseContent.astro';
 import StructuredData from '../components/StructuredData.astro';
 import YouTubeCTA from '../components/YouTubeCTA.astro';
 import FunnelSection from '../components/FunnelSection.astro';
-import { getHeroImage, getHeroImageUrl } from '../utils/getHeroImage';
+import { getHeroImage } from '../utils/getHeroImage';
 import { formatDateLong } from '../utils/formatDate';
 import type { CollectionEntry } from 'astro:content';
 
@@ -130,7 +130,7 @@ const totalGuides = new Set(
                 title={entry.data.title}
                 description={entry.data.description}
                 meta={formatDateLong(entry.data.pubDate)}
-                image={getHeroImageUrl(entry.data.heroImage, entry.data.youtubeId)}
+                image={getHeroImage(entry.data.heroImage, entry.data.youtubeId)}
               />
             ))}
           </div>
@@ -160,7 +160,7 @@ const totalGuides = new Set(
                   title={entry.data.title}
                   description={entry.data.description}
                   meta={formatDateLong(entry.data.pubDate)}
-                  image={getHeroImageUrl(entry.data.heroImage, entry.data.youtubeId)}
+                  image={getHeroImage(entry.data.heroImage, entry.data.youtubeId)}
                 />
               ))}
             </div>
@@ -205,7 +205,7 @@ const totalGuides = new Set(
                         title={entry.data.title}
                         description={entry.data.description}
                         meta={formatDateLong(entry.data.pubDate)}
-                        image={getHeroImageUrl(entry.data.heroImage, entry.data.youtubeId)}
+                        image={getHeroImage(entry.data.heroImage, entry.data.youtubeId)}
                       />
                     ))}
                   </div>

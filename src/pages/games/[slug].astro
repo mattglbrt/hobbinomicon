@@ -485,7 +485,7 @@ const gameSpecs = [
                     title={entry.data.title}
                     description={entry.data.description}
                     meta={formatDateLong(entry.data.pubDate)}
-                    image={getHeroImageUrl(entry.data.heroImage, entry.data.youtubeId)}
+                    image={getHeroImage(entry.data.heroImage, entry.data.youtubeId)}
                   />
                 ))}
               </div>
@@ -503,7 +503,7 @@ const gameSpecs = [
                   href={`/series/${s.id}/`}
                   title={s.data.name}
                   description={s.data.description}
-                  image={getHeroImageUrl(s.data.heroImage, undefined)}
+                  image={getHeroImage(s.data.heroImage, undefined)}
                 />
               ))}
             </div>

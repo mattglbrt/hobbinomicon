@@ -8,7 +8,7 @@ import ContentContainer from '../../components/ContentContainer.astro';
 import ListCard from '../../components/ListCard.astro';
 import StructuredData from '../../components/StructuredData.astro';
 import { getGuides, guideUrlWith, TOPICS, type Topic } from '../../utils/content';
-import { getHeroImageUrl } from '../../utils/getHeroImage';
+import { getHeroImage } from '../../utils/getHeroImage';
 import { formatDateLong } from '../../utils/formatDate';
 
 const games = new Set((await getCollection('games')).map((g) => g.id));
@@ -80,7 +80,7 @@ const description =
               title={g.data.title}
               description={g.data.description}
               meta={`${TOPICS[g.data.topic as Topic]} · ${formatDateLong(g.data.pubDate)}`}
-              image={getHeroImageUrl(g.data.heroImage, g.data.youtubeId)}
+              image={getHeroImage(g.data.heroImage, g.data.youtubeId)}
             />
           ))}
         </div>

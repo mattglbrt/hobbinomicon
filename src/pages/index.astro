@@ -9,7 +9,7 @@ import Footer from '../components/Footer.astro';
 import ContentContainer from '../components/ContentContainer.astro';
 import ImageCard from '../components/ImageCard.astro';
 import ViewAllLink from '../components/ViewAllLink.astro';
-import { getHeroImage, getHeroImageUrl } from '../utils/getHeroImage';
+import { getHeroImage } from '../utils/getHeroImage';
 import { sortByDate } from '../utils/collections';
 import { getGuides, guideUrlWith, TOPICS, type Topic } from '../utils/content';
 
@@ -158,7 +158,7 @@ const hubs = [
                 title={g.data.title}
                 description={g.data.description}
                 meta={TOPICS[g.data.topic as Topic]}
-                image={getHeroImageUrl(g.data.heroImage, g.data.youtubeId)}
+                image={getHeroImage(g.data.heroImage, g.data.youtubeId)}
               />
             ))}
           </div>
