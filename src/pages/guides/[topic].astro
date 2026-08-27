@@ -8,7 +8,7 @@ import ContentContainer from '../../components/ContentContainer.astro';
 import ListCard from '../../components/ListCard.astro';
 import StructuredData from '../../components/StructuredData.astro';
 import { getGuides, guideUrlWith, TOPICS, TOPIC_INTROS, type Topic } from '../../utils/content';
-import { getHeroImageUrl } from '../../utils/getHeroImage';
+import { getHeroImage } from '../../utils/getHeroImage';
 import { formatDateLong } from '../../utils/formatDate';
 
 export async function getStaticPaths() {
@@ -62,7 +62,7 @@ const intro = TOPIC_INTROS[topic as Topic];
             title={g.data.title}
             description={g.data.description}
             meta={formatDateLong(g.data.pubDate)}
-            image={getHeroImageUrl(g.data.heroImage, g.data.youtubeId)}
+            image={getHeroImage(g.data.heroImage, g.data.youtubeId)}
           />
         ))}
       </div>

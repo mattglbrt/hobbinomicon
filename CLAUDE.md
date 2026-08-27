@@ -153,16 +153,43 @@ inside `dist/` does.
 ## YouTube description footer pass
 
 `scripts/update-descriptions.cjs` is the **only** description writer. It appends
-the standard footer (directory or game-specific link, newsletter, Discord) to
-every video, leaving title/tags/categoryId untouched. Skipping is content-based,
-not id-based: a video already carrying the exact desired description is skipped,
-so the pass is safely re-runnable and self-healing.
+the standard footer to every video, leaving title/tags/categoryId untouched.
+Skipping is content-based, not id-based: a video already carrying the exact
+desired description is skipped, so the pass is safely re-runnable and
+self-healing.
+
+The footer carries **exactly two site links, one per surface**, deep-linked
+where we know the page and falling back to the hub where we don't:
+
+- **guides** — the video's own guide page, matched on `youtubeId` in
+  `src/content/guides` (85 of 271 videos), else `/guides/`.
+- **games** — the video's game page from `src/data/game-videos.json` (28
+  videos), else `/games/`.
+
+Then newsletter and Discord, unchanged. Draft games and draft guides are
+excluded from the deep links: a draft builds no page, so linking it from
+YouTube is a 404. Two live videos were being pointed at the still-drafted
+`/games/infinity/` before that guard existed (fixed 08-27).
 
 - **Always `npm run backup-descriptions` first** — it snapshots all live
   snippets to `scripts/backups/`. That backup is the only undo.
+- **`--verify-urls` is the pre-flight, and it needs no auth.** It checks every
+  link the pass would emit against `dist/`, then prints the four footer shapes
+  on real videos. Build first so `dist/` is current. The URL rule is duplicated
+  from `guideUrlWith()` in `src/utils/content.ts`; this check is what stops the
+  copies drifting apart into a channel-wide pass of dead links.
 - Dry run, then `--run --max 190`. Each update costs 50 quota units against a
   10,000/day limit, so a full pass takes two days. Priority (playlisted +
   game-mapped) videos go first, so a quota-limited day covers what matters.
+- **At the consent screen, pick the Hobbinomicon channel.** Matt has five, and
+  Google's account chooser does not default to the right one. Authorizing the
+  wrong channel fails in the least obvious way possible: every *read* still
+  succeeds, because video metadata is public, so the backup and the dry run
+  both look perfect — and then every *write* returns a bare 403 `Forbidden`.
+  On 08-27 that burned a full day of quota (190 rejected writes × 50 units)
+  updating nothing. `assertRightChannel()` now spends one unit checking
+  `channels.list({mine: true})` against `YOUTUBE_CHANNEL_ID` before the first
+  write, and the run aborts after 5 consecutive failures with 0 successes.
 - The OAuth app is unverified → **refresh token dies after 7 days**. Expect
   `npm run youtube-auth` before most passes. This is a **closed decision**
   (Matt, 07-21): these scripts run locally only, and Google verification isn't

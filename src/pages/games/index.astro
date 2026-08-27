@@ -57,7 +57,7 @@ const soloCount = allGames.filter((g) => g.data.solo === true && g.data.status !
     <ContentContainer class="py-16 space-y-20">
       <!-- Skirmish -->
       <section>
-        <div class="flex items-baseline justify-between mb-2 gap-4">
+        <div class="section-head flex items-baseline justify-between mb-2 gap-4">
           <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark">
             <a href="/games/skirmish/" class="hover:underline underline-offset-4">Skirmish</a>
           </h2>
@@ -77,7 +77,7 @@ const soloCount = allGames.filter((g) => g.data.solo === true && g.data.status !
 
       <!-- Army-Scale -->
       <section>
-        <div class="flex items-baseline justify-between mb-2 gap-4">
+        <div class="section-head flex items-baseline justify-between mb-2 gap-4">
           <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark">
             <a href="/games/army/" class="hover:underline underline-offset-4">Army-Scale</a>
           </h2>
@@ -97,7 +97,7 @@ const soloCount = allGames.filter((g) => g.data.solo === true && g.data.status !
 
       <!-- Narrative -->
       <section>
-        <div class="flex items-baseline justify-between mb-2 gap-4">
+        <div class="section-head flex items-baseline justify-between mb-2 gap-4">
           <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark">
             <a href="/games/narrative/" class="hover:underline underline-offset-4">Narrative</a>
           </h2>
@@ -118,7 +118,7 @@ const soloCount = allGames.filter((g) => g.data.solo === true && g.data.status !
       <!-- The Graveyard -->
       {graveyard.length > 0 && (
         <section>
-          <div class="flex items-baseline justify-between mb-2 gap-4">
+          <div class="section-head flex items-baseline justify-between mb-2 gap-4">
             <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark">
               <a href="/games/graveyard/" class="hover:underline underline-offset-4">The Graveyard</a>
             </h2>

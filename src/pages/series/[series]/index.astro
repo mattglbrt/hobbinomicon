@@ -9,7 +9,7 @@ import ListCard from '../../../components/ListCard.astro';
 import ProseContent from '../../../components/ProseContent.astro';
 import StructuredData from '../../../components/StructuredData.astro';
 import { getEpisodes } from '../../../utils/content';
-import { getHeroImageUrl } from '../../../utils/getHeroImage';
+import { getHeroImage, getHeroImageUrl } from '../../../utils/getHeroImage';
 import { formatDateLong } from '../../../utils/formatDate';
 
 export async function getStaticPaths() {
@@ -92,7 +92,7 @@ const canonical = new URL(`/series/${series.id}/`, Astro.site ?? Astro.url).toSt
                 : ep.data.title}
               description={ep.data.description}
               meta={formatDateLong(ep.data.pubDate)}
-              image={getHeroImageUrl(ep.data.heroImage, ep.data.youtubeId)}
+              image={getHeroImage(ep.data.heroImage, ep.data.youtubeId)}
             />
           ))}
         </div>

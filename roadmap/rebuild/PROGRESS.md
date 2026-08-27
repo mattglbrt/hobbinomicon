@@ -5,13 +5,16 @@ One section per phase. Written at the end of each phase, before the merge to
 
 | Phase | State | Merged to `main` |
 |---|---|---|
-| 0 — Audit & safety net | **complete, signed off** | not yet |
-| 1 — Content model & moves | **complete** | not yet (ships with Phase 2) |
-| 2 — Routes, templates & redirects | **complete, awaiting sign-off** | not yet |
-| 3 — Content upgrade: guides | not started | |
+| 0 — Audit & safety net | **complete** | **yes, 2026-08-26** |
+| 1 — Content model & moves | **complete** | **yes** |
+| 2 — Routes, templates & redirects | **complete** | **yes** |
+| 3 — Content upgrade: guides | **complete** | **yes** |
 | 3b — Evergreen list articles | not started | |
-| 4 — On-ramp hubs & funnel | not started | |
-| 5 — Cutover & SEO | not started | |
+| 4 — On-ramp hubs & funnel | hubs live, funnel waiting on Matt's `relatedGames` | partially |
+| 5 — Cutover & SEO | **in progress** — deployed; GSC steps outstanding | |
+
+**Live since 2026-08-26.** `main` at `f86252d`. PageSpeed Insights mobile
+scores **100** on every page checked, against a target of 95.
 
 **After Phase 5 (Matt, 08-26):** fold the `roadmap/games.md` § "Directory
 to-do" recommendations into the content to-do list. Not before — the phases
@@ -446,6 +449,35 @@ Both clear the three-guide bar, so both launch.
   none carries `system` yet. 40k, The Old World and Spearhead render their
   planned lists. No per-system routes were built; the enum reserves the slugs.
 
+### List thumbnails: a 404 nobody saw, hiding an optimisation nobody got
+
+`getHeroImageUrl()` returns `ImageMetadata.src`, which is
+`/_astro/<name>.<hash>.jpg`. Astro emits that original only when something
+references it *as an original*; a component handed the bare string never does,
+so the file was never written. Nine images 404'd across ~100 pages, on the live
+site as well as locally.
+
+The same bug had a second half. `ListCard` forks on `isImageMetadata`, and
+because every call site passed a string, the `<Image>` branch had never once
+run. List pages were shipping unprocessed full-size originals — median 104 KB —
+to fill a 96px square. Fixing the input fixed both: `/guides/` at 390px now
+loads 107 KB of images in total, against roughly 1 MB before, at eleven times
+the display area.
+
+Thumbnails are 16:9 now rather than square. They are video stills, and the
+square crop was discarding ~44% of the frame — most of what tells you what a
+vlog is about, which was Matt's complaint. Below 640px the card stacks and the
+image goes full width; above it, 192px beside the text.
+
+**The lesson worth keeping: a dead branch looks exactly like a working one.**
+Nothing errored, nothing warned, and the pages rendered. What caught it was
+auditing every image URL in `dist` against the files actually on disk — worth
+re-running after any change to image plumbing.
+
+Related: the `src/assets/images` glob listed `{jpg,jpeg,png,webp}`, so an avif
+studio logo silently degraded to a raw `/images/` path with no `public/` copy.
+An extension missing from that glob fails this way every time — quietly.
+
 ### Still open, and why
 
 * **Lighthouse/PSI** — needs the deploy.
@@ -460,3 +492,78 @@ Both clear the three-guide bar, so both launch.
 * **`system` unset on 9 Warhammer guides**, so the hub cannot group them.
 * **`/articles/rss-feeds/` links seven retired tag feeds.** They 301 correctly;
   the page itself wants a pass in Phase 3b.
+
+
+---
+
+## Phase 3 — Content upgrade: guides
+
+Branch `dev`, many commits. Shipped with the same merge as 0–2.
+
+### Acceptance
+
+| Criterion | Result |
+|---|---|
+| Body ≥150 authored words | **99 of 101**; the two under are a link list and a Short, correctly short |
+| `steps` ≥3 or a flag | **75 guides emit `HowTo`**, up from 0. The other 26 are reference pages where `HowTo` would be false schema |
+| `validate-schema` green | yes |
+| `verify-migration` green | yes, 431/431 throughout |
+| Voice spot-check | Matt approved the register at the four-guide pilot, before scaling |
+
+### What the plan got wrong
+
+The workup assumed guides were transcript-only and budgeted ~95 rewrites.
+Measured properly, **82 already had 150+ authored words**. The real work was
+`steps`/`materials` — which nothing had, which is why zero `HowTo` was emitting,
+the thing `01-…md` calls the single biggest rich-result win available.
+
+It also assumed every promoted post was a guide. Nine were diary entries and are
+now back in `/vlog/`, and one was a duplicate of another and was merged.
+
+### Three bugs found by reading, not by any check
+
+1. **Nine guides rendered as empty pages.** Their written body sat under a
+   `## Transcript` heading using `###` subheadings, which do not terminate the
+   block, so the whole article was swept into the collapsed `<details>`.
+   `how-to-speed-paint-faces` went from 0 visible words to 802.
+2. **One page was publishing song lyrics.** A video with music over silence
+   transcribed the track, not Matt. Removed. Checked the rest of the corpus:
+   the only one, but the failure mode recurs on any silent-with-music video.
+3. **`normalize-transcripts` had been reading half the corpus** since Phase 1
+   split guides out, and was missing two of Matt's own proper nouns —
+   Kal Arath and the Mnemosyne notebook.
+
+### The deploy failed the first time
+
+`CLAUDE.md` says to verify with `npx astro build` so the YouTube prebuild does
+not fire. Following that for the whole rebuild meant **the `prebuild` chain
+Netlify actually runs was never exercised against any Phase 1 path change.**
+Two bugs were waiting there, and the daily vlog-sync build had already failed on
+them at midnight:
+
+* `sync-vlogs` only scanned `src/content/vlog` when deciding whether a video
+  already had a post, so the ~95 videos promoted into `guides` looked unsynced
+  and it recreated **86 duplicate posts every build**.
+* The MDX it generates still imported `../../../components/`, three deep, when
+  posts now land two deep. That alone would have broken the build on the next
+  real video, duplicates or not.
+
+Both fixed, plus the same half-corpus blindness in `backfill-transcripts`,
+`download-hero-images` and six tag/description scripts. Reproduced the failure
+locally rather than guessing, then verified with `npm run build` end to end.
+
+**The lesson worth keeping: `npx astro build` is not the build.** Anything that
+changes a content path has to be checked against `npm run build` before a merge,
+even though that costs an API call.
+
+### Still open
+
+* `relatedGames` on `warmachine.mdx` — no funnel renders on the hub until it is
+  set, and `hideFunnel` is honoured deliberately.
+* `START_HERE_SLUGS` on the Warmachine hub is empty, so "Start here" is the
+  three newest guides rather than Matt's picks.
+* Both hub bodies and both series descriptions are still in my register.
+* Both series entries use the site default hero image.
+* 17 "topic guessed as painting" flags — low stakes, Matt is working through them.
+* `chainmail-miniatures-checklist` and `painting-references-maximus-infinity`
+  fold into their game pages the moment those pages exist.

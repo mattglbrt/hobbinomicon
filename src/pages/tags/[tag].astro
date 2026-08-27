@@ -6,7 +6,7 @@ import Footer from '../../components/Footer.astro';
 import StructuredData from '../../components/StructuredData.astro';
 import ContentContainer from '../../components/ContentContainer.astro';
 import { groupTaggedItems } from '../../utils/content';
-import { getHeroImageUrl } from '../../utils/getHeroImage';
+import { getHeroImage, getHeroImageUrl } from '../../utils/getHeroImage';
 import { formatDateLong } from '../../utils/formatDate';
 import { getTagDisplay, getTagDescription } from '../../utils/tags';
 
@@ -68,7 +68,7 @@ const socialImage = posts[0] ? getHeroImageUrl(posts[0].heroImage, posts[0].yout
             title={post.title}
             description={post.description}
             meta={`${post.kind} · ${formatDateLong(post.pubDate)}`}
-            image={getHeroImageUrl(post.heroImage, post.youtubeId)}
+            image={getHeroImage(post.heroImage, post.youtubeId)}
           />
         ))}
       </div>

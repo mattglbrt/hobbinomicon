@@ -22,9 +22,10 @@ interface Props {
    */
   scheme?: 'light' | 'dark';
   /**
-   * Thumbnail size:
-   * - 'sm': 24x24 (96px)
-   * - 'md': 32x32 (128px)
+   * Thumbnail size at the horizontal (>=640px) breakpoint. Below that the
+   * thumbnail is full-width regardless.
+   * - 'sm': 192px wide
+   * - 'md': 240px wide
    */
   size?: 'sm' | 'md';
   /**
@@ -47,10 +48,23 @@ const {
   class: className,
 } = Astro.props;
 
-// Size classes for thumbnail
+// Thumbnail geometry.
+//
+// These are 16:9 video stills. Cropping them to a square threw away ~44% of
+// the frame, which is most of what tells you what a vlog is about, so the box
+// matches the source aspect and nothing is cut.
+//
+// Below 640px the card stacks and the image goes full-width: on a 390px screen
+// a horizontal thumbnail big enough to read leaves the title nowhere to go.
 const sizeClasses = {
-  sm: 'w-24 h-24',
-  md: 'w-24 h-24 md:w-32 md:h-32',
+  sm: 'w-full sm:w-48',
+  md: 'w-full sm:w-48 md:w-60',
+};
+
+// Matches sizeClasses so the browser picks the right candidate.
+const sizeAttr = {
+  sm: '(min-width: 640px) 192px, 100vw',
+  md: '(min-width: 768px) 240px, (min-width: 640px) 192px, 100vw',
 };
 
 // Color scheme classes
@@ -77,14 +91,14 @@ const colors = schemeClasses[scheme];
 <a
   href={href}
   class:list={[
-    'group flex gap-4 p-4 rounded-lg transition-all',
+    'group flex flex-col sm:flex-row gap-3 sm:gap-4 p-3 sm:p-4 rounded-lg transition-all',
     colors.wrapper,
     borderAccent && `border-l-4 ${colors.border} rounded-l-none`,
     className,
   ]}
 >
   {image && (
-    <div class:list={['flex-shrink-0 overflow-hidden rounded-lg', sizeClasses[size]]}>
+    <div class:list={['flex-shrink-0 overflow-hidden rounded-lg aspect-video', sizeClasses[size]]}>
       {isImageMetadata(image) ? (
         <Image
           src={image}
@@ -94,10 +108,10 @@ const colors = schemeClasses[scheme];
           decoding="async"
           format="webp"
           quality={60}
-          width={128}
-          height={128}
-          widths={[96, 128, 256]}
-          sizes="128px"
+          width={480}
+          height={270}
+          widths={[192, 384, 480, 720]}
+          sizes={sizeAttr[size]}
         />
       ) : (
         <img
@@ -106,8 +120,8 @@ const colors = schemeClasses[scheme];
           class="w-full h-full object-cover img-hover"
           loading="lazy"
           decoding="async"
-          width="128"
-          height="128"
+          width="480"
+          height="270"
         />
       )}
     </div>

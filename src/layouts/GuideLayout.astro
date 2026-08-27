@@ -13,7 +13,7 @@ import StepsList from '../components/StepsList.astro';
 import ListCard from '../components/ListCard.astro';
 import YouTubeCTA from '../components/YouTubeCTA.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
-import { getHeroImageUrl } from '../utils/getHeroImage';
+import { getHeroImage, getHeroImageUrl } from '../utils/getHeroImage';
 import { formatDateLong } from '../utils/formatDate';
 import { TOPICS, type Topic } from '../utils/content';
 import type { CollectionEntry } from 'astro:content';
@@ -150,7 +150,7 @@ const pills = [
       </h1>
 
       {showVideoTitle && (
-        <p class="mt-3 text-ink/60 dark:text-ink-dark/60 font-heading text-sm" data-pagefind-ignore>
+        <p class="mt-3 text-ink/65 dark:text-ink-dark/65 font-heading text-sm" data-pagefind-ignore>
           From the video “{d.videoTitle}”
         </p>
       )}
@@ -163,7 +163,7 @@ const pills = [
         ))}
       </div>
 
-      <div class="flex flex-wrap gap-3 items-center text-ink/60 dark:text-ink-dark/60 text-sm mt-4" data-pagefind-ignore>
+      <div class="flex flex-wrap gap-3 items-center text-ink/65 dark:text-ink-dark/65 text-sm mt-4" data-pagefind-ignore>
         <time datetime={d.pubDate.toISOString()} class="font-heading tracking-wide">
           {formatDateLong(d.pubDate)}
         </time>
@@ -233,7 +233,7 @@ const pills = [
                 title={entry.data.title}
                 description={entry.data.description}
                 meta={formatDateLong(entry.data.pubDate)}
-                image={getHeroImageUrl(entry.data.heroImage, entry.data.youtubeId)}
+                image={getHeroImage(entry.data.heroImage, entry.data.youtubeId)}
               />
             ))}
           </div>
@@ -252,7 +252,7 @@ const pills = [
                 title={entry.data.title}
                 description={entry.data.description}
                 meta={formatDateLong(entry.data.pubDate)}
-                image={getHeroImageUrl(entry.data.heroImage, entry.data.youtubeId)}
+                image={getHeroImage(entry.data.heroImage, entry.data.youtubeId)}
               />
             ))}
           </div>
@@ -286,12 +286,15 @@ const pills = [
       font-size: 0.875rem;
       letter-spacing: 0.15em;
       text-transform: uppercase;
-      opacity: 0.7;
+      /* opacity 0.7 diluted this to 3.99:1 against parchment. An explicit
+         colour at the same visual weight clears AA in both themes. */
+      color: rgb(26 22 20 / 0.72);
       list-style: none;
     }
     .transcript-details > .transcript-summary::-webkit-details-marker { display: none; }
     .transcript-details > .transcript-summary::before { content: '▸ '; }
     .transcript-details[open] > .transcript-summary::before { content: '▾ '; }
     .transcript-details > .transcript-body { margin-top: 1.5rem; }
+    :global(.dark) .transcript-details > .transcript-summary { color: rgb(244 236 216 / 0.75); }
   </style>
 </BaseLayout>

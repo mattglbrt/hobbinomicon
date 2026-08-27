@@ -9,7 +9,7 @@ import ProseContent from '../components/ProseContent.astro';
 import StructuredData from '../components/StructuredData.astro';
 import YouTubeCTA from '../components/YouTubeCTA.astro';
 import FunnelSection from '../components/FunnelSection.astro';
-import { getHeroImage, getHeroImageUrl } from '../utils/getHeroImage';
+import { getHeroImage } from '../utils/getHeroImage';
 import { formatDateLong } from '../utils/formatDate';
 import type { CollectionEntry } from 'astro:content';
 
@@ -108,7 +108,7 @@ const totalGuides = new Set(
         <p class="text-lg md:text-2xl text-parchment/70 dark:text-parchment-dark/70 font-serif max-w-3xl">
           {tagline}
         </p>
-        <p class="mt-6 text-sm font-heading uppercase tracking-[0.2em] text-parchment/40 dark:text-parchment-dark/40">
+        <p class="mt-6 text-sm font-heading uppercase tracking-[0.2em] text-parchment/65 dark:text-parchment-dark/65">
           {totalGuides} {totalGuides === 1 ? 'guide' : 'guides'}
         </p>
       </ContentContainer>
@@ -130,7 +130,7 @@ const totalGuides = new Set(
                 title={entry.data.title}
                 description={entry.data.description}
                 meta={formatDateLong(entry.data.pubDate)}
-                image={getHeroImageUrl(entry.data.heroImage, entry.data.youtubeId)}
+                image={getHeroImage(entry.data.heroImage, entry.data.youtubeId)}
               />
             ))}
           </div>
@@ -139,7 +139,7 @@ const totalGuides = new Set(
 
       {spotlight ? (
         <section class="mt-16 rounded-lg border-2 border-ink/20 dark:border-ink-dark/20 bg-ink/[0.03] dark:bg-ink-dark/[0.03] p-8">
-          <p class="font-heading text-sm uppercase tracking-[0.2em] text-ink/60 dark:text-ink-dark/60">
+          <p class="font-heading text-sm uppercase tracking-[0.2em] text-ink/65 dark:text-ink-dark/65">
             {spotlight.label}
           </p>
           <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mt-1 mb-6">
@@ -160,7 +160,7 @@ const totalGuides = new Set(
                   title={entry.data.title}
                   description={entry.data.description}
                   meta={formatDateLong(entry.data.pubDate)}
-                  image={getHeroImageUrl(entry.data.heroImage, entry.data.youtubeId)}
+                  image={getHeroImage(entry.data.heroImage, entry.data.youtubeId)}
                 />
               ))}
             </div>
@@ -192,7 +192,7 @@ const totalGuides = new Set(
             {groups.map((group) => (
               <div>
                 <h3 class="font-heading text-xl text-ink dark:text-ink-dark mb-1">{group.name}</h3>
-                <p class="text-sm text-ink/50 dark:text-ink-dark/50 mb-4">
+                <p class="text-sm text-ink/65 dark:text-ink-dark/65 mb-4">
                   {group.guides.length > 0
                     ? `${group.guides.length} ${group.guides.length === 1 ? 'guide' : 'guides'}`
                     : 'Coming soon'}
@@ -205,7 +205,7 @@ const totalGuides = new Set(
                         title={entry.data.title}
                         description={entry.data.description}
                         meta={formatDateLong(entry.data.pubDate)}
-                        image={getHeroImageUrl(entry.data.heroImage, entry.data.youtubeId)}
+                        image={getHeroImage(entry.data.heroImage, entry.data.youtubeId)}
                       />
                     ))}
                   </div>

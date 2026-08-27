@@ -1,7 +1,9 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { vlogUrl } from '../utils/content';
-import { getHeroImageUrl } from '../utils/getHeroImage';
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { getHeroImage, isImageMetadata } from '../utils/getHeroImage';
 import { formatDateShort } from '../utils/formatDate';
 
 interface Props {
@@ -13,8 +15,8 @@ interface Props {
 
 const { previousPost, nextPost, projectName, projectSlug } = Astro.props;
 
-function getPostImage(post: CollectionEntry<'vlog'>): string {
-  return getHeroImageUrl(post.data.heroImage, post.data.youtubeId);
+function getPostImage(post: CollectionEntry<'vlog'>): string | ImageMetadata {
+  return getHeroImage(post.data.heroImage, post.data.youtubeId);
 }
 
 // Helper to safely get slug as string
@@ -49,13 +51,31 @@ function getSlug(post: CollectionEntry<'vlog'> | null): string {
           class="group block bg-ink/5 rounded-lg overflow-hidden hover:bg-ink/10 transition-colors"
         >
           <div class="aspect-video relative overflow-hidden">
-            <img
-              src={getPostImage(previousPost)}
-              alt={previousPost.data.heroImageAlt || previousPost.data.title}
-              class="w-full h-full object-cover img-hover"
-              loading="lazy"
-              decoding="async"
-            />
+            {isImageMetadata(getPostImage(previousPost)) ? (
+              <Image
+                src={getPostImage(previousPost) as ImageMetadata}
+                alt={previousPost.data.heroImageAlt || previousPost.data.title}
+                class="w-full h-full object-cover img-hover"
+                loading="lazy"
+                decoding="async"
+                format="webp"
+                quality={60}
+                width={480}
+                height={270}
+                widths={[320, 480, 640]}
+                sizes="(min-width: 768px) 320px, 100vw"
+              />
+            ) : (
+              <img
+                src={getPostImage(previousPost) as string}
+                alt={previousPost.data.heroImageAlt || previousPost.data.title}
+                class="w-full h-full object-cover img-hover"
+                loading="lazy"
+                decoding="async"
+                width="480"
+                height="270"
+              />
+            )}
             <div class="absolute inset-0 bg-gradient-to-t from-ink/60 to-transparent"></div>
             <div class="absolute bottom-3 left-3">
               <span class="text-xs text-white/80 bg-ink/50 px-2 py-1 rounded">← Previous</span>
@@ -78,13 +98,31 @@ function getSlug(post: CollectionEntry<'vlog'> | null): string {
           class={`group block bg-ink/5 rounded-lg overflow-hidden hover:bg-ink/10 transition-colors ${!previousPost ? 'md:col-start-2' : ''}`}
         >
           <div class="aspect-video relative overflow-hidden">
-            <img
-              src={getPostImage(nextPost)}
-              alt={nextPost.data.heroImageAlt || nextPost.data.title}
-              class="w-full h-full object-cover img-hover"
-              loading="lazy"
-              decoding="async"
-            />
+            {isImageMetadata(getPostImage(nextPost)) ? (
+              <Image
+                src={getPostImage(nextPost) as ImageMetadata}
+                alt={nextPost.data.heroImageAlt || nextPost.data.title}
+                class="w-full h-full object-cover img-hover"
+                loading="lazy"
+                decoding="async"
+                format="webp"
+                quality={60}
+                width={480}
+                height={270}
+                widths={[320, 480, 640]}
+                sizes="(min-width: 768px) 320px, 100vw"
+              />
+            ) : (
+              <img
+                src={getPostImage(nextPost) as string}
+                alt={nextPost.data.heroImageAlt || nextPost.data.title}
+                class="w-full h-full object-cover img-hover"
+                loading="lazy"
+                decoding="async"
+                width="480"
+                height="270"
+              />
+            )}
             <div class="absolute inset-0 bg-gradient-to-t from-ink/60 to-transparent"></div>
             <div class="absolute bottom-3 right-3">
               <span class="text-xs text-white/80 bg-ink/50 px-2 py-1 rounded">Next →</span>

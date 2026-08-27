@@ -28,7 +28,7 @@ const hasAffiliate = materials.some((m) => m.affiliate);
     <ul class="grid gap-2 sm:grid-cols-2">
       {materials.map((m) => (
         <li class="flex gap-2 text-ink dark:text-ink-dark">
-          <span aria-hidden="true" class="text-ink/40 dark:text-ink-dark/40">·</span>
+          <span aria-hidden="true" class="text-ink/65 dark:text-ink-dark/65">·</span>
           {m.url ? (
             <a
               href={m.url}
@@ -45,7 +45,7 @@ const hasAffiliate = materials.some((m) => m.affiliate);
       ))}
     </ul>
     {hasAffiliate && (
-      <p class="mt-4 pt-4 border-t border-ink/10 dark:border-ink-dark/10 text-xs text-ink/60 dark:text-ink-dark/60">
+      <p class="mt-4 pt-4 border-t border-ink/10 dark:border-ink-dark/10 text-xs text-ink/65 dark:text-ink-dark/65">
         Some links above are affiliate links. If you buy through one, I get a
         small cut at no extra cost to you. It does not change what I recommend —
         everything listed is what I actually used.
