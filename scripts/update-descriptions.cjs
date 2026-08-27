@@ -180,6 +180,24 @@ function desiredDescription(snippet, gameSlug, guidePath, titles) {
   return base ? `${base}\n\n${footer}` : footer;
 }
 
+// The consent screen asks which channel to authorize, and Matt has five. Pick
+// the wrong one and every read still succeeds (video metadata is public) while
+// every write comes back 403 — which is how a pass once ground through 190
+// rejected updates at 50 units each and burned a day of quota writing nothing.
+// One unit up front makes that impossible.
+async function assertRightChannel(yt) {
+  const want = process.env.YOUTUBE_CHANNEL_ID;
+  const { data } = await yt.channels.list({ part: 'id,snippet', mine: true });
+  const owned = data.items || [];
+  if (owned.some((c) => c.id === want)) return;
+  console.error('\nWrong channel authorized.');
+  console.error(`  token owns: ${owned.map((c) => `${c.snippet.title} (${c.id})`).join(', ') || '(nothing)'}`);
+  console.error(`  need:       ${want}`);
+  console.error('\nRerun `npm run youtube-auth` and pick the Hobbinomicon channel');
+  console.error('at the Google account chooser. No videos were touched.');
+  process.exit(1);
+}
+
 function isQuotaError(e) {
   const reason = e?.errors?.[0]?.reason || '';
   return (
@@ -253,6 +271,7 @@ async function main() {
   if (VERIFY) return verifyUrls(guides, titles, videoToGame);
 
   const yt = google.youtube({ version: 'v3', auth: getAuthClient() });
+  await assertRightChannel(yt);
 
   // Priority set = playlisted (evergreen) ∪ game-mapped ∪ guide-mapped.
   // Guide-mapped videos matter most in this pass: their pages moved, and a
@@ -322,6 +341,7 @@ async function main() {
 
   // RUN
   let updates = 0;
+  let failures = 0;
   for (const id of ordered) {
     if (updates >= MAX) {
       console.log(`\nReached --max ${MAX}. Re-run tomorrow to continue (already-updated are skipped).`);
@@ -353,6 +373,7 @@ async function main() {
         },
       });
       updates++;
+      failures = 0;
       updatedLog.ids = [...already.add(id)];
       fs.writeFileSync(UPDATED_LOG, JSON.stringify(updatedLog, null, 2));
       console.log(`updated (${updates}) ${id}  ${slug ? `[${slug}]` : ''}  ${sn.title.slice(0, 60)}`);
@@ -363,6 +384,13 @@ async function main() {
         break;
       }
       console.error(`! failed ${id}: ${e.message}`);
+      // A run that is failing every single call is failing for a reason that
+      // the next call will not fix, and each attempt still costs quota.
+      if (++failures >= 5 && updates === 0) {
+        console.error(`\nAborted: ${failures} consecutive failures, 0 successes.`);
+        console.error('Nothing was written. Fix the cause before rerunning.');
+        break;
+      }
     }
   }
   console.log(`\nDone. Updated ${updates} descriptions this run.`);

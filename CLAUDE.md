@@ -181,6 +181,15 @@ YouTube is a 404. Two live videos were being pointed at the still-drafted
 - Dry run, then `--run --max 190`. Each update costs 50 quota units against a
   10,000/day limit, so a full pass takes two days. Priority (playlisted +
   game-mapped) videos go first, so a quota-limited day covers what matters.
+- **At the consent screen, pick the Hobbinomicon channel.** Matt has five, and
+  Google's account chooser does not default to the right one. Authorizing the
+  wrong channel fails in the least obvious way possible: every *read* still
+  succeeds, because video metadata is public, so the backup and the dry run
+  both look perfect — and then every *write* returns a bare 403 `Forbidden`.
+  On 08-27 that burned a full day of quota (190 rejected writes × 50 units)
+  updating nothing. `assertRightChannel()` now spends one unit checking
+  `channels.list({mine: true})` against `YOUTUBE_CHANNEL_ID` before the first
+  write, and the run aborts after 5 consecutive failures with 0 successes.
 - The OAuth app is unverified → **refresh token dies after 7 days**. Expect
   `npm run youtube-auth` before most passes. This is a **closed decision**
   (Matt, 07-21): these scripts run locally only, and Google verification isn't
