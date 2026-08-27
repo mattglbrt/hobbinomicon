@@ -478,6 +478,34 @@ Related: the `src/assets/images` glob listed `{jpg,jpeg,png,webp}`, so an avif
 studio logo silently degraded to a raw `/images/` path with no `public/` copy.
 An extension missing from that glob fails this way every time — quietly.
 
+### Dark mode: text the same colour as the page
+
+`ListCard`'s `light` colour scheme had no `dark:` counterparts, so its title,
+meta and description all rendered `text-ink`. The palette **inverts** rather
+than dims — `ink` is near-black in light mode and cream in dark — so those
+stayed near-black on the near-black page. Measured **1:1**. Not poor contrast:
+the identical colour. It affected every list page.
+
+Three more had the mirror-image mistake — a background that inverts under
+hard-coded `text-white`, giving white on cream: the `/tags/<tag>/` header, the
+contact submit button, and `Pagination` (which also punched white pills into
+the dark page, with the disabled prev/next and ellipsis invisible).
+`PageHeader` is the model to copy: it does **not** invert its background, so
+white text stays correct in both themes.
+
+**The method mattered more than the fix.** A regex pass over class strings
+flagged `ProseContent` and half a dozen others that are entirely fine, and
+would have sent me editing body copy that already worked. Rendering both
+themes and computing contrast against the *effective* background for every
+visible text node gave the true answer in both directions. Worth re-running
+after any colour change; the audit's one blind spot is white text over a
+photograph, where the real backdrop is the image plus a scrim.
+
+**And verify a deploy by measuring, not by grepping.** The marker string I
+first polled for (`dark:text-ink-dark/80`) already existed elsewhere on the
+same page from `GuideLayout`, so it matched the *old* deploy within 20 seconds
+and I called it live while production was still 1:1.
+
 ### Still open, and why
 
 * **Lighthouse/PSI** — needs the deploy.

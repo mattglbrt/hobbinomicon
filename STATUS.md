@@ -14,6 +14,13 @@ nine of them 404'd on the live site — `getHeroImageUrl()` hands components a
 the thumbnails are responsive webp, 16:9, and full width on mobile. `/guides/`
 at 390px went from ~1 MB of images to 107 KB. Sitewide image audit: 0 missing.
 
+**Dark mode was broken on every list page and is now fixed and live.**
+`ListCard` had no `dark:` variants, so titles, dates and descriptions rendered
+at 1:1 against the background — the same colour, not merely low contrast. Same
+class of bug in the `/tags/<tag>/` header, the contact button and `Pagination`.
+Verified on production by measuring rendered contrast across 11 pages, both
+themes: clean.
+
 Still true: **transcripts only reach the live site from a local sync** — YouTube blocks caption fetches from Netlify IPs, so `npm run refresh-vlogs` is load-bearing.
 
 ## Next (ranked)
