@@ -66,7 +66,7 @@ function getPageUrl(page: number): string {
     {prevUrl ? (
       <a
         href={prevUrl}
-        class="flex items-center gap-1 px-4 py-2 bg-white border-2 border-ink/20 text-ink font-mono text-sm rounded hover:border-ink/40 hover:bg-ink/5 transition-all"
+        class="flex items-center gap-1 px-4 py-2 bg-white dark:bg-ink-dark/10 border-2 border-ink/20 dark:border-ink-dark/25 text-ink dark:text-ink-dark font-mono text-sm rounded hover:border-ink/40 dark:hover:border-ink-dark/45 hover:bg-ink/5 dark:hover:bg-ink-dark/15 transition-all"
         aria-label="Previous page"
       >
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -75,7 +75,7 @@ function getPageUrl(page: number): string {
         <span class="hidden sm:inline">Prev</span>
       </a>
     ) : (
-      <span class="flex items-center gap-1 px-4 py-2 bg-ink/5 border-2 border-ink/10 text-ink/70 font-mono text-sm rounded cursor-not-allowed">
+      <span class="flex items-center gap-1 px-4 py-2 bg-ink/5 dark:bg-ink-dark/5 border-2 border-ink/10 dark:border-ink-dark/15 text-ink/70 dark:text-ink-dark/70 font-mono text-sm rounded cursor-not-allowed">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
         </svg>
@@ -87,10 +87,10 @@ function getPageUrl(page: number): string {
     <div class="flex items-center gap-1">
       {pageNumbers.map((page) => (
         page === '...' ? (
-          <span class="px-3 py-2 text-ink/65 font-mono text-sm">...</span>
+          <span class="px-3 py-2 text-ink/65 dark:text-ink-dark/65 font-mono text-sm">...</span>
         ) : page === currentPage ? (
           <span
-            class="px-4 py-2 bg-ink text-parchment font-mono text-sm rounded"
+            class="px-4 py-2 bg-ink dark:bg-ink-dark text-parchment dark:text-parchment-dark font-mono text-sm rounded"
             aria-current="page"
           >
             {page}
@@ -98,7 +98,7 @@ function getPageUrl(page: number): string {
         ) : (
           <a
             href={getPageUrl(page)}
-            class="px-4 py-2 bg-white border-2 border-ink/20 text-ink font-mono text-sm rounded hover:border-ink/40 hover:bg-ink/5 transition-all"
+            class="px-4 py-2 bg-white dark:bg-ink-dark/10 border-2 border-ink/20 dark:border-ink-dark/25 text-ink dark:text-ink-dark font-mono text-sm rounded hover:border-ink/40 dark:hover:border-ink-dark/45 hover:bg-ink/5 dark:hover:bg-ink-dark/15 transition-all"
             aria-label={`Page ${page}`}
           >
             {page}
@@ -111,7 +111,7 @@ function getPageUrl(page: number): string {
     {nextUrl ? (
       <a
         href={nextUrl}
-        class="flex items-center gap-1 px-4 py-2 bg-white border-2 border-ink/20 text-ink font-mono text-sm rounded hover:border-ink/40 hover:bg-ink/5 transition-all"
+        class="flex items-center gap-1 px-4 py-2 bg-white dark:bg-ink-dark/10 border-2 border-ink/20 dark:border-ink-dark/25 text-ink dark:text-ink-dark font-mono text-sm rounded hover:border-ink/40 dark:hover:border-ink-dark/45 hover:bg-ink/5 dark:hover:bg-ink-dark/15 transition-all"
         aria-label="Next page"
       >
         <span class="hidden sm:inline">Next</span>
@@ -120,7 +120,7 @@ function getPageUrl(page: number): string {
         </svg>
       </a>
     ) : (
-      <span class="flex items-center gap-1 px-4 py-2 bg-ink/5 border-2 border-ink/10 text-ink/70 font-mono text-sm rounded cursor-not-allowed">
+      <span class="flex items-center gap-1 px-4 py-2 bg-ink/5 dark:bg-ink-dark/5 border-2 border-ink/10 dark:border-ink-dark/15 text-ink/70 dark:text-ink-dark/70 font-mono text-sm rounded cursor-not-allowed">
         <span class="hidden sm:inline">Next</span>
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />

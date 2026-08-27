@@ -69,12 +69,16 @@ const sizeAttr = {
 
 // Color scheme classes
 const schemeClasses = {
+  // Every colour here needs its dark: counterpart. The palette inverts rather
+  // than dimming — `ink` is near-black in light mode and cream in dark — so a
+  // bare `text-ink` is the same near-black in both, which is invisible against
+  // the dark background. That is exactly how this shipped.
   light: {
-    wrapper: 'bg-ink/5 hover:bg-ink/10',
-    border: 'border-ink/30 hover:border-ink',
-    title: 'text-ink',
-    description: 'text-ink/80',
-    meta: 'text-ink/70',
+    wrapper: 'bg-ink/5 hover:bg-ink/10 dark:bg-ink-dark/5 dark:hover:bg-ink-dark/10',
+    border: 'border-ink/30 hover:border-ink dark:border-ink-dark/30 dark:hover:border-ink-dark',
+    title: 'text-ink dark:text-ink-dark',
+    description: 'text-ink/80 dark:text-ink-dark/80',
+    meta: 'text-ink/70 dark:text-ink-dark/70',
   },
   dark: {
     wrapper: 'bg-white/5 hover:bg-white/10',
