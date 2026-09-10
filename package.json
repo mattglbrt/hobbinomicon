@@ -24,7 +24,8 @@
     "update-youtube-stats": "node scripts/update-youtube-stats.js",
     "update-descriptions": "node scripts/update-descriptions.cjs",
     "backup-descriptions": "node scripts/backup-descriptions.cjs",
-    "youtube-auth": "node scripts/youtube-auth.cjs"
+    "youtube-auth": "node scripts/youtube-auth.cjs",
+    "audit-images": "node scripts/audit-images.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^5.0.2",

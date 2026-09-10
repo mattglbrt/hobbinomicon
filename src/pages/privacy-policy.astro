@@ -3,7 +3,7 @@ import LegalPageLayout from '../layouts/LegalPageLayout.astro';
 import LegalSection from '../components/LegalSection.astro';
 ---
 
-<LegalPageLayout title="Privacy Policy" lastUpdated="November 23, 2025">
+<LegalPageLayout title="Privacy Policy" lastUpdated="September 10, 2026">
   <LegalSection title="1. Introduction">
     <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
       The Hobbinomicon ("we," "us," or "our") respects your privacy and is committed to protecting your personal data. This Privacy Policy explains how we collect, use, and safeguard information when you visit our website.
@@ -27,7 +27,7 @@ import LegalSection from '../components/LegalSection.astro';
 
     <LegalSection title="2.2 Automatically Collected Information" level={3}>
       <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
-        When you visit our Site, we automatically collect certain information about your device through Google Analytics, including:
+        When you visit our Site, we automatically collect certain information about your device through Google Analytics and the Meta pixel, including:
       </p>
       <ul class="list-disc pl-8 text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4 space-y-2">
         <li>IP address (anonymized)</li>
@@ -51,6 +51,7 @@ import LegalSection from '../components/LegalSection.astro';
       <li><strong>Site Maintenance:</strong> To monitor and analyze Site performance and technical issues</li>
       <li><strong>Content Improvement:</strong> To understand what content is most valuable to our visitors</li>
       <li><strong>Security:</strong> To protect against malicious activity and maintain Site security</li>
+      <li><strong>Advertising and Measurement:</strong> To measure how our advertising performs and to show ads to people who have visited the Site or signed up for our newsletter</li>
     </ul>
     <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
       <strong>WE DO NOT AND WILL NEVER:</strong>
@@ -97,7 +98,38 @@ import LegalSection from '../components/LegalSection.astro';
       </p>
     </LegalSection>
 
-    <LegalSection title="4.4 YouTube" level={3}>
+    <LegalSection title="4.4 Meta Pixel" level={3}>
+      <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+        We use the Meta pixel (Facebook and Instagram) to measure our advertising and to reach people who have already visited the Site. The pixel loads on every page and reports:
+      </p>
+      <ul class="list-disc pl-8 text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4 space-y-2">
+        <li>That a page on this Site was viewed, and which page it was</li>
+        <li>That a newsletter signup was completed, recorded as a "Lead" event</li>
+        <li>Standard technical information sent with any web request, including IP address, browser and device type, and referring page</li>
+      </ul>
+      <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+        We do not send your email address, name, or any other information you typed to Meta. The newsletter signup event records only that a signup happened, not who made it.
+      </p>
+      <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+        <strong>Data from this Site may be combined with data from other sites we operate.</strong> The Hobbinomicon and <a href="https://yellowimp.com" target="_blank" rel="noopener noreferrer" class="text-ink dark:text-ink-dark hover:underline">Yellow Imp Miniatures</a> are both run by MDG Growth LLC and share advertising and measurement infrastructure. Meta may also combine what it collects here with information it already holds about you from your Facebook or Instagram account and from other sites and apps that use its tools.
+      </p>
+      <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+        Meta's handling of this data is governed by the <a href="https://www.facebook.com/privacy/policy/" target="_blank" rel="noopener noreferrer" class="text-ink dark:text-ink-dark hover:underline">Meta Privacy Policy</a> and the <a href="https://www.facebook.com/legal/terms/businesstools" target="_blank" rel="noopener noreferrer" class="text-ink dark:text-ink-dark hover:underline">Meta Business Tools Terms</a>.
+      </p>
+      <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+        <strong>How to opt out.</strong> You have several options, and they work independently of each other:
+      </p>
+      <ul class="list-disc pl-8 text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4 space-y-2">
+        <li><strong>Meta ad settings:</strong> If you have a Facebook or Instagram account, use <a href="https://www.facebook.com/adpreferences/ad_settings" target="_blank" rel="noopener noreferrer" class="text-ink dark:text-ink-dark hover:underline">Meta Ad Preferences</a> to control how activity from other websites is used to target ads to you. <a href="https://www.facebook.com/off_facebook_activity/" target="_blank" rel="noopener noreferrer" class="text-ink dark:text-ink-dark hover:underline">Off-Facebook Activity</a> lets you see and disconnect the activity businesses like ours have sent about you.</li>
+        <li><strong>Browser controls:</strong> Blocking third-party cookies, using your browser's tracking protection, or using private browsing will limit or prevent the pixel from working. Content blockers stop it outright.</li>
+        <li><strong>Do not use the Site:</strong> The pixel only runs while you are on our pages.</li>
+      </ul>
+      <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+        We do not currently show a cookie consent banner, so the pixel loads for every visitor. If we add one, it will control the pixel along with our other analytics, and this policy will be updated to say so.
+      </p>
+    </LegalSection>
+
+    <LegalSection title="4.5 YouTube" level={3}>
       <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
         Our Site may embed YouTube videos. When you view pages with embedded YouTube videos, YouTube may set cookies on your device. YouTube's data practices are governed by Google's Privacy Policy.
       </p>
@@ -113,6 +145,7 @@ import LegalSection from '../components/LegalSection.astro';
     </p>
     <ul class="list-disc pl-8 text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4 space-y-2">
       <li><strong>Analytics Cookies:</strong> Google Analytics cookies to understand Site usage</li>
+      <li><strong>Advertising Cookies:</strong> Meta pixel cookies to measure advertising and show ads to previous visitors</li>
       <li><strong>Essential Cookies:</strong> Cookies necessary for the Site to function properly</li>
     </ul>
     <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
@@ -127,6 +160,7 @@ import LegalSection from '../components/LegalSection.astro';
     <ul class="list-disc pl-8 text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4 space-y-2">
       <li><strong>Contact Form Submissions:</strong> Retained for as long as necessary to respond to your inquiry and for our records</li>
       <li><strong>Analytics Data:</strong> Retained according to Google Analytics retention settings (typically 26 months)</li>
+      <li><strong>Advertising Data:</strong> Retained by Meta according to its own retention policies, which we do not control</li>
     </ul>
   </LegalSection>
 
