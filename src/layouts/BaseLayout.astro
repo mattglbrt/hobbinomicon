@@ -130,6 +130,9 @@ const metaDescription =
     <!-- Preconnect to GA so the lazy-loaded analytics handshake is already warm -->
     <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin />
 
+    <!-- Same for the Meta pixel, which loads on first interaction (see below) -->
+    <link rel="preconnect" href="https://connect.facebook.net" crossorigin />
+
     <!-- Favicons -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
@@ -195,6 +198,70 @@ const metaDescription =
           setTimeout(loadGA, 3000);
         });
       })();
+    </script>
+
+    <!-- Meta pixel. The fbq() stub is defined here so init/PageView (and a
+         later Lead) queue immediately; fbevents.js itself is held back so
+         ~70KB of pixel never competes with LCP, then flushes the queue when
+         it arrives.
+
+         It loads on the FIRST of: any real interaction (pointer, touch, key,
+         scroll) or 3s after load. Interaction is the usual trigger and is much
+         earlier than 3s, so a visitor who bounces quickly still registers —
+         the plain 3s delay GA uses would have dropped them. `load` is a floor
+         either way: an interaction during page load waits for it, so LCP is
+         never in competition. mousemove is deliberately not a trigger; on
+         desktop it fires almost immediately and would defeat the deferral. -->
+    <script is:inline>
+      (function (f, b, e, v) {
+        if (f.fbq) return;
+        var n = (f.fbq = function () {
+          n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+        });
+        if (!f._fbq) f._fbq = n;
+        n.push = n;
+        n.loaded = !0;
+        n.version = '2.0';
+        n.queue = [];
+
+        var EVENTS = ['pointerdown', 'touchstart', 'keydown', 'scroll'];
+        var inserted = false;
+        var pageLoaded = false;
+        var wanted = false;
+        var timer;
+
+        function insert() {
+          if (inserted) return;
+          inserted = true;
+          clearTimeout(timer);
+          for (var i = 0; i < EVENTS.length; i++) {
+            b.removeEventListener(EVENTS[i], want, true);
+          }
+          var t = b.createElement(e);
+          t.async = !0;
+          t.src = v;
+          var s = b.getElementsByTagName(e)[0];
+          s.parentNode.insertBefore(t, s);
+        }
+
+        function want() {
+          wanted = true;
+          if (pageLoaded) insert();
+        }
+
+        for (var i = 0; i < EVENTS.length; i++) {
+          b.addEventListener(EVENTS[i], want, { capture: true, passive: true });
+        }
+
+        f.addEventListener('load', function () {
+          pageLoaded = true;
+          if (wanted) insert();
+          else timer = setTimeout(insert, 3000);
+        });
+      })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+
+      fbq('init', '2022316185081924');
+      fbq('track', 'PageView');
     </script>
 
     <!-- Cursor spotlight for dark sections -->
@@ -374,6 +441,16 @@ const metaDescription =
     />
   </head>
   <body class="min-h-screen font-serif bg-parchment dark:bg-parchment-dark text-ink dark:text-ink-dark transition-colors duration-300">
+    <noscript>
+      <img
+        height="1"
+        width="1"
+        style="display:none"
+        alt=""
+        src="https://www.facebook.com/tr?id=2022316185081924&ev=PageView&noscript=1"
+      />
+    </noscript>
+
     <GrainOverlay />
     <SkipLink />
     <div id="swup">
@@ -856,6 +933,14 @@ const metaDescription =
           window.gtag('config', 'G-990EP8N5XW', {
             page_path: (event as CustomEvent).detail.args.url,
           });
+        }
+
+        // Same for the Meta pixel: Swup swaps content without a document load,
+        // so without this every visit after the first would go uncounted. fbq
+        // is the stub until fbevents.js lands, and the stub queues, so this is
+        // safe to call at any point in the page's life.
+        if (typeof window.fbq === 'function') {
+          window.fbq('track', 'PageView');
         }
       });
     </script>

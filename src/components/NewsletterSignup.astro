@@ -89,6 +89,14 @@ const { variant = 'section', class: className = '' } = Astro.props;
 
           const data = await res.json();
 
+          // Meta pixel: a completed signup is the one conversion we report.
+          // Deliberately no email or other user data — advanced matching stays
+          // off, so the pixel never receives the subscriber's address and the
+          // privacy policy's "never share your email with advertisers" holds.
+          if (res.ok && typeof window.fbq === 'function') {
+            window.fbq('track', 'Lead');
+          }
+
           if (msg) {
             msg.classList.remove('hidden', 'text-red-500', 'text-green-600', 'dark:text-red-400', 'dark:text-green-400');
             if (res.ok) {
