@@ -4,6 +4,81 @@ Append-only. **Newest entry first.** Pre-existing planning history lives in `roa
 
 ---
 
+## 2026-09-01 — The description pass, staged and held at the last step
+
+Came in to run the YouTube description pass (STATUS #0, blocked since 08-27).
+Everything in front of the writes is done and green; the pass itself is
+deliberately not run. **No descriptions were touched, nothing was committed,
+nothing was pushed.**
+
+### The newsletter link, decided before the writes
+
+The footer's newsletter line was the one open question that gets baked into
+271 videos at 50 quota units each, so it had to be settled first. Changed
+`scripts/update-descriptions.cjs:143` from `hobbinomicon.com/#newsletter` to
+`https://hobbinomicon.com/newsletter/?utm_source=youtube&utm_medium=description`.
+
+Three reasons, in order of weight:
+
+1. **A fragment is invisible to analytics.** `/#newsletter` records as a
+   pageview of `/`. The fragment never leaves the browser and is not in GA4's
+   default `page_path`, so newsletter clicks from YouTube were not merely hard
+   to attribute, they were *uncountable* — indistinguishable from all other
+   homepage traffic.
+2. **That line carried no UTM at all.** The guides and games lines (132, 138)
+   both append `?${U}`; newsletter and Discord did not. Fixing only the URL
+   would still have left the source unattributed. The Discord line was left
+   bare on purpose: it points at an external domain that will never report a
+   UTM back.
+3. **It is a better landing page.** Both surfaces render the identical
+   `<NewsletterSignup variant="section" />`, so the form is the same. The
+   difference is context — `/newsletter/` opens with the pitch and carries its
+   own title and breadcrumb data, where `/#newsletter` drops a cold viewer at
+   the bottom of the homepage past everything else.
+
+### Pre-flight, all green
+
+`npm run backup-descriptions` → 271 snippets to
+`scripts/backups/descriptions-backup-2026-09-01T16-19-34.json`. **That file is
+the only undo.** Full `npm run build` (439 pages, per CLAUDE.md — not
+`npx astro build`, which skips `prebuild`). Then `--verify-urls`: 97 URLs
+checked against `dist/`, 85 guide deep links, all resolve. Dry run: **269
+videos need the footer, 168 priority, ~13,450 units against a 10,000/day
+limit** — so 190 in the first day and 79 in the second, priority first.
+
+### Three things the pre-flight surfaced
+
+**`--verify-urls` cannot tell you a page is live.** It checks against local
+`dist/`, built from the working tree, so it would pass happily for a page never
+merged to `main`. Matt asked whether the newsletter page actually exists on the
+site, which is precisely the question that check does not answer. It does:
+`src/pages/newsletter.astro` landed on `main` in `6aa29e0` (Phase 2b) and went
+out with the 08-26 deploy, and production returns **200** for both
+`/newsletter/` and the exact UTM'd URL the footer emits, serving the real title
+and form. Confirmed by request, not inferred. Worth remembering this blind spot
+in the pre-flight — the only two commits on `dev` and not on `main` are
+docs-only, so nothing else the footer points at was at risk this time.
+
+**STATUS's "engine missing" for the newsletter is out of date.**
+`netlify/functions/subscribe.js` is a working Mailgun handler. It is gated on
+`MAILGUN_API_KEY` and `MAILGUN_LIST` and returns a 500 if either is absent.
+Whether they are set in Netlify's env is **unverified** and not checkable from
+here. The form is live either way; the open risk is silently dropped signups.
+
+**Counts.** The backup captured 271 snippets, the pass scopes 269 — two videos
+sit outside its filter. And the dry run's BEFORE blocks already show UTMs on the
+guides and games lines, so an earlier pass did land at some point; STATUS's
+"0 of 271 updated" is specific to the 08-27 wrong-channel attempt.
+
+### Why it is held
+
+Matt's call, and the right one: pointing 271 video descriptions at a thin page
+spends the one shot that traffic gives you. He is writing content for
+`/newsletter/` first. The pass runs after that. The backup stays valid as long
+as nothing else edits descriptions in the meantime.
+
+---
+
 ## 2026-08-27 — Mobile pass, then two bugs that had shipped invisible
 
 Started as the mobile UI/UX pass Matt asked for and turned into finding two

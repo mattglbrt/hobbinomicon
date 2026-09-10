@@ -140,7 +140,7 @@ function buildFooter(gameSlug, guidePath, titles) {
   } else {
     lines.push(`🎲 The indie wargames directory: https://hobbinomicon.com/games/?${U}`);
   }
-  lines.push('📬 Monthly-ish newsletter: https://hobbinomicon.com/#newsletter');
+  lines.push(`📬 Monthly-ish newsletter: https://hobbinomicon.com/newsletter/?${U}`);
   lines.push('💬 Discord: https://discord.gg/5YnP7KrQH3');
   return lines.join('\n');
 }
