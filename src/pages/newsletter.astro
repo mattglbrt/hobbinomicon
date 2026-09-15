@@ -317,6 +317,10 @@ const sections = [
    * owns the outcome and never tells us. Expect it to read slightly high
    * against the Substack subscriber count.
    *
+   * The two parameters exist because pixel 2022316185081924 is shared with
+   * Yellow Imp; without them a newsletter signup here is indistinguishable
+   * from a store lead there. See NewsletterSignup.astro for the full note.
+   *
    * No email or other user data is passed. Advanced matching stays off, so the
    * privacy policy's "never share your email with advertisers" still holds.
    */
@@ -327,7 +331,12 @@ const sections = [
       el.dataset.leadBound = 'true';
 
       el.addEventListener('submit', () => {
-        if (typeof window.fbq === 'function') window.fbq('track', 'Lead');
+        if (typeof window.fbq === 'function') {
+          window.fbq('track', 'Lead', {
+            content_name: 'newsletter',
+            content_category: 'hobbinomicon',
+          });
+        }
         // Never preventDefault: the browser must still post to Substack.
       });
     });
