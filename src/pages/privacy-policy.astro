@@ -3,7 +3,7 @@ import LegalPageLayout from '../layouts/LegalPageLayout.astro';
 import LegalSection from '../components/LegalSection.astro';
 ---
 
-<LegalPageLayout title="Privacy Policy" lastUpdated="September 10, 2026">
+<LegalPageLayout title="Privacy Policy" lastUpdated="September 15, 2026">
   <LegalSection title="1. Introduction">
     <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
       The Hobbinomicon ("we," "us," or "our") respects your privacy and is committed to protecting your personal data. This Privacy Policy explains how we collect, use, and safeguard information when you visit our website.
@@ -20,7 +20,7 @@ import LegalSection from '../components/LegalSection.astro';
       </p>
       <ul class="list-disc pl-8 text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4 space-y-2">
         <li>Submit our contact form (name, email address, subject, and message content)</li>
-        <li>Subscribe to our newsletter or updates (if applicable)</li>
+        <li>Subscribe to our newsletter (email address only, submitted directly to Substack — see section 4.6)</li>
         <li>Contact us via email</li>
       </ul>
     </LegalSection>
@@ -104,11 +104,11 @@ import LegalSection from '../components/LegalSection.astro';
       </p>
       <ul class="list-disc pl-8 text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4 space-y-2">
         <li>That a page on this Site was viewed, and which page it was</li>
-        <li>That a newsletter signup was completed, recorded as a "Lead" event</li>
+        <li>That a newsletter signup form was submitted, recorded as a "Lead" event</li>
         <li>Standard technical information sent with any web request, including IP address, browser and device type, and referring page</li>
       </ul>
       <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
-        We do not send your email address, name, or any other information you typed to Meta. The newsletter signup event records only that a signup happened, not who made it.
+        We do not send your email address, name, or any other information you typed to Meta. The newsletter signup event records only that the form was submitted, not who submitted it or what address was entered. Because it reports the submission rather than a confirmed subscription, it fires even if the signup is not completed on Substack.
       </p>
       <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
         <strong>Data from this Site may be combined with data from other sites we operate.</strong> The Hobbinomicon and <a href="https://yellowimp.com" target="_blank" rel="noopener noreferrer" class="text-ink dark:text-ink-dark hover:underline">Yellow Imp Miniatures</a> are both run by MDG Growth LLC and share advertising and measurement infrastructure. Meta may also combine what it collects here with information it already holds about you from your Facebook or Instagram account and from other sites and apps that use its tools.
@@ -132,6 +132,24 @@ import LegalSection from '../components/LegalSection.astro';
     <LegalSection title="4.5 YouTube" level={3}>
       <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
         Our Site may embed YouTube videos. When you view pages with embedded YouTube videos, YouTube may set cookies on your device. YouTube's data practices are governed by Google's Privacy Policy.
+      </p>
+    </LegalSection>
+
+    <LegalSection title="4.6 Substack (Newsletter)" level={3}>
+      <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+        Our newsletter is published and delivered by Substack. The signup forms on this Site, including the one in the footer of every page, submit directly to Substack rather than to us. When you enter your email address and press the button, your browser sends that address to Substack and you are taken to Substack's site to finish signing up.
+      </p>
+      <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+        <strong>We never receive or store your email address ourselves.</strong> The subscriber list lives in our Substack account, where we can see it and send issues to it, but it is held and processed by Substack on their systems. We do not keep a copy anywhere else.
+      </p>
+      <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+        Substack may also collect information about how you interact with issues we send, such as whether an email was opened and which links were clicked, along with technical information about your device. We see this only in aggregate reporting inside Substack.
+      </p>
+      <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+        Substack is based in the United States, and your address is stored and processed there. Its handling of your information is governed by the <a href="https://substack.com/privacy" target="_blank" rel="noopener noreferrer" class="text-ink dark:text-ink-dark hover:underline">Substack Privacy Policy</a> and the <a href="https://substack.com/tos" target="_blank" rel="noopener noreferrer" class="text-ink dark:text-ink-dark hover:underline">Substack Terms of Use</a>.
+      </p>
+      <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed mb-4">
+        <strong>How to unsubscribe.</strong> Every issue has an unsubscribe link at the bottom, and it takes one click. You can also manage the subscription from your Substack account. Unsubscribing removes you from the list; if you want your data deleted from Substack entirely, contact Substack directly, since they hold it.
       </p>
     </LegalSection>
   </LegalSection>
@@ -161,6 +179,7 @@ import LegalSection from '../components/LegalSection.astro';
       <li><strong>Contact Form Submissions:</strong> Retained for as long as necessary to respond to your inquiry and for our records</li>
       <li><strong>Analytics Data:</strong> Retained according to Google Analytics retention settings (typically 26 months)</li>
       <li><strong>Advertising Data:</strong> Retained by Meta according to its own retention policies, which we do not control</li>
+      <li><strong>Newsletter Subscriptions:</strong> Held by Substack for as long as you stay subscribed. Unsubscribing removes you from the list. We hold no copy of your address ourselves, so any further deletion is a matter for Substack</li>
     </ul>
   </LegalSection>
 
