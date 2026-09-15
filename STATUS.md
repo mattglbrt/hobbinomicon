@@ -13,7 +13,7 @@ Site otherwise unchanged since 08-27. Still true: **transcripts only reach the l
 0. **Matt: confirm the pixel in Events Manager → Test Events.** The one hop this session couldn't close (needs the Business login). Expect stray `localhost` events from verification — a few `PageView`s and two `Lead`s from a fake `test@example.com`. Those are the session, not traffic.
 1. **Matt: content for `/newsletter/`.** Still the one thing gating the description pass.
 2. **Then run the pass, two days.** `node scripts/update-descriptions.cjs --run --max 190`, then the remaining 79. **Re-run `npm run backup-descriptions` and the dry run first** — the 09-01 backup is nine days old and the footer copy may have moved. `assertRightChannel()` fails in one unit on a wrong channel; **pick the Hobbinomicon channel at the consent screen**. Expect `npm run youtube-auth`; the old token is long dead.
-3. **Confirm `MAILGUN_API_KEY` + `MAILGUN_LIST` in Netlify env.** Now doubly load-bearing: missing vars mean signups 500 silently *and* `Lead` reads zero, which looks like a broken pixel.
+3. **Matt: subscribe from the live page to test Substack end to end.** The only unverified step: our form posts `email` alone, while Substack's own form also sends ten hidden attribution fields. A real signup proves it, and confirms `Lead` in Events Manager at the same time. **Also: delete the three `MAILGUN_*` vars from Netlify env and revoke the key at Mailgun** — the handler is gone as of 09-15.
 4. **Decide on a consent banner.** An advertising pixel is a different consent category from analytics under UK/EU GDPR, and BONEZONE runs UK traffic to 31 Oct. The policy currently discloses that no banner exists. Matt's call.
 5. **The rest of Phase 5, time-sensitive.** GSC Coverage weekly: "Page with redirect" rises then plateaus, "Not found" stays zero. Expect a **2–6 week dip** before guides recover past baseline. (Recrawls requested 08-27.)
 6. **Matt's outstanding content calls** — `relatedGames` on `warmachine.mdx`, `START_HERE_SLUGS`, both hub bodies and both series descriptions still in Claude's register, series hero images, 17 low-stakes topic flags. All in `roadmap/rebuild/PROGRESS.md`.
@@ -24,14 +24,14 @@ Site otherwise unchanged since 08-27. Still true: **transcripts only reach the l
 11. **Funnel backfill (editorial).** Mechanic done, only hand-picked `relatedGames` remain. **TSPN** wants it most. Warmachine needs peers or picks before `hideFunnel` comes off.
 12. **Hero images for the Gloam and DWARF news posts.** No-AI-art rule applies: Matt's own photo, or ask the creators.
 13. **Act on the channel strategy** — Warmachine launch stream, `@mattglbrt` handle switch, Reels cadence. None are code here.
-14. Newsletter engine proper: Mailgun handler exists, provider/cadence/archive still undecided (Buttondown was the recommendation — coordinate with AITD). Monster Friends project entry + backfill `project:` on posts. Port the GEO pattern to mattglbrt.com.
+14. Newsletter engine: **settled 09-15 — Substack** (`hobbinomicon.substack.com`), Mailgun removed. Cadence is monthly, first issue 06 Oct 2026; archive lives on Substack. Coordinate with AITD. Monster Friends project entry + backfill `project:` on posts. Port the GEO pattern to mattglbrt.com.
 
 **Note:** `refresh-vlogs` stays off this list until Matt posts a video. Its return is the first real exercise of the manual tag prompt.
 
 ## Blockers
 - **Events Manager confirmation (Matt)** — needs the Business login; can't be done from here.
 - **Newsletter page content (Matt)** — still the only thing holding the description pass.
-- **Mailgun env vars unverified** — cannot be checked from the repo; needs the Netlify dashboard.
+- **Netlify still holds three dead `MAILGUN_*` vars** (Matt, dashboard). Harmless but the key should be revoked at Mailgun.
 - Matt: wave-3 game one-liners (10 games) + wave-1 game-page inputs; MESBG tier call; The One Ring page-split call.
 - Comments moderation has no pending-notification (manual D1 SQL only).
 - YouTube OAuth re-auth roughly weekly before *write* work; **the consent screen must be given the Hobbinomicon channel** — reads succeed under any identity, so nothing warns you until the first write. Staying unverified/local-only is closed (07-21).
@@ -46,7 +46,7 @@ Site otherwise unchanged since 08-27. Still true: **transcripts only reach the l
 ## Open questions
 - **`eventCount` from `fbq.getState()` is not a per-call counter** and nearly produced a false "Swup PageView isn't firing" conclusion. Spy on `window.fbq` instead. Related: **stubbing `window.fetch` breaks Swup**, forcing a hard navigation — test `Lead` and Swup separately.
 - **The outbound `/tr` beacon was never directly observed** locally (invisible transport, `_fbp` unreliable on localhost). Events Manager is the real check.
-- **`.env.example` was deleted** with the env var; the five real keys (YouTube ×2, Mailgun ×3) stay undocumented in the repo. Worth adding back standalone?
+- **`.env.example` was deleted** with the env var; the two remaining keys (YouTube ×2) stay undocumented in the repo. Worth adding back standalone?
 - **`--verify-urls` validates local `dist/`, not production.** It would pass for a page never merged to `main`. Teach it to check live URLs, or warn when `dev` is ahead of `main` on a content path.
 - **The guide-URL rule now lives in four places** (both routes, `generate-redirects.mjs`, `update-descriptions.cjs`). Extract one shared source?
 - **`pinned: true` is dead on the homepage.** Set on Motley Crews, but the sort reads `updatedDate || pubDate` only.
