@@ -35,7 +35,6 @@ Site otherwise unchanged since 08-27. Still true: **transcripts only reach the l
 - Matt: wave-3 game one-liners (10 games) + wave-1 game-page inputs; MESBG tier call; The One Ring page-split call.
 - Comments moderation has no pending-notification (manual D1 SQL only).
 - YouTube OAuth re-auth roughly weekly before *write* work; **the consent screen must be given the Hobbinomicon channel** — reads succeed under any identity, so nothing warns you until the first write. Staying unverified/local-only is closed (07-21).
-- Installing the launchd schedule needs Matt — writing to `~/Library/LaunchAgents/` is outside the project.
 
 ## Recently done
 - 09-10 — **Meta pixel shipped.** First-interaction loading (chosen over a flat 3s delay, which would drop every visitor who bounces inside 3s); `load` kept as a hard floor for LCP. **The site runs Swup, not View Transitions** — without handling that, every visit after the first would have gone uncounted. Advanced matching off and `Lead` carries no payload, so the policy's "never share your email with advertisers" holds. Hardcoded ID at Matt's call, matching GA in the same layout; it therefore also fires from localhost and deploy previews. Full account in SESSION_LOG.
