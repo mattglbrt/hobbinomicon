@@ -103,7 +103,14 @@ const SUBSCRIBE_ACTION = `${SUBSTACK_URL}/api/v1/free?nojs=true`;
    * conversion that shipped with the pixel on 09-10 survives the move off
    * Mailgun. It counts intent, not a confirmed subscription.
    *
-   * No email or other user data is passed — advanced matching stays off.
+   * The two parameters exist because pixel 2022316185081924 is shared with
+   * Yellow Imp. Without them a newsletter signup here and a store lead there
+   * are the same event, which matters if ads ever optimize for Lead. Build
+   * custom conversions on content_name = newsletter.
+   *
+   * They describe the event, not the person: no email, no name, nothing the
+   * visitor typed. Advanced matching stays off, so the privacy policy's
+   * "records only that the form was submitted" holds as written.
    */
   function initSubstackForms() {
     document.querySelectorAll('[data-substack-form]').forEach((form) => {
@@ -112,7 +119,12 @@ const SUBSCRIBE_ACTION = `${SUBSTACK_URL}/api/v1/free?nojs=true`;
       el.dataset.leadBound = 'true';
 
       el.addEventListener('submit', () => {
-        if (typeof window.fbq === 'function') window.fbq('track', 'Lead');
+        if (typeof window.fbq === 'function') {
+          window.fbq('track', 'Lead', {
+            content_name: 'newsletter',
+            content_category: 'hobbinomicon',
+          });
+        }
         // Never preventDefault: the browser must still post to Substack.
       });
     });
