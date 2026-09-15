@@ -28,7 +28,7 @@ This is intentional — keep it.
 `prebuild` runs: `sync-vlogs.js → backfill-transcripts.js → download-hero-images.js`
 
 - **`scripts/sync-vlogs.js`** — fetches new channel videos (YouTube Data API),
-  generates MDX in `src/content/blog/vlogs/`, prompts for tags, downloads
+  generates MDX in `src/content/vlog/`, prompts for tags, downloads
   thumbnails, and fetches the transcript. Only processes videos not already
   present.
 - **`scripts/lib/prompt-tags.js`** — the tag prompt. **Tagging is manual**
@@ -102,7 +102,7 @@ So the ritual, weekly-ish:
 
 ```bash
 npm run refresh-vlogs   # sync + backfill + normalize + heroes, then git status
-git add src/content/blog/vlogs && git commit && # merge dev -> main to deploy
+git add src/content/vlog && git commit && # merge dev -> main to deploy
 ```
 
 If a fetch is ever blocked, both scripts now print a loud banner rather than

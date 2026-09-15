@@ -4,6 +4,157 @@ Append-only. **Newest entry first.** Pre-existing planning history lives in `roa
 
 ---
 
+## 2026-09-10 — The Meta pixel, and the 09-01 backlog finally shipped
+
+Came in to add a Meta pixel and left with the site's first advertising tag
+live, plus the 09-01 description-pass work committed and deployed after nine
+days sitting uncommitted in the working tree. **Deployed: `main` @ `a336854`.**
+One build credit for the whole batch.
+
+### The discovery that shaped the work: this site is not on View Transitions
+
+The brief asked to make `PageView` fire on client-side navigations "if View
+Transitions are enabled." They are not. The site runs **Swup**
+(`BaseLayout.astro`, `swup:page:view`), and had this gone unchecked every visit
+after the first would have been uncounted — the single largest silent failure
+available in this task. `PageView` now fires from the existing `swup:page:view`
+listener, directly beside the GA virtual pageview that was already doing the
+same job.
+
+### Two decisions Matt reversed mid-session, both taken
+
+**Hardcoded, not an env var.** The pixel first shipped behind
+`PUBLIC_META_PIXEL_ID` so dev and Netlify deploy previews stayed out of the ad
+account. Matt asked for it hardcoded instead. Done, and it is the more
+consistent choice: GA's `G-990EP8N5XW` is already a literal in this same
+layout, so both tags now behave identically. **Consequence, recorded because it
+is real: the pixel fires from localhost and from deploy previews.** If that
+becomes noise, a one-line `location.hostname` guard fixes it without bringing
+the env var back. `.env.example` was created for the env-var approach and
+deleted when it went away; the four real keys (YouTube x2, Mailgun x3) are
+still undocumented anywhere committed.
+
+**First interaction, not a flat 3s delay.** The first cut mirrored GA exactly:
+load, then `setTimeout(..., 3000)`. Flagged that for an *advertising* pixel this
+quietly drops every visitor who bounces inside 3s, which thins retargeting
+audiences in a way GA's equivalent trade-off does not matter for. Matt agreed.
+It now loads on the **first of** a real interaction (`pointerdown`,
+`touchstart`, `keydown`, `scroll`) **or** 3s after load.
+
+Two deliberate constraints inside that loader:
+
+- **`load` is a hard floor.** An interaction during page load sets a flag and
+  waits rather than inserting immediately, so ~70KB of pixel can never compete
+  with LCP. The performance-first rule (PSI mobile >=95) is a closed decision and
+  this keeps it closed.
+- **`mousemove` is not a trigger.** On desktop it fires within milliseconds of
+  paint and would have defeated the deferral entirely, turning "deferred" into
+  "render-blocking with extra steps."
+
+### Verification, and the rig it needed
+
+Tool round-trips run 3-5s, which is longer than the 3s fallback, so naive
+testing could never observe the interaction path — the timer always won first.
+Built a throwaway rig instead: a real built page copied to `dist/__pixeltest/`
+with one deliberately slow subresource, served by a Python handler that sleeps
+10s on that one path. `load` then lands at ~10s and every branch is timeable.
+
+All three branches measured against a served build:
+
+| Case | `load` | Script inserted | Result |
+|---|---|---|---|
+| No interaction | 183ms | 3536ms | fallback timer, +3353ms |
+| Interaction *before* load (5446ms) | 10032ms | 10031ms | fired **at** load, +0ms |
+| Interaction *after* load (+1186ms) | 10040ms | at interaction | beat the timer by ~1.8s |
+
+The middle row is the LCP floor proving itself: at 5446ms `readyState` was
+`interactive` and the script was absent both immediately before *and*
+immediately after the interaction. It waited, then went at load exactly.
+
+Also confirmed: `fbevents.js` v2.9.397 loads, `signals/config/2022316185081924`
+returns 200 (Meta recognised the ID), a Swup navigation fires exactly one
+`['track','PageView']`, a successful signup fires exactly one `['track','Lead']`
+with no payload, and a **failed** signup fires nothing.
+
+### Two measurement traps worth remembering
+
+**`fbq.getState().pixels[0].eventCount` is not a per-call counter.** It sat at
+1 through repeated tracks, including a manual `fbq('track','PageView')` typed
+straight into the console. It nearly produced a false "the Swup PageView is not
+firing" conclusion. Spying on `window.fbq` is the reliable check.
+
+**A `fetch` stub breaks Swup.** Stubbing `window.fetch` to fake a successful
+`/api/subscribe` also broke Swup's own page fetching, forcing a hard navigation
+and wiping the spy — which read exactly like "the Swup PageView is not firing."
+Test `Lead` and Swup separately.
+
+Not chased further: the outbound `/tr` beacon was never directly observed. It
+goes out on a transport invisible to resource timing and to the extension's
+network monitor, and `_fbp` is not reliably set on `localhost` anyway. Meta's
+config endpoint accepting the pixel is the strongest local signal available;
+Events Manager is the real confirmation and it needs Matt's Business login.
+
+### Privacy policy
+
+`src/pages/privacy-policy.astro` gains **section 4.4 Meta Pixel** (YouTube
+renumbered 4.5), plus edits to 2.2, 3, 5 (cookies) and 6 (retention), stamped
+**September 10, 2026**. It discloses what the pixel collects, that data may be
+combined with **Yellow Imp Miniatures** under MDG Growth LLC for advertising
+and measurement, and three opt-out routes (Meta Ad Preferences and Off-Facebook
+Activity, browser controls, a consent banner if one is ever added).
+
+**There is no consent banner**, so the pixel loads for every visitor exactly as
+GA already does, and the policy now says that in as many words. Flagged once and
+left with Matt: an advertising pixel is a different consent category from
+analytics under UK/EU GDPR, and BONEZONE is pulling UK traffic through October.
+No banner was built; that was not the ask.
+
+The policy's absolute "**WE DO NOT AND WILL NEVER** ... share your email address
+with marketers or advertisers" survives intact, and deliberately so: **advanced
+matching stays off and `Lead` carries no payload**, so Meta never receives a
+subscriber's address. `Lead` sits outside the `if (msg)` block in
+`NewsletterSignup.astro` so it does not depend on the message element existing.
+
+### Artifacts
+
+- `src/layouts/BaseLayout.astro` — base code, first-interaction loader,
+  `<noscript>` beacon (in `<body>`, since `<noscript>` in `<head>` may legally
+  contain only `link`/`style`/`meta`), preconnect, Swup `PageView`
+- `src/components/NewsletterSignup.astro` — `Lead` on signup success
+- `src/pages/privacy-policy.astro` — section 4.4 and four amended sections
+- Commits `237cb64` (pixel) and `0a97171` (the 09-01 description-pass staging,
+  including the 271-snippet backup, tracked by existing precedent)
+
+### Also shipped: the 09-01 backlog
+
+That work had been sitting uncommitted for nine days, one `git checkout` from
+gone. Committed separately from the pixel. The merge to `main` additionally
+carried two older `dev` commits that had never been deployed (the 08-27 wrap and
+the dark-mode bug record) — checked before pushing: docs, `PROGRESS.md`,
+`scripts/audit-images.mjs` and one `package.json` entry, no rendering changes.
+
+**The description pass itself is untouched and still held.** Its gate has not
+moved: Matt's `/newsletter/` copy. The 09-01 backup stays the only undo and is
+now nine days old, so re-run `backup-descriptions` and the dry run before any
+write.
+
+### Open
+
+- **Events Manager Test Events is the unclosed hop.** Everything up to the
+  `fbq` call is verified; the last mile needs Matt's Business login.
+- **Stray `localhost` events may already be in the account** from this
+  session's verification — a handful of `PageView`s and two `Lead`s from a fake
+  `test@example.com` (no actual signup was created). If they appear against a
+  `localhost` domain, that is this session, not traffic.
+- **`Lead` will read zero until Mailgun is confirmed.** It only fires when
+  `/api/subscribe` returns ok, so the unverified `MAILGUN_API_KEY` /
+  `MAILGUN_LIST` env vars gate it. A quiet Lead count could mean the pixel is
+  fine and the newsletter is broken.
+- Consent banner: Matt's call, unbuilt.
+- `.env.example` was deleted with the env var; the real keys stay undocumented.
+
+---
+
 ## 2026-09-01 — The description pass, staged and held at the last step
 
 Came in to run the YouTube description pass (STATUS #0, blocked since 08-27).
