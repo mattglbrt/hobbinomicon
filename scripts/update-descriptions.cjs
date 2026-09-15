@@ -46,6 +46,20 @@ const RUN = args.includes('--run');
 const DRY = !RUN || args.includes('--dry-run');
 const LIMIT = args.includes('--limit') ? Number(args[args.indexOf('--limit') + 1]) : 25;
 const MAX = args.includes('--max') ? Number(args[args.indexOf('--max') + 1]) : 190;
+
+// --only <id,id,...> restricts the pass to specific video IDs. The pass is
+// normally a full converging sweep — every video not already carrying the
+// exact desired description — which is what you want after a footer change.
+// This is for the other case: a couple of fresh uploads that need the footer
+// now, without spending a day of quota rewriting the whole channel.
+const ONLY = args.includes('--only')
+  ? new Set(
+      String(args[args.indexOf('--only') + 1] || '')
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean)
+    )
+  : null;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const U = 'utm_source=youtube&utm_medium=description';
@@ -300,7 +314,17 @@ async function main() {
   }
 
   // Order: priority first, preserving uploads order within each group.
-  const ordered = [...snippets.keys()].sort((a, b) => (priority.has(b) ? 1 : 0) - (priority.has(a) ? 1 : 0));
+  let ordered = [...snippets.keys()].sort((a, b) => (priority.has(b) ? 1 : 0) - (priority.has(a) ? 1 : 0));
+
+  if (ONLY) {
+    const missing = [...ONLY].filter((id) => !snippets.has(id));
+    if (missing.length) {
+      console.error(`--only: no such video on this channel: ${missing.join(', ')}`);
+      process.exit(1);
+    }
+    ordered = ordered.filter((id) => ONLY.has(id));
+    console.log(`--only: restricted to ${ordered.length} video(s).\n`);
+  }
 
   const updatedLog = fs.existsSync(UPDATED_LOG) ? JSON.parse(fs.readFileSync(UPDATED_LOG, 'utf8')) : { ids: [] };
   const already = new Set(updatedLog.ids);
