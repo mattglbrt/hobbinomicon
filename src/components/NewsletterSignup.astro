@@ -1,129 +1,118 @@
 ---
+/**
+ * Site-wide newsletter signup. Used in the footer (`inline`) and as a section
+ * on the homepage, game pages, and news pages (`section`).
+ *
+ * Posts straight to Substack's no-JS endpoint, same as /newsletter/. The old
+ * JS handler posted to /api/subscribe (Mailgun) and rendered an inline success
+ * message; Substack owns the confirmation step now, so the browser navigates
+ * there instead and there is no message element to update.
+ */
 interface Props {
   variant?: 'inline' | 'section';
   class?: string;
 }
 
 const { variant = 'section', class: className = '' } = Astro.props;
+
+const SUBSTACK_URL = 'https://hobbinomicon.substack.com';
+const SUBSCRIBE_ACTION = `${SUBSTACK_URL}/api/v1/free?nojs=true`;
 ---
 
 {variant === 'section' ? (
   <section class:list={['relative overflow-hidden', className]} data-scroll-reveal>
     <div class="max-w-2xl mx-auto text-center px-6 py-20">
       <p class="text-sm font-heading uppercase tracking-[0.3em] text-ink/65 dark:text-ink-dark/65 mb-4">
-        From the painting desk
+        From across the scene
       </p>
       <h2 class="font-display text-4xl md:text-5xl lg:text-6xl text-ink dark:text-ink-dark mb-4">
-        From the Workbench
+        Newsletter
       </h2>
       <p class="text-ink/70 dark:text-ink-dark/70 text-lg mb-8 max-w-lg mx-auto">
-        What I'm painting, what indie wargames are doing something interesting, the Kickstarter you might've missed, and whatever weird thing I'm obsessed with this month. Once a month-ish. Won't waste your time.
+        Small and indie wargames, once a month. New rules, crowdfunding worth backing, reviews, and hobby guides from across the scene.
       </p>
-      <form class="newsletter-form flex flex-col sm:flex-row gap-3 max-w-md mx-auto" data-newsletter-form>
+      <form
+        action={SUBSCRIBE_ACTION}
+        method="post"
+        data-substack-form
+        class="newsletter-form flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
+      >
+        <label for="newsletter-email-section" class="sr-only">Email address</label>
         <input
+          id="newsletter-email-section"
           type="email"
           name="email"
           required
+          autocomplete="email"
           placeholder="your@email.com"
           class="flex-1 px-4 py-3 rounded-lg bg-ink/5 dark:bg-ink-dark/10 border border-ink/10 dark:border-ink-dark/20 text-ink dark:text-ink-dark placeholder:text-ink/40 dark:placeholder:text-ink-dark/40 focus:outline-none focus:ring-2 focus:ring-ink/20 dark:focus:ring-ink-dark/30 transition-all"
         />
         <button
           type="submit"
-          class="px-6 py-3 bg-ink dark:bg-ink-dark text-parchment dark:text-parchment-dark font-heading uppercase tracking-wider text-sm rounded-lg hover:bg-ink/90 dark:hover:bg-ink-dark/90 transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
+          class="px-6 py-3 bg-ink dark:bg-ink-dark text-parchment dark:text-parchment-dark font-heading uppercase tracking-wider text-sm rounded-lg hover:bg-ink/90 dark:hover:bg-ink-dark/90 transition-colors whitespace-nowrap"
         >
           Send it
         </button>
       </form>
-      <p class="newsletter-message hidden mt-4 text-sm" data-newsletter-message></p>
     </div>
   </section>
 ) : (
   <div class:list={['newsletter-inline', className]}>
     <p class="text-sm font-medium text-white/80 uppercase tracking-wider mb-4">
-      From the Workbench
+      Newsletter
     </p>
     <p class="text-white/60 text-sm mb-4">
-      What I'm painting and the indie wargame stuff worth your time. Once a month-ish.
+      Small and indie wargames, once a month. New rules, crowdfunding worth backing, reviews, and hobby guides from across the scene.
     </p>
-    <form class="newsletter-form flex flex-col gap-2" data-newsletter-form>
+    <form
+      action={SUBSCRIBE_ACTION}
+      method="post"
+      data-substack-form
+      class="newsletter-form flex flex-col gap-2"
+    >
+      <label for="newsletter-email-inline" class="sr-only">Email address</label>
       <input
+        id="newsletter-email-inline"
         type="email"
         name="email"
         required
+        autocomplete="email"
         placeholder="your@email.com"
         class="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-white/40 text-sm focus:outline-none focus:ring-1 focus:ring-white/20 transition-all"
       />
       <button
         type="submit"
-        class="px-4 py-2 bg-white/10 border border-white/10 text-white text-sm font-medium rounded-lg hover:bg-white/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        class="px-4 py-2 bg-white/10 border border-white/10 text-white text-sm font-medium rounded-lg hover:bg-white/20 transition-colors"
       >
         Send it
       </button>
     </form>
-    <p class="newsletter-message hidden mt-2 text-xs" data-newsletter-message></p>
   </div>
 )}
 
 <script>
-  function initNewsletterForms() {
-    document.querySelectorAll('[data-newsletter-form]').forEach((form) => {
-      if (form.dataset.initialized) return;
-      form.dataset.initialized = 'true';
+  /**
+   * Substack's no-JS endpoint means a plain form post: the page navigates away
+   * and nothing of ours runs afterwards. `Lead` is reported on submit so the
+   * conversion that shipped with the pixel on 09-10 survives the move off
+   * Mailgun. It counts intent, not a confirmed subscription.
+   *
+   * No email or other user data is passed — advanced matching stays off.
+   */
+  function initSubstackForms() {
+    document.querySelectorAll('[data-substack-form]').forEach((form) => {
+      const el = form as HTMLFormElement;
+      if (el.dataset.leadBound) return;
+      el.dataset.leadBound = 'true';
 
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const formEl = e.target as HTMLFormElement;
-        const btn = formEl.querySelector('button') as HTMLButtonElement;
-        const msg = formEl.parentElement?.querySelector('[data-newsletter-message]') as HTMLElement;
-        const email = (formEl.querySelector('input[name="email"]') as HTMLInputElement).value;
-
-        btn.disabled = true;
-        btn.textContent = 'Sending...';
-
-        try {
-          const res = await fetch('/api/subscribe', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email }),
-          });
-
-          const data = await res.json();
-
-          // Meta pixel: a completed signup is the one conversion we report.
-          // Deliberately no email or other user data — advanced matching stays
-          // off, so the pixel never receives the subscriber's address and the
-          // privacy policy's "never share your email with advertisers" holds.
-          if (res.ok && typeof window.fbq === 'function') {
-            window.fbq('track', 'Lead');
-          }
-
-          if (msg) {
-            msg.classList.remove('hidden', 'text-red-500', 'text-green-600', 'dark:text-red-400', 'dark:text-green-400');
-            if (res.ok) {
-              msg.textContent = data.message || 'Successfully subscribed!';
-              msg.classList.add('text-green-600', 'dark:text-green-400');
-              formEl.reset();
-            } else {
-              msg.textContent = data.error || 'Something went wrong.';
-              msg.classList.add('text-red-500', 'dark:text-red-400');
-            }
-          }
-        } catch {
-          if (msg) {
-            msg.classList.remove('hidden', 'text-green-600', 'dark:text-green-400');
-            msg.classList.add('text-red-500', 'dark:text-red-400');
-            msg.textContent = 'Network error. Please try again.';
-          }
-        } finally {
-          btn.disabled = false;
-          btn.textContent = 'Send it';
-        }
+      el.addEventListener('submit', () => {
+        if (typeof window.fbq === 'function') window.fbq('track', 'Lead');
+        // Never preventDefault: the browser must still post to Substack.
       });
     });
   }
 
-  initNewsletterForms();
-  // Re-initialize after Swup navigation — lives inside #swup and gets
-  // destroyed/recreated on every swap, losing its listener.
-  document.addEventListener('swup:page:view', initNewsletterForms);
+  initSubstackForms();
+  // Lives inside #swup and is recreated on every swap, losing its listener.
+  document.addEventListener('swup:page:view', initSubstackForms);
 </script>

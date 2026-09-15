@@ -1,0 +1,267 @@
+---
+/**
+ * /newsletter/ — landing page for the monthly indie-wargames link roundup.
+ *
+ * Wiring notes for Claude Code:
+ *  - Swap `BaseLayout` for whatever the site's real layout component is, and pass
+ *    title/description the way other pages do. Breadcrumb markup below is inline;
+ *    replace with the site's Breadcrumb component if one exists.
+ *  - Fill in SUBSTACK_URL. Form posts straight to Substack's no-JS endpoint, so the
+ *    old `data-newsletter-form` script is not needed on this page.
+ *  - Drop two photos into /public/images/newsletter/: hero.jpg (a single lit mini on
+ *    black, landscape, ~1600px wide) and workbench.jpg (desk shot, ~1200px wide).
+ *  - Set SAMPLE_ISSUE_URL once Issue #0 is published; the link renders only if set.
+ *  - Update the site-wide footer form to match: same copy, same Substack action.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const SUBSTACK_URL = 'https://YOUR-PUBLICATION.substack.com'; // TODO
+const SUBSCRIBE_ACTION = `${SUBSTACK_URL}/api/v1/free?nojs=true`;
+const SAMPLE_ISSUE_URL = ''; // e.g. `${SUBSTACK_URL}/p/issue-0`
+const FIRST_ISSUE = 'Tuesday, October 6, 2026';
+
+const title = 'Newsletter | The Hobbinomicon';
+const description =
+  'A monthly roundup of small and indie wargames: new rules, crowdfunding worth backing, reviews, design writing, and hobby guides from across the scene. One email, first Tuesday of the month.';
+
+const sections = [
+  {
+    name: 'Crowdfunding and pre-orders',
+    what: 'Live campaigns and short pre-order windows, with the dates they close. Ranked by whether they are worth your money, not by how big they are.',
+    example: 'Denizens of Dreadwood resin pre-order for Motley Crews, open one week.',
+  },
+  {
+    name: 'New and free rules',
+    what: 'Free rulesets, fan supplements, expansions, print-and-play, and pay-what-you-want releases.',
+    example: 'DWARF, a name-your-price solo hex crawl from Tavern Lore.',
+  },
+  {
+    name: 'Sales and deals',
+    what: 'Wargame Vault, MyMiniFactory, Humble bundles, studio sales. Only the ones that are actually good.',
+    example: 'A studio bundle at 40% off, or nothing if there was nothing.',
+  },
+  {
+    name: 'Reviews and play reports',
+    what: 'Other people playing indie games and writing honestly about it. Blogs, videos, forum threads worth your time.',
+    example: 'A three-part play report of a Trench Crusade campaign.',
+  },
+  {
+    name: 'News and culture',
+    what: 'Releases, reprints, things going out of print, competitions, studio news, and the occasional argument.',
+    example: 'BONEZONE 2026 is open; entries close on Halloween.',
+  },
+  {
+    name: 'Design and theory',
+    what: 'Writing about how skirmish games work: activation, campaigns, balance, what makes a ruleset feel good.',
+    example: 'Why alternating activation breaks at six models.',
+  },
+  {
+    name: 'Hobby and painting',
+    what: 'Guides, recipes, terrain, tools. Mostly from other people, occasionally from me.',
+    example: 'A bone recipe using blue and orange ink under airbrushed skin tone.',
+  },
+  {
+    name: 'From the Hobbinomicon',
+    what: 'Two or three links to what I made this month: a video, a guide, what got added to the game directory. Kept short on purpose.',
+    example: 'A new game in the directory and the video that goes with it.',
+  },
+];
+---
+
+<BaseLayout title={title} description={description}>
+  <!-- Hero -->
+  <section class="relative bg-ink text-white overflow-hidden">
+    <!-- Photo: a single painted mini, hard key light, black background. Bleeds right, fades into the copy column. -->
+    <div class="absolute inset-y-0 right-0 w-full md:w-3/5 pointer-events-none" aria-hidden="true">
+      <img
+        src="/images/newsletter/hero.jpg"
+        alt=""
+        class="h-full w-full object-cover object-center opacity-70 md:opacity-100"
+        loading="eager"
+        fetchpriority="high"
+      />
+      <div class="absolute inset-0 bg-gradient-to-r from-ink via-ink/90 md:via-ink/60 to-transparent"></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-transparent md:hidden"></div>
+    </div>
+
+    <div class="relative max-w-7xl mx-auto px-6 pt-36 md:pt-40 pb-20 md:pb-28">
+      <nav class="mb-6 flex items-center gap-2 text-sm font-mono text-white/60" aria-label="Breadcrumb">
+        <a href="/" class="hover:text-white transition-colors">Home</a>
+        <span aria-hidden="true">/</span>
+        <span class="text-white/80">Newsletter</span>
+      </nav>
+
+      <div class="max-w-2xl">
+        <h1 class="font-heading font-bold text-5xl md:text-6xl leading-[1.05]">
+          Every small and indie wargame worth knowing about. Once a month.
+        </h1>
+        <p class="mt-6 text-xl text-white/80 leading-relaxed">
+          What the indie wargaming scene made, released, funded, and argued about this month.
+          New rules, crowdfunding worth backing, reviews, design writing, and hobby guides, gathered
+          from across the community into one email on the first Tuesday of the month.
+        </p>
+
+        <form action={SUBSCRIBE_ACTION} method="post" class="mt-10 flex flex-col sm:flex-row gap-3 max-w-lg">
+          <label for="email-hero" class="sr-only">Email address</label>
+          <input
+            id="email-hero"
+            type="email"
+            name="email"
+            required
+            autocomplete="email"
+            placeholder="your@email.com"
+            class="flex-1 px-4 py-3 rounded-lg bg-white/10 border border-white/15 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-white/40 transition-all"
+          />
+          <button
+            type="submit"
+            class="px-6 py-3 bg-parchment text-ink font-heading uppercase tracking-wider text-sm rounded-lg hover:bg-white transition-colors whitespace-nowrap"
+          >
+            Send it
+          </button>
+        </form>
+        <p class="mt-4 text-sm text-white/60">
+          First issue goes out {FIRST_ISSUE}. Monthly, never more. Unsubscribe in one click.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- What's in an issue -->
+  <section class="bg-parchment dark:bg-parchment-dark">
+    <div class="max-w-7xl mx-auto px-6 py-20 md:py-28">
+      <div class="md:grid md:grid-cols-12 md:gap-12">
+        <div class="md:col-span-4">
+          <h2 class="font-display text-4xl md:text-5xl text-ink dark:text-ink-dark">
+            What's in an issue
+          </h2>
+          <p class="mt-5 text-lg text-ink/70 dark:text-ink-dark/70 leading-relaxed">
+            The same sections in the same order every time, so you can skim it in a few minutes.
+            Almost all of it points to other people's work. That's the point: the scene is bigger than
+            any one channel, and most of it is hard to find unless you're already looking.
+          </p>
+          <p class="mt-5 text-lg text-ink/70 dark:text-ink-dark/70 leading-relaxed">
+            One line per link. A quote when the quote is the interesting part. No essays.
+          </p>
+          {SAMPLE_ISSUE_URL && (
+            <a
+              href={SAMPLE_ISSUE_URL}
+              class="inline-block mt-8 font-heading uppercase tracking-wider text-sm text-ink dark:text-ink-dark underline underline-offset-4 decoration-ink/30 hover:decoration-ink transition-colors"
+            >
+              Read the sample issue
+            </a>
+          )}
+        </div>
+
+        <dl class="mt-12 md:mt-0 md:col-span-8 divide-y divide-ink/10 dark:divide-ink-dark/15">
+          {sections.map((s) => (
+            <div class="py-6 first:pt-0 last:pb-0 sm:grid sm:grid-cols-3 sm:gap-6">
+              <dt class="font-heading font-semibold text-xl text-ink dark:text-ink-dark">{s.name}</dt>
+              <dd class="mt-2 sm:mt-0 sm:col-span-2">
+                <p class="text-ink/80 dark:text-ink-dark/80 leading-relaxed">{s.what}</p>
+                <p class="mt-2 text-sm text-ink/55 dark:text-ink-dark/55 italic">
+                  For example: {s.example}
+                </p>
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- Who writes it -->
+  <section class="bg-ink text-white">
+    <div class="max-w-7xl mx-auto px-6 py-20 md:py-28">
+      <div class="md:grid md:grid-cols-12 md:gap-12 md:items-center">
+        <div class="md:col-span-5">
+          <!-- Photo: the actual desk, mid-project. Overhead or low three-quarter, shallow depth of field. -->
+          <img
+            src="/images/newsletter/workbench.jpg"
+            alt="Matt's painting desk with a half-finished miniature, wet palette, and brushes"
+            class="w-full rounded-lg object-cover aspect-[4/3]"
+            loading="lazy"
+          />
+        </div>
+        <div class="mt-10 md:mt-0 md:col-span-7">
+          <h2 class="font-display text-4xl md:text-5xl">Who's writing it</h2>
+          <p class="mt-5 text-lg text-white/80 leading-relaxed">
+            I'm Matt. I run The Hobbinomicon: a directory of indie miniature wargames, painting and
+            hobby guides, and a YouTube channel where I paint something almost every day. The newsletter
+            is the part of that where I read everything the scene put out this month and hand you the
+            pieces worth your time.
+          </p>
+          <p class="mt-5 text-lg text-white/80 leading-relaxed">
+            Everything here is written by a person. No generated summaries, no auto-scraped link dumps.
+            If something's in the email, I read it or watched it first.
+          </p>
+          <div class="mt-8 flex flex-wrap gap-x-8 gap-y-3 text-sm font-mono">
+            <a href="https://www.youtube.com/@Hobbinomicon?utm_source=hobbinomicon&utm_medium=newsletter_page" class="text-white/70 hover:text-white underline underline-offset-4 decoration-white/30 hover:decoration-white transition-colors">YouTube</a>
+            <a href="/games/" class="text-white/70 hover:text-white underline underline-offset-4 decoration-white/30 hover:decoration-white transition-colors">The game directory</a>
+            <a href="/ai-disclosure/" class="text-white/70 hover:text-white underline underline-offset-4 decoration-white/30 hover:decoration-white transition-colors">100% human-made content</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- The deal -->
+  <section class="bg-parchment dark:bg-parchment-dark">
+    <div class="max-w-7xl mx-auto px-6 py-20 md:py-28">
+      <div class="md:grid md:grid-cols-12 md:gap-12">
+        <div class="md:col-span-4">
+          <h2 class="font-display text-4xl md:text-5xl text-ink dark:text-ink-dark">The deal</h2>
+        </div>
+        <ul class="mt-8 md:mt-0 md:col-span-8 space-y-6 text-lg text-ink/80 dark:text-ink-dark/80 leading-relaxed max-w-2xl">
+          <li>
+            <span class="font-heading font-semibold text-ink dark:text-ink-dark">Once a month.</span>
+            If a month is thin, the issue is short. It will not be padded to fill space, and it will
+            never turn into daily mail.
+          </li>
+          <li>
+            <span class="font-heading font-semibold text-ink dark:text-ink-dark">Affiliate links exist and are marked.</span>
+            Where a store has an affiliate program, I use it; it costs you nothing and helps pay for
+            this. Nobody pays to be included, and if a sponsor slot ever appears it will be labeled as one.
+          </li>
+          <li>
+            <span class="font-heading font-semibold text-ink dark:text-ink-dark">Your address stays put.</span>
+            It goes to Substack, which sends the email, and nowhere else. Unsubscribe is one click at the
+            bottom of every issue.
+          </li>
+          <li>
+            <span class="font-heading font-semibold text-ink dark:text-ink-dark">Independent by default.</span>
+            The focus is small studios, solo designers, and skirmish games. Big publishers show up when
+            they do something the indie scene cares about, not because they're big.
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Closing form -->
+  <section class="bg-ink text-white">
+    <div class="max-w-2xl mx-auto px-6 py-20 md:py-24 text-center">
+      <h2 class="font-display text-4xl md:text-5xl">Get the first issue</h2>
+      <p class="mt-5 text-lg text-white/80 leading-relaxed">
+        Out {FIRST_ISSUE}. You'd be on the list from the start.
+      </p>
+      <form action={SUBSCRIBE_ACTION} method="post" class="mt-8 flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+        <label for="email-footer" class="sr-only">Email address</label>
+        <input
+          id="email-footer"
+          type="email"
+          name="email"
+          required
+          autocomplete="email"
+          placeholder="your@email.com"
+          class="flex-1 px-4 py-3 rounded-lg bg-white/10 border border-white/15 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-white/40 transition-all"
+        />
+        <button
+          type="submit"
+          class="px-6 py-3 bg-parchment text-ink font-heading uppercase tracking-wider text-sm rounded-lg hover:bg-white transition-colors whitespace-nowrap"
+        >
+          Send it
+        </button>
+      </form>
+    </div>
+  </section>
+</BaseLayout>
