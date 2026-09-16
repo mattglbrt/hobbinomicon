@@ -4,6 +4,34 @@ Append-only. **Newest entry first.** Pre-existing planning history lives in `roa
 
 ---
 
+## 2026-09-16 — Description pass finished: 269 of 269
+
+A short session with one job: write the last 79 YouTube descriptions left over
+from 09-15. **All 79 were written with zero errors**, and a dry run afterwards
+reports `need footer added/updated: 0` of 271. Every video on the channel now
+carries the two-link footer and points at `/newsletter/` rather than the dead
+`/#newsletter` anchor.
+
+Ran the documented order:
+
+1. `npm run backup-descriptions` — 273 snippets to
+   `scripts/backups/descriptions-backup-2026-09-16T14-45-36.json` (gitignored,
+   local only; still the only undo).
+2. `npx astro build`, then `--verify-urls` — 97 URLs (85 guide deep links) all
+   resolve against `dist/`. `npx astro build` skips `prebuild`, which is fine
+   here since only link targets were being checked, not new vlogs.
+3. **Checked `git diff origin/main..dev -- src/content src/data` was empty** before
+   trusting that result, since `--verify-urls` validates local `dist/`, not
+   production (the open question from 09-15). Nothing was ahead of `main`, so a
+   link that resolves locally resolves live.
+4. Dry run showed 79 remaining; `--run --max 190` wrote all 79.
+
+The 09-15 token was still valid and on the right channel, so no re-auth was
+needed. No code or content changed; nothing to deploy or commit beyond these
+docs. The token still dies around 09-22, but no remaining work needs it.
+
+---
+
 ## 2026-09-15 — Mac to PC, the newsletter moves to Substack, Mailgun deleted
 
 A long session that started as "clean up the Mac files" and ended with the

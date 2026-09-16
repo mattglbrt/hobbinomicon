@@ -1,17 +1,18 @@
-# STATUS — The Hobbinomicon · updated 2026-09-15
+# STATUS — The Hobbinomicon · updated 2026-09-16
 
 ## Now
-**The newsletter runs on Substack, and the whole site follows it.** `main` @ `d76d146`, five deploys today. `/newsletter/` was rebuilt from `roadmap/newsletter.astro` and every signup form — footer, homepage, game pages, news pages — posts to `hobbinomicon.substack.com`. **A real signup was verified landing in Substack**, so the chain is proven end to end. Monthly, first issue **06 Oct 2026**. Mailgun is deleted and its key revoked; `api/subscribe.ts` was the only `prerender = false` route, so **the site is now fully static**. Privacy policy (4.6) and terms (6) both disclose Substack.
+**The newsletter runs on Substack, and the whole site follows it.** `main` @ `d76d146`, five deploys 09-15. `/newsletter/` was rebuilt from `roadmap/newsletter.astro` and every signup form — footer, homepage, game pages, news pages — posts to `hobbinomicon.substack.com`. **A real signup was verified landing in Substack**, so the chain is proven end to end. Monthly, first issue **06 Oct 2026**. Mailgun is deleted and its key revoked; `api/subscribe.ts` was the only `prerender = false` route, so **the site is now fully static**. Privacy policy (4.6) and terms (6) both disclose Substack.
 
 **This machine replaces the Mac and is fully working.** `node_modules` was a darwin-arm64 install and nothing built; `npm ci` fixed it. Build, vlog sync, transcript backfill, YouTube auth and the description pass all run here.
 
-Still true: **transcripts only reach the live site from a local sync**, so `npm run refresh-vlogs` is load-bearing. **The YouTube token was re-authed 09-15 and dies around 09-22.**
+**The YouTube description pass is complete (09-16): 269 of 269**, every footer now pointing at `/newsletter/`.
+
+Still true: **transcripts only reach the live site from a local sync**, so `npm run refresh-vlogs` is load-bearing. The YouTube token dies around 09-22; nothing queued needs it.
 
 ## Next (ranked)
-0. **Finish the description pass — 79 left.** 190 of 269 written 09-15, zero errors. `node scripts/update-descriptions.cjs --run --max 190` any time after quota resets. Already-updated videos are skipped, so it just picks up the remainder. **Do it before 09-22** or re-auth first, and pick the Hobbinomicon channel at the consent screen.
 1. **Matt: consolidate the Substack publications under `mattglbrt`** (planned 09-16). **Transfer, never delete** — Settings → Danger Zone → Transfer ownership, accepted within 6 hours. The subdomain survives a transfer and would not survive a delete, and it is hardcoded here and named in the privacy policy and terms.
 2. **Matt: two newsletter photos** — `public/images/newsletter/hero.jpg` (lit mini on black, landscape ~1600px) and `workbench.jpg` (desk, ~1200px). Both slots check at build time and fall back to flat `bg-ink`, so the page holds; the hero is currently a plain black band.
-3. **Check the site at 390px.** Never done this session — the Chrome extension is not connected here. Most signups will be mobile, and the rebuilt newsletter page plus the new Substack notice line under all four forms have only been verified structurally. **The mobile hero fade cannot be checked until `hero.jpg` exists**, since the image block is skipped entirely when the file is missing.
+3. **Check the site at 390px.** Not done yet — the Chrome extension is not connected here. Most signups will be mobile, and the rebuilt newsletter page plus the new Substack notice line under all four forms have only been verified structurally. **The mobile hero fade cannot be checked until `hero.jpg` exists**, since the image block is skipped entirely when the file is missing.
 4. **Matt: create the Events Manager custom conversion.** Both `Lead` calls now send `content_name: 'newsletter'`, but nothing uses it until a custom conversion filters on it. Then optimise ads and audiences against that, not raw `Lead`.
 5. **Decide on a consent banner.** Two US processors now disclosed (Meta, Substack) and nothing gates either. An advertising pixel is a different consent category from analytics under UK/EU GDPR, and BONEZONE runs UK traffic to 31 Oct. Matt's call.
 6. **The rest of Phase 5, time-sensitive.** GSC Coverage weekly: "Page with redirect" rises then plateaus, "Not found" stays zero. Expect a **2–6 week dip** before guides recover past baseline. (Recrawls requested 08-27.)
@@ -31,8 +32,8 @@ Still true: **transcripts only reach the live site from a local sync**, so `npm 
 - YouTube OAuth re-auth roughly weekly before *write* work; **the consent screen must be given the Hobbinomicon channel** — reads succeed under any identity, so nothing warns you until the first write. Staying unverified/local-only is closed (07-21).
 
 ## Recently done
+- 09-16 — **Description pass finished, 269/269, zero errors.** Backed up first; `--verify-urls` clean and `dev` had no content ahead of `main`, so the links are live.
 - 09-15 — **Newsletter moved to Substack; Mailgun deleted.** Signup verified end to end. `Lead` now fires on submit rather than on a success response, so it counts intent and will read above the subscriber count. Legal pages updated, including a correction: 4.4 had claimed the pixel records a *completed* signup.
-- 09-15 — **Description pass 190/269, zero errors.** All now point at `/newsletter/` instead of the dead `/#newsletter` anchor. Added `--only <id,id>` for one-off videos.
 - 09-15 — **Mac → PC.** `node_modules` was darwin-arm64 and nothing built. Launchd tooling and three Lighthouse reports deleted; `CLAUDE.md`'s stale `src/content/blog/vlogs/` path fixed (it was in the commit ritual, so following it staged nothing).
 - 09-15 — **2 new vlogs, 13 transcripts backfilled** (11 guides, 2 vlogs) that had synced too early for captions. 9 genuinely have none.
 - 09-15 — **Yellow Imp leads separated.** Pixel `2022316185081924` is shared with the store, so its `AddToCart`/`ViewContent` counts and much of `PageView` are not this site.
@@ -41,7 +42,7 @@ Still true: **transcripts only reach the live site from a local sync**, so `npm 
 ## Open questions
 - **Substack silently ignores the publication owner subscribing to their own publication** — no error, same redirect, no subscriber. With `?nojs=true` making success and failure identical, this made a working form look broken. Test with a non-owner address in a private window. curl cannot test it (403 as a bot).
 - **`.env.example` was deleted** with the env var; the two remaining keys (YouTube ×2) stay undocumented in the repo. Worth adding back standalone?
-- **`--verify-urls` validates local `dist/`, not production.** It would pass for a page never merged to `main`. Teach it to check live URLs, or warn when `dev` is ahead of `main` on a content path.
+- **`--verify-urls` validates local `dist/`, not production.** It would pass for a page never merged to `main`. Worked around 09-16 by hand (`git diff origin/main..dev -- src/content src/data`); worth building that warning into the script.
 - **The guide-URL rule lives in four places** (both routes, `generate-redirects.mjs`, `update-descriptions.cjs`). Extract one shared source?
 - **`pinned: true` is dead on the homepage.** Set on Motley Crews, but the sort reads `updatedDate || pubDate` only.
 - **Do the stacked mobile list cards feel too tall** on a long list like `/tags/warmachine/` (41 cards)?
