@@ -17,6 +17,7 @@ import LiteYouTube from '../../components/LiteYouTube.astro';
 import NewsletterSignup from '../../components/NewsletterSignup.astro';
 import SearchMeta from '../../components/SearchMeta.astro';
 import FunnelSection from '../../components/FunnelSection.astro';
+import PartnerStore from '../../components/PartnerStore.astro';
 import ListCard from '../../components/ListCard.astro';
 import { getFunnelSuggestions } from '../../utils/funnel';
 import { getGuides, getSeries, getAllVlogEntries, guideUrlWith } from '../../utils/content';
@@ -121,13 +122,13 @@ const gameNews = sortByDate(
 // Reference card link list — flatten to array of {label, url}
 const referenceLinks = [
   { label: 'Official Site', url: game.data.officialUrl },
-  { label: 'Buy', url: game.data.storeUrl },
+  { label: game.data.storeAffiliate ? 'Buy (partner link)' : 'Buy', url: game.data.storeUrl, sponsored: game.data.storeAffiliate },
   { label: 'Rules', url: game.data.rulesUrl },
   { label: 'Official Discord', url: game.data.discordUrl },
   { label: 'Subreddit', url: game.data.subredditUrl },
   { label: 'Kickstarter', url: game.data.kickstarterUrl },
   { label: 'Facebook', url: game.data.facebookUrl },
-].filter((l): l is { label: string; url: string } => Boolean(l.url));
+].filter((l): l is { label: string; url: string; sponsored?: boolean } => Boolean(l.url));
 
 const hasReferenceCard = Boolean(studio) || designers.length > 0 || referenceLinks.length > 0;
 const hasSidebar =
@@ -318,6 +319,10 @@ const gameSpecs = [
               </blockquote>
             )}
 
+            {game.data.storeAffiliate && game.data.storeUrl && (
+              <PartnerStore url={game.data.storeUrl} game={game.data.title} store={studio?.data.name} />
+            )}
+
             <ProseContent>
               <Content />
             </ProseContent>
@@ -360,7 +365,7 @@ const gameSpecs = [
                         <a
                           href={link.url}
                           target="_blank"
-                          rel="noopener noreferrer"
+                          rel={link.sponsored ? 'sponsored nofollow noopener' : 'noopener noreferrer'}
                           class="text-ink dark:text-ink-dark hover:underline"
                         >
                           {link.label} →
