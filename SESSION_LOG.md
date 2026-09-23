@@ -6,8 +6,8 @@ Append-only. **Newest entry first.** Pre-existing planning history lives in `roa
 
 ## 2026-09-23 — Five game pages, a chessboard shelf, affiliate links, and fabricated founders removed
 
-A long directory session. **Five deploys: `main` @ `7783b01`, `82484b6`,
-`361106a`, `1a81b87`, `8672cae`.** Infinity, Maleghast, Brawl Arcane 28,
+A long directory session. **Six deploys: `main` @ `7783b01`, `82484b6`,
+`361106a`, `1a81b87`, `8672cae`, `ca9df7e`.** Infinity, Maleghast, Brawl Arcane 28,
 Necropolis28, and Pillage are live, with the people and studios behind them.
 
 ### The Corvus Belli founders were invented, and they were live
@@ -80,12 +80,23 @@ listed as a podcast. All fixed, voice-cleaned, and Matt wrote his own take
 - Corvus Belli's press kit is a request form (name, email, website), not a
   download. Not submitted.
 
+### After the first wrap: Matt's answers
+
+- **No AI-art mention on Pillage.** The page just doesn't use the book art.
+- **Corvus Belli studio page now uses the affiliate link.** Studios got
+  `storeAffiliate` too, and `PartnerStore` takes an optional `game`: without one
+  it reads as a whole-store partner ("Shop Corvus Belli", "anything", "their
+  games"). Uses Matt's exact link (lands on the Infinity Start Here page); the
+  `url=` param was not re-pointed, since the tracking behaviour is unverified.
+  Deployed as `ca9df7e`.
+- Matt already has the Corvus Belli press kit, and can get bigger Necropolis art
+  if it's ever needed.
+
 ### Still open
 
 Brawl Arcane hero. Necropolis Kickstarter launch (update page + news post).
 October solo video → `game-videos.json`. Description pass to deep-link the
-Infinity and Necropolis videos (needs `youtube-auth`). Affiliate link on the
-Corvus Belli studio page? Mention Pillage's AI art on the page? Everything from
+Infinity and Necropolis videos (needs `youtube-auth`). Everything from
 09-16's Next is unchanged.
 
 ---
