@@ -36,6 +36,7 @@ const WEIGHTS = {
   format: 4,
   solo: 3,
   miniAgnostic: 3,
+  chessboard: 3,
   tier: 1,
   cost: 1,
   /** Multiplier on a shared tag's inverse-document-frequency score. */
@@ -127,6 +128,11 @@ function score(
   if (source.data.solo && candidate.data.solo) {
     total += WEIGHTS.solo;
     shared.push({ label: 'Solo-friendly', rank: 1 });
+  }
+
+  if (source.data.chessboard && candidate.data.chessboard) {
+    total += WEIGHTS.chessboard;
+    shared.push({ label: 'Plays on a chessboard', rank: 1 });
   }
 
   if (source.data.miniatureAgnostic && candidate.data.miniatureAgnostic) {

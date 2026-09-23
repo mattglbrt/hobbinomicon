@@ -30,6 +30,7 @@ const graveyard = sortGamesPinnedThenTitle(
 ).slice(0, 6);
 
 const soloCount = allGames.filter((g) => g.data.solo === true && g.data.status !== 'oop').length;
+const chessboardCount = allGames.filter((g) => g.data.chessboard === true && g.data.status !== 'oop').length;
 ---
 
 <BaseLayout
@@ -140,6 +141,18 @@ const soloCount = allGames.filter((g) => g.data.solo === true && g.data.status !
             Looking for games that work without an opponent?{' '}
             <a href="/games/solo/" class="text-ink dark:text-ink-dark font-medium underline underline-offset-4 hover:no-underline">
               Browse solo-friendly games →
+            </a>
+          </p>
+        </section>
+      )}
+
+      <!-- Chessboard cross-link -->
+      {chessboardCount > 0 && (
+        <section class={soloCount > 0 ? 'pt-6' : 'border-t border-ink/10 dark:border-ink-dark/10 pt-12'}>
+          <p class="text-ink/70 dark:text-ink-dark/70 text-lg">
+            Got a chessboard in the closet?{' '}
+            <a href="/games/chessboard/" class="text-ink dark:text-ink-dark font-medium underline underline-offset-4 hover:no-underline">
+              Browse games you can play on a chessboard →
             </a>
           </p>
         </section>

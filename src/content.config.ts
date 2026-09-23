@@ -185,6 +185,9 @@ const games = defineCollection({
     format: z.enum(['skirmish', 'army', 'narrative', 'ttrpg', 'boardgame']),
     solo: z.boolean().default(false),
     miniatureAgnostic: z.boolean().default(false),
+    // Designed to be played on a standard 8×8 chessboard (or any 8×8 grid).
+    // Cross-listing like `solo`, not a format: lists on /games/chessboard/.
+    chessboard: z.boolean().default(false),
     tier: z.enum(['indie', 'big']),
     // On-ramp membership. The hub at /warmachine/ or /warhammer/ is a
     // marketing surface that pulls from this entry; the game page stays the

@@ -1,0 +1,54 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import ContentContainer from '../../components/ContentContainer.astro';
+import GameGrid from '../../components/GameGrid.astro';
+import StructuredData from '../../components/StructuredData.astro';
+import { sortGamesPinnedThenTitle } from '../../utils/collections';
+
+const allGames = await getCollection('games', ({ data }) => !data.draft);
+const games = sortGamesPinnedThenTitle(
+  allGames.filter((g) => g.data.chessboard === true)
+);
+---
+
+<BaseLayout
+  title="Games You Can Play on a Chessboard | The Hobbinomicon"
+  description="Miniature games designed for a standard 8×8 chessboard. No terrain to build and no mat to buy, just the board you probably already own and some minis."
+>
+  <StructuredData
+    type="breadcrumb"
+    data={{
+      breadcrumbs: [
+        { name: 'Home', url: 'https://hobbinomicon.com/' },
+        { name: 'Games', url: 'https://hobbinomicon.com/games/' },
+        { name: 'Chessboard', url: 'https://hobbinomicon.com/games/chessboard/' },
+      ],
+    }}
+  />
+  <Header theme="light" />
+
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
+    <PageHeader
+      title="Games You Can Play on a Chessboard"
+      description="Miniature games designed for a standard 8×8 chessboard. No terrain to build and no mat to buy, just the board you probably already own and some minis."
+      breadcrumbs={[
+        { label: 'Games', href: '/games' },
+        { label: 'Chessboard', href: '/games/chessboard' },
+      ]}
+    />
+
+    <ContentContainer class="py-16">
+      <GameGrid
+        games={games}
+        emptyTitle="No chessboard games listed yet"
+        emptyMessage="Cross-listed from the rest of the directory. Check back as we add more."
+      />
+    </ContentContainer>
+
+    <Footer />
+  </main>
+</BaseLayout>
