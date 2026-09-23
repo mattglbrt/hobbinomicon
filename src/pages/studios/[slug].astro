@@ -8,6 +8,7 @@ import ProseContent from '../../components/ProseContent.astro';
 import ImageCard from '../../components/ImageCard.astro';
 import StructuredData from '../../components/StructuredData.astro';
 import SearchMeta from '../../components/SearchMeta.astro';
+import PartnerStore from '../../components/PartnerStore.astro';
 import { formatDateLong } from '../../utils/formatDate';
 import { sortByDate } from '../../utils/collections';
 import { getHeroImage, getHeroImageUrl } from '../../utils/getHeroImage';
@@ -47,7 +48,7 @@ const studioNews = sortByDate(
 
 const referenceLinks = [
   { label: 'Official Site', url: studio.data.officialUrl },
-  { label: 'Buy', url: studio.data.storeUrl },
+  { label: studio.data.storeAffiliate ? 'Buy (partner link)' : 'Buy', url: studio.data.storeUrl, sponsored: studio.data.storeAffiliate },
   { label: 'Discord', url: studio.data.discordUrl },
   { label: 'Kickstarter', url: studio.data.kickstarterUrl },
   { label: 'Twitter', url: studio.data.twitterUrl },
@@ -55,7 +56,7 @@ const referenceLinks = [
   { label: 'YouTube', url: studio.data.youtubeUrl },
   { label: 'Patreon', url: studio.data.patreonUrl },
   { label: 'Facebook', url: studio.data.facebookUrl },
-].filter((l): l is { label: string; url: string } => Boolean(l.url));
+].filter((l): l is { label: string; url: string; sponsored?: boolean } => Boolean(l.url));
 ---
 
 <BaseLayout
@@ -113,6 +114,9 @@ const referenceLinks = [
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
           <div class="lg:col-span-2">
+            {studio.data.storeAffiliate && studio.data.storeUrl && (
+              <PartnerStore url={studio.data.storeUrl} store={studio.data.name} />
+            )}
             <ProseContent>
               <Content />
             </ProseContent>
@@ -141,7 +145,7 @@ const referenceLinks = [
                     <dt class="text-ink/70 dark:text-ink-dark/70 mb-2">Links</dt>
                     <dd class="flex flex-col gap-1">
                       {referenceLinks.map((link) => (
-                        <a href={link.url} target="_blank" rel="noopener noreferrer" class="text-ink dark:text-ink-dark hover:underline">
+                        <a href={link.url} target="_blank" rel={link.sponsored ? 'sponsored nofollow noopener' : 'noopener noreferrer'} class="text-ink dark:text-ink-dark hover:underline">
                           {link.label} →
                         </a>
                       ))}

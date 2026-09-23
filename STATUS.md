@@ -32,9 +32,6 @@ Still true: newsletter on Substack, first issue **06 Oct**. Transcripts only rea
 - 09-15 — Newsletter moved to Substack, Mailgun deleted, site fully static. Mac → PC.
 
 ## Open questions
-- **Pillage's rulebook art is credited to Midjourney AI** (Victrix apologised publicly). The page uses none of it. Should the page say so?
-- **Affiliate link on `/studios/corvus-belli/`** too? Its store link is plain.
-- **Corvus Belli press kit** needs a request form (name, email, website). Worth submitting for future Infinity art?
-- **Necropolis28 hero is only 700px** (all Kickstarter would serve). Ask OwlShield for a larger copy?
+- Settled 09-23 (Matt): no AI-art mention on Pillage; Corvus Belli studio uses the affiliate link; Matt has the CB press kit; Matt can get bigger Necropolis art if needed.
 - **`--verify-urls` validates local `dist/`, not production**; worth building a warning into the script. The guide-URL rule lives in four places.
 - Carried from 09-16: `pinned: true` is dead on the homepage; embedded non-vlog thumbnails come from `i.ytimg.com`; `.md` GEO output emits raw `../../assets/` image paths (and JSX expressions, found 09-23); funnel threshold may want revisiting as the directory grows (now 16 games); housekeeping list in `SESSION_LOG.md` 09-15.
