@@ -211,6 +211,10 @@ const games = defineCollection({
     // page (the Projects section was retired; content relocated here).
     relatedProjects: z.array(z.string()).default([]),
     verdict: z.string().optional(),
+    // Matt hasn't played it yet. Swaps the verdict box for a "not played yet"
+    // note (verdict text if given, else a standard line) and the page carries
+    // no take section. Clear it once there's a real take.
+    notPlayed: z.boolean().default(false),
 
     // Reference card links
     officialUrl: z.string().url().optional(),

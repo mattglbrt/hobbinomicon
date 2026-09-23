@@ -151,6 +151,18 @@ bug — nine of eleven games have a `heroImage`. Note `astro preview` does not
 work here either (the Netlify adapter rejects it); `python3 -m http.server`
 inside `dist/` does.
 
+## Games Matt hasn't played: `notPlayed: true`
+
+A game page's verdict and "The Hobbinomicon take" are Matt's voice, so never
+write them for him. If he hasn't played a game yet, set `notPlayed: true`: the
+verdict box becomes a dashed "Not played yet" note (the `verdict` text if
+given, else a standard "on my list" line) and the page carries no take
+section. Clear the flag once he has a real take. First used on Brawl Arcane
+28 (2026-09-23).
+
+Games designed for an 8×8 grid get `chessboard: true`, which lists them on
+`/games/chessboard/` the same way `solo: true` feeds `/games/solo/`.
+
 ## YouTube description footer pass
 
 `scripts/update-descriptions.cjs` is the **only** description writer. It appends
