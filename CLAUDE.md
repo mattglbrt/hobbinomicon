@@ -123,7 +123,8 @@ full-width card section after the body on every game page.
   still *receive* a funnel — a graveyard entry is the best possible place for
   one.
 - **Scoring leans on structured fields, not tags.** `format` (4), `solo` (3),
-  `miniatureAgnostic` (3), tier (1), cost band (1), plus shared tags weighted
+  `miniatureAgnostic` (3),
+  `chessboard` (3), tier (1), cost band (1), plus shared tags weighted
   by inverse document frequency and capped at 3. The cap matters: game tags are
   ad-hoc (`grimdark`, `bounty-hunters`, `mage-knight`) and on a ten-game corpus
   a shared `fantasy` means almost nothing — half the directory carries it —
