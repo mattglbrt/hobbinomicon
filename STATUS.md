@@ -1,7 +1,7 @@
 # STATUS — The Hobbinomicon · updated 2026-09-23
 
 ## Now
-**The directory grew by five games in a day.** `main` @ `8672cae`, five deploys 09-23. **Infinity, Maleghast, Brawl Arcane 28, Necropolis28, and Pillage** are live, each with its designer and studio pages. Every page was researched with names sourced or left out, after Infinity's draft turned out to have **invented Corvus Belli's founders** ("the Vigo brothers"), live on the studio page since May. That's fixed, with 301s on the old person URLs.
+**The directory grew by five games in a day.** `main` @ `ca9df7e`, six deploys 09-23 (the last put the affiliate link on the Corvus Belli studio page). **Infinity, Maleghast, Brawl Arcane 28, Necropolis28, and Pillage** are live, each with its designer and studio pages. Every page was researched with names sourced or left out, after Infinity's draft turned out to have **invented Corvus Belli's founders** ("the Vigo brothers"), live on the studio page since May. That's fixed, with 301s on the old person URLs.
 
 **Three new frontmatter switches:** `storeAffiliate: true` (partner box with built-in disclosure, `rel="sponsored"`; Infinity uses Matt's Corvus Belli affiliate link), `chessboard: true` (feeds `/games/chessboard/`: Motley Crews, Maleghast, Brawl Arcane 28), and `notPlayed: true` (a "Not played yet" box in place of an invented take). The last two are documented in CLAUDE.md.
 
