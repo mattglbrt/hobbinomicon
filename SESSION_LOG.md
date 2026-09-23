@@ -4,6 +4,92 @@ Append-only. **Newest entry first.** Pre-existing planning history lives in `roa
 
 ---
 
+## 2026-09-23 — Five game pages, a chessboard shelf, affiliate links, and fabricated founders removed
+
+A long directory session. **Five deploys: `main` @ `7783b01`, `82484b6`,
+`361106a`, `1a81b87`, `8672cae`.** Infinity, Maleghast, Brawl Arcane 28,
+Necropolis28, and Pillage are live, with the people and studios behind them.
+
+### The Corvus Belli founders were invented, and they were live
+
+Finishing Infinity (drafted since 05-18) turned up `carlos-vigo` and
+`alberto-vigo` as its designers. **Neither person exists.** Vigo is the Galician
+city near Corvus Belli's HQ. Both person pages and `/studios/corvus-belli/` had
+been publishing them (plus founded 1998 and "near Barcelona") since May.
+Replaced with the four credited creators (Gutier Lusquiños, Alberto Abal,
+Fernando Liste, Carlos Torres), studio fixed to 2001 / Bueu, Galicia, and both
+old URLs 301 to the studio page. **The lesson drove the rest of the session:
+every new page was researched by a subagent told that each name must come from
+a source it actually read, with UNCONFIRMED marked.** That caught real errors
+later (see Necropolis and Pillage).
+
+The Infinity body was also largely wrong: eight factions (it's ten plus NA2,
+JSA and Tohaa missing), four rounds (three), a fan "Recon" pack called official,
+"JTS leagues" (doesn't exist), a dead Discord invite, and "Mayanet", an app
+listed as a podcast. All fixed, voice-cleaned, and Matt wrote his own take
+(Combined Army, nearly complete).
+
+### New site mechanics
+
+- **`storeAffiliate: true`** (games): renders `PartnerStore.astro` under the
+  verdict with the disclosure built in, and marks the sidebar Buy link
+  `rel="sponsored"`. Same rule as `MaterialsCard`: no paid link without its
+  disclosure. Placed above the body because the sidebar drops below it on
+  mobile. Disclaimer page's "not connected to any gaming company" now carves
+  out Corvus Belli. First use: Infinity, Matt's `cbafflink.com` link.
+- **`chessboard: true`** + `/games/chessboard/`: a cross-listing like `solo`,
+  not a format. Directory hero shortcut, `/games/` cross-link, and a funnel
+  weight of 3 ("Plays on a chessboard"). Motley Crews, Maleghast, Brawl Arcane 28.
+- **`notPlayed: true`**: swaps the verdict box for a dashed "Not played yet"
+  note and the page has no take section, so a game can go live without Matt's
+  opinion being invented. Crawler export prefixes the verdict too. Documented in
+  CLAUDE.md. First use: Brawl Arcane 28.
+
+### The five games
+
+- **Infinity** — hero is Matt's Raveneye Morat art, cost ~$60–100 + terrain,
+  a Terrain section, a list-per-mission bullet (ITS allows two lists), Robert
+  Shepherd's channel instead of Goonhammer.
+- **Maleghast** (+ CHASM studio, Tom Bloom) — itch cover as hero; news post
+  `maleghast-stls-myminifactory` on Taiga's official STLs ($66 a warband, 50%
+  off via their Discord, Matt backed the Kickstarter). Matt asked that Tom
+  Bloom's previous name never appear; removed from bio and aliases, and saved
+  as a standing memory rule.
+- **Brawl Arcane 28** (+ Quarantine Miniatures, Brett Evans) — `notPlayed`,
+  no hero (the itch cover is only a wordmark, used as the logo). NeverRealm and
+  Meridian (Ana Polanšćak's range, Matt's own pick for his wizards) as mini
+  sources. The TTS mod was left out (possibly removed by Steam).
+- **Necropolis28** (+ Peter Vigors) — solo flag for the beta solo rules Matt has
+  (video in October). Hero is Martin McCoy's Kickstarter art, pulled through
+  the r.jina.ai reader because Kickstarter 403s scripts and Chrome wasn't
+  connected; only a 700px copy was obtainable. Matt's board guide got
+  `game: necropolis-28` and the video is in `game-videos.json`. **Meridian's
+  "Necropolis Nobles/Scum" are Black Crab sets, unrelated** — left out.
+- **Pillage** (+ Victrix, Guillaume Rousselot) — Intro Set featured with its box
+  shot, all ten free downloads listed. **The rulebook's illustrations are
+  credited to Midjourney AI**, so no book art is used anywhere; hero is a
+  Victrix miniature photo and the logo is the wordmark cropped from the French
+  site. Matt's take: not shelved, multiple warbands in progress.
+
+### Smaller
+
+- `painting-some-infinity-models` retagged `orcs-and-goblins` → `infinity`.
+- Local preview is `python -m http.server` in `dist/`; stop it before
+  `astro build` on Windows or the build can't clear `dist/`. The OS reaped it
+  once for memory.
+- Corvus Belli's press kit is a request form (name, email, website), not a
+  download. Not submitted.
+
+### Still open
+
+Brawl Arcane hero. Necropolis Kickstarter launch (update page + news post).
+October solo video → `game-videos.json`. Description pass to deep-link the
+Infinity and Necropolis videos (needs `youtube-auth`). Affiliate link on the
+Corvus Belli studio page? Mention Pillage's AI art on the page? Everything from
+09-16's Next is unchanged.
+
+---
+
 ## 2026-09-16 — Description pass finished: 269 of 269
 
 A short session with one job: write the last 79 YouTube descriptions left over
