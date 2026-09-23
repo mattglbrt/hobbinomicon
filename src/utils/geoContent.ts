@@ -66,7 +66,9 @@ export async function gameDoc(game: Game): Promise<MarkdownDoc> {
       costToStart: d.costToStart,
       studio: studio ? `${studio.data.name} (${canonical(`studios/${studio.id}`)})` : undefined,
       designers: designers.length ? designers.map((p) => p!.data.name).join(', ') : undefined,
-      verdict: d.verdict,
+      verdict: d.notPlayed
+        ? `Not played yet: ${d.verdict ?? "I haven't played this one myself yet, but it's on my list."}`
+        : d.verdict,
       officialUrl: d.officialUrl,
       rulesUrl: d.rulesUrl,
       storeUrl: d.storeUrl,
