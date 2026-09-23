@@ -260,6 +260,8 @@ const studios = defineCollection({
 
     officialUrl: z.string().url().optional(),
     storeUrl: z.string().url().optional(),
+    // Same as games: storeUrl is our affiliate link; renders PartnerStore.
+    storeAffiliate: z.boolean().default(false),
     discordUrl: z.string().url().optional(),
     kickstarterUrl: z.string().url().optional(),
     twitterUrl: z.string().url().optional(),

@@ -7,12 +7,16 @@
  */
 interface Props {
   url: string;
-  game: string;
+  /** The game being sold. Omit on a studio page, where the link covers the whole store. */
+  game?: string;
   store?: string;
 }
 
 const { url, game, store } = Astro.props;
-const label = store ? `Shop ${game} at ${store}` : `Shop ${game}`;
+const label = game
+  ? store ? `Shop ${game} at ${store}` : `Shop ${game}`
+  : `Shop ${store ?? 'the store'}`;
+const what = game ?? 'anything';
 ---
 
 <aside class="not-prose mb-12 p-6 rounded-lg border-2 border-amber-400 dark:border-amber-600 bg-amber-50 dark:bg-amber-900/20">
@@ -21,8 +25,8 @@ const label = store ? `Shop ${game} at ${store}` : `Shop ${game}`;
   </p>
   <p class="text-ink dark:text-ink-dark leading-relaxed mb-4">
     The Hobbinomicon is an approved affiliate partner{store ? ` of ${store}` : ''}. If you pick
-    up {game} through this link, a small cut comes back to us at no extra cost to you, and it
-    goes toward covering the site's hosting. It doesn't change anything I say about the game.
+    up {what} through this link, a small cut comes back to us at no extra cost to you, and it
+    goes toward covering the site's hosting. It doesn't change anything I say about {game ? 'the game' : 'their games'}.
   </p>
   <a
     href={url}
