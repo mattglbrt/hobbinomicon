@@ -1,0 +1,35 @@
+---
+/**
+ * The store callout on a game page whose publisher we're an approved affiliate
+ * partner of (`storeAffiliate: true`). Same rule as MaterialsCard: the
+ * disclosure is part of the component, so there is no way to render the paid
+ * link without it sitting right next to it.
+ */
+interface Props {
+  url: string;
+  game: string;
+  store?: string;
+}
+
+const { url, game, store } = Astro.props;
+const label = store ? `Shop ${game} at ${store}` : `Shop ${game}`;
+---
+
+<aside class="not-prose mb-12 p-6 rounded-lg border-2 border-amber-400 dark:border-amber-600 bg-amber-50 dark:bg-amber-900/20">
+  <p class="text-xs font-heading uppercase tracking-[0.2em] text-ink/70 dark:text-ink-dark/70 mb-2">
+    {store ? `Official ${store} partner` : 'Official partner'}
+  </p>
+  <p class="text-ink dark:text-ink-dark leading-relaxed mb-4">
+    The Hobbinomicon is an approved affiliate partner{store ? ` of ${store}` : ''}. If you pick
+    up {game} through this link, a small cut comes back to us at no extra cost to you, and it
+    goes toward covering the site's hosting. It doesn't change anything I say about the game.
+  </p>
+  <a
+    href={url}
+    target="_blank"
+    rel="sponsored nofollow noopener"
+    class="inline-block px-5 py-3 rounded-md bg-ink dark:bg-ink-dark text-parchment dark:text-parchment-dark font-heading font-semibold hover:bg-ink/90 dark:hover:bg-ink-dark/90 transition-colors"
+  >
+    {label} →
+  </a>
+</aside>

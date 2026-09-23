@@ -1297,3 +1297,14 @@
 # for anyone holding an old link. Same treatment as the dropped tag pages.
 /news/deathbringer-backerkit-live  /news/  301
 /news/deathbringer-backerkit-live.md  /news/  301
+
+# Fabricated person entries removed 2026-09-23. "Carlos and Alberto Vigo" never
+# existed (Vigo is the city near Corvus Belli's HQ). Not mapped to a real
+# person, since neither was anyone in particular; the studio page names the
+# actual founders and creators.
+/people/carlos-vigo  /studios/corvus-belli/  301!
+/people/carlos-vigo/  /studios/corvus-belli/  301!
+/people/carlos-vigo.md  /studios/corvus-belli.md  301!
+/people/alberto-vigo  /studios/corvus-belli/  301!
+/people/alberto-vigo/  /studios/corvus-belli/  301!
+/people/alberto-vigo.md  /studios/corvus-belli.md  301!

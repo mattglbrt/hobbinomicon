@@ -1,8 +1,162 @@
 # Session Log Archive — The Hobbinomicon
-Entries moved out of `SESSION_LOG.md` on 2026-08-11 and 2026-08-27 per `_system/PLAYBOOK.md` §8. **Newest first.** The live log carries summary blocks in their place.
+Entries moved out of `SESSION_LOG.md` on 2026-08-11, 2026-08-27 and 2026-09-15 per `_system/PLAYBOOK.md` §8. **Newest first.** The live log carries summary blocks in their place.
 Entries moved out of `SESSION_LOG.md` on 2026-08-11 per `_system/PLAYBOOK.md` §8. **Newest first.** The live log carries a summary block in their place.
 
 ---
+
+## 2026-08-24/25 — Two news posts, a countdown component, a hub rule, and three real bugs
+
+Long content session that kept turning into engineering. **Eleven commits on dev, three merges to main** (`d4275dc`, `acc9cd2`, `5e82a0c`), three builds. Everything shipped; `dev` and `main` are level.
+
+### BONEZONE 2026 post + the Countdown component
+
+Matt is entering Richard Gray's annual skeleton painting comp and wanted a post with a live countdown to the deadline. Source page 403s to both WebFetch and curl, so the details came out of the browser.
+
+**The comp had not "just started."** It opened 1 August and today is the 23rd. Wrote it as open with ten weeks left rather than as a launch, and flagged the mismatch rather than papering over it.
+
+`src/components/Countdown.astro` + a tick script in `BaseLayout`. Two decisions worth keeping:
+
+- **The script lives in BaseLayout, outside `#swup`, not in the component.** A countdown only ships on the posts that use it, which is exactly the shape that broke `LiteYouTube`, `Comments` and the reading progress bar: Swup swaps content in as parsed markup, so a component-local script never executes on a page reached by clicking. Verified by *clicking through from /news/*, not by hard-loading — digits ticked, the interval cleared on navigate-away (net intervals back to 0), and the expired state swapped correctly against a faked past deadline.
+- **Digits are server-rendered from build time, then corrected by JS.** No-JS readers and the pre-hydration frame get a plausible number instead of dashes. They stale between builds, which the daily scheduled rebuild covers. The deadline is *also* written in prose, because `stripMdx` strips JSX components from the `.md` GEO rendering — the countdown must not be the only carrier of the date.
+
+Halloween 2026 falls after UK DST ends (25 Oct), so the deadline is 23:59 **GMT**, not BST.
+
+### The BONEZONE hub rule
+
+Matt: all BONEZONE content links back to `/news/bonezone-2026-open/`. Recorded in **`CLAUDE.md`** rather than only STATUS, because CLAUDE.md is auto-loaded and survives STATUS rewrites, and because the failure mode is specific: **synced vlogs arrive with no links in the body**, so every Royal Herald vlog needs the link added by hand after `refresh-vlogs`, and committed, since Netlify-built vlog posts are ephemeral.
+
+Applied it to the two pieces that already existed: `online-painting-competitions-2026.mdx` still said 2026 details "haven't been announced yet" (now filled in), and the skeleton-recipe vlog got a backlink.
+
+### Motley Crews: Dreadwood
+
+New `_nubmark` release. Post at `/news/motley-crews-denizens-of-dreadwood/`, plus a "What's new" section on the game page. Matt supplied the final copy; his version carried facts the sources did not — Advanced goes **2 terrain pieces to 10**, cows and terrain are pay-what-you-want, $15 buys a table plus all three official teams, new teams in development.
+
+**Deadwood vs Dreadwood:** the itch product title says Deadwood, the card file and video chapters say Dreadwood. Matt confirmed **Dreadwood**. Renamed the post; the itch URL genuinely contains `deadwood` and was deliberately left alone. Safe rename with no redirect — it had never reached main.
+
+**A correction of mine.** I changed the game page's "$10" to "$5 a set", assuming it was stale. It was not: sets are $5 and a two-player game needs two. Restored, and both mentions now state the per-set price *and* why it doubles, so the next reader does not repeat the mistake.
+
+Also caught from the video description and added: the **Maison Nébuleuse pre-order week, 24–31 August**, physical resin printed by Trashfire Studio. Time-sensitive, which is what drove merging rather than batching.
+
+### Three bugs, none of them the thing I was asked to do
+
+- **og:image was broken site-wide on four templates.** news, games, studios and people all passed the raw `heroImage` frontmatter path to BaseLayout and StructuredData. Heroes live in `src/assets`, so `/images/...` has no file behind it once deployed: every social preview and every structured-data image pointed at a 404. `BlogLayout` already resolved this via `getHeroImageUrl`; the detail templates never did, which is why blog posts previewed fine and news posts did not. Fixed all four.
+- **YouTube embed thumbnails sat 32px low.** Reported as "the container is too tall" — the container was always exactly 16:9. Tailwind Typography's base `prose img` rule margins the thumbnail, and **a margin still offsets an absolutely positioned box**, so it dropped below the frame top and overflowed the bottom into `overflow-hidden`. `not-prose` on the `LiteYouTube` root, fixed at the component so it covers every in-prose embed.
+- **Motley Crews had fallen off the homepage.** "Games worth knowing about" sorts indie-tier first then by `updatedDate || pubDate`, top 6; Motley Crews sat at #8 on its May pubDate. Added `updatedDate`, now #1. **Note `pinned: true` is set on that game and the homepage sort never reads it** — there is no durable pin, only date order.
+
+### Deletions and drafts
+
+- **Deathbringer post removed** at Matt's request: post, 700KB hero, and a stale doc-comment referencing it. Its URL and `.md` rendering both 301 to `/news/`, matching the dropped-tag convention. Verified gone from build, news index, sitemap, `llms.txt` and `llms-full.txt`.
+- **`oldhammer-year-2027.mdx` drafted** (`draft: true`, invisible to build/sitemap/indexes). 2027 as an Oldhammer year via OWAC and 40k2ndAC. Both source pages currently document the 2026 editions and Matt says they update in place. Two threads left visible in the copy rather than smoothed: the challenges **overlap** (two 1,000-point armies in parallel, on top of the Tomb Kings army), and **OWAC is Oldhammer 3rd/4th edition, not the current Warhammer: The Old World game** the BONEZONE kits belong to.
+
+### Artifacts
+
+`src/components/Countdown.astro` · `src/content/news/bonezone-2026-open.mdx` · `src/content/news/motley-crews-denizens-of-dreadwood.mdx` (+ two optimized images in `src/assets/images/news/`) · `src/content/blog/articles/oldhammer-year-2027.mdx` (draft) · edits to `BaseLayout.astro`, `LiteYouTube.astro`, four `[slug].astro` templates, `motley-crews.mdx`, `online-painting-competitions-2026.mdx`, `a-new-way-to-paint-skeletons.mdx`, `public/_redirects`, `CLAUDE.md`.
+
+Not verified: the live site after the final deploy. The countdown and the og:image tags were confirmed on a locally built site and, for the embed fix, measured in a browser before and after.
+
+---
+
+## 2026-08-13 — AI disclosure reframed as a promise; shipped
+
+Short session, one change, deployed. **`8ba7eba`** on dev, merged **`f2391f2`** to main, one build.
+
+Matt asked for the footer's **"AI Disclosure"** link to read **"100% Human Made Content & Art"** while still pointing at `/ai-disclosure/`. The framing is the point: the old label leads with the caveat, the new one leads with the promise, and the promise is the brand position (`../CLAUDE.md` hard rule: *"All artwork and creative content by Matt Gilbert — no AI-generated art"*).
+
+Three things followed from the relabel, each raised and each approved before doing it:
+
+- **The page had to be retitled too.** Clicking a link that promises human-made work and landing on an `<h1>` reading "AI Disclosure" is a mismatch the reader notices. `LegalPageLayout` feeds `title` to both the `<h1>` and the `<title>` tag, so one prop change fixed both.
+- **The heading needed a size.** At the layout's `text-5xl md:text-6xl`, the longer title ran to three lines. Rather than shrink every legal page, `LegalPageLayout` gained an optional **`titleSize`** prop defaulting to the existing classes; only the disclosure page passes `text-4xl md:text-5xl`. Also added `text-balance`, which is free — it only affects headings that actually wrap, so Privacy Policy and Terms of Service render identically. Verified that in `dist/`, not by eye.
+- **Two typos in the page copy** — "assit" → "assist", "peice" → "piece". Reader-facing text on the page that makes the site's central credibility claim, so worth the thirty seconds.
+
+**URL unchanged**, so no redirect. Grepped `src/`, `public/` and the Astro config: the footer was the *only* link to that page anywhere in the repo.
+
+**Build verification without burning the YouTube quota.** `npm run build` fires `prebuild` (vlog sync → transcripts → heroes), which hits the YouTube API and is pointless for two string literals. Calling **`npx astro build` directly bypasses the npm prebuild hook** and still produces a real `dist/`. Worth remembering as the default for verifying presentation-layer changes here.
+
+**The merge carried more than this change.** `main` was two commits behind — the 08-11 wrap (`SESSION_LOG` compaction into `SESSION_LOG_ARCHIVE.md`, `STATUS.md` refresh) had been committed to dev but never merged. So `f2391f2` published those too. Docs only, no effect on the built site, but a reminder that the batched-deploy workflow means dev can quietly accumulate: check what a merge actually contains before pushing, not after.
+
+Not verified: the live page after the deploy. Structurally confirmed in `dist/` only.
+
+---
+
+## 2026-08-11 — Funnel mechanic v1 built and deployed; then a full YouTube data analysis and a three-channel strategy
+
+Two halves. Code first (**`df70292`** on dev, merged **`864effa`** to main, one build), then a long analytical session that produced strategy documents rather than commits.
+
+### Funnel mechanic v1 — "if you like X, try Y"
+
+Matt cleared the DWARF play-through off the board (he'll post it when he does it) and picked the funnel.
+
+**STATUS was wrong about what was missing.** It said "schema ready, rendering + tag-fallback + backfill not." Rendering *was* built — a sidebar "If you like this, try" list at `[slug].astro:368`. It had simply never appeared on the site, because **zero of the 11 games have `relatedGames` set**, so the array was always empty and the block never rendered. Worth recording because the same trap is easy to re-enter: a feature can be fully written and invisible, and the doc will describe it as unwritten.
+
+So the real gaps were the fallback and the placement. Matt chose a full-width card section over the sidebar, and chose to exclude out-of-print games from auto-suggestions while still allowing them editorially.
+
+**Scoring leans on the structured fields, not tags.** `src/utils/funnel.ts` weights `format` (4), `solo` (3), `miniatureAgnostic` (3), tier (1) and cost band (1), plus shared tags weighted by inverse document frequency and **capped at 3**. The cap is the load-bearing part. Game tags are ad-hoc (`grimdark`, `bounty-hunters`, `mage-knight`, `dim-future`) and on a ten-game corpus a shared `fantasy` means almost nothing — five of ten carry it — while an uncapped IDF would let a one-off tag outrank a format match. Below `MIN_SCORE` (3) nothing renders; no padding with "latest" filler, because an empty section beats a non-sequitur.
+
+Editorial `relatedGames` always come first, unfiltered — no threshold, no OOP exclusion. Out-of-print games are excluded as *suggestions* but still *receive* a funnel, which makes a graveyard entry the best possible place for one. Mage Knight now points at three live skirmish games.
+
+Result: all 10 published games get suggestions, none suggest themselves, and the format index pages correctly show nothing.
+
+**Then Matt asked for Warmachine to be switched off.** Added `hideFunnel` to the games schema and set it on `warmachine.mdx` — it's the only large-scale-army entry, so scored suggestions have no format peer and fall back to thin tag overlap (its single suggestion was Motley Crews on "3d printable · Fantasy", a $400 game pointing at a $0 one). The flag only hides the section *on* Warmachine's page; it can still be suggested elsewhere.
+
+### A wrong call, and how it got caught
+
+I reported that most game entries lack card images and filed it as a directory-wide content gap, based on a screenshot of the funnel section showing blank gradient cards. **Matt pushed back, and he was right.** Nine of eleven games have a `heroImage`; they all resolve through `getHeroImage` into `src/assets/images/` and all emit correctly to `/_astro/*.webp`.
+
+The screenshot was of the **dev server**, taken immediately after scrolling. Card images are `loading="lazy"` and `astro dev` transforms them on demand, so I caught them mid-load. Only Ømen Tide genuinely has no hero (logo only). Two lessons now in CLAUDE.md: verify card rendering against a **built** site, and `astro preview` does not work here at all — the Netlify adapter rejects it, so serve `dist/` with `python3 -m http.server`.
+
+### YouTube analysis — 271 videos
+
+Matt asked for top-20 lists by views, likes and comments. Pulled the full catalogue via the Data API (~12 quota units of 10,000; public data, so the API key, not the OAuth token that dies weekly). Script kept out of the repo, in the session scratchpad.
+
+Corpus: 271 videos, Sep 2025 – Jul 2026, **33,044 lifetime views, median 38 per video**.
+
+Only **4 videos appear in all three lists**. The findings that drove everything after:
+
+- **`My minimal solo rpg kit` is 10% of all channel views** — 3,313 views, 185 likes, 3.4× the next best on likes. Solo content overall: median 72 views against a channel median of 38.
+- **Complete things beat installments, by 40×.** Board videos framed as a finished technique or a finished board did 983 / 922 / 761. The same subject framed as progress — "starting", "working on", "almost ready for paint", "making some additions" — did 40 / 25 / 24 / 21. That's the daily-vlog habit leaking into terrain content.
+- **Shorts are a discovery product, not an engagement one.** 23 Shorts, 6,493 views, 1.20% like rate against long-form's 5.69%; 0.32% comments against 1.73%.
+- **20–45 minute videos have the best like rate on the channel** (7.69%, n=14). Under five minutes is the weakest bucket.
+- **Vlogs are last on reach and likes but beat baseline on comments** (1.84% vs 1.46%) — the conversation engine.
+
+Combined ranking computed two ways (average percentile vs share-of-totals). They agreed on 6 of 10 and on the entire top 4; every disagreement was the Shorts/reach question. Led with the percentile method because the question was resonance, not reach.
+
+### The strategy work
+
+Matt had already planned to split into three channels. Checked it rather than endorsing it, and **two of three moves were well-supported, one was not**: Warmachine is 1.8% of lifetime views on 7 videos, and Trench Crusade out-performs it on a similar count (983 views, median 106 — the highest median of any category). Said so. Matt then supplied the missing variable — **direct Steamforged access and relationships with established Warmachine creators** — which addresses exactly the problem the numbers describe (reach, not resonance, since Warmachine already has the channel's highest like *and* comment rates). Updated the recommendation rather than holding the line.
+
+Decisions settled across the session:
+
+- **Daily vlog relocates to Instagram Reels**, not retired — the format's real strength is reach, which is worth something on a platform where reach converts to follows.
+- **YouTube splits by topic, Instagram unifies by craft.** Two IG accounts, not four: `@hobbinomicon` (Matt-forward, all hobby craft including the Reels) and `@yellowimp` (company voice). No AITD Instagram. `@mattglbrt` secured everywhere and deliberately parked, replacing `@mattgilbertsucks` as the front door — it works against a page asking people to pay for painting.
+- **Keep cross-posting Reels to YouTube Shorts** — same asset, zero marginal cost, and Shorts are a fifth of lifetime views.
+- **Yellow Imp is a separate brand and business licence.** Rule: *borrow the audience, don't borrow the identity.*
+- **Commissions are a real revenue line** (Matt's answer), which is what forced the mattglbrt.com rescope.
+
+**The connection worth keeping:** the directory already flags which games are `miniatureAgnostic` — games that tell players to bring any minis. That is precisely Yellow Imp's addressable market, and the Hobbinomicon showcase strategy builds relationships with those same studios. Hobbinomicon opens the door, Yellow Imp walks through as a supplier rather than a competitor. **And it is also the exposure**: painting your own product on camera while the directory carries a `verdict` on those studios' games needs a plain disclosure line, set now rather than retrofitted after someone else raises it.
+
+### mattglbrt.com — revised scope
+
+"Commissions are real" breaks `claude.md §4`, which says keep it text-forward and explicitly do not make it a gallery. Nobody hires a miniature painter from ASCII text.
+
+**The fix is cheap because the rule was editorial, not technical.** `src/modules/philes/images.ts` already globs and bundles everything under `src/images/`, and `src/modules/textmode/lightbox` already exists. So: keep the terminal frame, make the work visible inside it. Home page stays text-first; the commissions path goes image-led. No theme replacement — throughput is the whole plan's biggest risk and a rebuild spends it for nothing.
+
+Three findings from reading that repo: `src/content` is **empty** (zero philes, so "the human behind the brands" is unbacked); `src/images/bearer-of-the-pale-stone/` holds **seven photos referenced by nothing**; and the `videos.ts` comment saying side channels are "retired" now misleads, since the split reinstates them.
+
+### Artifacts
+
+| | Path |
+|---|---|
+| Channel strategy (web) | `claude.ai/code/artifact/f185367e-7e17-4ea3-99ee-832ed6dd0183` |
+| mattglbrt.com scope (web) | `claude.ai/code/artifact/ec0e17c3-1625-41d4-9a7e-8941ea6ba80c` |
+| Channel strategy (md) | `~/Desktop/channel-strategy.md` |
+| mattglbrt.com scope (md) | `~/Desktop/mattglbrt-scope.md` |
+
+Markdown copies live on the Desktop by Matt's request, deliberately outside any repo. They are independent of the artifacts — editing one does not touch the other.
+
+**Still open:** the funnel backfill is editorial and unstarted (TSPN wants it most — only narrative-format entry, so all three of its suggestions read just "Solo-friendly"); no Instagram data exists, so every IG target in the strategy needs a real 30-day baseline; and the mattglbrt.com scope has one decision outstanding — publish commission price ranges or stay quote-only (recommended: publish).
+
+---
+
 
 ## 2026-07-31 — Monster Friends rulebook v1.3 update; reading progress bar fixed, Swup sweep closed. Three deploys
 

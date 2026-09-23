@@ -212,6 +212,10 @@ const games = defineCollection({
     // Reference card links
     officialUrl: z.string().url().optional(),
     storeUrl: z.string().url().optional(),
+    // storeUrl is our affiliate link with the publisher (approved partner).
+    // Renders the PartnerStore callout, disclosure included, and marks the
+    // sidebar Buy link rel="sponsored".
+    storeAffiliate: z.boolean().default(false),
     rulesUrl: z.string().url().optional(),
     discordUrl: z.string().url().optional(),
     subredditUrl: z.string().url().optional(),
