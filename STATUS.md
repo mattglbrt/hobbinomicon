@@ -1,7 +1,7 @@
 # STATUS — The Hobbinomicon · updated 2026-09-24
 
 ## Now
-**The directory is at 18 games.** `main` @ `a3d4ed4`, two deploys 09-24. **Forbidden Psalm** (with Will RD and Wird Designs) and **Necromunda** are live, both `notPlayed`. The Necromunda page leads with the new edition (**Necromunda Skirmish**, released 15 Aug 2026), then what changed from 2017, the 1995 original, and the **Roleplay** game announced 18 Sep. It has a gang-builder section with **Gyrinx** and **Munda Manager**, which both support the new edition; YakTribe is frozen on 2017. Matt's three Necromunda guides link to the page, and the how-to-start guide got a dated 2026 update note.
+**The directory is at 18 games.** `main` @ `e6296a9`+1, four deploys 09-24: the last two added logos and hero art (Forbidden Psalm, Necromunda, Ømen Tide hero, Maleghast logo) and a `logoInvert` flag for white logos. **Forbidden Psalm** (with Will RD and Wird Designs) and **Necromunda** are live, both `notPlayed`. The Necromunda page leads with the new edition (**Necromunda Skirmish**, released 15 Aug 2026), then what changed from 2017, the 1995 original, and the **Roleplay** game announced 18 Sep. It has a gang-builder section with **Gyrinx** and **Munda Manager**, which both support the new edition; YakTribe is frozen on 2017. Matt's three Necromunda guides link to the page, and the how-to-start guide got a dated 2026 update note.
 
 Still true: newsletter on Substack, first issue **06 Oct**. Transcripts only reach the site from a local sync, so `npm run refresh-vlogs` is load-bearing. Every page is researched with names sourced or left out (lesson from 09-23).
 
@@ -10,7 +10,7 @@ Still true: newsletter on Substack, first issue **06 Oct**. Transcripts only rea
 2. **Matt: the two newsletter photos** (`hero.jpg`, `workbench.jpg`) before issue #1 on 06 Oct. Both fall back to flat `bg-ink`.
 3. **Description pass for six videos**: Infinity x2, the Necropolis board video, and the three Necromunda videos (now in `game-videos.json`). `npm run youtube-auth` first, Hobbinomicon channel at the consent screen, `--verify-urls`, then `--only <ids>`.
 4. **Necropolis28: when the hardback Kickstarter launches**, update the "hasn't launched yet" line and write a news post. **After Matt's October solo-rules video**, add it to `game-videos.json`.
-5. **Hero images**: Forbidden Psalm and Brawl Arcane 28 have none (Brawl needs Matt's wizards or Brett Evans's OK).
+5. **Brawl Arcane 28 hero image**: Matt's own wizards, or art with Brett Evans's OK. **Necropolis28 logo**: no transparent wordmark is public (Kickstarter blocks automated fetches, not on Patreon); ask Peter Vigors or grab it from the Kickstarter page in a browser.
 6. **Check the site at 390px.** Partner box, chessboard shelf, the new Necromunda tools grid. The Chrome extension still isn't connected.
 7. **Matt: Events Manager custom conversion** on `content_name = newsletter`. **Decide on a consent banner** (BONEZONE runs UK traffic to 31 Oct).
 8. **Paint the Royal Herald.** BONEZONE closes **31 Oct 23:59 GMT**. Link every BONEZONE post to the hub.

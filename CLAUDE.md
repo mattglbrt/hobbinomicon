@@ -160,6 +160,10 @@ given, else a standard "on my list" line) and the page carries no take
 section. Clear the flag once he has a real take. First used on Brawl Arcane
 28 (2026-09-23).
 
+A logo that's white on transparent gets `logoInvert: true`: it renders black
+on the light paper background and as-is in dark mode (first used on Forbidden
+Psalm, 2026-09-24). Without it a white wordmark vanishes in light mode.
+
 Games designed for an 8×8 grid get `chessboard: true`, which lists them on
 `/games/chessboard/` the same way `solo: true` feeds `/games/solo/`.
 
