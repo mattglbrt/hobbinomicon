@@ -1,7 +1,7 @@
 # STATUS — The Hobbinomicon · updated 2026-09-24
 
 ## Now
-**The directory is at 18 games.** `main` @ `e6296a9`+1, four deploys 09-24: the last two added logos and hero art (Forbidden Psalm, Necromunda, Ømen Tide hero, Maleghast logo) and a `logoInvert` flag for white logos. **Forbidden Psalm** (with Will RD and Wird Designs) and **Necromunda** are live, both `notPlayed`. The Necromunda page leads with the new edition (**Necromunda Skirmish**, released 15 Aug 2026), then what changed from 2017, the 1995 original, and the **Roleplay** game announced 18 Sep. It has a gang-builder section with **Gyrinx** and **Munda Manager**, which both support the new edition; YakTribe is frozen on 2017. Matt's three Necromunda guides link to the page, and the how-to-start guide got a dated 2026 update note.
+**The directory is at 18 games.** `main` @ `ccf439a`, four deploys 09-24: the last two added logos and hero art (Forbidden Psalm, Necromunda, Ømen Tide hero, Maleghast logo) and a `logoInvert` flag for white logos. **Forbidden Psalm** (with Will RD and Wird Designs) and **Necromunda** are live, both `notPlayed`. The Necromunda page leads with the new edition (**Necromunda Skirmish**, released 15 Aug 2026), then what changed from 2017, the 1995 original, and the **Roleplay** game announced 18 Sep. It has a gang-builder section with **Gyrinx** and **Munda Manager**, which both support the new edition; YakTribe is frozen on 2017. Matt's three Necromunda guides link to the page, and the how-to-start guide got a dated 2026 update note.
 
 Still true: newsletter on Substack, first issue **06 Oct**. Transcripts only reach the site from a local sync, so `npm run refresh-vlogs` is load-bearing. Every page is researched with names sourced or left out (lesson from 09-23).
 
