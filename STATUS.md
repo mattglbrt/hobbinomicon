@@ -1,36 +1,38 @@
 # STATUS — The Hobbinomicon · updated 2026-09-24
 
 ## Now
-**The directory is at 18 games.** `main` @ `ccf439a`, four deploys 09-24: the last two added logos and hero art (Forbidden Psalm, Necromunda, Ømen Tide hero, Maleghast logo) and a `logoInvert` flag for white logos. **Forbidden Psalm** (with Will RD and Wird Designs) and **Necromunda** are live, both `notPlayed`. The Necromunda page leads with the new edition (**Necromunda Skirmish**, released 15 Aug 2026), then what changed from 2017, the 1995 original, and the **Roleplay** game announced 18 Sep. It has a gang-builder section with **Gyrinx** and **Munda Manager**, which both support the new edition; YakTribe is frozen on 2017. Matt's three Necromunda guides link to the page, and the how-to-start guide got a dated 2026 update note.
+**Working through the directory master list.** `main` @ `bfcd907`, five deploys 09-24. There are 23 games: Forbidden Psalm, Necromunda, and **batch 1** (Greathelm, Frostgrave, Rangers of Shadow Deep, Mordheim, Turnip28) went live today. The plan is `roadmap/directory-plan.md`: Matt's ~140-game list, scoped to skirmish, Games Workshop, and mass battle (TTRPGs out), and done in batches of 5, with the Pillage-video games first. **Never mention the video on a game page.**
 
-Still true: newsletter on Substack, first issue **06 Oct**. Transcripts only reach the site from a local sync, so `npm run refresh-vlogs` is load-bearing. Every page is researched with names sourced or left out (lesson from 09-23).
+Games without Matt's take say **"My take on this one is coming soon."** (`notPlayed: true`, no custom lines). White logos use `logoInvert`. Every page is researched with names sourced or left out, and every image comes from official sources, checked by eye, with no AI art.
+
+Still true: newsletter on Substack, first issue **06 Oct**. `npm run refresh-vlogs` is load-bearing.
 
 ## Next (ranked)
-0. **Directory build, batch 1** per `roadmap/directory-plan.md`: Greathelm, Frostgrave, Rangers of Shadow Deep, Mordheim, Turnip28 (Pillage-video games first; never mention the video on pages). **Matt: the RPG call** (5 RPGs in the video group + Dolmenwood; §6 RPGs are out of scope).
-1. **Matt: consolidate the Substack publications under `mattglbrt`.** **Transfer, never delete**: the subdomain survives a transfer, is hardcoded here and named in the policy and terms.
-2. **Matt: the two newsletter photos** (`hero.jpg`, `workbench.jpg`) before issue #1 on 06 Oct. Both fall back to flat `bg-ink`.
-3. **Description pass for six videos**: Infinity x2, the Necropolis board video, and the three Necromunda videos (now in `game-videos.json`). `npm run youtube-auth` first, Hobbinomicon channel at the consent screen, `--verify-urls`, then `--only <ids>`.
-4. **Necropolis28: when the hardback Kickstarter launches**, update the "hasn't launched yet" line and write a news post. **After Matt's October solo-rules video**, add it to `game-videos.json`.
-5. **Brawl Arcane 28 hero image**: Matt's own wizards, or art with Brett Evans's OK. **Necropolis28 logo**: no transparent wordmark is public (Kickstarter blocks automated fetches, not on Patreon); ask Peter Vigors or grab it from the Kickstarter page in a browser.
-6. **Check the site at 390px.** Partner box, chessboard shelf, the new Necromunda tools grid. The Chrome extension still isn't connected.
-7. **Matt: Events Manager custom conversion** on `content_name = newsletter`. **Decide on a consent banner** (BONEZONE runs UK traffic to 31 Oct).
-8. **Paint the Royal Herald.** BONEZONE closes **31 Oct 23:59 GMT**. Link every BONEZONE post to the hub.
-9. **Dolmenwood: wait** until its makers launch their own store (moving off Exalted Funeral, Matt 09-24). Then the same research-subagent pattern.
-10. **GSC Coverage weekly.** Matt's content calls in `roadmap/rebuild/PROGRESS.md`. Publish or bin `oldhammer-year-2027.mdx`. Funnel backfill (TSPN most). Hero images for Gloam + DWARF.
+1. **Matt: review batch 1** on phone and desktop, including the four inverted logos (Frostgrave, Mordheim, Rangers, Turnip28) in light and dark mode and the Maleghast logo in light mode.
+2. **Batch 2:** Sword Weirdos · 1490 DOOM · OPR Age of Fantasy: Skirmish · OPR Age of Fantasy: Quest · Five Leagues from the Borderlands. Batch 3 is The Doomed plus the top of Wave 2 (Sun Rot, Bellwoken, Kingdom Death: Monster, Hobgoblin).
+3. **Matt: consolidate the Substack publications under `mattglbrt`.** Transfer, never delete.
+4. **Matt: the two newsletter photos** (`hero.jpg`, `workbench.jpg`) before issue #1 on 06 Oct.
+5. **Description pass for six videos:** Infinity x2, the Necropolis board video, and three Necromunda videos. `npm run youtube-auth` first, with the Hobbinomicon channel at the consent screen.
+6. **Necropolis28** update and news post when its Kickstarter launches. Its logo needs Matt (from the Kickstarter page or Peter Vigors).
+7. **Brawl Arcane 28 hero** (Matt's wizards or Brett Evans's OK). **Mordheim hero** would need a photo of Matt's own warbands.
+8. **Matt: Events Manager custom conversion**, and a consent-banner call.
+9. **Paint the Royal Herald.** BONEZONE closes **31 Oct 23:59 GMT**.
+10. GSC Coverage weekly. Matt's calls in `roadmap/rebuild/PROGRESS.md`. Hero images for Gloam and DWARF.
 
 ## Blockers
-- Matt: wave-3 game one-liners (10 games), MESBG tier call, One Ring page-split call.
-- YouTube OAuth re-auth before any write. **The consent screen must be given the Hobbinomicon channel**; reads succeed under any identity.
+- **Matt: the RPG call.** Shadowdark, OSE, Wolves upon the Coast, D&D, and Mörk Borg are in the Pillage video, but RPGs are out of scope. Also Dolmenwood (held for its new store anyway).
+- Matt: wave-3 game one-liners, MESBG tier call.
+- YouTube OAuth re-auth before any write. **The consent screen must be given the Hobbinomicon channel.**
 - Comments moderation has no pending-notification (manual D1 SQL only).
 
 ## Recently done
-- 09-24 — **Forbidden Psalm live**: End Times Edition, credited "Will RD" as on the official site, studio page for Wird Designs.
-- 09-24 — **Necromunda live**: 2026 edition, 2017 changes, 1995 history, Roleplay. `hub: warhammer`. Gang-builder section. Guide fixed ("Munda Manager (Yaktribe)" was two sites).
-- 09-23 — **Five game pages live** (Infinity, Maleghast, Brawl Arcane 28, Necropolis28, Pillage); fabricated Corvus Belli founders removed; `storeAffiliate`, `chessboard`, `notPlayed` switches.
-- 09-16 — Description pass finished, 269/269.
+- 09-24 — **Batch 1 live:** Greathelm, Frostgrave, Rangers of Shadow Deep, Mordheim (oop, thumbnail only), Turnip28 (`army`). People: McCullough, Malev, Max FitzGerald. Studios: Modiphius, Osprey Games.
+- 09-24 — **Directory plan** from Matt's master list. **"Take coming soon"** standard line. **`logoInvert`** flag. Logos and heroes for Forbidden Psalm, Necromunda, Ømen Tide, and Maleghast.
+- 09-24 — **Forbidden Psalm and Necromunda live.** Necromunda gang-builder tools. Guide fixed ("Munda Manager (Yaktribe)" was two sites).
+- 09-23 — Five game pages (Infinity, Maleghast, Brawl Arcane 28, Necropolis28, Pillage). Fabricated Corvus Belli founders removed.
 
 ## Open questions
-- Necro Raw's support for the new Necromunda edition is unknown. (r/necromunda confirmed by Matt 09-24 and added.)
-- **The Warhammer hub is built from guides**, so `hub: warhammer` on a game entry doesn't list it on `/warhammer/`. Worth a games row on the hub once there's a second live entry.
-- **`--verify-urls` validates local `dist/`, not production**; worth building a warning into the script. The guide-URL rule lives in four places.
-- Carried: `pinned: true` is dead on the homepage; embedded non-vlog thumbnails come from `i.ytimg.com`; `.md` GEO output emits raw `../../assets/` image paths and JSX expressions; funnel threshold may want revisiting (18 games); every build rewrites `src/data/youtube-stats.json`; housekeeping list in `SESSION_LOG.md` 09-15.
+- r/mordheim is unconfirmed (Reddit blocks automated checks). Necro Raw's support for the new Necromunda edition is unknown.
+- **The Warhammer hub is built from guides**, so `hub: warhammer` on a game (Necromunda, Mordheim) doesn't list it on `/warhammer/`. There are now two live entries, which is enough to add a games row to the hub.
+- **`--verify-urls` validates local `dist/`, not production.** The guide-URL rule lives in four places.
+- Carried: `pinned: true` is dead on the homepage; embedded non-vlog thumbnails come from `i.ytimg.com`; `.md` GEO output emits raw asset paths and JSX expressions; funnel threshold may want revisiting (23 games); every build rewrites `src/data/youtube-stats.json`; housekeeping list in `SESSION_LOG.md` 09-15.
