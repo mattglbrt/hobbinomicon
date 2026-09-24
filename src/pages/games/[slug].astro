@@ -311,10 +311,10 @@ const gameSpecs = [
             {game.data.notPlayed ? (
               <blockquote class="not-prose mb-12 p-6 border-2 border-dashed border-ink/25 dark:border-ink-dark/25 rounded-lg">
                 <p class="text-lg md:text-xl font-serif italic text-ink dark:text-ink-dark">
-                  "{game.data.verdict ?? "I haven't played this one myself yet, but it's on my list."}"
+                  "{game.data.verdict ?? "My take on this one is coming soon."}"
                 </p>
                 <footer class="mt-3 text-sm text-ink/70 dark:text-ink-dark/70 font-heading uppercase tracking-wider">
-                  Not played yet
+                  Take coming soon
                 </footer>
               </blockquote>
             ) : game.data.verdict && (

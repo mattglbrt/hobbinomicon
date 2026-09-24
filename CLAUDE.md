@@ -154,11 +154,11 @@ inside `dist/` does.
 ## Games Matt hasn't played: `notPlayed: true`
 
 A game page's verdict and "The Hobbinomicon take" are Matt's voice, so never
-write them for him. If he hasn't played a game yet, set `notPlayed: true`: the
-verdict box becomes a dashed "Not played yet" note (the `verdict` text if
-given, else a standard "on my list" line) and the page carries no take
-section. Clear the flag once he has a real take. First used on Brawl Arcane
-28 (2026-09-23).
+write them for him. If he has no take yet, set `notPlayed: true` and leave
+`verdict` out: the verdict box becomes a dashed "Take coming soon" note reading
+"My take on this one is coming soon." (Matt, 09-24: that is the standard line,
+don't write a custom one), and the page carries no take section. Clear the flag
+once he has a real take. First used on Brawl Arcane 28 (2026-09-23).
 
 A logo that's white on transparent gets `logoInvert: true`: it renders black
 on the light paper background and as-is in dark mode (first used on Forbidden
