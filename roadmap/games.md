@@ -1,5 +1,7 @@
 # Games roadmap
 
+> **09-24: the ranked directory to-do now lives in [`directory-plan.md`](directory-plan.md)** (Matt's master list, scored and batched). The priority list below is kept for history.
+
 Working doc — not deployed. Fill in the per-game checklists below; once a game's checklist is reasonably complete, I'll convert it to an MDX entry under `src/content/games/`.
 
 ## How this works

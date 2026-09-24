@@ -6,6 +6,7 @@
 Still true: newsletter on Substack, first issue **06 Oct**. Transcripts only reach the site from a local sync, so `npm run refresh-vlogs` is load-bearing. Every page is researched with names sourced or left out (lesson from 09-23).
 
 ## Next (ranked)
+0. **Directory build, batch 1** per `roadmap/directory-plan.md`: Greathelm, Frostgrave, Rangers of Shadow Deep, Mordheim, Turnip28 (Pillage-video games first; never mention the video on pages). **Matt: the RPG call** (5 RPGs in the video group + Dolmenwood; §6 RPGs are out of scope).
 1. **Matt: consolidate the Substack publications under `mattglbrt`.** **Transfer, never delete**: the subdomain survives a transfer, is hardcoded here and named in the policy and terms.
 2. **Matt: the two newsletter photos** (`hero.jpg`, `workbench.jpg`) before issue #1 on 06 Oct. Both fall back to flat `bg-ink`.
 3. **Description pass for six videos**: Infinity x2, the Necropolis board video, and the three Necromunda videos (now in `game-videos.json`). `npm run youtube-auth` first, Hobbinomicon channel at the consent screen, `--verify-urls`, then `--only <ids>`.
