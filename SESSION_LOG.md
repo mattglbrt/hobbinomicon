@@ -4,6 +4,80 @@ Append-only. **Newest entry first.** Pre-existing planning history lives in `roa
 
 ---
 
+## 2026-09-24 — Forbidden Psalm and Necromunda, gang-builder tools, guide fix
+
+**Two deploys: `main` @ `7b36b0f`, `a3d4ed4`.** Directory is at 18 games.
+
+### Forbidden Psalm (`/games/forbidden-psalm/`)
+Researched by a subagent with the 09-23 sourcing rule (sourced or left out).
+End Times Edition page, `notPlayed: true` (Matt owns all of it, hasn't
+played). New person `will-rd` and studio `wird-designs`.
+- **Designer credit: "Will RD"** (Matt's call), exactly as the official site
+  has it now. The credit has changed over time; the older form is not printed
+  anywhere, per the no-previous-names rule.
+- **Studio: Wird Designs** (Matt's call over "no studio page"). The page says
+  only what's sourced: it's the name on the logo and US store. An "it's Will's
+  studio" line was cut as inference. Pronouns for Will aren't known, so the
+  person page uses none.
+- Left out: campaign scenario count (sources say 24, 25, and 26), release
+  year, "Space Penguin Ink" (one review, no official backing), subreddit and
+  Facebook group (unconfirmed). Discord invite checked live via the API.
+- No hero image; the only logo found is the studio's.
+
+### Necromunda (`/games/necromunda/`)
+Matt asked for the page to cover the old versions, the new edition, and the
+RPG. The structure he approved: the 2026 edition leads, then "What changed from
+2017" (in depth, since that's where existing players are), then the 1995
+original (short), then the RPG.
+- **Warhammer Necromunda Skirmish**: revealed 26 Jun, pre-orders 1 Aug,
+  released 15 Aug 2026. Core Set $165 / £98 (one retailer says $170; used
+  the warhammer.com sighting). Two gang books replace the whole 2017 shelf;
+  GW says existing models are "fully compatible."
+- **Warhammer Necromunda Roleplay** announced 18 Sep 2026, GW itself, no date
+  or price.
+- `notPlayed: true`, `hub: warhammer` (Matt's calls). Note the hub page is
+  built from guides, so the game entry doesn't itself appear there.
+- Matt's three Necromunda guides now carry `game: "necromunda"` and list on
+  the page (URLs unchanged: `guideUrlWith` keys off folder path, not `game`).
+  Their videos are mapped in `game-videos.json` (zI5TesRUFBk, SfFaP1gTzTI,
+  eyHO9QuQ-Xo; the Ogryn kitbash was already `system: necromunda`).
+
+### Third-party tools
+Matt suspected YakTribe was stale. It is: "These tools are for Necromunda
+2017", and its developer hasn't been reachable for a long time. **Gyrinx**
+(gyrinx.app, N26 live for all 17 starting gangs) and **Munda Manager**
+(N26 per a 21 Aug forum reply; its site 403s automated checks) now lead a
+"Gang builders & tools" section, with Open Hive War, Second Best Guides, and
+the Gyrinx Discord. YakTribe is kept but labelled frozen on 2017.
+
+### Guide fix
+`how-to-start-playing-necromunda-easily` called it "Munda Manager (Yaktribe)";
+they're separate sites. Heading, materials, and description fixed, Munda
+Manager linked, and a dated "Update, September 2026" note added pointing to
+Gyrinx and the game page, warning that Necro Raw predates the new rules.
+Matt approved the edit. `updatedDate: 2026-09-24`.
+
+### Decisions
+- **Dolmenwood deferred** (Matt): its makers are reportedly moving off
+  Exalted Funeral to their own store. Wait for that before writing the page.
+
+### Gotchas
+- A bash heredoc with an apostrophe in the body failed in the Bash tool; use
+  Write for MDX.
+- Python rewrites on Windows turned an LF file into CRLF (whole-file diff);
+  checked with `file`, fixed with `sed 's/\r$//'`.
+- `node` JSON round-trip reformats `game-videos.json` (compact one-line
+  objects); edit it textually.
+- Every build rewrites `src/data/youtube-stats.json`; reverted each time.
+
+### Open
+- r/necromunda and Necro Raw unverified (Reddit blocks automated checks; Necro
+  Raw's edition support unknown). Matt to confirm the subreddit.
+- Description pass now covers six videos: Infinity x2, Necropolis board, and
+  the three Necromunda videos.
+
+---
+
 ## 2026-09-23 — Five game pages, a chessboard shelf, affiliate links, and fabricated founders removed
 
 A long directory session. **Six deploys: `main` @ `7783b01`, `82484b6`,
