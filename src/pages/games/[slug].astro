@@ -282,7 +282,7 @@ const gameSpecs = [
                 <Image
                   src={resolvedLogo}
                   alt={game.data.logoAlt || `${game.data.title} logo`}
-                  class="h-40 md:h-44 w-auto max-w-full object-contain"
+                  class={`h-40 md:h-44 w-auto max-w-full object-contain ${game.data.logoInvert ? 'invert dark:invert-0' : ''}`}
                   loading="eager"
                   format="webp"
                   quality={80}
@@ -291,7 +291,7 @@ const gameSpecs = [
                 <img
                   src={resolvedLogo}
                   alt={game.data.logoAlt || `${game.data.title} logo`}
-                  class="h-40 md:h-44 w-auto max-w-full object-contain"
+                  class={`h-40 md:h-44 w-auto max-w-full object-contain ${game.data.logoInvert ? 'invert dark:invert-0' : ''}`}
                   loading="eager"
                 />
               )

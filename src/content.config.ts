@@ -163,6 +163,9 @@ const games = defineCollection({
     thumbnailImageAlt: z.string().optional(),
     logo: z.string().optional(),
     logoAlt: z.string().optional(),
+    // White-on-transparent logo: render it inverted (black) in light mode and
+    // as-is in dark mode, so it doesn't vanish on the paper background.
+    logoInvert: z.boolean().default(false),
     draft: z.boolean().default(false),
 
     // Identity
