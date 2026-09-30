@@ -101,6 +101,11 @@
       "description": "Solo roleplaying games and solo play sessions, including journaling and oracle-driven play.",
       "category": "game-system"
     },
+    "sun-rot": {
+      "display": "Sun Rot",
+      "description": "Content about Sun Rot, Smashbash's co-op grimdark adventure game.",
+      "category": "game-system"
+    },
     "trench-crusade": {
       "display": "Trench Crusade",
       "description": "Content about Trench Crusade, a grimdark alternate-history skirmish game set in WWI trenches.",
