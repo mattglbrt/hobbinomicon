@@ -86,9 +86,9 @@ Kill Team · Warcry · Warhammer Underworlds · Blood Bowl
 
 ### Wave 4: indie breakouts (§4), strongest signal first
 
-1. Pilgrim: The Haunted Frontier
+1. ~~Pilgrim: The Haunted Frontier~~ (Matt, 09-30: not on the site)
 2. Guards of Traitor's Toll
-3. OASIS
+3. ~~OASIS~~ (Matt, 09-30: unknown to him, dropped)
 4. Scrapjacks
 5. Full Spectrum Dominance
 6. 1698
