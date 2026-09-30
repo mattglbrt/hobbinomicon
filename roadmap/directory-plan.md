@@ -217,8 +217,9 @@ From round 2 onward:
   subsection), Stargrave, The Silver Bayonet, Gaslands: Refuelled (3E is in
   beta for summer 2027, so revisit the slug then), When Nightmares Come, Zona
   Alfa. **Gundam Assemble failed the release rule** (everything is preorder;
-  first retail is 31 Oct 2026, and the rules are already free). **Re-run it
-  after 31 Oct.**
+  first retail is 31 Oct 2026, and the rules are already free). Matt then made an exception
+  ("publish gundam assemble to gain the search traffic"), so it's built with
+  `status: "announced"`. **Flip it to `active` after 31 Oct.**
 - **Round 3:** Rapture (moved to 2b), Eldfall Chronicles, Here's the Ruckus, The Last Mile,
   Malifaux 4E (Wyrd, owner of the studio page), Marvel: Crisis Protocol (owns
   `atomic-mass-games`), Star Wars: Shatterpoint, Warcrow (corvus-belli).
