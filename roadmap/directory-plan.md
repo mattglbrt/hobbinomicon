@@ -73,7 +73,9 @@ OASIS, Scrapjacks. Space Weirdos is done, so skip it in wave 5.
 - **BattleTech / Alpha Strike**: 2 posts, and a big mainstream on-ramp.
 - **Verrotwood**: Gardens of Hecate. Matt owns the Kickstarter minis.
 - **MESBG**: needs Matt's tier call first. Not on the master list.
-- **Wave 3 games** (Flames of Orion, Gloam, Hag 28, Midguard, Rumpus, Cyber
+- **Flames of Orion: Matt wants it on the site now** (09-30). It's being
+  built without the one-liner, as a coming-soon take.
+- **Wave 3 games** (Gloam, Hag 28, Midguard, Rumpus, Cyber
   Savages, Alien Zoo Keeper, Scrungaloids): these still need Matt's one-liner
   each. Build them when he's written it.
 
