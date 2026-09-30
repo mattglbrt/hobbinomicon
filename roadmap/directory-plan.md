@@ -145,6 +145,8 @@ Ordered by the list's signal.
 
 Tag these `army`, and mark them `big` where they are.
 
+- **Done 09-30 (batch 7, pulled forward by Matt):** Bolt Action 3E, Konflikt '47,
+  Lion Rampant 2E, Dragon Rampant 2E, Oathmark (Second Edition, Aug 2026).
 - Kings of War (with Ambush), Bolt Action 3E, Saga, Conquest: Last Argument of
   Kings
 - Oathmark, Lion Rampant 2E, Dragon Rampant 2E, Konflikt '47
