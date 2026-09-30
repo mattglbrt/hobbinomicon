@@ -91,7 +91,7 @@ Kill Team · Warcry · Warhammer Underworlds · Blood Bowl
 3. ~~OASIS~~ (Matt, 09-30: unknown to him, dropped)
 4. Scrapjacks
 5. Full Spectrum Dominance
-6. 1698
+6. 1698 (an expansion for Don't Look Back: covered on that page, 09-30)
 7. Outlaws: The Curse of Sherwood Forest
 8. Malediction
 9. The Barons' War 2E
@@ -101,7 +101,7 @@ Kill Team · Warcry · Warhammer Underworlds · Blood Bowl
 13. Carnivore
 14. Hallowtide
 15. Hametsu
-16. Don't Look Back
+16. Don't Look Back (done 09-30, batch 6)
 17. Devilry Afoot
 18. Spectre (Operations / Rogue Warriors / War Eternal)
 19. Cosmic Horror
@@ -145,6 +145,8 @@ Ordered by the list's signal.
 
 Tag these `army`, and mark them `big` where they are.
 
+- **Done 09-30 (batch 7, pulled forward by Matt):** Bolt Action 3E, Konflikt '47,
+  Lion Rampant 2E, Dragon Rampant 2E, Oathmark (Second Edition, Aug 2026).
 - Kings of War (with Ambush), Bolt Action 3E, Saga, Conquest: Last Argument of
   Kings
 - Oathmark, Lion Rampant 2E, Dragon Rampant 2E, Konflikt '47
