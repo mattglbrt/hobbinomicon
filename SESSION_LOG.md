@@ -4,6 +4,68 @@ Append-only. **Newest entry first.** Pre-existing planning history lives in `roa
 
 ---
 
+## 2026-09-24 (addendum) — Images, "take coming soon", the directory plan, batch 1
+
+**Three more deploys: `main` @ `e6296a9`, `ccf439a`, `bfcd907`.** The directory
+is at 23 games.
+
+### Images
+- Logos and heroes for Forbidden Psalm and Necromunda. The Ømen Tide hero is a
+  table photo from its core rules PDF. The Maleghast logo is from Taiga
+  Creative Studios, the licensed minis maker, because Chasm publishes no
+  standalone logo.
+- **New `logoInvert: true` flag** (games): a white-on-transparent logo renders
+  black on the light paper background and as-is in dark mode. Dark-ink logos
+  (Rangers, Turnip28) were recoloured white and flagged the same way.
+  Documented in CLAUDE.md.
+- Necropolis28 has no transparent wordmark publicly available: the Kickstarter
+  blocks fetches and the Patreon has none. Brawl Arcane hero still waits on
+  Matt or Brett Evans.
+- Every image came from official sources through a subagent, and each was
+  checked by eye before it went into the repo. None is AI-credited.
+
+### "My take on this one is coming soon." (Matt)
+`notPlayed` now shows that line under a "Take coming soon" label. The custom
+not-played lines on Brawl Arcane and Forbidden Psalm were removed. **Don't
+write custom ones.**
+
+### The directory plan
+Matt's master list (~140 games, `Downloads/hobbinomicon-directory-master-list.md`)
+was scored against the Search Console export, Matt's content, and
+`roadmap/games.md`, and batched into `roadmap/directory-plan.md`.
+- **Scope (Matt):** skirmish, Games Workshop, and mass battle are in. **TTRPGs
+  are out**, which parks the 5 RPGs in the Pillage-video group and Dolmenwood
+  pending Matt's call.
+- **Order:** Pillage-video games first, because Matt is making that video now.
+  **Never mention the video on a game page.**
+- **Batches of 5**, one deploy each, and Matt skims each batch first.
+- **The master list has errors:** 11 live games marked ☐, and wrong credits
+  for Forbidden Psalm, Necropolis28, and Maleghast. It is not a source.
+- Search demand is near zero for everything not yet live (the export is only
+  the top ~450 queries), so the order leans on the video, Matt's content, and
+  earlier roadmap promises.
+
+### Batch 1 live
+Greathelm, Frostgrave, Rangers of Shadow Deep, Mordheim, and Turnip28, all
+`notPlayed`. New people: Joseph A. McCullough, Malev, and Max FitzGerald. New
+studios: Modiphius and Osprey Games.
+- **Turnip28 is `army`** (Matt: "it's just not full rank and flank size").
+- **Mordheim is a card thumbnail only.** The best official photo is a 958px
+  1999 catalogue scan. It's `oop`, `hub: warhammer`, with the free Living
+  Rulebook via Broheim.
+- Frostgrave and Rangers are linked through `relatedGames`, and Turnip28 to
+  Necropolis28.
+- **Subreddits confirmed by Matt:** r/Greathelm, r/RangersofShadowDeep, and
+  r/necromunda. r/mordheim is still unconfirmed and left off.
+
+### Next
+Matt is reviewing batch 1 on his phone and desktop, including the
+inverted logos in light and dark mode. Then comes batch 2: Sword Weirdos, 1490
+DOOM, OPR Age of Fantasy: Skirmish, OPR Age of Fantasy: Quest, and Five
+Leagues from the Borderlands.
+
+---
+
 ## 2026-09-24 — Forbidden Psalm and Necromunda, gang-builder tools, guide fix
 
 **Two deploys: `main` @ `7b36b0f`, `a3d4ed4`.** Directory is at 18 games.

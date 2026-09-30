@@ -164,6 +164,13 @@ A logo that's white on transparent gets `logoInvert: true`: it renders black
 on the light paper background and as-is in dark mode (first used on Forbidden
 Psalm, 2026-09-24). Without it a white wordmark vanishes in light mode.
 
+## RPGs live on Alone in the Dungeon
+
+TTRPGs are not in the directory (Matt, 09-30), and that includes Shadowdark,
+OSE, Mörk Borg, Dolmenwood, and D&D. When a page here talks about an RPG, send
+readers to **aloneinthedungeon.com**, Matt's dedicated RPG site, rather than
+building RPG coverage here. Kal Arath is the one exception and stays live.
+
 Games designed for an 8×8 grid get `chessboard: true`, which lists them on
 `/games/chessboard/` the same way `solo: true` feeds `/games/solo/`.
 

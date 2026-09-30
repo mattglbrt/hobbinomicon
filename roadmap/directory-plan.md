@@ -10,10 +10,10 @@ folded in here).
 
 - **In:** indie and established skirmish, Games Workshop games, mass battle
   and big mainstream games (tag `format: army` / `tier: big` honestly).
-- **Out for now:** TTRPGs. That parks Shadowdark, OSE, Wolves upon the Coast,
-  D&D, Mörk Borg, Dolmenwood, Cairn, Knave, and the rest of §6. **Open call for
-  Matt**: the five RPGs in the Pillage-video group, and Dolmenwood (which was
-  already held for its new store). Kal Arath stays live either way.
+- **Out:** TTRPGs, all of them (Matt, 09-30). That covers Shadowdark, OSE,
+  Wolves upon the Coast, D&D, Mörk Borg, Dolmenwood, Cairn, Knave, and the rest
+  of §6, including the five in the Pillage video. RPG talk on the site links to
+  **aloneinthedungeon.com**, Matt's dedicated RPG site. Kal Arath stays live.
 - **Out:** the §7 watchlist, until something on it gets real traction.
 
 ## How a batch runs (5 games, one deploy)
@@ -145,10 +145,8 @@ Tag these `army`, and mark them `big` where they are.
 
 ## Needs Matt
 
-- **The RPG call.** Are the five RPGs in the Pillage video in, or out like the
-  rest of §6? What about Dolmenwood?
-- **MESBG tier** (big or indie). The One Ring page split falls away if RPGs
-  stay out.
+- **MESBG tier** (big or indie). No One Ring page split: RPGs are out
+  (09-30).
 - **Wave-3 one-liners.**
 - **A skim of each batch before deploy.**
 
