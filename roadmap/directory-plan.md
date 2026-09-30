@@ -158,7 +158,21 @@ Rounds of 8 parallel agents, committed to `dev`, deployed once at the end.
 Stopped after round 1 when the session's **web-search budget (200,
 `CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION`) ran out**. Agents must NOT work
 around it by fetching search-engine result pages (one did on Devilry Afoot;
-disclosed). Raise the limit before resuming: expect ~25-35 searches a game.
+disclosed).
+
+**Lean protocol (Matt, 09-30: keep the cap, fewer searches, "so we don't get
+wonky").** The limit stays at 200. Round 1 averaged ~25-35 searches a game.
+From round 2 onward:
+- **Hard budget of 10 `WebSearch` calls per game.** When it's spent, the agent
+  stops and reports what's missing. It does not keep hunting.
+- **Official sources first, fetched directly.** Open the publisher's site,
+  store page and rules PDF by URL (`WebFetch`), and search only to find those
+  URLs.
+- **Gaps get left out or marked *(verify)*** for Matt's review, the same rule
+  as always. A thin page that's correct beats a full one that's guessed.
+- **4 agents per round, not 8.** That's about 40 searches a round and 4 rounds
+  a session, stopping at ~170 used to leave headroom. The rounds below stay as
+  written. Each one is just split across two sessions.
 
 - **Round 1 done:** Wyrdcry, This Quar's War, Carnivore, Hallowtide, Hametsu,
   Devilry Afoot, Spectre (as `spectre-operations`). **Not done:** Repent! Ye
