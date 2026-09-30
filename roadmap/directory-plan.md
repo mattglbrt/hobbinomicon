@@ -54,6 +54,13 @@ before the video is.
   Age of Fantasy: Quest · Five Leagues from the Borderlands
 - **Batch 3:** The Doomed · plus the four highest from Wave 2 below.
 
+**Progress (09-30): batches 1–4 are live, and the directory is at 40.** Batch 2
+added Space Weirdos, Deep Below and Eric Michael Robertson (Matt). Batch 3 was
+The Doomed, Sun Rot, Bellwoken, Kingdom Death: Monster and Hobgoblin. Batch 4
+was BattleTech (+ Alpha Strike), Verrotwood, Kill Team, Warcry and
+Underworlds. **Batch 5:** Blood Bowl + Pilgrim, Guards of Traitor's Toll,
+OASIS, Scrapjacks. Space Weirdos is done, so skip it in wave 5.
+
 ### Wave 2: demand, Matt's content, and old roadmap promises
 
 - **Sun Rot**: 9 posts of Matt's, and it's the only other game with search
@@ -79,9 +86,9 @@ Kill Team · Warcry · Warhammer Underworlds · Blood Bowl
 
 ### Wave 4: indie breakouts (§4), strongest signal first
 
-1. Pilgrim: The Haunted Frontier
+1. ~~Pilgrim: The Haunted Frontier~~ (Matt, 09-30: not on the site)
 2. Guards of Traitor's Toll
-3. OASIS
+3. ~~OASIS~~ (Matt, 09-30: unknown to him, dropped)
 4. Scrapjacks
 5. Full Spectrum Dominance
 6. 1698
