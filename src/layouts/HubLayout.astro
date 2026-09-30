@@ -9,6 +9,7 @@ import ProseContent from '../components/ProseContent.astro';
 import StructuredData from '../components/StructuredData.astro';
 import YouTubeCTA from '../components/YouTubeCTA.astro';
 import FunnelSection from '../components/FunnelSection.astro';
+import GameGrid from '../components/GameGrid.astro';
 import { getHeroImage } from '../utils/getHeroImage';
 import { formatDateLong } from '../utils/formatDate';
 import type { CollectionEntry } from 'astro:content';
@@ -53,6 +54,8 @@ interface Props {
   startHere: { entry: CollectionEntry<'guides'>; href: string }[];
   news?: CollectionEntry<'news'>[];
   funnel?: { game: CollectionEntry<'games'>; reason: string }[];
+  /** Directory entries that carry this hub (`hub:` on the game). */
+  hubGames?: CollectionEntry<'games'>[];
   game?: CollectionEntry<'games'> | null;
   channelUrl?: string;
   ctaText?: string;
@@ -72,6 +75,7 @@ const {
   startHere,
   news = [],
   funnel = [],
+  hubGames = [],
   game = null,
   channelUrl,
   ctaText,
@@ -223,6 +227,15 @@ const totalGuides = new Set(
               </div>
             ))}
           </div>
+        </section>
+      )}
+
+      {hubGames.length > 0 && (
+        <section class="mt-20 pt-12 border-t border-ink/10 dark:border-ink-dark/10">
+          <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mb-8">
+            {title} games in the directory
+          </h2>
+          <GameGrid games={hubGames} />
         </section>
       )}
 
