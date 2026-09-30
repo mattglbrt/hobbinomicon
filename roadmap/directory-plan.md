@@ -75,9 +75,9 @@ OASIS, Scrapjacks. Space Weirdos is done, so skip it in wave 5.
 - **MESBG**: needs Matt's tier call first. Not on the master list.
 - **Flames of Orion: Matt wants it on the site now** (09-30). It's being
   built without the one-liner, as a coming-soon take.
-- **Wave 3 games** (Gloam, Hag 28, Midguard, Rumpus, Cyber
-  Savages, Alien Zoo Keeper, Scrungaloids): these still need Matt's one-liner
-  each. Build them when he's written it.
+- **Wave 3 games** (Gloam, Hag 28, Midguard, Rumpus, Cyber Savages, Alien Zoo
+  Keeper, Scrungaloids): Matt, 09-30, "add all the wave 3 game with coming
+  soon". They're built with no one-liner, as coming-soon takes.
 
 ### Wave 3: Games Workshop (feeds `/warhammer/`)
 
@@ -182,7 +182,26 @@ From round 2 onward:
 - **Round 2:** Repent! Ye Foolish Gods, Cosmic Horror, Sector Alix, Flames of
   Orion, Of Oil & Iron, Zeo Genesis, Steel Psalm, Mars: Code Aurora, FIRE:
   Modern Combat.
-- **Round 3:** Rapture, Eldfall Chronicles, Here's the Ruckus, The Last Mile,
+- **Round 2 done (09-30, lean, 13 searches for 5):** Repent! Ye Foolish Gods,
+  Cosmic Horror, Of Oil & Iron, Flames of Orion. Sector AL-IX was built, then
+  **removed by Matt** ("remove sector al-ix"). Keep it out.
+- **Round 2b done (09-30, 26 searches):** Zeo Genesis, Mars: Code Aurora, FIRE:
+  Modern Combat, Rapture. **Steel Psalm failed the release rule** (the 2024
+  Kickstarter hasn't delivered and the books are still in production), so it
+  wasn't built. Recheck it when BackerKit ships.
+- **Release rule (Matt, 09-30):** a game lists only if its full rules are out
+  now. See CLAUDE.md, "Only released games". Every agent brief checks it.
+  Drafted under it: Hallowtide, Outlaws, Cosmic Horror. Bellwoken passes
+  (delivered and complete, Matt).
+- **Added by Matt 09-30, "coming soon" pages (no one-liner needed):** the wave-3
+  games Gloam, Hag 28, Midguard, Rumpus, Cyber Savages, Alien Zoo Keeper,
+  Scrungaloids.
+- **Added by Matt 09-30, Snarling Badger's other games** (owns
+  `snarling-badger-studios`): Space Station Zero, Deth Wizards, Majestic 13,
+  Reign in Hell, Reign in Iron. Identity-check each one. Any that turns out to
+  be an RPG gets dropped under the RPG rule.
+- No `6mm` tag (Matt, 09-30).
+- **Round 3:** Rapture (moved to 2b), Eldfall Chronicles, Here's the Ruckus, The Last Mile,
   Malifaux 4E (Wyrd, owner of the studio page), Marvel: Crisis Protocol (owns
   `atomic-mass-games`), Star Wars: Shatterpoint, Warcrow (corvus-belli).
 - **Round 4:** Halo: Flashpoint, Fallout: Wasteland Warfare (modiphius), Gundam
