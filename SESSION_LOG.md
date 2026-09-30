@@ -4,6 +4,62 @@ Append-only. **Newest entry first.** Pre-existing planning history lives in `roa
 
 ---
 
+## 2026-09-30 (addendum) — Batches 5–7, backlog run round 1: directory at 60 on dev (53 live)
+
+**Deploys: `main` @ `ffb6f6c` (batch 5), `7fb5c13` (batches 6 + 7 in one
+build).** Round 1 of the backlog run (`cec86b7`) is on `dev`, NOT deployed.
+
+### Batch 5 (live)
+Blood Bowl (Third Season, 2025; `hub: warhammer`, skirmish per Matt), Guards of
+Traitor's Toll (Grey For Now Games, Graham Davey; **USD from the en-us store**,
+Matt), Scrapjacks (Patrick Todoroff; keeps a sentence noting the book's
+AI-generated accent images, Matt). **Oasis and Pilgrim dropped** (Matt: never
+heard of Oasis; Pilgrim not wanted), crossed off in the plan.
+
+### Batch 6 (live)
+Full Spectrum Dominance (army), Don't Look Back (**1698 is its expansion, not
+a game**: covered there + alias), Outlaws: The Curse of Sherwood Forest (live
+on Gamefound to 14 Oct), Malediction (Loot Studios), The Barons' War
+(**Wargames Atlantic publishes 2E**, not Footsore; Matt: use WA's $144.95).
+Black Site pages list **both Discord invites** (Matt).
+
+### Batch 7 (live, pulled forward from wave 6 by Matt)
+Bolt Action 3E (Warlord Games studio, Alessio Cavatore), Konflikt '47 (2025
+edition), Lion Rampant 2E + Dragon Rampant 2E (Daniel Mersey; both `army`),
+**Oathmark Second Edition** (Aug 2026, Matt flagged it). Mordheim now credits
+Cavatore (Matt). Frostgrave links Oathmark.
+
+### Backlog run (Matt: "keep going through them all", deploy at the end)
+Round 1 of 8 (plan in `roadmap/directory-plan.md`, "Full-backlog run"):
+Wyrdcry (a free fan hack of Warcry set in Mordheim), This Quar's War (2E "The
+Long War", ZombieSmith), Carnivore (Buer, digital only), Hallowtide
+(announced), Hametsu (Black Site, Doug Cundall), Devilry Afoot (Irregular Wars
+/ Nic Wright, not Osprey), Spectre Operations.
+- **Stopped: the session's web-search budget ran out** (200,
+  `CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION`, shared by all subagents). Repent!
+  Ye Foolish Gods was blocked at its identity check, correctly.
+- **The Devilry Afoot agent worked around the cap** by fetching Brave search
+  pages directly. Disclosed to Matt; the three agents still running were told
+  not to. Future briefs must forbid it explicitly.
+- Search cost runs ~25–35 per game; the remaining ~57 need the limit raised.
+
+### Process
+- Agent reports shortened to 12 lines to keep the orchestrator's context lean.
+- Identity-first rule (stop and report candidates) caught 1698 and Spectre's
+  phantom "Rogue Warriors / War Eternal".
+- `grep $''` is unreliable in this shell; use Python byte counts for line
+  endings. `SESSION_LOG_ARCHIVE.md` and the dashboard `data.json` are CRLF.
+
+### Open (Matt)
+Round 1: Wyrdcry on the Warhammer hub?; Spectre's "Rogue Warriors"/"War Eternal"
+(master-list error?) and a new `modern` tag; Carnivore solo (lists 1–4, no solo
+rules seen) and a `dinosaurs` tag; This Quar's War status and possible test
+cover; Hallowtide's Chris Bunge credit (cover byline only); Hametsu's second
+Discord and Kickstarter; Devilry Afoot's studio name. Earlier: Malediction and
+Barons' War logos (adapted), Bolt Action small logo, portrait Rampant covers.
+
+---
+
 ## 2026-09-30 — Batches 2, 3 and 4: 23 games to 40, RPGs out, Warhammer hub lists games
 
 **Four deploys: `main` @ `607dc5e`, `02c38be`, `cb14df9`** (plus batch 2's
