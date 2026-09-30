@@ -1,22 +1,19 @@
-# STATUS — The Hobbinomicon · updated 2026-09-30 (late)
+# STATUS — The Hobbinomicon · updated 2026-09-30 (evening)
 
 ## Now
-**Directory at 53 games live, 60 on `dev`.** Batches 2 to 7 went live today (`main` @ `7fb5c13`). **Backlog run round 1** (7 games) is committed on `dev` (`cec86b7`) but **not deployed**. The run plan is in `roadmap/directory-plan.md` under "Full-backlog run": rounds 2 to 8, about 57 games, with the studio page each round's designated agent creates.
+**Directory: 60 live, 102 on `dev` (not deployed).** Round 1 went live this morning (`main` @ `1c8f26d`). Since then, rounds 2-5, wave 3, Snarling Badger's five and Gundam Assemble are all committed on `dev` (last: `7c39e6b`). Everything builds, and no internal links are dead. **Deploy once, when Matt says**, with one `dev` → `main` merge.
 
-**The run stopped because the session's web-search budget ran out** (200, `CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION`, shared by every subagent). Each game costs about 25–35 searches. **Agents must never work around the cap by fetching search-engine pages.** One did on Devilry Afoot; it was disclosed and stopped.
-
-Rules unchanged: sourced or left out, official images checked by eye, "My take on this one is coming soon." for pages without a take, never mention the video, USD prices, and identity check first. RPGs link to aloneinthedungeon.com. Bellwoken discloses the Yellow Imp partnership.
+**Lean protocol:** 10 searches per game, and the cap stays at 200. A game averages about 3.5. This session used about 155. **New rule (Matt, 09-30):** a game only lists once its full rules are out (see CLAUDE.md, "Only released games"). Hallowtide, Outlaws and Cosmic Horror are drafts, and the two live URLs 302 to Black Site on the next deploy. Gundam Assemble is Matt's one exception (`status: announced`).
 
 Newsletter on Substack, first issue **06 Oct**. `npm run refresh-vlogs` is load-bearing.
 
 ## Next (ranked)
-1. **Matt: raise `CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION`** (1,500+ covers the rest), then start a new session and **resume at round 2**. Deploy once at the end, including round 1.
-2. **Matt: newsletter photos** (`hero.jpg`, `workbench.jpg`) and **Substack consolidation under `mattglbrt`** (transfer, never delete), before **06 Oct**.
-3. **Matt: manual review of every game** once the run finishes. The round 1 questions are below.
-4. **Outlaws:** update the "on Gamefound now" line after **14 Oct**.
-5. **Paint the Royal Herald.** BONEZONE closes **31 Oct 23:59 GMT**.
-6. Description pass for the new game videos (`youtube-auth` first, Hobbinomicon channel). Retag the 9 pages wrongly tagged `ttrpg`.
-7. Necropolis28 update at Kickstarter launch. Brawl Arcane 28 and Mordheim heroes. Events Manager conversion and consent banner. GSC Coverage weekly.
+1. **Rounds 6-8** in a fresh session (about 25 games, listed in `roadmap/directory-plan.md`). Then **deploy**.
+2. **Matt: newsletter photos** and **Substack consolidation**, before 06 Oct.
+3. **Matt: skim the new pages.** Questions are in the session log and the plan. The big ones: Here's the Ruckus (WiPrime-only rules, does it pass?), Rumpus / Alien Zoo Keeper / Scrungaloids (need links), and the Gundam hero with baked-in text.
+4. **After 31 Oct:** flip Gundam Assemble to `active`. Recheck Hallowtide (preorder 30 Oct) and Steel Psalm.
+5. Outlaws Gamefound ends 14 Oct. It stays a draft until the rules ship.
+6. Paint the Royal Herald (BONEZONE closes 31 Oct). Run the description pass. Retag the 9 wrongly tagged `ttrpg` pages.
 
 ## Blockers
 - **The web-search budget** (above). Nothing else blocks the run.
