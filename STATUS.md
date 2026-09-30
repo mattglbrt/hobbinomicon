@@ -1,37 +1,46 @@
-# STATUS — The Hobbinomicon · updated 2026-09-30
+# STATUS — The Hobbinomicon · updated 2026-09-30 (late)
 
 ## Now
-**Directory at 40 games.** Batches 2, 3 and 4 went live 09-30 (`main` @ `cb14df9`, four deploys). The plan is `roadmap/directory-plan.md`: batches of 5, one deploy each, Matt skims first. **Never mention the video on a game page.** No-take pages say **"My take on this one is coming soon."** (`notPlayed: true`). Every fact is sourced or left out, and every image is official and checked by eye.
+**Directory at 53 games live, 60 on `dev`.** Batches 2 to 7 went live today (`main` @ `7fb5c13`). **Backlog run round 1** (7 games) is committed on `dev` (`cec86b7`) but **not deployed**. The run plan is in `roadmap/directory-plan.md` under "Full-backlog run": rounds 2 to 8, about 57 games, with the studio page each round's designated agent creates.
 
-**RPGs are out of the directory (Matt, 09-30).** RPG talk links to aloneinthedungeon.com (CLAUDE.md). `/warhammer/` now lists every live `hub: warhammer` game.
+**The run stopped because the session's web-search budget ran out** (200, `CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION`, shared by every subagent). Each game costs about 25–35 searches. **Agents must never work around the cap by fetching search-engine pages.** One did on Devilry Afoot; it was disclosed and stopped.
 
-**Bellwoken:** Matt is an official merchant partner. The page discloses it and links the Yellow Imp homepage until yellowimp.com launches, then should switch to the Bellwoken category.
+Rules unchanged: sourced or left out, official images checked by eye, "My take on this one is coming soon." for pages without a take, never mention the video, USD prices, and identity check first. RPGs link to aloneinthedungeon.com. Bellwoken discloses the Yellow Imp partnership.
 
-Still true: newsletter on Substack, first issue **06 Oct**. `npm run refresh-vlogs` is load-bearing.
+Newsletter on Substack, first issue **06 Oct**. `npm run refresh-vlogs` is load-bearing.
 
 ## Next (ranked)
-1. **Matt: the two newsletter photos** (`hero.jpg`, `workbench.jpg`) and **Substack consolidation under `mattglbrt`** (transfer, never delete) before issue #1 on **06 Oct**.
-2. **Matt: skim batches 2–4** on phone and desktop. Check the logos marked `logoInvert` (Five Leagues, Space Weirdos, Hobgoblin, Verrotwood) in light and dark mode.
-3. **Batch 5:** Blood Bowl + the top of wave 4 (Pilgrim, Guards of Traitor's Toll, OASIS, Scrapjacks).
-4. **Matt's batch 4 answers:** the GW hero crops (Warcry, Kill Team), BattleTech's "keep list" line and skirmish vs army, GW prices and store links, an Underworlds take, the Verrotwood 2027 hardback publisher, and whether Ana Polanšćak gets a people page.
+1. **Matt: raise `CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION`** (1,500+ covers the rest), then start a new session and **resume at round 2**. Deploy once at the end, including round 1.
+2. **Matt: newsletter photos** (`hero.jpg`, `workbench.jpg`) and **Substack consolidation under `mattglbrt`** (transfer, never delete), before **06 Oct**.
+3. **Matt: manual review of every game** once the run finishes. The round 1 questions are below.
+4. **Outlaws:** update the "on Gamefound now" line after **14 Oct**.
 5. **Paint the Royal Herald.** BONEZONE closes **31 Oct 23:59 GMT**.
-6. **Description pass for the new game videos:** Infinity x2, Necropolis board, three Necromunda. `npm run youtube-auth` first, with the Hobbinomicon channel at the consent screen.
-7. **Housekeeping:** retag the 9 pages wrongly tagged `ttrpg` (KDM, Mage Knight, the Mordheim rant, skeletons). Consider pointing the solo/co-op guide's RPG section at AITD.
-8. Necropolis28 update and news post when its Kickstarter launches. Brawl Arcane 28 and Mordheim heroes. Events Manager conversion and consent banner. GSC Coverage weekly, where `/games/hobgoblin` should now clear.
+6. Description pass for the new game videos (`youtube-auth` first, Hobbinomicon channel). Retag the 9 pages wrongly tagged `ttrpg`.
+7. Necropolis28 update at Kickstarter launch. Brawl Arcane 28 and Mordheim heroes. Events Manager conversion and consent banner. GSC Coverage weekly.
 
 ## Blockers
-- Matt: wave-3 game one-liners (8 games), MESBG tier call, and identities for the 7 *(verify)* entries in wave 4.
+- **The web-search budget** (above). Nothing else blocks the run.
+- Matt: 7 *(verify)* identities, 8 wave-3 one-liners, MESBG tier. Spearhead and The Old World are on hold.
 - YouTube OAuth re-auth before any write. **The consent screen must be given the Hobbinomicon channel.**
 - Comments moderation has no pending-notification (manual D1 SQL only).
 
 ## Recently done
-- 09-30 — **Batch 4:** BattleTech (+ Alpha Strike), Verrotwood, Kill Team, Warcry, Warhammer Underworlds. **`/warhammer/` games row.**
-- 09-30 — **Batch 3:** The Doomed, Sun Rot, Bellwoken, Kingdom Death: Monster (**Matt's take**), Hobgoblin (solo, reclaims the legacy URL). **`sun-rot` tag** on 5 posts.
-- 09-30 — **Batch 2:** Sword Weirdos, 1490 DOOM, AoF Skirmish, AoF Quest, Five Leagues, plus Space Weirdos, Deep Below and Eric Michael Robertson. The solo/co-op guide's cards now point at game pages.
-- 09-30 — **RPG call:** out, and linked to AITD from 11 RPG pages, the About page and Kal Arath. Vlog check: nothing missing from the site.
-- 09-24 — Batch 1 live, the directory plan, "take coming soon", `logoInvert`.
+- 09-30 — **Backlog round 1** (on `dev`): Wyrdcry, This Quar's War, Carnivore, Hallowtide, Hametsu, Devilry Afoot, Spectre Operations.
+- 09-30 — **Batch 7:** Bolt Action, Konflikt '47, Lion Rampant, Dragon Rampant, Oathmark 2E. Cavatore credited on Mordheim.
+- 09-30 — **Batch 6:** Full Spectrum Dominance, Don't Look Back (+1698), Outlaws, Malediction, The Barons' War.
+- 09-30 — **Batch 5:** Blood Bowl, Guards of Traitor's Toll (USD), Scrapjacks. Oasis and Pilgrim dropped.
+- 09-30 — Batches 2–4, the RPG call (out; linked to AITD), the KDM take, the `sun-rot` tag, and the `/warhammer/` games row.
 
-## Open questions
-- r/mordheim is unconfirmed (Reddit blocks automated checks). Neither the Sword Weirdos nor the Space Weirdos Kickstarter URL is verified (blocked), and Matt said to keep them.
-- **`--verify-urls` validates local `dist/`, not production.** The guide-URL rule lives in four places.
-- Carried: `pinned: true` is dead on the homepage; embedded non-vlog thumbnails come from `i.ytimg.com`; `.md` GEO output emits raw asset paths and JSX expressions; the funnel threshold may want revisiting at 40 games; every build rewrites `src/data/youtube-stats.json` (revert before committing).
+## Open questions (Matt, for the review)
+- **Round 1:**
+  - Wyrdcry (a Warcry fan hack): put it on the Warhammer hub?
+  - Spectre's "Rogue Warriors" and "War Eternal" aren't Spectre products (master-list error?), and there's a new `modern` tag.
+  - Carnivore: solo or not? Also, a `dinosaurs` tag?
+  - This Quar's War: status, and the hero may be a test cover.
+  - Hallowtide: Chris Bunge's credit comes from the cover byline only.
+  - Hametsu: a second Discord invite, and was there a Kickstarter?
+  - Devilry Afoot: the studio name.
+- **Earlier:**
+  - Malediction and Barons' War logos (adapted), the small Bolt Action logo, and the portrait Rampant covers.
+  - GW hero crops, BattleTech's "keep list" line and format, GW prices, an Underworlds take, the Verrotwood publisher, and an Ana Polanšćak people page.
+- Carried: r/mordheim unconfirmed. `--verify-urls` checks `dist/` only. Every build rewrites `youtube-stats.json` (revert before committing). The funnel threshold may want revisiting at 60 games.

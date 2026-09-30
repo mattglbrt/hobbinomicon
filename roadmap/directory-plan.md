@@ -152,6 +152,54 @@ Tag these `army`, and mark them `big` where they are.
 - Oathmark, Lion Rampant 2E, Dragon Rampant 2E, Konflikt '47
 - A Song of Ice and Fire, Firefight, Argatoria, Fantastic Battles
 
+## Full-backlog run (started 09-30, Matt: "keep going through them all")
+
+Rounds of 8 parallel agents, committed to `dev`, deployed once at the end.
+Stopped after round 1 when the session's **web-search budget (200,
+`CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION`) ran out**. Agents must NOT work
+around it by fetching search-engine result pages (one did on Devilry Afoot;
+disclosed).
+
+**Lean protocol (Matt, 09-30: keep the cap, fewer searches, "so we don't get
+wonky").** The limit stays at 200. Round 1 averaged ~25-35 searches a game.
+From round 2 onward:
+- **Hard budget of 10 `WebSearch` calls per game.** When it's spent, the agent
+  stops and reports what's missing. It does not keep hunting.
+- **Official sources first, fetched directly.** Open the publisher's site,
+  store page and rules PDF by URL (`WebFetch`), and search only to find those
+  URLs.
+- **Gaps get left out or marked *(verify)*** for Matt's review, the same rule
+  as always. A thin page that's correct beats a full one that's guessed.
+- **4 agents per round, not 8.** That's about 40 searches a round and 4 rounds
+  a session, stopping at ~170 used to leave headroom. The rounds below stay as
+  written. Each one is just split across two sessions.
+
+- **Round 1 done:** Wyrdcry, This Quar's War, Carnivore, Hallowtide, Hametsu,
+  Devilry Afoot, Spectre (as `spectre-operations`). **Not done:** Repent! Ye
+  Foolish Gods (blocked by the search cap).
+- **Round 2:** Repent! Ye Foolish Gods, Cosmic Horror, Sector Alix, Flames of
+  Orion, Of Oil & Iron, Zeo Genesis, Steel Psalm, Mars: Code Aurora, FIRE:
+  Modern Combat.
+- **Round 3:** Rapture, Eldfall Chronicles, Here's the Ruckus, The Last Mile,
+  Malifaux 4E (Wyrd, owner of the studio page), Marvel: Crisis Protocol (owns
+  `atomic-mass-games`), Star Wars: Shatterpoint, Warcrow (corvus-belli).
+- **Round 4:** Halo: Flashpoint, Fallout: Wasteland Warfare (modiphius), Gundam
+  Assemble, Stargrave, The Silver Bayonet, Gaslands: Refuelled, When
+  Nightmares Come, Zona Alfa (osprey-games).
+- **Round 5:** Moonstone, Carnevale, Burrows & Badgers, Blood & Plunder, Port
+  Royal, Five Parsecs from Home (modiphius), Grimdark Future: Firefight, Star
+  Quest (one-page-rules).
+- **Round 6:** Song of Blades and Heroes, Sellswords & Spellslingers, This Is
+  Not a Test, Deadzone (owns `mantic-games`), The Walking Dead: All Out War,
+  Warcrow Adventures, Elder Scrolls: Call to Arms, XCOM.
+- **Round 7:** Cyberpunk RED: Combat Zone, Bushido, Conquest: First Blood (owns
+  `para-bellum`), Blood Eagle, Brethren, Ravenfeast, Sludge, Guild Ball.
+- **Round 8:** DreadBall, X-Wing, Kings of War, Saga, Conquest: Last Argument
+  of Kings, A Song of Ice and Fire, Firefight (Mantic; not OPR's), Argatoria,
+  Fantastic Battles.
+- Still skipped, need Matt: the 7 *(verify)* entries, the 8 wave-3 one-liner
+  games, MESBG tier, Spearhead + The Old World (on hold).
+
 ## Needs Matt
 
 - **MESBG tier** (big or indie). No One Ring page split: RPGs are out
