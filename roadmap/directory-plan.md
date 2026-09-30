@@ -212,6 +212,13 @@ From round 2 onward:
   Malifaux 4E, Marvel: Crisis Protocol, Star Wars: Shatterpoint, Warcrow.
   New studios: wyrd-miniatures, atomic-mass-games, freecompany,
   wargames-illustrated.
+- **Round 4 done (09-30, 29 searches):** Halo: Flashpoint (new `mantic-games`
+  studio), Fallout: Wasteland Warfare (1E; 2E is on preorder and gets a
+  subsection), Stargrave, The Silver Bayonet, Gaslands: Refuelled (3E is in
+  beta for summer 2027, so revisit the slug then), When Nightmares Come, Zona
+  Alfa. **Gundam Assemble failed the release rule** (everything is preorder;
+  first retail is 31 Oct 2026, and the rules are already free). **Re-run it
+  after 31 Oct.**
 - **Round 3:** Rapture (moved to 2b), Eldfall Chronicles, Here's the Ruckus, The Last Mile,
   Malifaux 4E (Wyrd, owner of the studio page), Marvel: Crisis Protocol (owns
   `atomic-mass-games`), Star Wars: Shatterpoint, Warcrow (corvus-belli).
