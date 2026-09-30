@@ -34,7 +34,7 @@ This is intentional — keep it.
 - **`scripts/lib/prompt-tags.js`** — the tag prompt. **Tagging is manual**
   (Matt, 07-28): keyword matching only *prefills a suggestion*, and nothing
   reaches frontmatter without someone pressing Enter on it. Enter accepts the
-  suggestion, `?` lists the 69 live tags by category, `s` leaves the post
+  suggestion, `?` lists the live tags by category, `s` leaves the post
   untagged. Input is validated against `src/data/tags.json`; a retired tag is
   rejected with the tag it became (read out of `public/_redirects`, which is
   the canonical "this became that" record), and a near-miss gets a
@@ -49,7 +49,7 @@ This is intentional — keep it.
   CI, or `--no-prompt`) it is skipped and the post is created with **no** tags
   rather than guessed ones. That's safe for the same reason transcripts are:
   Netlify-built vlog posts are ephemeral, and the committed local file wins.
-- **`src/data/tag-keywords.json`** — suggestion keywords, keyed by the 69 live
+- **`src/data/tag-keywords.json`** — suggestion keywords, keyed by the live
   tags and nothing else. Read the `_rules` before editing. Matching is a plain
   substring count with **no word boundaries**, so a keyword that's a substring
   of a common word fires on every video — `ork` used to match "work" 903 times
