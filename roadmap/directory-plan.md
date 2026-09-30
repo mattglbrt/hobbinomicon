@@ -202,10 +202,9 @@ From round 2 onward:
   tarot), so it's out under the RPG rule. **Rumpus, Alien Zoo Keeper and
   Scrungaloids couldn't be identified**, so they need a link or designer name
   from Matt. (Rumpus may be *Here's the Ruckus*, which is already in round 3.)
-- **Added by Matt 09-30, Snarling Badger's other games** (owns
-  `snarling-badger-studios`): Space Station Zero, Deth Wizards, Majestic 13,
-  Reign in Hell, Reign in Iron. Identity-check each one. Any that turns out to
-  be an RPG gets dropped under the RPG rule.
+- **Snarling Badger round done (09-30, 6 searches for 5):** Reign in Hell,
+  Space Station Zero, Majestic 13, Deth Wizards and Reign in Iron all built
+  and all pass the release rule. The studio page lists the full run.
 - No `6mm` tag (Matt, 09-30).
 - **Round 3:** Rapture (moved to 2b), Eldfall Chronicles, Here's the Ruckus, The Last Mile,
   Malifaux 4E (Wyrd, owner of the studio page), Marvel: Crisis Protocol (owns
