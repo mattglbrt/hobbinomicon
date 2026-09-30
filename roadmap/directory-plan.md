@@ -196,6 +196,12 @@ From round 2 onward:
 - **Added by Matt 09-30, "coming soon" pages (no one-liner needed):** the wave-3
   games Gloam, Hag 28, Midguard, Rumpus, Cyber Savages, Alien Zoo Keeper,
   Scrungaloids.
+- **Wave-3 round (09-30, 27 searches):** built Hag28, Midgard Heroic Battles
+  (the list's "Midguard"; slug `midgard` picks up Matt's midgard guides) and
+  Cyber Savage (the list's "Cyber Savages"). **Gloam is an RPG** (Sam Helms,
+  tarot), so it's out under the RPG rule. **Rumpus, Alien Zoo Keeper and
+  Scrungaloids couldn't be identified**, so they need a link or designer name
+  from Matt. (Rumpus may be *Here's the Ruckus*, which is already in round 3.)
 - **Added by Matt 09-30, Snarling Badger's other games** (owns
   `snarling-badger-studios`): Space Station Zero, Deth Wizards, Majestic 13,
   Reign in Hell, Reign in Iron. Identity-check each one. Any that turns out to
