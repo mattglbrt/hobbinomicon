@@ -206,6 +206,12 @@ From round 2 onward:
   Space Station Zero, Majestic 13, Deth Wizards and Reign in Iron all built
   and all pass the release rule. The studio page lists the full run.
 - No `6mm` tag (Matt, 09-30).
+- **Round 3 done (09-30, 25 searches):** Eldfall Chronicles, Here's the Ruckus
+  (Wi / Mike Peters; the rules are WiPrime-only now, so Matt should confirm
+  it passes), Last Mile (Black Site zine; Matt: keep it, format narrative),
+  Malifaux 4E, Marvel: Crisis Protocol, Star Wars: Shatterpoint, Warcrow.
+  New studios: wyrd-miniatures, atomic-mass-games, freecompany,
+  wargames-illustrated.
 - **Round 3:** Rapture (moved to 2b), Eldfall Chronicles, Here's the Ruckus, The Last Mile,
   Malifaux 4E (Wyrd, owner of the studio page), Marvel: Crisis Protocol (owns
   `atomic-mass-games`), Star Wars: Shatterpoint, Warcrow (corvus-belli).
