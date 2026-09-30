@@ -5,6 +5,8 @@
 
 Games without Matt's take say **"My take on this one is coming soon."** (`notPlayed: true`, no custom lines). White logos use `logoInvert`. Every page is researched with names sourced or left out, and every image comes from official sources, checked by eye, with no AI art.
 
+**RPGs are out of the directory (Matt, 09-30).** When the site talks about RPGs, it links to aloneinthedungeon.com.
+
 Still true: newsletter on Substack, first issue **06 Oct**. `npm run refresh-vlogs` is load-bearing.
 
 ## Next (ranked)
@@ -20,7 +22,6 @@ Still true: newsletter on Substack, first issue **06 Oct**. `npm run refresh-vlo
 10. GSC Coverage weekly. Matt's calls in `roadmap/rebuild/PROGRESS.md`. Hero images for Gloam and DWARF.
 
 ## Blockers
-- **Matt: the RPG call.** Shadowdark, OSE, Wolves upon the Coast, D&D, and Mörk Borg are in the Pillage video, but RPGs are out of scope. Also Dolmenwood (held for its new store anyway).
 - Matt: wave-3 game one-liners, MESBG tier call.
 - YouTube OAuth re-auth before any write. **The consent screen must be given the Hobbinomicon channel.**
 - Comments moderation has no pending-notification (manual D1 SQL only).
