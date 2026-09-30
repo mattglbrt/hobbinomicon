@@ -23,7 +23,13 @@ const PLANNED: Partial<Record<(typeof SYSTEM_ORDER)[number], string[]>> = {
   '40k': ['a Khorne Daemon army'],
 };
 
-const gameSlugs = new Set((await getCollection('games')).map((g) => g.id));
+const allGames = await getCollection('games');
+const gameSlugs = new Set(allGames.map((g) => g.id));
+// Game pages that opt in with `hub: warhammer`. Drafts build no page, so a
+// card for one would be a dead link.
+const hubGames = allGames
+  .filter((g) => g.data.hub === 'warhammer' && !g.data.draft)
+  .sort((a, b) => a.data.title.localeCompare(b.data.title));
 const guides = (await getGuides()).filter((g) => g.data.hub === 'warhammer');
 const link = (entry: (typeof guides)[number]) => ({ entry, href: guideUrlWith(entry, gameSlugs) });
 
@@ -58,6 +64,7 @@ const news = (await getCollection('news', ({ data }) => !data.draft))
   groups={groups}
   startHere={startHere}
   news={news}
+  hubGames={hubGames}
   ctaText="More Warhammer on YouTube"
 >
   {/* MATT: your words go here — what you are painting and why anyone landing
