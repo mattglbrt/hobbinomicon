@@ -237,6 +237,16 @@ From round 2 onward:
 - **Round 8:** DreadBall, X-Wing, Kings of War, Saga, Conquest: Last Argument
   of Kings, A Song of Ice and Fire, Firefight (Mantic; not OPR's), Argatoria,
   Fantastic Battles.
+- **Rounds 6-8 done (10-01, about 95 searches for 25):** all built except
+  **XCOM**, which is *XCOM: The Miniatures Game* (Modiphius). It's a preorder
+  shipping January 2027 with only a preview rulebook, so it fails the release
+  rule. Recheck in January 2027, slug `xcom-the-miniatures-game`, related to
+  Five Parsecs. Out of print: DreadBall and X-Wing (the X-Wing Alliance runs
+  it now). Guild Ball and The Walking Dead: All Out War are back in print, so
+  they're `active`. Sludge turned out to be Sean Sutter's black-powder army
+  game (Metal King), not sci-fi. Firefight's slug is `firefight-mantic`.
+  Backlog ideas the agents found: Fantastic Scuffles (Irregular Wars), Song of
+  Drums and Shakos, Flying Lead (Ganesha).
 - Still skipped, need Matt: the 7 *(verify)* entries, the 8 wave-3 one-liner
   games, MESBG tier, Spearhead + The Old World (on hold).
 
