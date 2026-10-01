@@ -73,9 +73,11 @@ OASIS, Scrapjacks. Space Weirdos is done, so skip it in wave 5.
 - **BattleTech / Alpha Strike**: 2 posts, and a big mainstream on-ramp.
 - **Verrotwood**: Gardens of Hecate. Matt owns the Kickstarter minis.
 - **MESBG**: needs Matt's tier call first. Not on the master list.
-- **Wave 3 games** (Flames of Orion, Gloam, Hag 28, Midguard, Rumpus, Cyber
-  Savages, Alien Zoo Keeper, Scrungaloids): these still need Matt's one-liner
-  each. Build them when he's written it.
+- **Flames of Orion: Matt wants it on the site now** (09-30). It's being
+  built without the one-liner, as a coming-soon take.
+- **Wave 3 games** (Gloam, Hag 28, Midguard, Rumpus, Cyber Savages, Alien Zoo
+  Keeper, Scrungaloids): Matt, 09-30, "add all the wave 3 game with coming
+  soon". They're built with no one-liner, as coming-soon takes.
 
 ### Wave 3: Games Workshop (feeds `/warhammer/`)
 
@@ -180,7 +182,45 @@ From round 2 onward:
 - **Round 2:** Repent! Ye Foolish Gods, Cosmic Horror, Sector Alix, Flames of
   Orion, Of Oil & Iron, Zeo Genesis, Steel Psalm, Mars: Code Aurora, FIRE:
   Modern Combat.
-- **Round 3:** Rapture, Eldfall Chronicles, Here's the Ruckus, The Last Mile,
+- **Round 2 done (09-30, lean, 13 searches for 5):** Repent! Ye Foolish Gods,
+  Cosmic Horror, Of Oil & Iron, Flames of Orion. Sector AL-IX was built, then
+  **removed by Matt** ("remove sector al-ix"). Keep it out.
+- **Round 2b done (09-30, 26 searches):** Zeo Genesis, Mars: Code Aurora, FIRE:
+  Modern Combat, Rapture. **Steel Psalm failed the release rule** (the 2024
+  Kickstarter hasn't delivered and the books are still in production), so it
+  wasn't built. Recheck it when BackerKit ships.
+- **Release rule (Matt, 09-30):** a game lists only if its full rules are out
+  now. See CLAUDE.md, "Only released games". Every agent brief checks it.
+  Drafted under it: Hallowtide, Outlaws, Cosmic Horror. Bellwoken passes
+  (delivered and complete, Matt).
+- **Added by Matt 09-30, "coming soon" pages (no one-liner needed):** the wave-3
+  games Gloam, Hag 28, Midguard, Rumpus, Cyber Savages, Alien Zoo Keeper,
+  Scrungaloids.
+- **Wave-3 round (09-30, 27 searches):** built Hag28, Midgard Heroic Battles
+  (the list's "Midguard"; slug `midgard` picks up Matt's midgard guides) and
+  Cyber Savage (the list's "Cyber Savages"). **Gloam is an RPG** (Sam Helms,
+  tarot), so it's out under the RPG rule. **Rumpus, Alien Zoo Keeper and
+  Scrungaloids couldn't be identified**, so they need a link or designer name
+  from Matt. (Rumpus may be *Here's the Ruckus*, which is already in round 3.)
+- **Snarling Badger round done (09-30, 6 searches for 5):** Reign in Hell,
+  Space Station Zero, Majestic 13, Deth Wizards and Reign in Iron all built
+  and all pass the release rule. The studio page lists the full run.
+- No `6mm` tag (Matt, 09-30).
+- **Round 3 done (09-30, 25 searches):** Eldfall Chronicles, Here's the Ruckus
+  (Wi / Mike Peters; the rules are WiPrime-only now, so Matt should confirm
+  it passes), Last Mile (Black Site zine; Matt: keep it, format narrative),
+  Malifaux 4E, Marvel: Crisis Protocol, Star Wars: Shatterpoint, Warcrow.
+  New studios: wyrd-miniatures, atomic-mass-games, freecompany,
+  wargames-illustrated.
+- **Round 4 done (09-30, 29 searches):** Halo: Flashpoint (new `mantic-games`
+  studio), Fallout: Wasteland Warfare (1E; 2E is on preorder and gets a
+  subsection), Stargrave, The Silver Bayonet, Gaslands: Refuelled (3E is in
+  beta for summer 2027, so revisit the slug then), When Nightmares Come, Zona
+  Alfa. **Gundam Assemble failed the release rule** (everything is preorder;
+  first retail is 31 Oct 2026, and the rules are already free). Matt then made an exception
+  ("publish gundam assemble to gain the search traffic"), so it's built with
+  `status: "announced"`. **Flip it to `active` after 31 Oct.**
+- **Round 3:** Rapture (moved to 2b), Eldfall Chronicles, Here's the Ruckus, The Last Mile,
   Malifaux 4E (Wyrd, owner of the studio page), Marvel: Crisis Protocol (owns
   `atomic-mass-games`), Star Wars: Shatterpoint, Warcrow (corvus-belli).
 - **Round 4:** Halo: Flashpoint, Fallout: Wasteland Warfare (modiphius), Gundam
@@ -197,6 +237,16 @@ From round 2 onward:
 - **Round 8:** DreadBall, X-Wing, Kings of War, Saga, Conquest: Last Argument
   of Kings, A Song of Ice and Fire, Firefight (Mantic; not OPR's), Argatoria,
   Fantastic Battles.
+- **Rounds 6-8 done (10-01, about 95 searches for 25):** all built except
+  **XCOM**, which is *XCOM: The Miniatures Game* (Modiphius). It's a preorder
+  shipping January 2027 with only a preview rulebook, so it fails the release
+  rule. Recheck in January 2027, slug `xcom-the-miniatures-game`, related to
+  Five Parsecs. Out of print: DreadBall and X-Wing (the X-Wing Alliance runs
+  it now). Guild Ball and The Walking Dead: All Out War are back in print, so
+  they're `active`. Sludge turned out to be Sean Sutter's black-powder army
+  game (Metal King), not sci-fi. Firefight's slug is `firefight-mantic`.
+  Backlog ideas the agents found: Fantastic Scuffles (Irregular Wars), Song of
+  Drums and Shakos, Flying Lead (Ganesha).
 - Still skipped, need Matt: the 7 *(verify)* entries, the 8 wave-3 one-liner
   games, MESBG tier, Spearhead + The Old World (on hold).
 

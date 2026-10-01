@@ -164,6 +164,30 @@ A logo that's white on transparent gets `logoInvert: true`: it renders black
 on the light paper background and as-is in dark mode (first used on Forbidden
 Psalm, 2026-09-24). Without it a white wordmark vanishes in light mode.
 
+## Only released games (Matt, 09-30)
+
+A game is only in the directory if a reader can get the full rules now. It
+qualifies one of two ways:
+
+- its full rules are already out (on sale or free) and a crowdfunding campaign
+  is running alongside them, or
+- its Kickstarter or Gamefound has delivered and the rules are for sale now.
+
+A quickstart, preview or demo PDF does not count as the full rules. A funded
+campaign that hasn't delivered doesn't count, and neither does a preorder.
+
+A game that fails the rule gets `draft: true` (it builds no page and drops out
+of the funnels), not deletion, so it can come back the day it ships. If the
+page was already live, add a `302!` in `public/_redirects` to its studio page;
+302 because the URL is only parked. First applied 09-30: Hallowtide, Outlaws
+and Cosmic Horror were drafted, and Steel Psalm was never built.
+
+**Exceptions are Matt's call, case by case.** Gundam Assemble (09-30) was
+published before its 31 Oct 2026 retail launch "to gain the search traffic":
+the full rules were already a free PDF and a Bandai retail date was fixed. It
+carries `status: "announced"` until the starter set is on shelves. Don't
+generalise this to other preorder games without asking.
+
 ## RPGs live on Alone in the Dungeon
 
 TTRPGs are not in the directory (Matt, 09-30), and that includes Shadowdark,
