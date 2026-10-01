@@ -1,14 +1,14 @@
 # STATUS — The Hobbinomicon · updated 2026-10-01
 
 ## Now
-**Directory: 60 live, 119 on `dev` (not deployed).** Rounds 2-8 are all committed on `dev` (last: `9c02ad6`), which finishes the backlog run. Everything builds, and no internal links are dead. **Deploy once, when Matt says**, with one `dev` → `main` merge.
+**Directory: 119 games live** (deployed 10-01, `main` @ `3af63b4`). The backlog run (rounds 1-8) is finished. Hallowtide and Cosmic Horror now 302 to Black Site.
 
 **Lean protocol:** 10 searches per game, and the cap stays at 200. Rounds 6-8 (10-01) used about 95 searches for 25 games. **New rule (Matt, 09-30):** a game only lists once its full rules are out (see CLAUDE.md, "Only released games"). Hallowtide, Outlaws and Cosmic Horror are drafts, and the two live URLs 302 to Black Site on the next deploy. Gundam Assemble is Matt's one exception (`status: announced`).
 
 Newsletter on Substack, first issue **06 Oct**. `npm run refresh-vlogs` is load-bearing.
 
 ## Next (ranked)
-1. **Matt: skim, then deploy** the 59 undeployed games (one merge).
+1. **Matt: skim the new pages** on the live site and answer the open questions below.
 2. **Matt: newsletter photos** and **Substack consolidation**, before 06 Oct.
 3. **Open questions from the earlier rounds:** Here's the Ruckus (WiPrime-only rules, does it pass?), Rumpus / Alien Zoo Keeper / Scrungaloids (need links), and the Gundam hero with baked-in text.
 4. **After 31 Oct:** flip Gundam Assemble to `active`. Recheck Hallowtide (preorder 30 Oct) and Steel Psalm.
