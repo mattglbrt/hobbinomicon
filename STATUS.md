@@ -8,12 +8,12 @@
 Newsletter on Substack, first issue **06 Oct**. `npm run refresh-vlogs` is load-bearing.
 
 ## Next (ranked)
-1. **Matt: skim the new pages** on the live site and answer the open questions below.
+1. **Matt: review the live game pages** one at a time, ticking them off in `GAME-REVIEW.md` (local, gitignored, newest first). Answer the open questions below as you go.
 2. **Matt: newsletter photos** and **Substack consolidation**, before 06 Oct.
-3. **Open questions from the earlier rounds:** Here's the Ruckus (WiPrime-only rules, does it pass?), Rumpus / Alien Zoo Keeper / Scrungaloids (need links), and the Gundam hero with baked-in text.
-4. **After 31 Oct:** flip Gundam Assemble to `active`. Recheck Hallowtide (preorder 30 Oct) and Steel Psalm.
-5. Outlaws Gamefound ends 14 Oct. It stays a draft until the rules ship.
-6. Paint the Royal Herald (BONEZONE closes 31 Oct). Run the description pass. Retag the 9 wrongly tagged `ttrpg` pages.
+3. **After 31 Oct:** flip Gundam Assemble to `active`. Recheck Hallowtide (preorder 30 Oct) and Steel Psalm. **Jan 2027:** recheck XCOM: The Miniatures Game.
+4. Outlaws Gamefound ends 14 Oct. It stays a draft until the rules ship.
+5. Paint the Royal Herald (BONEZONE closes 31 Oct). Run the description pass. Retag the 9 wrongly tagged `ttrpg` pages.
+6. More backlog candidates if wanted: Fantastic Scuffles, Song of Drums and Shakos, Flying Lead.
 
 ## Blockers
 - Matt: 7 *(verify)* identities, 8 wave-3 one-liners, MESBG tier. Spearhead and The Old World are on hold.
@@ -21,12 +21,8 @@ Newsletter on Substack, first issue **06 Oct**. `npm run refresh-vlogs` is load-
 - Comments moderation has no pending-notification (manual D1 SQL only).
 
 ## Recently done
-- 10-01 — **Rounds 6-8** (on `dev`), 24 games: Deadzone, Firefight (Mantic), Song of Blades and Heroes, Sellswords & Spellslingers, This Is Not a Test, Warcrow Adventures, The Walking Dead: All Out War, Elder Scrolls: Call to Arms, Cyberpunk RED: Combat Zone, Conquest ×2, Bushido, Blood Eagle, Brethren, Ravenfeast, Sludge, Guild Ball, DreadBall (oop), Kings of War, X-Wing (oop), SAGA, A Song of Ice and Fire, Argatoria, Fantastic Battles. XCOM failed the release rule (recheck Jan 2027).
-- 09-30 — **Backlog round 1** (on `dev`): Wyrdcry, This Quar's War, Carnivore, Hallowtide, Hametsu, Devilry Afoot, Spectre Operations.
-- 09-30 — **Batch 7:** Bolt Action, Konflikt '47, Lion Rampant, Dragon Rampant, Oathmark 2E. Cavatore credited on Mordheim.
-- 09-30 — **Batch 6:** Full Spectrum Dominance, Don't Look Back (+1698), Outlaws, Malediction, The Barons' War.
-- 09-30 — **Batch 5:** Blood Bowl, Guards of Traitor's Toll (USD), Scrapjacks. Oasis and Pilgrim dropped.
-- 09-30 — Batches 2–4, the RPG call (out; linked to AITD), the KDM take, the `sun-rot` tag, and the `/warhammer/` games row.
+- 10-01 — **Rounds 6-8** (24 games; XCOM failed the release rule), then **deployed everything**: `main` @ `3af63b4`, 119 games live. Made `GAME-REVIEW.md`, the review checklist, instead of drafting games (drafting would have 404'd YouTube links and dropped search ranking).
+- 09-30 — Backlog rounds 1-5, batches 5-7, Snarling Badger's five, wave 3, Gundam Assemble, the release rule and the RPG rule (RPGs out, linked to AITD).
 
 ## Open questions (Matt, for the review)
 - **Rounds 6-8:**
@@ -38,6 +34,7 @@ Newsletter on Substack, first issue **06 Oct**. `npm run refresh-vlogs` is load-
   - Designers *(verify)*: Cyberpunk CZ (Aaron Dill and John Kovaleski?), Bushido's original designer, X-Wing 2E, the Argatoria designer.
   - Is Cavatore's "lead designer on Conquest" line outdated? The 2026 rules credit Leandros Mavrokefalos.
   - Brethren: Wargames Atlantic only sells the PDF, so no studio is set. Steamforged's HQ: Sheffield or Salford?
+- **Earlier rounds:** Here's the Ruckus (WiPrime-only rules, does it pass?). Rumpus, Alien Zoo Keeper and Scrungaloids need links. The Gundam hero has text baked in.
 - **Round 1:**
   - Wyrdcry (a Warcry fan hack): put it on the Warhammer hub?
   - Spectre's "Rogue Warriors" and "War Eternal" aren't Spectre products (master-list error?), and there's a new `modern` tag.
