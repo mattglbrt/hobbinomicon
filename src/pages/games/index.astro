@@ -1,164 +1,40 @@
 ---
-import { getCollection } from 'astro:content';
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import Header from '../../components/Header.astro';
-import Footer from '../../components/Footer.astro';
-import PageHeader from '../../components/PageHeader.astro';
-import ContentContainer from '../../components/ContentContainer.astro';
-import GameGrid from '../../components/GameGrid.astro';
-import StructuredData from '../../components/StructuredData.astro';
-import { sortGamesPinnedThenTitle } from '../../utils/collections';
+/**
+ * /games/ — the whole directory, filterable. Used to be a sampler of six
+ * games per format, which hid most of the directory from its own front door.
+ * The format and cross-listing pages still exist (and are linked below) as
+ * the indexable landing pages for "skirmish games", "solo wargames" etc.
+ */
+import DirectoryPage from '../../components/DirectoryPage.astro';
+import { getDirectory, SETTING_PAGES, facetLabel } from '../../utils/facets';
 
-const allGames = await getCollection('games', ({ data }) => !data.draft);
+const entries = await getDirectory();
 
-const ttrpgs = sortGamesPinnedThenTitle(
-  allGames.filter((g) => g.data.format === 'ttrpg' && g.data.status !== 'oop')
-).slice(0, 6);
-const skirmish = sortGamesPinnedThenTitle(
-  allGames.filter((g) => g.data.format === 'skirmish')
-).slice(0, 6);
-// One army-scale shelf, not two. The directory used to advertise "Large Scale
-// Army" and "Rank and Flank" and only ever fill the first.
-const army = sortGamesPinnedThenTitle(
-  allGames.filter((g) => g.data.format === 'army' && g.data.status !== 'oop')
-).slice(0, 6);
-const narrative = sortGamesPinnedThenTitle(
-  allGames.filter((g) => g.data.format === 'narrative' && g.data.status !== 'oop')
-).slice(0, 6);
-const graveyard = sortGamesPinnedThenTitle(
-  allGames.filter((g) => g.data.status === 'oop')
-).slice(0, 6);
-
-const soloCount = allGames.filter((g) => g.data.solo === true && g.data.status !== 'oop').length;
-const chessboardCount = allGames.filter((g) => g.data.chessboard === true && g.data.status !== 'oop').length;
+const shelves = [
+  { href: '/games/skirmish/', label: 'Skirmish' },
+  { href: '/games/army/', label: 'Army-scale' },
+  { href: '/games/narrative/', label: 'Narrative' },
+  { href: '/games/solo/', label: 'Solo' },
+  { href: '/games/chessboard/', label: 'Chessboard' },
+  { href: '/games/free-rules/', label: 'Free rules' },
+  { href: '/games/mini-agnostic/', label: 'Mini-agnostic' },
+  ...SETTING_PAGES.map((s) => ({ href: `/games/setting/${s}/`, label: facetLabel('setting', s) })),
+  { href: '/games/graveyard/', label: 'The Graveyard' },
+];
 ---
 
-<BaseLayout
-  title="Games | The Hobbinomicon"
-  description="A directory of indie wargames, GW Specialist Games, classic Warhammer editions, and standalone miniature lines. Browse by format."
+<DirectoryPage
+  title="Games"
+  heading="Games"
+  description={`Every game in the directory, ${entries.length} of them. Indie wargames, specialist games, out-of-print classics. Filter by players, price, minis and setting.`}
+  path="/games/"
+  entries={entries}
 >
-  <StructuredData
-    type="breadcrumb"
-    data={{
-      breadcrumbs: [
-        { name: 'Home', url: 'https://hobbinomicon.com/' },
-        { name: 'Games', url: 'https://hobbinomicon.com/games/' },
-      ],
-    }}
-  />
-  <Header theme="light" />
-
-  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
-    <PageHeader
-      title="Games"
-      description="A directory of indie wargames, GW Specialist Games, classic editions, and the standalone miniature lines worth knowing about. Browse by format below."
-      breadcrumbs={[{ label: 'Games', href: '/games' }]}
-    />
-
-    <ContentContainer class="py-16 space-y-20">
-      <!-- Skirmish -->
-      <section>
-        <div class="section-head flex items-baseline justify-between mb-2 gap-4">
-          <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark">
-            <a href="/games/skirmish/" class="hover:underline underline-offset-4">Skirmish</a>
-          </h2>
-          <a href="/games/skirmish/" class="text-ink/70 dark:text-ink-dark/70 hover:text-ink dark:hover:text-ink-dark text-sm font-medium whitespace-nowrap">
-            View all →
-          </a>
-        </div>
-        <p class="text-ink/70 dark:text-ink-dark/70 text-lg mb-8">
-          Small-warband miniature games. Low buy-in, narrative-friendly, easy to start.
-        </p>
-        <GameGrid
-          games={skirmish}
-          emptyTitle="Nothing here yet"
-          emptyMessage="Skirmish games are coming. Working through the list."
-        />
-      </section>
-
-      <!-- Army-Scale -->
-      <section>
-        <div class="section-head flex items-baseline justify-between mb-2 gap-4">
-          <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark">
-            <a href="/games/army/" class="hover:underline underline-offset-4">Army-Scale</a>
-          </h2>
-          <a href="/games/army/" class="text-ink/70 dark:text-ink-dark/70 hover:text-ink dark:hover:text-ink-dark text-sm font-medium whitespace-nowrap">
-            View all →
-          </a>
-        </div>
-        <p class="text-ink/70 dark:text-ink-dark/70 text-lg mb-8">
-          Whole armies on the table. Bigger model counts, longer setup, and a game that fills an afternoon.
-        </p>
-        <GameGrid
-          games={army}
-          emptyTitle="Nothing here yet"
-          emptyMessage="Army-scale coverage is coming."
-        />
-      </section>
-
-      <!-- Narrative -->
-      <section>
-        <div class="section-head flex items-baseline justify-between mb-2 gap-4">
-          <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark">
-            <a href="/games/narrative/" class="hover:underline underline-offset-4">Narrative</a>
-          </h2>
-          <a href="/games/narrative/" class="text-ink/70 dark:text-ink-dark/70 hover:text-ink dark:hover:text-ink-dark text-sm font-medium whitespace-nowrap">
-            View all →
-          </a>
-        </div>
-        <p class="text-ink/70 dark:text-ink-dark/70 text-lg mb-8">
-          Story and scenario-driven miniature games. Often solo or co-op, often the weirder end of the hobby.
-        </p>
-        <GameGrid
-          games={narrative}
-          emptyTitle="Nothing here yet"
-          emptyMessage="Narrative games coverage is coming."
-        />
-      </section>
-
-      <!-- The Graveyard -->
-      {graveyard.length > 0 && (
-        <section>
-          <div class="section-head flex items-baseline justify-between mb-2 gap-4">
-            <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark">
-              <a href="/games/graveyard/" class="hover:underline underline-offset-4">The Graveyard</a>
-            </h2>
-            <a href="/games/graveyard/" class="text-ink/70 dark:text-ink-dark/70 hover:text-ink dark:hover:text-ink-dark text-sm font-medium whitespace-nowrap">
-              View all →
-            </a>
-          </div>
-          <p class="text-ink/70 dark:text-ink-dark/70 text-lg mb-8 max-w-3xl">
-            Officially out of print. Still on the table somewhere. The community has kept these dead games alive.
-          </p>
-          <GameGrid games={graveyard} />
-        </section>
-      )}
-
-      <!-- Solo cross-link -->
-      {soloCount > 0 && (
-        <section class="border-t border-ink/10 dark:border-ink-dark/10 pt-12">
-          <p class="text-ink/70 dark:text-ink-dark/70 text-lg">
-            Looking for games that work without an opponent?{' '}
-            <a href="/games/solo/" class="text-ink dark:text-ink-dark font-medium underline underline-offset-4 hover:no-underline">
-              Browse solo-friendly games →
-            </a>
-          </p>
-        </section>
-      )}
-
-      <!-- Chessboard cross-link -->
-      {chessboardCount > 0 && (
-        <section class={soloCount > 0 ? 'pt-6' : 'border-t border-ink/10 dark:border-ink-dark/10 pt-12'}>
-          <p class="text-ink/70 dark:text-ink-dark/70 text-lg">
-            Got a chessboard in the closet?{' '}
-            <a href="/games/chessboard/" class="text-ink dark:text-ink-dark font-medium underline underline-offset-4 hover:no-underline">
-              Browse games you can play on a chessboard →
-            </a>
-          </p>
-        </section>
-      )}
-    </ContentContainer>
-
-    <Footer />
-  </main>
-</BaseLayout>
+  <nav aria-label="Browse by" class="mb-10 flex gap-2 overflow-x-auto pb-2 -mx-6 px-6 snap-x lg:flex-wrap lg:overflow-visible lg:mx-0 lg:px-0">
+    {shelves.map((s) => (
+      <a href={s.href} class="snap-start shrink-0 inline-flex items-center min-h-11 px-4 rounded-full border border-ink/25 dark:border-ink-dark/25 text-ink dark:text-ink-dark text-sm font-medium hover:bg-ink/5 dark:hover:bg-ink-dark/10">
+        {s.label}
+      </a>
+    ))}
+  </nav>
+</DirectoryPage>

@@ -44,9 +44,47 @@ older picture of the site; the corrections are listed so nobody re-derives them.
 - Both scripts only fill fields that are unset, so hand fixes survive a re-run.
 - No new redirects were needed.
 
+## Phase 2 — done 10-02 (`dev`, not deployed)
+
+**Don't deploy until Matt has reviewed the Phase 1 facet drafts.** Phase 2
+puts those values on every card (players, minis, price) and behind every
+filter, so a wrong guess becomes visible.
+
+- `src/utils/facets.ts`: facet definitions, buckets, `getDirectory()` (every
+  live game + facets + coverage date + latest video), `facetHref()` (landing
+  page if one exists, else `/games/?k=v`), `SETTING_PAGES`.
+- `GameCard` is the one game card (wraps `ImageCard`, adds the spec row:
+  type · players · minis · price). `GameGrid` uses it, so hubs, studio and
+  people pages all show it.
+- `GameDirectory` + `DirectoryPage`: every card server-rendered (with JS off you
+  get the full list and no dead controls), client script filters, sorts,
+  counts, syncs the URL, "Show more" past 48, empty state offers to drop the
+  last filter, mobile drawer with a sticky "Show N games". A facet only shows
+  if it can narrow that page's list. `ItemList` JSON-LD on every directory page.
+- `/games/` is the full directory (119), default sort "Recently covered" =
+  newest of the page's pubDate/updatedDate/latest video. Type pages and
+  cross-listings use the same component; type pages hide the Type facet.
+- New landing pages: `/games/free-rules/`, `/games/mini-agnostic/`,
+  `/games/setting/{fantasy,sci-fi,horror,grimdark,historical,modern}/`. In the
+  sitemap automatically. Post-apoc and weird have 2 games each, so filter only.
+- `/games/solo/` now means the Solo facet (solo flag OR a 1-player minimum), 46 games.
+- `/games/ttrpgs/` points to Alone in the Dungeon.
+- `/games/index.json` (74 KB, 16 KB gzipped).
+- Game pages: visible breadcrumb Games › Type › Game (and in the JSON-LD),
+  "Browse similar" facet chips, "Last updated".
+- Checked headless (Chrome, 1366 and 390 px): filter/count/URL/sort/more/empty,
+  drawer, no horizontal scroll, no-JS, no console errors.
+- Copy written for Matt to check (voice): `/games/` description, free-rules,
+  mini-agnostic, the six setting intros, the ttrpgs line, "Browse similar".
+- Not done: the ⌘K facet row (§5), "Most viewed" sort (Phase 4).
+- Size: `/games/` HTML is 480 KB raw / 80 KB gzipped (119 cards of image
+  markup, same per-card weight as the old category pages). Run PageSpeed
+  mobile on it after deploy; the fix if needed is lighter card markup past
+  the first 48, not dropping cards from the HTML.
+
 ## Still open (ask before the phase that needs it)
 
-- Big-publisher titles: equal footing, or a visible "mainstream" marker? (`tier: big` makes either cheap.) — Phase 2
+- Big-publisher titles: shipped on equal footing with a **Publisher: Indie / Big publisher** filter. A visible marker on cards is a one-line change if Matt wants it.
 - "Recently covered": videos only, or do guides/news about a game count? With 15 video-covered games, counting guides widens it a lot. — Phase 3
 - Most viewed: GA4 page views (needs a service account) or YouTube views first? — Phase 4
 - New vlogs from `sync-vlogs.js` arrive with no `games`. Add a games prompt next to the tag prompt (same rules: suggest, never auto-write, skip without a TTY)? — Phase 4
@@ -163,7 +201,7 @@ Build-time joins only; the nightly scheduled build (already exists, `trigger-reb
 | Phase | Scope | Ships |
 | --- | --- | --- |
 | 1. Data normalization | Facet fields on all games (script drafts, Matt reviews), `games[]` on vlogs, redirects | **Done 10-02**, pending Matt's review |
-| 2. Directory + filters | `/games/` as the full directory; type pages reuse it; `index.json`; filter rail/drawer; URL state; facet landing pages; breadcrumbs and facet chips on game pages | The core |
+| 2. Directory + filters | `/games/` as the full directory; type pages reuse it; `index.json`; filter rail/drawer; URL state; facet landing pages; breadcrumbs and facet chips on game pages | **Done 10-02**, not deployed |
 | 3. Homepage | New section order; Recently covered + Latest videos; Browse-by chips; mobile carousels; one newsletter form; staff picks via `pinned` | Dynamic homepage |
 | 4. Popularity + automation | `views.json`; Most viewed with month/all-time; games prompt for new vlogs; build hook on upload | Self-updating homepage |
 

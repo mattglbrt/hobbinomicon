@@ -1,0 +1,53 @@
+---
+/**
+ * /games/setting/{setting}/ — one landing page per setting in SETTING_PAGES
+ * (src/utils/facets.ts). A setting comes from a game's tags, so tagging a game
+ * `grimdark` is all it takes to list it here.
+ */
+import DirectoryPage from '../../../components/DirectoryPage.astro';
+import { getDirectory, SETTING_PAGES, facetLabel } from '../../../utils/facets';
+
+const COPY: Record<string, { title: string; description: string }> = {
+  fantasy: {
+    title: 'Fantasy Wargames',
+    description: 'Wizards, warbands, dungeons and the odd dragon. Fantasy miniature games from tiny indie zines to the big names.',
+  },
+  'sci-fi': {
+    title: 'Sci-Fi Wargames',
+    description: 'Space crews, cyberpunk gangs, mechs and the far future. Science fiction miniature games, skirmish to army scale.',
+  },
+  horror: {
+    title: 'Horror Wargames',
+    description: 'Monsters, cults and things in the dark. Miniature games built to be a bit unsettling.',
+  },
+  grimdark: {
+    title: 'Grimdark Wargames',
+    description: 'Bleak worlds where everyone loses something. Miniature games for the mud, blood and doom crowd.',
+  },
+  historical: {
+    title: 'Historical Wargames',
+    description: 'Vikings, knights, musket lines and the world wars. Miniature games set in real history, give or take.',
+  },
+  modern: {
+    title: 'Modern Wargames',
+    description: 'Special forces, firefights and the present day. Miniature games with modern guns and modern problems.',
+  },
+};
+
+export async function getStaticPaths() {
+  return SETTING_PAGES.map((setting) => ({ params: { setting } }));
+}
+
+const { setting } = Astro.params;
+const entries = (await getDirectory()).filter(({ facets }) => facets.setting.includes(setting!));
+const copy = COPY[setting!] ?? { title: `${facetLabel('setting', setting!)} Games`, description: `${facetLabel('setting', setting!)} miniature games in the directory.` };
+---
+
+<DirectoryPage
+  title={copy.title}
+  heading={copy.title}
+  description={copy.description}
+  path={`/games/setting/${setting}/`}
+  crumb={facetLabel('setting', setting!)}
+  entries={entries}
+/>

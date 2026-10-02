@@ -1,0 +1,16 @@
+---
+import DirectoryPage from '../../components/DirectoryPage.astro';
+import { getDirectory } from '../../utils/facets';
+
+// Full rules free, not a quickstart (rulesPriceUsd 0; see content.config.ts).
+const entries = (await getDirectory()).filter(({ facets }) => facets.price.includes('free'));
+---
+
+<DirectoryPage
+  title="Wargames With Free Rules"
+  heading="Free Rules"
+  description="Miniature games where the full rules cost nothing. Not a quickstart or a demo, the whole game. Some sell models alongside, some don't care what you use."
+  path="/games/free-rules/"
+  crumb="Free rules"
+  entries={entries}
+/>

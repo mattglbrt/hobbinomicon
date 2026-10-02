@@ -1,0 +1,64 @@
+---
+/**
+ * DirectoryPage: the shell every directory URL shares — /games/, the type
+ * pages (/games/skirmish/...), the cross-listings (/games/solo/...) and the
+ * facet landing pages (/games/free-rules/, /games/setting/grimdark/). Each
+ * page passes its pre-filtered list and an intro; the filtering is
+ * GameDirectory's job.
+ *
+ * Intro copy is reader-facing: voice.md applies.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import PageHeader from './PageHeader.astro';
+import ContentContainer from './ContentContainer.astro';
+import GameDirectory from './GameDirectory.astro';
+import StructuredData from './StructuredData.astro';
+import type { DirectoryGame } from '../utils/facets';
+
+interface Props {
+  /** <title>, without the site suffix. */
+  title: string;
+  heading: string;
+  description: string;
+  /** Path with leading and trailing slash, e.g. /games/skirmish/. */
+  path: string;
+  /** Crumbs after "Games". Omit on /games/ itself. */
+  crumb?: string;
+  entries: DirectoryGame[];
+  hideFacets?: string[];
+}
+
+const { title, heading, description, path, crumb, entries, hideFacets } = Astro.props;
+const url = `https://hobbinomicon.com${path}`;
+const crumbs = [
+  { name: 'Home', url: 'https://hobbinomicon.com/' },
+  { name: 'Games', url: 'https://hobbinomicon.com/games/' },
+  ...(crumb ? [{ name: crumb, url }] : []),
+];
+---
+
+<BaseLayout title={`${title} | The Hobbinomicon`} description={description}>
+  <StructuredData type="breadcrumb" data={{ breadcrumbs: crumbs }} />
+  <Header theme="light" />
+
+  <main id="main-content" class="min-h-screen bg-parchment dark:bg-parchment-dark">
+    <PageHeader
+      title={heading}
+      description={description}
+      breadcrumbs={[
+        { label: 'Games', href: '/games' },
+        ...(crumb ? [{ label: crumb, href: path.replace(/\/$/, '') }] : []),
+      ]}
+    />
+
+    <ContentContainer class="py-12 md:py-16">
+      <slot />
+      <GameDirectory entries={entries} hideFacets={hideFacets} pageUrl={url} />
+      <slot name="after" />
+    </ContentContainer>
+
+    <Footer />
+  </main>
+</BaseLayout>

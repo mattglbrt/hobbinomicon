@@ -1,0 +1,69 @@
+---
+/**
+ * GameCard: the one card for a game, wherever games are listed (directory,
+ * type and facet pages, hubs). Wraps ImageCard with the game's image rules
+ * and a compact spec row: type · players · minis · price.
+ *
+ * Card image preference order:
+ *   1. thumbnailImage (custom card art, sized 16:9)
+ *   2. heroImage      (full-bleed hero, falls back if no thumbnail)
+ *   3. fallbackLetter (game's first letter on a neutral background)
+ *
+ * Logo is intentionally NOT a card-image fallback — logos look bad as 16:9
+ * full-bleed thumbnails. Logos layer over the image instead.
+ */
+import ImageCard from './ImageCard.astro';
+import { getHeroImage } from '../utils/getHeroImage';
+import { startCost } from '../utils/facets';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  game: CollectionEntry<'games'>;
+}
+
+const { game } = Astro.props;
+const d = game.data;
+
+const cardImage = d.thumbnailImage || d.heroImage;
+const resolvedImage = cardImage ? getHeroImage(cardImage) : null;
+const resolvedLogo = d.logo ? getHeroImage(d.logo) : null;
+const cardAlt = d.thumbnailImageAlt || d.heroImageAlt || d.title;
+
+const TYPE: Record<string, string> = {
+  skirmish: 'Skirmish', army: 'Army', narrative: 'Narrative', boardgame: 'Board game', ttrpg: 'RPG',
+};
+const MINIS: Record<string, string> = {
+  'proxy-friendly': 'Proxy-friendly', 'own-line': 'Own minis line', 'print-and-play': 'Print / STL',
+};
+
+let players: string | undefined;
+if (d.players) {
+  const { min, max } = d.players;
+  players = max === undefined ? `${min}+ players` : min === max ? `${min} player${min === 1 ? '' : 's'}` : `${min}–${max} players`;
+}
+const cost = startCost(game);
+const price = d.rulesPriceUsd === 0 ? 'Free rules' : cost !== undefined ? `$${Math.round(cost)}` : undefined;
+
+const meta = [
+  TYPE[d.format],
+  players,
+  d.miniatureAgnostic ? 'Mini-agnostic' : d.minis ? MINIS[d.minis] : undefined,
+  price,
+].filter((x): x is string => Boolean(x));
+---
+
+<ImageCard
+  href={`/games/${game.id}/`}
+  image={resolvedImage}
+  imageAlt={cardAlt}
+  title={d.title}
+  subtitle={d.description}
+  badge={d.status === 'oop' ? 'Out of Print' : undefined}
+  logoOverlay={resolvedLogo}
+  fallbackLetter={d.title.charAt(0)}
+  aspectRatio="16/9"
+  variant="overlay"
+  subtitleOnHover
+  titleBelow
+  meta={meta}
+/>

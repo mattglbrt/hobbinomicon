@@ -23,6 +23,9 @@ interface Props {
   titleBelow?: boolean;
   /** Open the link in a new tab with safe rel attributes */
   external?: boolean;
+  /** Compact spec row under the subtitle (titleBelow / logo cards only),
+   *  e.g. ['Skirmish', '1-4 players', 'Mini-agnostic', 'Free rules']. */
+  meta?: string[];
   class?: string;
 }
 
@@ -41,6 +44,7 @@ const {
   subtitleOnHover = false,
   titleBelow = false,
   external = false,
+  meta = [],
   class: className = '',
 } = Astro.props;
 
@@ -167,6 +171,11 @@ const hasSlot = Astro.slots.has('default');
         </h3>
         {subtitle && (
           <p class="text-ink/70 dark:text-ink-dark/70 mt-1 text-sm line-clamp-3">{subtitle}</p>
+        )}
+        {meta.length > 0 && (
+          <p class="mt-2 text-xs font-heading uppercase tracking-[0.12em] text-ink/65 dark:text-ink-dark/65">
+            {meta.join(' · ')}
+          </p>
         )}
       </div>
     )}
