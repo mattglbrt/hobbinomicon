@@ -4,6 +4,11 @@
  * type and facet pages, hubs). Wraps ImageCard with the game's image rules
  * and a compact spec row: type · players · minis · price.
  *
+ * With `coverage` (homepage "Recently covered") the card is about what was
+ * just made for the game: the badge says New video / New guide / News, the
+ * line under the title is that item's title, and the row is its date. The
+ * card still links to the game page; the item is one click on from there.
+ *
  * Card image preference order:
  *   1. thumbnailImage (custom card art, sized 16:9)
  *   2. heroImage      (full-bleed hero, falls back if no thumbnail)
@@ -14,14 +19,16 @@
  */
 import ImageCard from './ImageCard.astro';
 import { getHeroImage } from '../utils/getHeroImage';
-import { startCost } from '../utils/facets';
+import { startCost, COVERAGE_LABEL, type Coverage } from '../utils/facets';
+import { formatDateShort } from '../utils/formatDate';
 import type { CollectionEntry } from 'astro:content';
 
 interface Props {
   game: CollectionEntry<'games'>;
+  coverage?: Coverage;
 }
 
-const { game } = Astro.props;
+const { game, coverage } = Astro.props;
 const d = game.data;
 
 const cardImage = d.thumbnailImage || d.heroImage;
@@ -57,13 +64,13 @@ const meta = [
   image={resolvedImage}
   imageAlt={cardAlt}
   title={d.title}
-  subtitle={d.description}
-  badge={d.status === 'oop' ? 'Out of Print' : undefined}
+  subtitle={coverage ? coverage.title : d.description}
+  badge={coverage ? COVERAGE_LABEL[coverage.kind] : d.status === 'oop' ? 'Out of Print' : undefined}
   logoOverlay={resolvedLogo}
   fallbackLetter={d.title.charAt(0)}
   aspectRatio="16/9"
   variant="overlay"
   subtitleOnHover
   titleBelow
-  meta={meta}
+  meta={coverage ? [formatDateShort(coverage.date), TYPE[d.format]] : meta}
 />

@@ -14,6 +14,7 @@
  * That's deliberate: a guess would put it in the wrong result set.
  */
 import { getCollection, type CollectionEntry } from 'astro:content';
+import { guideUrlWith, vlogUrl } from './content';
 
 type Game = CollectionEntry<'games'>;
 
@@ -173,12 +174,31 @@ export function gameFacets(g: Game, coverage: { videos: number; guides: number }
   return out;
 }
 
+/** One piece of Hobbinomicon coverage about a game: a video, a guide or a
+ *  news post. "Recently covered" on the homepage and the directory's default
+ *  sort both come from these (Matt, 10-02: guides and news count, not only
+ *  videos). */
+export interface Coverage {
+  kind: 'video' | 'guide' | 'news';
+  title: string;
+  date: Date;
+  href: string;
+}
+
+export const COVERAGE_LABEL: Record<Coverage['kind'], string> = {
+  video: 'New video',
+  guide: 'New guide',
+  news: 'News',
+};
+
 export interface DirectoryGame {
   game: Game;
   facets: Record<string, string[]>;
-  /** Newest of: the game page itself, its last update, its newest video. */
+  /** Newest coverage first. Empty for a game nothing has been made about. */
+  coverage: Coverage[];
+  /** Directory sort key: the newest of the page itself (added or updated)
+   *  and its coverage, so a game just added to the directory counts too. */
   coveredAt: Date;
-  latestVideo?: { title: string; date: Date; href: string };
   cost?: number;
 }
 
@@ -187,48 +207,67 @@ const newest = (dates: (Date | undefined)[]) =>
 
 let cache: DirectoryGame[] | null = null;
 
-/** Every live game with its facets, newest coverage first. Cached per build. */
+/** Every live game with its facets and coverage, newest first. Cached per build. */
 export async function getDirectory(): Promise<DirectoryGame[]> {
   if (cache) return cache;
-  const [games, vlogs, guides] = await Promise.all([
+  const [games, vlogs, guides, news] = await Promise.all([
     getCollection('games', ({ data }) => !data.draft),
     getCollection('vlog', ({ data }) => !data.draft),
     getCollection('guides', ({ data }) => !data.draft),
+    getCollection('news', ({ data }) => !data.draft),
   ]);
+  const slugs = new Set(games.map((g) => g.id));
 
-  const videosByGame = new Map<string, CollectionEntry<'vlog'>[]>();
+  const byGame = new Map<string, Coverage[]>();
+  const add = (id: string | undefined, c: Coverage) => {
+    if (!id || !slugs.has(id)) return;
+    if (!byGame.has(id)) byGame.set(id, []);
+    byGame.get(id)!.push(c);
+  };
   for (const v of vlogs) {
-    for (const ref of v.data.games) {
-      if (!videosByGame.has(ref.id)) videosByGame.set(ref.id, []);
-      videosByGame.get(ref.id)!.push(v);
-    }
+    for (const ref of v.data.games) add(ref.id, { kind: 'video', title: v.data.title, date: v.data.pubDate, href: vlogUrl(v) });
   }
-  const guidesByGame = new Map<string, number>();
   for (const g of guides) {
-    if (g.data.game) guidesByGame.set(g.data.game.id, (guidesByGame.get(g.data.game.id) ?? 0) + 1);
+    // A guide belongs to a game by `game`, or by living in the game's folder
+    // (guides/frostgrave/...), which is what guideUrlWith() routes on.
+    const id = g.data.game?.id ?? (slugs.has(g.id.split('/')[0]) && g.id.includes('/') ? g.id.split('/')[0] : undefined);
+    add(id, { kind: 'guide', title: g.data.title, date: g.data.pubDate, href: guideUrlWith(g, slugs) });
+  }
+  for (const n of news) {
+    add(n.data.relatedGame?.id, { kind: 'news', title: n.data.title, date: n.data.pubDate, href: `/news/${n.id}/` });
   }
 
   cache = games
     .map((game) => {
-      const videos = (videosByGame.get(game.id) ?? []).sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
-      const v = videos[0];
-      const latestVideo = v
-        ? {
-            title: v.data.title,
-            date: v.data.pubDate,
-            href: v.data.series ? `/series/${v.data.series.id}/${v.id}/` : v.data.kind === 'article' ? `/articles/${v.id}/` : `/vlog/${v.id}/`,
-          }
-        : undefined;
+      const coverage = (byGame.get(game.id) ?? []).sort((a, b) => b.date.getTime() - a.date.getTime());
       return {
         game,
-        facets: gameFacets(game, { videos: videos.length, guides: guidesByGame.get(game.id) ?? 0 }),
-        coveredAt: newest([game.data.pubDate, game.data.updatedDate, v?.data.pubDate]),
-        latestVideo,
+        facets: gameFacets(game, {
+          videos: coverage.filter((c) => c.kind === 'video').length,
+          guides: coverage.filter((c) => c.kind === 'guide').length,
+        }),
+        coverage,
+        coveredAt: newest([game.data.pubDate, game.data.updatedDate, coverage[0]?.date]),
         cost: startCost(game),
       };
     })
     .sort((a, b) => b.coveredAt.getTime() - a.coveredAt.getTime() || a.game.data.title.localeCompare(b.game.data.title));
   return cache;
+}
+
+/**
+ * Homepage "Recently covered": one card per game, by its newest video, guide
+ * or news post. Everything from the last `days`; if that's fewer than `min`,
+ * topped up with the next most recent regardless of age, so a quiet month
+ * never empties the section.
+ */
+export async function getRecentlyCovered(limit = 8, days = 30, min = 6) {
+  const covered = (await getDirectory())
+    .filter((e) => e.coverage.length)
+    .sort((a, b) => b.coverage[0].date.getTime() - a.coverage[0].date.getTime());
+  const cutoff = Date.now() - days * 86_400_000;
+  const recent = covered.filter((e) => e.coverage[0].date.getTime() >= cutoff);
+  return (recent.length >= min ? recent : covered).slice(0, limit);
 }
 
 /**

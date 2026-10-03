@@ -926,6 +926,17 @@ const metaDescription =
         visit.animation.animate = false;
       });
 
+      // The games directory's filters (src/scripts/directory.ts). Loaded here,
+      // outside #swup, so they bind however the page was reached; imported on
+      // demand so pages without a directory don't download it.
+      const loadDirectory = () => {
+        if (document.querySelector('[data-directory]:not([data-ready])')) {
+          import('../scripts/directory').then((m) => m.initAll());
+        }
+      };
+      loadDirectory();
+      document.addEventListener('swup:page:view', loadDirectory);
+
       // Fire a GA virtual pageview for each client-side navigation. GA itself
       // loads lazily (see above), so gtag may not exist yet on early visits.
       document.addEventListener('swup:page:view', (event) => {

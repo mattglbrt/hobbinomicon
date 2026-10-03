@@ -9,7 +9,7 @@ import { getDirectory } from '../../utils/facets';
  * already has and doesn't fetch this. Budget: under 100 KB.
  */
 export const GET: APIRoute = async () => {
-  const games = (await getDirectory()).map(({ game, facets, coveredAt, latestVideo, cost }) => ({
+  const games = (await getDirectory()).map(({ game, facets, coveredAt, coverage, cost }) => ({
     slug: game.id,
     title: game.data.title,
     url: `/games/${game.id}/`,
@@ -18,8 +18,8 @@ export const GET: APIRoute = async () => {
     facets: Object.fromEntries(Object.entries(facets).filter(([, v]) => v.length)),
     costUsd: cost ?? null,
     coveredAt: coveredAt.toISOString().slice(0, 10),
-    latestVideo: latestVideo
-      ? { title: latestVideo.title, date: latestVideo.date.toISOString().slice(0, 10), url: latestVideo.href }
+    latestCoverage: coverage[0]
+      ? { kind: coverage[0].kind, title: coverage[0].title, date: coverage[0].date.toISOString().slice(0, 10), url: coverage[0].href }
       : null,
   }));
   return new Response(JSON.stringify({ count: games.length, games }), {

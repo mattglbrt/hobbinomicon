@@ -1,0 +1,63 @@
+---
+/**
+ * BrowseBy: the homepage's facet shortcuts, right under the hero (whose own
+ * chip row is the "Type" row). Every chip is a link to a directory view:
+ * the landing page where one exists, else the filtered /games/ URL, via
+ * facetHref(), so the homepage passes link weight to indexable pages.
+ *
+ * Desktop shows every row. On a phone the rows would add a screen of chips,
+ * so they collapse to one "Filter games" button that opens the directory with
+ * the filter drawer already open (/games/#filters). The rows stay in the HTML.
+ */
+import ContentContainer from './ContentContainer.astro';
+import { getDirectory, facetHref, facetLabel, SETTING_PAGES } from '../utils/facets';
+
+const directory = await getDirectory();
+const n = (key: string, value: string) => directory.filter((e) => e.facets[key]?.includes(value)).length;
+
+const rows = [
+  { label: 'Players', key: 'players', values: ['solo', '2', '3plus', 'coop'] },
+  { label: 'Minis', key: 'minis', values: ['agnostic', 'own-line', 'proxy-friendly', 'print-and-play'] },
+  { label: 'Price', key: 'price', values: ['free', 'under-30', '30-75', '75plus'] },
+  { label: 'Setting', key: 'setting', values: SETTING_PAGES },
+].map((r) => ({
+  ...r,
+  chips: r.values
+    .map((v) => ({ label: facetLabel(r.key, v), href: facetHref(r.key, v), count: n(r.key, v) }))
+    .filter((c) => c.count > 0),
+}));
+---
+
+<section aria-labelledby="browse-by" class="bg-parchment dark:bg-parchment-dark py-8 md:py-12 border-b border-ink/10 dark:border-ink-dark/10">
+  <ContentContainer>
+    <h2 id="browse-by" class="sr-only md:not-sr-only md:mb-6 md:text-sm md:font-heading md:uppercase md:tracking-[0.3em] md:text-ink/65 md:dark:text-ink-dark/65">
+      Browse {directory.length} games by
+    </h2>
+
+    <a
+      href="/games/#filters"
+      class="md:hidden flex items-center justify-center gap-2 min-h-12 w-full rounded-full border border-ink/30 dark:border-ink-dark/30 text-ink dark:text-ink-dark font-heading"
+    >
+      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h18M6 12h12M10 19h4" />
+      </svg>
+      Filter games by players, minis, price
+    </a>
+
+    <dl class="hidden md:grid grid-cols-[7rem_minmax(0,1fr)] gap-x-6 gap-y-4 items-start">
+      {rows.map((r) => (
+        <>
+          <dt class="pt-2.5 text-xs font-heading uppercase tracking-[0.15em] text-ink/65 dark:text-ink-dark/65">{r.label}</dt>
+          <dd class="flex flex-wrap gap-2">
+            {r.chips.map((c) => (
+              <a href={c.href} class="inline-flex items-center gap-2 min-h-11 px-4 rounded-full border border-ink/25 dark:border-ink-dark/25 text-sm text-ink dark:text-ink-dark hover:bg-ink/5 dark:hover:bg-ink-dark/10">
+                {c.label}
+                <span class="text-ink/55 dark:text-ink-dark/55 tabular-nums">{c.count}</span>
+              </a>
+            ))}
+          </dd>
+        </>
+      ))}
+    </dl>
+  </ContentContainer>
+</section>

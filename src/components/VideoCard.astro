@@ -5,8 +5,10 @@ import { getHeroImageUrl } from '../utils/getHeroImage';
 
 interface Props {
   post: CollectionEntry<'vlog'>;
+  /** The directory game this video covers, shown as a label (homepage). */
+  game?: string;
 }
-const { post } = Astro.props;
+const { post, game } = Astro.props;
 const imageUrl = getHeroImageUrl(post.data.heroImage, post.data.youtubeId);
 ---
 
@@ -31,6 +33,9 @@ const imageUrl = getHeroImageUrl(post.data.heroImage, post.data.youtubeId);
     )}
   </div>
   <div class="p-4">
+    {game && (
+      <span class="block mb-1 text-[11px] font-heading uppercase tracking-[0.15em] text-ink/65 dark:text-ink-dark/65">{game}</span>
+    )}
     <h3 class="font-heading font-bold text-ink dark:text-ink-dark group-hover:text-ink/80 dark:group-hover:text-ink-dark/80 transition-colors line-clamp-2">
       {post.data.title}
     </h3>
