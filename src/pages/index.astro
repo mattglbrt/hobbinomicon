@@ -6,14 +6,14 @@
  * whenever a video, guide or news post about a game goes out.
  *
  *   1. Hero + search + type chips      (DirectoryHero)
- *   2. Browse by players/minis/price/setting (BrowseBy)
- *   3. Recently covered games          (newest video, guide or news per game)
- *   4. Most viewed games               (Phase 4, needs a views source)
- *   5. Latest videos
- *   6. News
- *   7. Guides, the ones for games in §3 first
- *   8. On-ramp hubs
- *   The newsletter signup lives in the footer only.
+ *   2. Latest videos                   (first after the hero, Matt 10-06)
+ *   3. Browse by players/minis/price/setting (BrowseBy)
+ *   4. Recently covered games          (newest video, guide or news per game)
+ *   5. News
+ *   6. Guides, the ones for games in §4 first
+ *   7. On-ramp hubs
+ *   8. Newsletter signup (Substack), last before the footer
+ *   ("Most viewed" was dropped, Matt 10-06.)
  *
  * On a phone, the card rows are horizontal snap carousels (.card-row) so the
  * page stays a few screens tall instead of a long stack.
@@ -26,6 +26,7 @@ import BrowseBy from '../components/BrowseBy.astro';
 import GameCard from '../components/GameCard.astro';
 import VideoCard from '../components/VideoCard.astro';
 import ListCard from '../components/ListCard.astro';
+import NewsletterSignup from '../components/NewsletterSignup.astro';
 import Footer from '../components/Footer.astro';
 import ContentContainer from '../components/ContentContainer.astro';
 import ImageCard from '../components/ImageCard.astro';
@@ -105,28 +106,7 @@ const heading = 'text-4xl md:text-7xl font-display font-bold text-ink dark:text-
     <!-- 1. Hero — directory value proposition + search + type chips -->
     <DirectoryHero />
 
-    <!-- 2. Browse by -->
-    <BrowseBy />
-
-    <!-- 3. Recently covered games -->
-    {recentlyCovered.length > 0 && (
-      <section class="bg-parchment dark:bg-parchment-dark py-10 md:py-24" data-scroll-reveal>
-        <ContentContainer>
-          <div class="section-head flex items-end justify-between gap-4 mb-6 md:mb-12">
-            <div>
-              <span class={eyebrow}>Just covered</span>
-              <h2 class={heading}>Recently covered games</h2>
-            </div>
-            <ViewAllLink href="/games/">All Games →</ViewAllLink>
-          </div>
-          <div class="card-row grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {recentlyCovered.map((e) => <GameCard game={e.game} coverage={e.coverage[0]} />)}
-          </div>
-        </ContentContainer>
-      </section>
-    )}
-
-    <!-- 5. Latest videos -->
+    <!-- 2. Latest videos: first after the hero (Matt, 10-06) -->
     {latestVideos.length > 0 && (
       <section class="bg-ink/[0.03] dark:bg-ink-dark/[0.03] py-10 md:py-24" data-scroll-reveal>
         <ContentContainer>
@@ -144,9 +124,30 @@ const heading = 'text-4xl md:text-7xl font-display font-bold text-ink dark:text-
       </section>
     )}
 
-    <!-- 6. Latest indie news -->
-    {recentNews.length > 0 && (
+    <!-- 3. Browse by -->
+    <BrowseBy />
+
+    <!-- 4. Recently covered games -->
+    {recentlyCovered.length > 0 && (
       <section class="bg-parchment dark:bg-parchment-dark py-10 md:py-24" data-scroll-reveal>
+        <ContentContainer>
+          <div class="section-head flex items-end justify-between gap-4 mb-6 md:mb-12">
+            <div>
+              <span class={eyebrow}>Just covered</span>
+              <h2 class={heading}>Recently covered games</h2>
+            </div>
+            <ViewAllLink href="/games/">All Games →</ViewAllLink>
+          </div>
+          <div class="card-row grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {recentlyCovered.map((e) => <GameCard game={e.game} coverage={e.coverage[0]} />)}
+          </div>
+        </ContentContainer>
+      </section>
+    )}
+
+    <!-- 5. Latest indie news -->
+    {recentNews.length > 0 && (
+      <section class="bg-ink/[0.03] dark:bg-ink-dark/[0.03] py-10 md:py-24" data-scroll-reveal>
         <ContentContainer>
           <div class="section-head flex items-end justify-between gap-4 mb-6 md:mb-12">
             <div>
@@ -173,9 +174,9 @@ const heading = 'text-4xl md:text-7xl font-display font-bold text-ink dark:text-
       </section>
     )}
 
-    <!-- 7. Learn to paint — the other half of the promise in the hero -->
+    <!-- 6. Learn to paint — the other half of the promise in the hero -->
     {latestGuides.length > 0 && (
-      <section class="bg-ink/[0.03] dark:bg-ink-dark/[0.03] py-10 md:py-24" data-scroll-reveal>
+      <section class="bg-parchment dark:bg-parchment-dark py-10 md:py-24" data-scroll-reveal>
         <ContentContainer>
           <div class="section-head flex items-end justify-between gap-4 mb-6 md:mb-12">
             <div>
@@ -199,7 +200,7 @@ const heading = 'text-4xl md:text-7xl font-display font-bold text-ink dark:text-
       </section>
     )}
 
-    <!-- 8. On-ramps. These are the top of the funnel, not the destination:
+    <!-- 7. On-ramps. These are the top of the funnel, not the destination:
          both hubs exist to point sideways into the indie directory. -->
     {hubs.length > 0 && (
       <section id="on-ramps" class="bg-ink dark:bg-ink-dark py-10 md:py-24 scroll-mt-24" data-scroll-reveal>
@@ -223,6 +224,12 @@ const heading = 'text-4xl md:text-7xl font-display font-bold text-ink dark:text-
         </ContentContainer>
       </section>
     )}
+
+    <!-- 8. Newsletter: the full Substack signup, last thing before the footer
+         (Matt, 10-06). The footer's small inline form was too easy to miss. -->
+    <div id="newsletter" class="scroll-mt-24">
+      <NewsletterSignup variant="section" />
+    </div>
 
     <Footer />
   </main>
