@@ -82,6 +82,20 @@ filter, so a wrong guess becomes visible.
   mobile on it after deploy; the fix if needed is lighter card markup past
   the first 48, not dropping cards from the HTML.
 
+## Phase 3 — done 10-03 (`dev`, not deployed)
+
+Homepage per §3 with Matt's 10-02 call that guides and news count as coverage
+(`getRecentlyCovered()` in `src/utils/facets.ts`). Directory script moved to
+`src/scripts/directory.ts`, loaded on demand by BaseLayout, because Swup page
+swaps left the filters dead when `/games/` was reached by a click.
+
+## Phase 4 — dropped (Matt, 10-06)
+
+"Most viewed" needed a GA4 service account; not worth the setup. YouTube views
+were rejected because they don't reflect site or search traffic. The homepage
+ships without the section. If it comes back, the plan is GA4 (or Search
+Console) via a service account writing `src/data/views.json` at build.
+
 ## Still open (ask before the phase that needs it)
 
 - Big-publisher titles: shipped on equal footing with a **Publisher: Indie / Big publisher** filter. A visible marker on cards is a one-line change if Matt wants it.
@@ -202,8 +216,8 @@ Build-time joins only; the nightly scheduled build (already exists, `trigger-reb
 | --- | --- | --- |
 | 1. Data normalization | Facet fields on all games (script drafts, Matt reviews), `games[]` on vlogs, redirects | **Done 10-02**, pending Matt's review |
 | 2. Directory + filters | `/games/` as the full directory; type pages reuse it; `index.json`; filter rail/drawer; URL state; facet landing pages; breadcrumbs and facet chips on game pages | **Done 10-02**, not deployed |
-| 3. Homepage | New section order; Recently covered + Latest videos; Browse-by chips; mobile carousels; one newsletter form; staff picks via `pinned` | Dynamic homepage |
-| 4. Popularity + automation | `views.json`; Most viewed with month/all-time; games prompt for new vlogs; build hook on upload | Self-updating homepage |
+| 3. Homepage | New section order; Recently covered + Latest videos; Browse-by chips; mobile carousels; one newsletter form; staff picks via `pinned` | **Done 10-03**, not deployed |
+| 4. Popularity + automation | `views.json`; Most viewed with month/all-time; games prompt for new vlogs; build hook on upload | **Dropped** (Matt, 10-06) |
 
 **Not in scope:** user accounts, ratings or comments, hosted search, the Substack migration, the Warmachine hub redesign.
 
