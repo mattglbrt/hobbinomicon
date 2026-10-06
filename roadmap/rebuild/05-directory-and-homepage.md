@@ -89,6 +89,11 @@ Homepage per §3 with Matt's 10-02 call that guides and news count as coverage
 `src/scripts/directory.ts`, loaded on demand by BaseLayout, because Swup page
 swaps left the filters dead when `/games/` was reached by a click.
 
+**Homepage tweaks (Matt, 10-06):** Latest videos moved to first after the
+hero, and the full newsletter signup section is back as the last section before
+the footer (the footer's inline form was too easy to miss). That reverses the
+brief's "footer only" rule on purpose.
+
 ## Phase 4 — dropped (Matt, 10-06)
 
 "Most viewed" needed a GA4 service account; not worth the setup. YouTube views
