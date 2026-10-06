@@ -4,6 +4,71 @@ Append-only. **Newest entry first.** Pre-existing planning history lives in `roa
 
 ---
 
+## 2026-10-02 → 10-06 — Directory + homepage redesign (Phases 1-3), TONKS, Orctober vlogs
+
+**Deploys:** `main` @ `56ff3f6` (10-06: Phases 1-3 + TONKS, Matt chose
+"everything on dev" over TONKS-only) and `main` @ `aa7a2d6` (10-06: homepage
+tweaks + 3 vlogs). Directory: **120 games live**.
+
+### The brief
+Matt pasted a homepage/directory scope. It was written against an older picture
+of the site, so I checked it against the repo first and filed it, with the
+corrections, at `roadmap/rebuild/05-directory-and-homepage.md`:
+- 135 games / 240 vlogs → really 119 live / 192.
+- The army merge was already done (08).
+- "Every video already links to a game": only 4 did.
+- `featured`, `coverImage` and the mainstream marker already exist (`pinned`, `heroImage`, `tier`).
+- Analytics: GA4. Channels: the site syncs one.
+
+**Matt's decisions (10-02):**
+- Keep `format` + cross-listings as the type axis (solo/chessboard/graveyard are not exclusive types).
+- TTRPG: no chip or facet, but `/games/ttrpgs/` stays (points to AITD).
+- Script drafts video→game links, Matt reviews.
+- No Pillage-list stub pages.
+- "Recently covered" counts guides and news, not only videos.
+- **Phase 4 ("Most viewed") dropped (10-06):** GA4 needs a service account; YouTube views rejected as not reflecting site/search traffic.
+
+### Phase 1: data
+- **Schema:** `rulesPriceUsd`, `starterPriceUsd`, `players {min,max,coop}`, `sessionMinutes`, `minis`, `scale` on games; `games[]` on vlogs.
+- **Price split into two numbers**, because "rules free + $125 box" is free to a painter with minis and $125 to someone without.
+- **Setting, solo and agnostic are derived** from tags and flags, not stored twice.
+- `scripts/draft-game-facets.mjs` drafted values for all 123 games. **95 live games have a flagged guess** in `roadmap/rebuild/phase1-facet-review.md`.
+- `scripts/draft-vlog-games.mjs` linked 99 vlogs (`phase1-vlog-games-review.md`). **Only 15 games have any video**, and Warmachine has 37 of them.
+- Both scripts only fill unset fields. First run lost CRLF on the `---` fences; reverted and fixed the split.
+
+### Phase 2: directory
+- `src/utils/facets.ts`: facets, buckets, `getDirectory()`, `facetHref()`, `SETTING_PAGES`.
+- **Components:** `GameCard` is now the one game card (directory, hubs, studios, people). `GameDirectory` + `DirectoryPage` render every card server-side, so the full list is indexable and works with no JS.
+- **Client behaviour:** filter/sort/count, URL state, show-more past 48, mobile drawer.
+- `/games/` is the full directory. **New landing pages:** `/games/free-rules/`, `/games/mini-agnostic/`, `/games/setting/{fantasy,sci-fi,horror,grimdark,historical,modern}/`. Also `/games/index.json`.
+- **Game pages:** breadcrumb with type, "Browse similar" chips, "Last updated".
+- `/games/solo/` = Solo facet (46).
+- Big publishers: equal footing + a Publisher filter.
+
+### Phase 3: homepage
+- **Order:** hero (type chips, no TTRPG) → **Latest videos** (moved first, Matt 10-06) → Browse by → Recently covered (`getRecentlyCovered()`) → News → Guides (covered games first) → hubs → **newsletter section** (restored 10-06; the footer's inline form was too easy to miss) → footer.
+- Card rows are snap carousels on phones: 3.94 screens at 390px.
+- **Bug found and fixed:** Swup swaps pages, so the directory script, shipped by the component, never bound when `/games/` was reached by a click. Moved to `src/scripts/directory.ts`, dynamic-imported from BaseLayout on `swup:page:view`. Only directory pages download it.
+- **Testing:** the Chrome extension wasn't connected, so checks ran in headless Chrome via `playwright-core` installed in the scratchpad (not the project).
+
+### Games
+- **TONKS!** (`tonks`): Apocrypha_Now's free multiplayer tank game, Version 3 via 28 (28-mag.com). 2 searches.
+  - Facts from the rulebook PDF (its fonts extract as a +29 letter shift, decoded), 28's games page and BGG (400572).
+  - Hero and logo from the rulebook cover; logo background knocked out.
+  - `notPlayed`, no length (BGG only), no people page (handle only).
+- **Burrows & Badgers** was already live since 09-30; nothing to add.
+
+### Vlogs
+- `npm run refresh-vlogs`: 3 Orctober videos (rusted sword, Orctober day 2 NMM, black ork armor) with transcripts. Netlify had published them transcript-less.
+- Tags approved by Matt.
+- The ork armor description was the YouTube music credit only. Replaced with a transcript line + "Music from Lost in the Forest" (Matt: keep the attribution). The page's About section keeps the Bandcamp link.
+- **YouTube-side** description still needs Matt's paste in Studio.
+
+### Open
+Matt to review the facet drafts (now public on cards and filters), the vlog links, and the new copy (setting/free-rules/mini-agnostic intros, `/games/` line, TTRPG line, TONKS). **PageSpeed Insights mobile: 100 after deploy (Matt).** Real-phone check still to do. YouTube footers for the 3 new videos need `youtube-auth`.
+
+---
+
 ## 2026-10-01 — Backlog rounds 6-8, full deploy: 119 games live
 
 **Deploy: `main` @ `3af63b4`** (one merge of everything on `dev`: rounds 2-8,
