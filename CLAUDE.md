@@ -185,8 +185,8 @@ and Cosmic Horror were drafted, and Steel Psalm was never built.
 **Exceptions are Matt's call, case by case.** Gundam Assemble (09-30) was
 published before its 31 Oct 2026 retail launch "to gain the search traffic":
 the full rules were already a free PDF and a Bandai retail date was fixed. It
-carries `status: "announced"` until the starter set is on shelves. Don't
-generalise this to other preorder games without asking.
+carried `status: "announced"` until Matt set it `active` on 10-06, ahead of
+retail. Don't generalise this to other preorder games without asking.
 
 ## RPGs live on Alone in the Dungeon
 

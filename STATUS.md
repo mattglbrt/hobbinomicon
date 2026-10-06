@@ -1,49 +1,54 @@
-# STATUS — The Hobbinomicon · updated 2026-10-01
+# STATUS — The Hobbinomicon · updated 2026-10-06
 
 ## Now
-**Directory: 119 games live** (deployed 10-01, `main` @ `3af63b4`). The backlog run (rounds 1-8) is finished. Hallowtide and Cosmic Horror now 302 to Black Site.
+**Directory redesign live** (`main` @ `aa7a2d6`, 10-06). **120 games.**
+- `/games/` is the full filterable directory: players, minis, price, length, setting, scale, status, publisher, coverage. Filters live in the URL.
+- New landing pages: free rules, mini-agnostic, six settings.
+- The homepage is a dashboard: Latest videos → Browse by → Recently covered → News → Guides → hubs → newsletter section.
 
-**Lean protocol:** 10 searches per game, and the cap stays at 200. Rounds 6-8 (10-01) used about 95 searches for 25 games. **New rule (Matt, 09-30):** a game only lists once its full rules are out (see CLAUDE.md, "Only released games"). Hallowtide, Outlaws and Cosmic Horror are drafts, and the two live URLs 302 to Black Site on the next deploy. Gundam Assemble is Matt's one exception (`status: announced`).
+Scope and decisions: `roadmap/rebuild/05-directory-and-homepage.md`. "Most viewed" was dropped (Matt, 10-06).
 
-Newsletter on Substack, first issue **06 Oct**. `npm run refresh-vlogs` is load-bearing.
+**The facet values on cards and filters are script-drafted and unreviewed.** That covers price, players, length, minis and scale. Newsletter first issue was due 06 Oct. `npm run refresh-vlogs` is load-bearing: Netlify-built vlogs have no transcript.
 
 ## Next (ranked)
-1. **Matt: review the live game pages** one at a time, ticking them off in `GAME-REVIEW.md` (local, gitignored, newest first). Answer the open questions below as you go.
-2. **Matt: newsletter photos** and **Substack consolidation**, before 06 Oct.
-3. **After 31 Oct:** flip Gundam Assemble to `active`. Recheck Hallowtide (preorder 30 Oct) and Steel Psalm. **Jan 2027:** recheck XCOM: The Miniatures Game.
-4. Outlaws Gamefound ends 14 Oct. It stays a draft until the rules ship.
-5. Paint the Royal Herald (BONEZONE closes 31 Oct). Run the description pass. Retag the 9 wrongly tagged `ttrpg` pages.
-6. More backlog candidates if wanted: Fantastic Scuffles, Song of Drums and Shakos, Flying Lead.
+1. **Matt: work through `GAME-REVIEW.md`, the one checklist for all 120 games** (local, gitignored, newest first). Each game shows its directory **Specs** (what cards and filters display), **Missing** fields and **Check** lines for flagged guesses (70 games). Tick once the page reads right and the specs are correct; fix specs in the game's frontmatter. `node scripts/game-review.mjs` rebuilds it and keeps ticks. Then `phase1-vlog-games-review.md`.
+2. **Matt: real-phone check of the homepage and `/games/` filter drawer.** PageSpeed Insights mobile is **100** after the redesign (Matt, 10-06).
+3. **Matt: read the new copy for voice:** the six setting intros, free-rules and mini-agnostic intros, the `/games/` description, the TTRPG line, "Browse similar", and the TONKS page.
+4. **YouTube:** paste the new ork-armor description in Studio, keeping the Lost in the Forest credit line. Optionally `npm run youtube-auth` (Hobbinomicon channel), then `update-descriptions.cjs --only kRZNffm3g2c,3WuOjAC77MI,6rukHpWR0ZM` for footers.
+5. Answer the open questions below as you go through the checklist.
+6. Paint the Royal Herald (BONEZONE closes 31 Oct). After 31 Oct: recheck Hallowtide and Steel Psalm (Gundam Assemble already set `active`, 10-06). Outlaws Gamefound ends 14 Oct (stays a draft). Jan 2027: XCOM.
 
 ## Blockers
-- Matt: 7 *(verify)* identities, 8 wave-3 one-liners, MESBG tier. Spearhead and The Old World are on hold.
+- Matt: the checklist (item 1), 7 *(verify)* identities, 8 wave-3 one-liners, MESBG tier.
 - YouTube OAuth re-auth before any write. **The consent screen must be given the Hobbinomicon channel.**
 - Comments moderation has no pending-notification (manual D1 SQL only).
 
 ## Recently done
-- 10-01 — **Rounds 6-8** (24 games; XCOM failed the release rule), then **deployed everything**: `main` @ `3af63b4`, 119 games live. Made `GAME-REVIEW.md`, the review checklist, instead of drafting games (drafting would have 404'd YouTube links and dropped search ranking).
-- 09-30 — Backlog rounds 1-5, batches 5-7, Snarling Badger's five, wave 3, Gundam Assemble, the release rule and the RPG rule (RPGs out, linked to AITD).
+- 10-06: **Phases 1-3 + TONKS! deployed; PSI mobile 100**. One review checklist (`scripts/game-review.mjs`). Gundam Assemble set `active`. Then the homepage tweaks (videos first, newsletter section back) and 3 Orctober vlogs with transcripts and approved tags. Fixed a Swup bug that left the filters dead when `/games/` was reached by a click.
+- 10-02: Phase 1 data. Facet fields on every game; `games[]` on 99 vlogs (only 15 games have videos).
+- 10-01: Backlog rounds 6-8, 119 games live, `GAME-REVIEW.md`.
 
-## Open questions (Matt, for the review)
+## Open questions (Matt)
 - **Rounds 6-8:**
-  - Mantic's KoW 4th edition posts and the DreadBall playtest credits list a "Matt Gilbert". Is that you?
-  - Format calls: Firefight (skirmish or army?) and X-Wing (skirmish for ship combat?).
-  - No `10mm` tag, to match the 6mm ruling (dropped from Argatoria). OK?
-  - Small or text-on heroes: Deadzone, Walking Dead and KoW (about 730-1000px), SAGA (906px), X-Wing (a padded product shot), Bushido (logo in the banner).
-  - No logo: Song of Blades, Sellswords, Cyberpunk Combat Zone, Blood Eagle, DreadBall, Fantastic Battles.
-  - Designers *(verify)*: Cyberpunk CZ (Aaron Dill and John Kovaleski?), Bushido's original designer, X-Wing 2E, the Argatoria designer.
-  - Is Cavatore's "lead designer on Conquest" line outdated? The 2026 rules credit Leandros Mavrokefalos.
-  - Brethren: Wargames Atlantic only sells the PDF, so no studio is set. Steamforged's HQ: Sheffield or Salford?
-- **Earlier rounds:** Here's the Ruckus (WiPrime-only rules, does it pass?). Rumpus, Alien Zoo Keeper and Scrungaloids need links. The Gundam hero has text baked in.
-- **Round 1:**
-  - Wyrdcry (a Warcry fan hack): put it on the Warhammer hub?
-  - Spectre's "Rogue Warriors" and "War Eternal" aren't Spectre products (master-list error?), and there's a new `modern` tag.
-  - Carnivore: solo or not? Also, a `dinosaurs` tag?
-  - This Quar's War: status, and the hero may be a test cover.
-  - Hallowtide: Chris Bunge's credit comes from the cover byline only.
-  - Hametsu: a second Discord invite, and was there a Kickstarter?
-  - Devilry Afoot: the studio name.
+  - The "Matt Gilbert" in the KoW 4E and DreadBall credits: is that you?
+  - Firefight and X-Wing format.
+  - No `10mm` tag.
+  - Small heroes: Deadzone, Walking Dead, KoW, SAGA, X-Wing, Bushido.
+  - Missing logos: Song of Blades, Sellswords, Cyberpunk CZ, Blood Eagle, DreadBall, Fantastic Battles.
+  - Designers *(verify)*: Cyberpunk CZ, Bushido, X-Wing 2E, Argatoria.
+  - Cavatore's Conquest line. Brethren's studio. Steamforged's HQ.
 - **Earlier:**
-  - Malediction and Barons' War logos (adapted), the small Bolt Action logo, and the portrait Rampant covers.
-  - GW hero crops, BattleTech's "keep list" line and format, GW prices, an Underworlds take, the Verrotwood publisher, and an Ana Polanšćak people page.
-- Carried: r/mordheim unconfirmed. `--verify-urls` checks `dist/` only. Every build rewrites `youtube-stats.json` (revert before committing). The funnel threshold may want revisiting at 60 games.
+  - Here's the Ruckus release-rule pass.
+  - Rumpus, Alien Zoo Keeper and Scrungaloids links.
+  - Gundam hero text.
+  - Wyrdcry on the Warhammer hub.
+  - Spectre master-list errors and the `modern` tag.
+  - Carnivore solo/dinosaurs. This Quar's War status. Hallowtide credit.
+  - Hametsu Discord/Kickstarter. Devilry Afoot studio.
+  - Logos and covers (Malediction, Barons' War, Bolt Action, Rampant).
+  - GW crops and prices, the Underworlds take, Verrotwood publisher, the Ana Polanšćak page.
+- **Directory:** a visible "big publisher" marker on cards? (A filter exists.) Only 2 games are pinned, too few for a staff-picks chip.
+- **Carried:**
+  - r/mordheim unconfirmed.
+  - `--verify-urls` checks `dist/` only.
+  - Every full build rewrites `youtube-stats.json`; revert before committing.
