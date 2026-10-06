@@ -1,0 +1,76 @@
+---
+/**
+ * GameCard: the one card for a game, wherever games are listed (directory,
+ * type and facet pages, hubs). Wraps ImageCard with the game's image rules
+ * and a compact spec row: type · players · minis · price.
+ *
+ * With `coverage` (homepage "Recently covered") the card is about what was
+ * just made for the game: the badge says New video / New guide / News, the
+ * line under the title is that item's title, and the row is its date. The
+ * card still links to the game page; the item is one click on from there.
+ *
+ * Card image preference order:
+ *   1. thumbnailImage (custom card art, sized 16:9)
+ *   2. heroImage      (full-bleed hero, falls back if no thumbnail)
+ *   3. fallbackLetter (game's first letter on a neutral background)
+ *
+ * Logo is intentionally NOT a card-image fallback — logos look bad as 16:9
+ * full-bleed thumbnails. Logos layer over the image instead.
+ */
+import ImageCard from './ImageCard.astro';
+import { getHeroImage } from '../utils/getHeroImage';
+import { startCost, COVERAGE_LABEL, type Coverage } from '../utils/facets';
+import { formatDateShort } from '../utils/formatDate';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  game: CollectionEntry<'games'>;
+  coverage?: Coverage;
+}
+
+const { game, coverage } = Astro.props;
+const d = game.data;
+
+const cardImage = d.thumbnailImage || d.heroImage;
+const resolvedImage = cardImage ? getHeroImage(cardImage) : null;
+const resolvedLogo = d.logo ? getHeroImage(d.logo) : null;
+const cardAlt = d.thumbnailImageAlt || d.heroImageAlt || d.title;
+
+const TYPE: Record<string, string> = {
+  skirmish: 'Skirmish', army: 'Army', narrative: 'Narrative', boardgame: 'Board game', ttrpg: 'RPG',
+};
+const MINIS: Record<string, string> = {
+  'proxy-friendly': 'Proxy-friendly', 'own-line': 'Own minis line', 'print-and-play': 'Print / STL',
+};
+
+let players: string | undefined;
+if (d.players) {
+  const { min, max } = d.players;
+  players = max === undefined ? `${min}+ players` : min === max ? `${min} player${min === 1 ? '' : 's'}` : `${min}–${max} players`;
+}
+const cost = startCost(game);
+const price = d.rulesPriceUsd === 0 ? 'Free rules' : cost !== undefined ? `$${Math.round(cost)}` : undefined;
+
+const meta = [
+  TYPE[d.format],
+  players,
+  d.miniatureAgnostic ? 'Mini-agnostic' : d.minis ? MINIS[d.minis] : undefined,
+  price,
+].filter((x): x is string => Boolean(x));
+---
+
+<ImageCard
+  href={`/games/${game.id}/`}
+  image={resolvedImage}
+  imageAlt={cardAlt}
+  title={d.title}
+  subtitle={coverage ? coverage.title : d.description}
+  badge={coverage ? COVERAGE_LABEL[coverage.kind] : d.status === 'oop' ? 'Out of Print' : undefined}
+  logoOverlay={resolvedLogo}
+  fallbackLetter={d.title.charAt(0)}
+  aspectRatio="16/9"
+  variant="overlay"
+  subtitleOnHover
+  titleBelow
+  meta={coverage ? [formatDateShort(coverage.date), TYPE[d.format]] : meta}
+/>

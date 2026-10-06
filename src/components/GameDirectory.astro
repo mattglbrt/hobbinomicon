@@ -1,0 +1,150 @@
+---
+/**
+ * GameDirectory: the filterable game list behind /games/ and every type and
+ * facet page (scope: roadmap/rebuild/05-directory-and-homepage.md §4-5).
+ *
+ * Every card is rendered into the HTML, so Google indexes the whole list and
+ * the page works with JS off (you get every game, unfiltered). The script
+ * below only hides, shows and reorders what is already there. Filter state
+ * lives in the query string (/games/?players=solo,2&minis=agnostic) so a
+ * YouTube description can link straight to a filtered view; the canonical
+ * stays the bare path (BaseLayout drops the query), so those URLs never
+ * count as duplicates.
+ *
+ * Within a facet values are OR'd, across facets AND'd. Counts beside each
+ * value are "what you'd get if you ticked this", which is the number that
+ * stops someone clicking into an empty result.
+ */
+import GameCard from './GameCard.astro';
+import { FACETS, type DirectoryGame } from '../utils/facets';
+
+interface Props {
+  entries: DirectoryGame[];
+  /** Facets fixed by the page (e.g. type on /games/skirmish/). */
+  hideFacets?: string[];
+  /** Absolute URL of this page, for the ItemList structured data. */
+  pageUrl: string;
+}
+
+const { entries, hideFacets = [], pageUrl } = Astro.props;
+const total = entries.length;
+
+const count = (key: string, value: string) => entries.filter((e) => e.facets[key]?.includes(value)).length;
+
+// A facet earns a place only if it can narrow this list: some value matches
+// some games but not all of them. On /games/graveyard/ "Status" would be one
+// box that changes nothing, so it goes.
+const facets = FACETS.filter((f) => !hideFacets.includes(f.key))
+  .map((f) => ({ ...f, values: f.values.map((v) => ({ ...v, n: count(f.key, v.value) })).filter((v) => v.n > 0) }))
+  .filter((f) => f.values.some((v) => v.n < total));
+
+const facetKeys = facets.map((f) => f.key);
+const tokens = (e: DirectoryGame) =>
+  facetKeys.flatMap((k) => (e.facets[k] ?? []).map((v) => `${k}:${v}`)).join(' ');
+
+const itemList = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  url: pageUrl,
+  numberOfItems: total,
+  itemListElement: entries.map((e, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    url: `https://hobbinomicon.com/games/${e.game.id}/`,
+    name: e.game.data.title,
+  })),
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(itemList)} />
+
+<div data-directory data-facets={facetKeys.join(' ')} class="lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-10">
+  <!-- Filter rail (desktop) / drawer (mobile). Hidden until the script runs:
+       without JS the boxes would do nothing. -->
+  <aside>
+    <div
+      data-panel
+      hidden
+      role="region"
+      aria-label="Filter games"
+      class="max-lg:hidden max-lg:fixed max-lg:inset-0 max-lg:z-50 max-lg:flex max-lg:flex-col max-lg:bg-parchment max-lg:dark:bg-parchment-dark lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:pr-2"
+    >
+      <div class="lg:hidden flex items-center justify-between px-4 py-4 border-b border-ink/10 dark:border-ink-dark/10">
+        <h2 class="font-heading font-bold text-xl text-ink dark:text-ink-dark">Filter games</h2>
+        <button type="button" data-close class="min-h-11 min-w-11 px-3 text-ink dark:text-ink-dark text-sm font-medium underline underline-offset-4">Close</button>
+      </div>
+
+      <div class="max-lg:flex-1 max-lg:overflow-y-auto max-lg:px-4 max-lg:py-4 space-y-6">
+        {facets.map((f) => (
+          <fieldset data-facet={f.key}>
+            <legend class="mb-2 text-xs font-heading uppercase tracking-[0.15em] text-ink/70 dark:text-ink-dark/70">{f.label}</legend>
+            <div class="space-y-0.5">
+              {f.values.map((v) => (
+                <label class="flex items-center gap-3 min-h-11 lg:min-h-9 cursor-pointer text-ink dark:text-ink-dark has-[:disabled]:opacity-40 has-[:disabled]:cursor-default">
+                  <input type="checkbox" name={f.key} value={v.value} class="h-4 w-4 accent-ink dark:accent-ink-dark" />
+                  <span class="flex-1">{v.label}</span>
+                  <span data-count class="text-sm tabular-nums text-ink/60 dark:text-ink-dark/60">{v.n}</span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+        ))}
+      </div>
+
+      <div class="lg:hidden sticky bottom-0 flex gap-3 px-4 py-4 border-t border-ink/10 dark:border-ink-dark/10 bg-parchment dark:bg-parchment-dark">
+        <button type="button" data-clear class="min-h-11 px-4 rounded-full border border-ink/30 dark:border-ink-dark/30 text-ink dark:text-ink-dark font-medium">Clear</button>
+        <button type="button" data-close class="min-h-11 flex-1 px-4 rounded-full bg-ink dark:bg-ink-dark text-parchment dark:text-parchment-dark font-medium">
+          Show <span data-shown-btn>{total}</span> games
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <div>
+    <div class="flex flex-wrap items-center gap-3 mb-6">
+      <p class="mr-auto text-ink/80 dark:text-ink-dark/80" aria-live="polite">
+        <span data-shown class="font-bold text-ink dark:text-ink-dark">{total}</span> <span data-of hidden>of {total}</span> games
+      </p>
+      <button type="button" data-open hidden class="lg:hidden min-h-11 px-4 rounded-full border border-ink/30 dark:border-ink-dark/30 text-ink dark:text-ink-dark font-medium">
+        Filter games<span data-active-n></span>
+      </button>
+      <label class="hidden items-center gap-2 text-sm text-ink/80 dark:text-ink-dark/80" data-sort-wrap>
+        <span>Sort</span>
+        <select data-sort class="min-h-11 lg:min-h-9 rounded-md border border-ink/30 dark:border-ink-dark/30 bg-transparent px-2 text-ink dark:text-ink-dark">
+          <option value="recent">Recently covered</option>
+          <option value="az">A to Z</option>
+          <option value="newest">Newest to the directory</option>
+          <option value="price">Cheapest to start</option>
+        </select>
+      </label>
+    </div>
+
+    <div data-chips class="flex flex-wrap gap-2 mb-6 empty:hidden"></div>
+
+    <ul data-list class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      {entries.map((e) => (
+        <li
+          data-game={tokens(e)}
+          data-title={e.game.data.title.toLowerCase()}
+          data-covered={e.coveredAt.getTime()}
+          data-added={e.game.data.pubDate.getTime()}
+          data-cost={e.cost ?? ''}
+        >
+          <GameCard game={e.game} />
+        </li>
+      ))}
+    </ul>
+
+    <div data-empty hidden class="max-w-xl mx-auto text-center py-16">
+      <h2 class="text-2xl font-heading font-bold text-ink dark:text-ink-dark mb-3">Nothing matches all of that</h2>
+      <p class="text-ink/70 dark:text-ink-dark/70 mb-6">Try dropping the last filter you added.</p>
+      <button type="button" data-loosen class="min-h-11 px-5 rounded-full bg-ink dark:bg-ink-dark text-parchment dark:text-parchment-dark font-medium"></button>
+    </div>
+
+    <div class="text-center mt-10">
+      <button type="button" data-more hidden class="min-h-11 px-6 rounded-full border border-ink/30 dark:border-ink-dark/30 text-ink dark:text-ink-dark font-medium">Show more games</button>
+    </div>
+  </div>
+</div>
+
+{/* Behaviour: src/scripts/directory.ts, loaded by BaseLayout (Swup). */}

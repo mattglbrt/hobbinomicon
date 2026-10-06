@@ -1,10 +1,31 @@
 ---
+/**
+ * Homepage: a dashboard over the directory (scope:
+ * roadmap/rebuild/05-directory-and-homepage.md §3). Everything is computed at
+ * build, and the daily scheduled rebuild keeps it current, so the page changes
+ * whenever a video, guide or news post about a game goes out.
+ *
+ *   1. Hero + search + type chips      (DirectoryHero)
+ *   2. Browse by players/minis/price/setting (BrowseBy)
+ *   3. Recently covered games          (newest video, guide or news per game)
+ *   4. Most viewed games               (Phase 4, needs a views source)
+ *   5. Latest videos
+ *   6. News
+ *   7. Guides, the ones for games in §3 first
+ *   8. On-ramp hubs
+ *   The newsletter signup lives in the footer only.
+ *
+ * On a phone, the card rows are horizontal snap carousels (.card-row) so the
+ * page stays a few screens tall instead of a long stack.
+ */
 import { getCollection, getEntry } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import DirectoryHero from '../components/DirectoryHero.astro';
+import BrowseBy from '../components/BrowseBy.astro';
+import GameCard from '../components/GameCard.astro';
+import VideoCard from '../components/VideoCard.astro';
 import ListCard from '../components/ListCard.astro';
-import NewsletterSignup from '../components/NewsletterSignup.astro';
 import Footer from '../components/Footer.astro';
 import ContentContainer from '../components/ContentContainer.astro';
 import ImageCard from '../components/ImageCard.astro';
@@ -12,20 +33,24 @@ import ViewAllLink from '../components/ViewAllLink.astro';
 import { getHeroImage } from '../utils/getHeroImage';
 import { sortByDate } from '../utils/collections';
 import { getGuides, guideUrlWith, TOPICS, type Topic } from '../utils/content';
+import { getDirectory, getRecentlyCovered } from '../utils/facets';
 
-// ─── Directory: featured / recently added games ─────────────────────
-const allGames = await getCollection('games', ({ data }) => !data.draft);
-const featuredGames = [...allGames]
-  .sort((a, b) => {
-    // Indie tier first, then by most recently updated/published
-    if (a.data.tier !== b.data.tier) return a.data.tier === 'indie' ? -1 : 1;
-    const aDate = (a.data.updatedDate || a.data.pubDate).valueOf();
-    const bDate = (b.data.updatedDate || b.data.pubDate).valueOf();
-    return bDate - aDate;
-  })
-  .slice(0, 6);
+const directory = await getDirectory();
+const gameTitles = new Map(directory.map((e) => [e.game.id, e.game.data.title]));
+const gameSlugs = new Set(gameTitles.keys());
 
-// ─── Latest indie news ──────────────────────────────────────────────
+// ─── 3. Recently covered ────────────────────────────────────────────
+const recentlyCovered = await getRecentlyCovered(8);
+
+// ─── 5. Latest videos: link to the on-site page, not YouTube, so the
+// visit (and the transcript page) gets the traffic.
+const latestVideos = sortByDate(
+  await getCollection('vlog', ({ data }) => !data.draft && data.kind === 'vlog' && !!data.youtubeId),
+)
+  .slice(0, 6)
+  .map((post) => ({ post, game: post.data.games.map((g) => gameTitles.get(g.id)).find(Boolean) }));
+
+// ─── 6. Latest indie news ───────────────────────────────────────────
 const allNews = await getCollection('news', ({ data }) => !data.draft);
 const recentNews = sortByDate(allNews).slice(0, 6);
 
@@ -40,13 +65,17 @@ const recentNewsCards = await Promise.all(
   })
 );
 
-// ─── Learn to paint: the newest guides ──────────────────────────────
-const gameSlugs = new Set(allGames.map((g) => g.id));
-const latestGuides = (await getGuides()).slice(0, 6);
-
-// ─── On-ramp hubs. A hub only appears once it has guides behind it;
-// an empty on-ramp is worse than no on-ramp.
+// ─── 7. Guides: the ones for games covered in §3 first, then the newest.
 const allGuides = await getGuides();
+const coveredIds = new Set(recentlyCovered.map((e) => e.game.id));
+const guideGame = (g: (typeof allGuides)[number]) => g.data.game?.id ?? g.id.split('/')[0];
+const latestGuides = [
+  ...allGuides.filter((g) => coveredIds.has(guideGame(g))),
+  ...allGuides.filter((g) => !coveredIds.has(guideGame(g))),
+].slice(0, 6);
+
+// ─── 8. On-ramp hubs. A hub only appears once it has guides behind it;
+// an empty on-ramp is worse than no on-ramp.
 const hubs = [
   {
     slug: 'warmachine',
@@ -61,6 +90,9 @@ const hubs = [
 ]
   .map((h) => ({ ...h, count: allGuides.filter((g) => g.data.hub === h.slug).length }))
   .filter((h) => h.count >= 3);
+
+const eyebrow = 'block text-sm font-heading uppercase tracking-[0.3em] text-ink/65 dark:text-ink-dark/65 mb-2';
+const heading = 'text-4xl md:text-7xl font-display font-bold text-ink dark:text-ink-dark';
 ---
 
 <BaseLayout
@@ -70,59 +102,60 @@ const hubs = [
   <Header theme="dark" />
 
   <main id="main-content" class="min-h-screen">
-    <!-- 1. Hero — directory value proposition + search -->
+    <!-- 1. Hero — directory value proposition + search + type chips -->
     <DirectoryHero />
 
-    <!-- 2. Featured / recently added games -->
-    {featuredGames.length > 0 && (
-      <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24" data-scroll-reveal>
+    <!-- 2. Browse by -->
+    <BrowseBy />
+
+    <!-- 3. Recently covered games -->
+    {recentlyCovered.length > 0 && (
+      <section class="bg-parchment dark:bg-parchment-dark py-10 md:py-24" data-scroll-reveal>
         <ContentContainer>
-          <div class="section-head flex items-center justify-between mb-12">
+          <div class="section-head flex items-end justify-between gap-4 mb-6 md:mb-12">
             <div>
-              <span class="block text-sm font-heading uppercase tracking-[0.3em] text-ink/65 dark:text-ink-dark/65 mb-2">Worth a closer look</span>
-              <h2 class="text-5xl md:text-7xl font-display font-bold text-ink dark:text-ink-dark">Games worth knowing about</h2>
+              <span class={eyebrow}>Just covered</span>
+              <h2 class={heading}>Recently covered games</h2>
             </div>
             <ViewAllLink href="/games/">All Games →</ViewAllLink>
           </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredGames.map((game) => {
-              const cardImage = game.data.thumbnailImage || game.data.heroImage;
-              const resolvedImage = cardImage ? getHeroImage(cardImage) : null;
-              const resolvedLogo = game.data.logo ? getHeroImage(game.data.logo) : null;
-              const cardAlt = game.data.thumbnailImageAlt || game.data.heroImageAlt || game.data.title;
-              return (
-                <ImageCard
-                  href={`/games/${game.id}/`}
-                  image={resolvedImage}
-                  imageAlt={cardAlt}
-                  title={game.data.title}
-                  subtitle={game.data.description}
-                  logoOverlay={resolvedLogo}
-                  fallbackLetter={game.data.title.charAt(0)}
-                  aspectRatio="16/9"
-                  variant="overlay"
-                  subtitleOnHover
-                  titleBelow
-                />
-              );
-            })}
+          <div class="card-row grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {recentlyCovered.map((e) => <GameCard game={e.game} coverage={e.coverage[0]} />)}
           </div>
         </ContentContainer>
       </section>
     )}
 
-    <!-- 3. Latest indie news -->
-    {recentNews.length > 0 && (
-      <section class="bg-ink/[0.03] dark:bg-ink-dark/[0.03] py-16 md:py-24" data-scroll-reveal>
+    <!-- 5. Latest videos -->
+    {latestVideos.length > 0 && (
+      <section class="bg-ink/[0.03] dark:bg-ink-dark/[0.03] py-10 md:py-24" data-scroll-reveal>
         <ContentContainer>
-          <div class="section-head flex items-center justify-between mb-12">
+          <div class="section-head flex items-end justify-between gap-4 mb-6 md:mb-12">
             <div>
-              <span class="block text-sm font-heading uppercase tracking-[0.3em] text-ink/65 dark:text-ink-dark/65 mb-2">What's new</span>
-              <h2 class="text-5xl md:text-7xl font-display font-bold text-ink dark:text-ink-dark">News from the indie wargame world</h2>
+              <span class={eyebrow}>On the channel</span>
+              <h2 class={heading}>Latest videos</h2>
+            </div>
+            <ViewAllLink href="/vlog/">All Videos →</ViewAllLink>
+          </div>
+          <div class="card-row grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {latestVideos.map(({ post, game }) => <VideoCard post={post} game={game} />)}
+          </div>
+        </ContentContainer>
+      </section>
+    )}
+
+    <!-- 6. Latest indie news -->
+    {recentNews.length > 0 && (
+      <section class="bg-parchment dark:bg-parchment-dark py-10 md:py-24" data-scroll-reveal>
+        <ContentContainer>
+          <div class="section-head flex items-end justify-between gap-4 mb-6 md:mb-12">
+            <div>
+              <span class={eyebrow}>What's new</span>
+              <h2 class={heading}>News from the indie wargame world</h2>
             </div>
             <ViewAllLink href="/news/">All News →</ViewAllLink>
           </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="card-row grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {recentNewsCards.map(({ item, cardImage }) => (
               <ImageCard
                 href={`/news/${item.id}/`}
@@ -140,18 +173,18 @@ const hubs = [
       </section>
     )}
 
-    <!-- 4. Learn to paint — the other half of the promise in the hero -->
+    <!-- 7. Learn to paint — the other half of the promise in the hero -->
     {latestGuides.length > 0 && (
-      <section class="bg-parchment dark:bg-parchment-dark py-16 md:py-24" data-scroll-reveal>
+      <section class="bg-ink/[0.03] dark:bg-ink-dark/[0.03] py-10 md:py-24" data-scroll-reveal>
         <ContentContainer>
-          <div class="section-head flex items-center justify-between mb-12">
+          <div class="section-head flex items-end justify-between gap-4 mb-6 md:mb-12">
             <div>
-              <span class="block text-sm font-heading uppercase tracking-[0.3em] text-ink/65 dark:text-ink-dark/65 mb-2">Learn to paint and play it</span>
-              <h2 class="text-5xl md:text-7xl font-display font-bold text-ink dark:text-ink-dark">Guides</h2>
+              <span class={eyebrow}>Learn to paint and play it</span>
+              <h2 class={heading}>Guides</h2>
             </div>
             <ViewAllLink href="/guides/">All Guides →</ViewAllLink>
           </div>
-          <div class="grid gap-4 md:grid-cols-2">
+          <div class="card-row grid gap-4 md:grid-cols-2">
             {latestGuides.map((g) => (
               <ListCard
                 href={guideUrlWith(g, gameSlugs)}
@@ -166,14 +199,14 @@ const hubs = [
       </section>
     )}
 
-    <!-- 5. On-ramps. These are the top of the funnel, not the destination:
+    <!-- 8. On-ramps. These are the top of the funnel, not the destination:
          both hubs exist to point sideways into the indie directory. -->
     {hubs.length > 0 && (
-      <section id="on-ramps" class="bg-ink dark:bg-ink-dark py-16 md:py-24 scroll-mt-24" data-scroll-reveal>
+      <section id="on-ramps" class="bg-ink dark:bg-ink-dark py-10 md:py-24 scroll-mt-24" data-scroll-reveal>
         <ContentContainer>
           <span class="block text-sm font-heading uppercase tracking-[0.3em] text-parchment/65 dark:text-parchment-dark/65 mb-2">Competitive Games</span>
-          <h2 class="text-2xl md:text-4xl font-display font-bold text-parchment dark:text-parchment-dark mb-10 max-w-3xl leading-tight">Warmachine is my competitive game of choice, but I just can't give up on Warhammer.</h2>
-          <div class="grid gap-6 md:grid-cols-2">
+          <h2 class="text-2xl md:text-4xl font-display font-bold text-parchment dark:text-parchment-dark mb-6 md:mb-10 max-w-3xl leading-tight">Warmachine is my competitive game of choice, but I just can't give up on Warhammer.</h2>
+          <div class="card-row grid gap-6 md:grid-cols-2">
             {hubs.map((h) => (
               <a
                 href={`/${h.slug}/`}
@@ -191,11 +224,30 @@ const hubs = [
       </section>
     )}
 
-    <!-- 5. Newsletter — Substack signup -->
-    <div id="newsletter" class="scroll-mt-24">
-      <NewsletterSignup variant="section" />
-    </div>
-
     <Footer />
   </main>
 </BaseLayout>
+
+<style>
+  /* Phones: card rows become horizontal snap carousels with ~1.2 cards in
+     view, so a row of six costs one card's height, not six. The negative
+     margin lets cards run to the screen edge; the padding keeps the first
+     one aligned with the section heading. */
+  @media (max-width: 767px) {
+    .card-row {
+      display: flex;
+      gap: 1rem;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: 1.5rem;
+      margin-inline: -1.5rem;
+      padding: 0 1.5rem 0.5rem;
+      scrollbar-width: none;
+    }
+    .card-row::-webkit-scrollbar { display: none; }
+    .card-row > :global(*) {
+      flex: 0 0 82%;
+      scroll-snap-align: start;
+    }
+  }
+</style>

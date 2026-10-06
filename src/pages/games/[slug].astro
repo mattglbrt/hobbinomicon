@@ -23,6 +23,7 @@ import { getFunnelSuggestions } from '../../utils/funnel';
 import { getGuides, getSeries, getAllVlogEntries, guideUrlWith } from '../../utils/content';
 import { formatDateLong } from '../../utils/formatDate';
 import gameVideos from '../../data/game-videos.json';
+import { getDirectory, facetHref, facetLabel } from '../../utils/facets';
 
 const newsKindLabels: Record<string, string> = {
   kickstarter: 'Kickstarter',
@@ -180,6 +181,22 @@ const gameSpecs = [
   game.data.costToStart && { label: 'Cost', value: game.data.costToStart },
   { label: 'Minis', value: game.data.miniatureAgnostic ? 'Mini-Agnostic' : 'Not Mini-Agnostic' },
 ].filter((s): s is { label: string; value: string } => Boolean(s));
+
+// Where this game sits in the directory: its type page for the breadcrumb,
+// and its facet values as chips that link back into the directory (to the
+// landing page where one exists, else the filtered /games/ view).
+const typePages: Record<string, { name: string; path: string }> = {
+  skirmish: { name: 'Skirmish', path: '/games/skirmish/' },
+  army: { name: 'Army', path: '/games/army/' },
+  narrative: { name: 'Narrative', path: '/games/narrative/' },
+  ttrpg: { name: 'TTRPGs', path: '/games/ttrpgs/' },
+};
+const typeCrumb = typePages[game.data.format];
+const directoryEntry = (await getDirectory()).find((e) => e.game.id === game.id);
+const facetChips = ['players', 'minis', 'price', 'length', 'setting', 'scale'].flatMap((k) =>
+  (directoryEntry?.facets[k] ?? []).map((v) => ({ label: facetLabel(k, v), href: facetHref(k, v) })),
+);
+const lastUpdated = game.data.updatedDate ?? game.data.pubDate;
 ---
 
 <BaseLayout
@@ -197,6 +214,7 @@ const gameSpecs = [
       breadcrumbs: [
         { name: 'Home', url: 'https://hobbinomicon.com/' },
         { name: 'Games', url: 'https://hobbinomicon.com/games/' },
+        ...(typeCrumb ? [{ name: typeCrumb.name, url: `https://hobbinomicon.com${typeCrumb.path}` }] : []),
         { name: game.data.title, url: `https://hobbinomicon.com/games/${game.id}/` },
       ],
     }}
@@ -258,6 +276,15 @@ const gameSpecs = [
     <article class={`pb-20 md:pb-24 ${game.data.heroImage ? '-mt-32 relative z-10' : ''}`}>
       <ContentContainer>
         <header class="mb-12">
+          <nav aria-label="Breadcrumb" class="mb-4 flex justify-center">
+            <ol class="flex flex-wrap items-center gap-x-2 px-4 py-1.5 rounded-full bg-parchment/90 dark:bg-parchment-dark/90 backdrop-blur text-sm text-ink/75 dark:text-ink-dark/75">
+              <li><a href="/games/" class="underline underline-offset-4 hover:text-ink dark:hover:text-ink-dark">Games</a></li>
+              {typeCrumb && (
+                <li class="flex items-center gap-x-2"><span aria-hidden="true">›</span><a href={typeCrumb.path} class="underline underline-offset-4 hover:text-ink dark:hover:text-ink-dark">{typeCrumb.name}</a></li>
+              )}
+              <li class="flex items-center gap-x-2"><span aria-hidden="true">›</span><span aria-current="page" class="text-ink dark:text-ink-dark">{game.data.title}</span></li>
+            </ol>
+          </nav>
           <div class="flex flex-wrap justify-center gap-3 mb-6">
             <span class="px-3 py-1 bg-white text-ink text-xs font-heading uppercase tracking-[0.2em] rounded-full shadow-sm">
               {game.data.tier === 'indie' ? 'Indie' : 'Big Game'}
@@ -304,6 +331,17 @@ const gameSpecs = [
             {game.data.description}
           </p>
           <GameSpecs specs={gameSpecs} />
+          {facetChips.length > 0 && (
+            <nav aria-label="Browse similar games" class="mt-6 flex flex-wrap items-center gap-2">
+              <span class="text-xs font-heading uppercase tracking-[0.15em] text-ink/65 dark:text-ink-dark/65 mr-1">Browse similar</span>
+              {facetChips.map((c) => (
+                <a href={c.href} class="inline-flex items-center min-h-9 px-3 rounded-full border border-ink/25 dark:border-ink-dark/25 text-sm text-ink dark:text-ink-dark hover:bg-ink/5 dark:hover:bg-ink-dark/10">{c.label}</a>
+              ))}
+            </nav>
+          )}
+          <p class="mt-4 text-sm text-ink/60 dark:text-ink-dark/60">
+            Last updated <time datetime={lastUpdated.toISOString().slice(0, 10)}>{formatDateLong(lastUpdated)}</time>
+          </p>
         </header>
 
         <div class={hasSidebar ? 'grid grid-cols-1 lg:grid-cols-3 gap-12' : 'max-w-3xl'}>

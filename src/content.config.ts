@@ -45,6 +45,12 @@ const vlog = defineCollection({
     // renders at /series/{series}/{slug}/ instead of /vlog/{slug}/.
     series: reference('series').optional(),
     episode: z.number().optional(),
+
+    // Directory games this video covers. Feeds "Recently covered" on the
+    // homepage and the directory's default sort. Drafted by
+    // scripts/draft-vlog-games.mjs, confirmed by hand; [] for videos that
+    // cover no directory game (a pure painting tutorial).
+    games: z.array(reference('games')).default([]),
   }),
 });
 
@@ -181,6 +187,27 @@ const games = defineCollection({
     pointsScale: z.string().optional(),
     gameLength: z.string().optional(),
     costToStart: z.string().optional(),
+
+    // Directory facets (2026-10). Numeric twins of the display strings above,
+    // which stay as the copy on the page. Drafted from those strings by
+    // scripts/draft-game-facets.mjs and reviewed by Matt. Setting, solo and
+    // mini-agnostic are NOT here: they derive from `tags`, `solo` and
+    // `miniatureAgnostic` (src/utils/facets.ts), so there is one source each.
+    //
+    // Price is split because "Rules free + a $125 starter" is free to a
+    // painter who owns minis and $125 to someone who doesn't. A quickstart
+    // does not make the rules free (same line as the release rule).
+    rulesPriceUsd: z.number().optional(),     // full rules; 0 = free
+    starterPriceUsd: z.number().optional(),   // cheapest box to play from nothing
+    players: z.object({
+      min: z.number(),
+      max: z.number().optional(),             // omitted = open-ended ("2+")
+      coop: z.boolean().default(false),
+    }).optional(),
+    sessionMinutes: z.object({ min: z.number(), max: z.number() }).optional(),
+    // Only for games that aren't mini-agnostic; agnostic is the flag below.
+    minis: z.enum(['proxy-friendly', 'own-line', 'print-and-play']).optional(),
+    scale: z.enum(['warband', 'platoon', 'rank-and-flank', 'mass-battle']).optional(),
 
     // Categorization
     // `large-scale-army` and `mass-battle` merged into `army` (2026-08): the

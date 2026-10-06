@@ -1,0 +1,15 @@
+---
+import DirectoryPage from '../../components/DirectoryPage.astro';
+import { getDirectory } from '../../utils/facets';
+
+const entries = (await getDirectory()).filter(({ game }) => game.data.miniatureAgnostic);
+---
+
+<DirectoryPage
+  title="Mini-Agnostic Wargames"
+  heading="Mini-Agnostic Games"
+  description="Games that don't care whose models you use. If you've got a drawer of unpainted minis, start here."
+  path="/games/mini-agnostic/"
+  crumb="Mini-agnostic"
+  entries={entries}
+/>

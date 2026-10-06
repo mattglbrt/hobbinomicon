@@ -4,6 +4,71 @@ Append-only. **Newest entry first.** Pre-existing planning history lives in `roa
 
 ---
 
+## 2026-10-01 — Backlog rounds 6-8, full deploy: 119 games live
+
+**Deploy: `main` @ `3af63b4`** (one merge of everything on `dev`: rounds 2-8,
+Gundam Assemble, and the release-rule 302s). The backlog run is finished.
+
+### Rounds 6-8 (24 built, 1 skipped, about 95 searches)
+The agents ran 4 at a time from a shared brief, one per game or one per
+publisher pair (Mantic, Para Bellum, Ganesha). Each wrote its own page, images
+and studio or people pages and reported back; I committed between rounds
+(`9861676`, `9c02ad6`).
+- **Built:** Deadzone, Firefight (`firefight-mantic`, to keep it apart from
+  OPR's), Song of Blades and Heroes, Sellswords & Spellslingers (`solo`), This
+  Is Not a Test (Black Site 2E, licensed from Joey McGuire), Warcrow Adventures
+  (`boardgame`), The Walking Dead: All Out War, Elder Scrolls: Call to Arms,
+  Cyberpunk RED: Combat Zone, Conquest: First Blood + The Last Argument of
+  Kings, Bushido (Risen Sun), Blood Eagle, Brethren, Ravenfeast, Sludge, Guild
+  Ball, DreadBall, Kings of War (4E), X-Wing, SAGA, A Song of Ice and Fire,
+  Argatoria, Fantastic Battles.
+- **Status calls:**
+  - DreadBall is `oop`: no starter, and both listed teams are out of stock.
+  - X-Wing is `oop`: AMG ended development in June 2024, and the X-Wing
+    Alliance runs it now.
+  - Guild Ball and The Walking Dead are `active`: both came back in 2024.
+- **Skipped: XCOM.** It's *XCOM: The Miniatures Game* (Modiphius), a preorder
+  shipping January 2027 with only a preview rulebook, so it fails the release
+  rule. Recheck then.
+- **My brief got two guesses wrong, and the agents corrected both.** Sludge is
+  Sean Sutter's black-powder army game (Metal King). SAGA's designer is Alex
+  Buchel.
+- **Fixes I made by hand:**
+  - Back-links: Warcrow → Adventures and Halo → Deadzone. Blood Eagle,
+    Ravenfeast and SAGA cross-linked.
+  - The AMG description no longer claims X-Wing or Armada.
+  - Dropped the new `10mm` tag, by analogy with the 6mm ruling.
+  - Removed the "Matt Hart" alias from Mat Hart's page.
+  - Reworded a "not just" on the Bushido page.
+- **New studios:** ganesha-games, monster-fight-club, para-bellum,
+  gct-studios, ministry-of-gentlemanly-warfare, little-wars-tv, cmon,
+  spellcrow.
+- **Built with `npx astro build`,** not `npm run build`, to skip the prebuild
+  sync. 119 live games, and no live dead links. The only hit was
+  `/people/chris-bunge/`, which only drafted Hallowtide links to.
+
+### Review approach (Matt)
+Matt asked whether to draft every game and review them one at a time. **We
+didn't.** It wouldn't break the build, because drafts are filtered
+everywhere, but it would have:
+- 404'd the roughly 28 YouTube deep links,
+- dead-linked 12 guide and news pages,
+- emptied the hubs,
+- thrown away the search ranking the pages have built.
+
+He also didn't want a `reviewed` field in frontmatter. He chose a **local,
+gitignored checklist, `GAME-REVIEW.md`**: all 119 games plus the 4 drafts, with
+live links, newest first. Add new games to it by hand. Regenerating it would
+wipe his ticks.
+
+### Open (in STATUS)
+- Is the "Matt Gilbert" byline on Mantic's KoW 4E posts and in the DreadBall
+  playtest credits Matt?
+- Format calls: Firefight, X-Wing.
+- Weak heroes, six pages with no logo, and designer credits to verify.
+
+---
+
 ## 2026-09-30 (addendum) — Batches 5–7, backlog run round 1: directory at 60 on dev (53 live)
 
 **Deploys: `main` @ `ffb6f6c` (batch 5), `7fb5c13` (batches 6 + 7 in one
@@ -47,7 +112,8 @@ Long War", ZombieSmith), Carnivore (Buer, digital only), Hallowtide
 - Agent reports shortened to 12 lines to keep the orchestrator's context lean.
 - Identity-first rule (stop and report candidates) caught 1698 and Spectre's
   phantom "Rogue Warriors / War Eternal".
-- `grep $''` is unreliable in this shell; use Python byte counts for line
+- `grep $'
+'` is unreliable in this shell; use Python byte counts for line
   endings. `SESSION_LOG_ARCHIVE.md` and the dashboard `data.json` are CRLF.
 
 ### Open (Matt)

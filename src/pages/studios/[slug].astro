@@ -5,13 +5,13 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import ContentContainer from '../../components/ContentContainer.astro';
 import ProseContent from '../../components/ProseContent.astro';
-import ImageCard from '../../components/ImageCard.astro';
+import GameGrid from '../../components/GameGrid.astro';
 import StructuredData from '../../components/StructuredData.astro';
 import SearchMeta from '../../components/SearchMeta.astro';
 import PartnerStore from '../../components/PartnerStore.astro';
 import { formatDateLong } from '../../utils/formatDate';
 import { sortByDate } from '../../utils/collections';
-import { getHeroImage, getHeroImageUrl } from '../../utils/getHeroImage';
+import { getHeroImageUrl } from '../../utils/getHeroImage';
 
 export async function getStaticPaths() {
   const studios = await getCollection('studios', ({ data }) => !data.draft);
@@ -179,23 +179,7 @@ const referenceLinks = [
             <h2 class="text-3xl md:text-4xl font-heading font-bold text-ink dark:text-ink-dark mb-8">
               Games
             </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {studioGames.map((g) => {
-                const cardImage = g.data.heroImage ? getHeroImage(g.data.heroImage) : null;
-                return (
-                  <ImageCard
-                    href={`/games/${g.id}/`}
-                    image={cardImage}
-                    imageAlt={g.data.heroImageAlt || g.data.title}
-                    title={g.data.title}
-                    subtitle={g.data.description}
-                    fallbackLetter={g.data.title.charAt(0)}
-                    aspectRatio="16/9"
-                    variant="overlay"
-                  />
-                );
-              })}
-            </div>
+            <GameGrid games={studioGames} />
           </section>
         )}
 
