@@ -64,6 +64,12 @@ corrections, at `roadmap/rebuild/05-directory-and-homepage.md`:
 - The ork armor description was the YouTube music credit only. Replaced with a transcript line + "Music from Lost in the Forest" (Matt: keep the attribution). The page's About section keeps the Bandcamp link.
 - **YouTube-side** description still needs Matt's paste in Studio.
 
+### After the wrap
+- **One checklist:** `scripts/game-review.mjs` rebuilds `GAME-REVIEW.md` (local) from the game files, folding in the Phase 1 facet review.
+  - Per game: Specs, live-computed Missing fields, and the flagged Check lines.
+  - Keeps ticks. Added TONKS. 70 games have Check lines, 64 have Missing fields.
+- **Gundam Assemble set `active`** (Matt, to start indexing). "Announced" never blocked indexing: the page was already in the sitemap with no noindex. The status only drives the label and the Status filter. CLAUDE.md updated.
+
 ### Open
 Matt to review the facet drafts (now public on cards and filters), the vlog links, and the new copy (setting/free-rules/mini-agnostic intros, `/games/` line, TTRPG line, TONKS). **PageSpeed Insights mobile: 100 after deploy (Matt).** Real-phone check still to do. YouTube footers for the 3 new videos need `youtube-auth`.
 
