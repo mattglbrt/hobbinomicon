@@ -4,6 +4,50 @@ Append-only. **Newest entry first.** Pre-existing planning history lives in `roa
 
 ---
 
+## 2026-10-19 — BONEZONE dropped, orc skin vlog, goobins-gits tag, footers
+
+**Deploy:** `main` @ `40f349f` (one merge from `dev`).
+
+**Handoff (orchestrator, 10-13) addressed:** Matt isn't entering BONEZONE
+("im not going to be able to participate"). "Paint the Royal Herald" dropped
+from Next. HANDOFF.md deleted.
+
+### BONEZONE removed from the site
+- `news/bonezone-2026-open.mdx` → `draft: true`, URL 301s to
+  `/guides/a-new-way-to-paint-skeletons/` (the post's subject; permanent, so
+  301 not the parked-page 302).
+- Skeleton guide update line now only mentions the 2027 Tomb Kings army.
+- `online-painting-competitions-2026`: dropped "I'm entering this one" + link.
+  The neutral BONEZONE listing stays.
+- `oldhammer-year-2027`: the Tomb Kings link re-pointed to the skeleton guide.
+- CLAUDE.md "BONEZONE 2026 is a hub" section deleted.
+- Left: the newsletter page example "BONEZONE 2026 is open; entries close on
+  Halloween." (true, says nothing about entering).
+
+### New vlog + tags
+- `npm run refresh-vlogs` (Matt): "How to paint old school orc skin" (10-15)
+  synced with transcript; untagged (no TTY).
+- Tags (Matt): painting, tutorial, skin-tones, glazing, orcs-and-goblins,
+  **goobins-gits** (new, category `brand`), and indie-miniatures. Matt asked
+  for `indie-models`; the existing `indie-miniatures` is the same thing (9 vlogs)
+  so it was used instead of a duplicate. Matt can ask for a rename.
+- `goobins-gits` also added to the other three Orctober vlogs (same model, Matt
+  said yes). Keyword `goobins gits` added to `tag-keywords.json`.
+- `transcript-normalize.json`: "Goobins Gits" ← "Guben's gits", "Gooen Gits"
+  (both seen in this transcript; spelling from Matt). The maker's people page is
+  `goobinsgitz` (assumed same person, unconfirmed).
+
+### YouTube footers
+- `youtube-auth` (Matt, Hobbinomicon channel) → backup
+  `scripts/backups/descriptions-backup-2026-10-19T13-23-48.json` → dry run →
+  `--run --only` on the 4 latest. All 4 verified on YouTube. Three had empty
+  descriptions, so they are footer-only now.
+- Correction: STATUS's "paste the new ork-armor description in Studio" was a
+  past session's suggestion (copy the site meta description to YouTube), not
+  something Matt wrote. Dropped.
+
+---
+
 ## 2026-10-02 → 10-06 — Directory + homepage redesign (Phases 1-3), TONKS, Orctober vlogs
 
 **Deploys:** `main` @ `56ff3f6` (10-06: Phases 1-3 + TONKS, Matt chose
