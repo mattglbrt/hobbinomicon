@@ -4,6 +4,36 @@ Append-only. **Newest entry first.** Pre-existing planning history lives in `roa
 
 ---
 
+## 2026-10-20 — Game review started: TONKS done, CMON removed, Argatoria in progress
+
+**Deploy:** none. `dev` is 3 commits ahead of `main` (`0b63811`, `bc6eef3`,
+`8db3b33`), not pushed. No HANDOFF.md.
+
+### GAME-REVIEW.md walkthrough (1 of 119 ticked)
+- **TONKS!:** `discordUrl` added (Matt's link,
+  `discord.com/invite/28-951450773823316028`), which turns on the header's
+  "Official Discord" link. The body's "28 Discord" card had the same invite as
+  `discord.gg/…` and now matches. Matt: "tonks is good". Ticked. Length is still
+  blank.
+- **Argatoria, in progress, not ticked:** Matt confirmed own line and "10mm mass
+  battle". `scale: rank-and-flank` → `mass-battle`. I ticked it too early and
+  Matt said "dont mark it done yet", so only tick on his explicit sign-off.
+  Still open: players, length, the £→$ prices ($32 / $70 from £25 / £55), whether
+  the description should say "mass battle" rather than "rank-and-flank", and
+  whether the `competitive` tag fits.
+
+### CMON removed (Matt: they're out of business and he won't support them)
+- A Song of Ice and Fire was the only CMON game. Drafted it, plus
+  `studios/cmon` and its three designers (Eric M. Lang, Fábio Cury, Michael
+  Shinall), whose pages existed only for ASOIAF.
+- Drafted, not deleted (the BONEZONE pattern). The 301s (permanent, since they
+  aren't coming back) go to `/games/`, `/studios/` and `/people/`, with slash and
+  `.md` variants. No other page referenced them, and the build was clean with no
+  leftover links in `dist/`.
+- CLAUDE.md: new "No CMON games" section.
+
+---
+
 ## 2026-10-19 — BONEZONE dropped, orc skin vlog, goobins-gits tag, footers
 
 **Deploy:** `main` @ `40f349f` (one merge from `dev`).

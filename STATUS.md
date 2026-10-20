@@ -1,37 +1,38 @@
-# STATUS — The Hobbinomicon · updated 2026-10-19
+# STATUS — The Hobbinomicon · updated 2026-10-20
 
 ## Now
-**Live, all deployed** (`main` @ `40f349f`, 10-19). **120 games.** The directory and homepage redesign went live 10-06, and PSI mobile is 100.
-- 10-19: BONEZONE is off the site (Matt isn't entering). The news post is drafted and 301s to the skeleton guide.
-- All 4 latest vlogs have their transcript post and YouTube footer. New tag `goobins-gits`.
+**Live** (`main` @ `40f349f`, 10-19). **119 games** after CMON was removed. The directory and homepage redesign went live 10-06, and PSI mobile is 100.
+- **Undeployed on `dev`** (3 commits, not pushed): the TONKS Discord link, CMON removed (ASOIAF, the studio and 3 designers drafted, 301s to the hubs), and Argatoria's scale changed to mass-battle.
+- **Game review has started:** 1 of 119 ticked (TONKS). Argatoria is half-done and not ticked.
 
 Scope and decisions: `roadmap/rebuild/05-directory-and-homepage.md`.
 
-**The facet values on cards and filters are script-drafted and unreviewed.** That covers price, players, length, minis and scale. `npm run refresh-vlogs` is load-bearing: Netlify-built vlogs have no transcript.
+**The facet values on cards and filters are script-drafted and mostly unreviewed.** That covers price, players, length, minis and scale. `npm run refresh-vlogs` is load-bearing: Netlify-built vlogs have no transcript.
 
 ## Next (ranked)
-1. **Matt: work through `GAME-REVIEW.md`, the one checklist for all 120 games** (local, gitignored, newest first). Tick once the page reads right and the specs are correct; fix specs in the game's frontmatter. `node scripts/game-review.mjs` rebuilds it and keeps ticks. Then `phase1-vlog-games-review.md`.
-2. **Matt: real-phone check of the homepage and `/games/` filter drawer.**
-3. **Matt: read the new copy for voice:** the six setting intros, free-rules and mini-agnostic intros, the `/games/` description, the TTRPG line, "Browse similar", the TONKS page, and the `goobins-gits` tag description.
-4. Answer the open questions below as you go through the checklist.
-5. After 31 Oct: recheck Hallowtide and Steel Psalm. Outlaws' Gamefound ended 14 Oct; it stays a draft until it delivers. Jan 2027: XCOM.
-6. **Matt: 7 *(verify)* identities, 8 wave-3 one-liners, MESBG tier.**
-7. **YouTube OAuth:** authorized 10-19, so it lapses ~10-26. Re-auth with the Hobbinomicon channel before the next write.
+1. **Matt: finish Argatoria in `GAME-REVIEW.md`.** It still needs players, length, a check of the £→$ prices ($32 / $70), whether the description should say "mass battle" instead of "rank-and-flank", and whether the `competitive` tag fits. Then carry on down the list (Blood Eagle is next). Tick a game only when Matt signs it off. `node scripts/game-review.mjs` rebuilds the file and keeps ticks. After that comes `roadmap/rebuild/phase1-vlog-games-review.md`.
+2. **Deploy `dev` → `main`** once there's enough batched (CMON removal is the one that matters).
+3. **Matt: real-phone check of the homepage and `/games/` filter drawer.**
+4. **Matt: read the new copy for voice:** the six setting intros, free-rules and mini-agnostic intros, the `/games/` description, the TTRPG line, "Browse similar", the TONKS page, and the `goobins-gits` tag description.
+5. After 31 Oct: recheck Hallowtide and Steel Psalm. Outlaws stays a draft until it delivers. Jan 2027: XCOM.
+6. **YouTube OAuth:** authorized 10-19, so it lapses ~10-26. Re-auth with the Hobbinomicon channel before the next write.
+7. **Matt: 7 *(verify)* identities, 8 wave-3 one-liners, MESBG tier.**
 8. **Comments moderation pending-notification.** Today it is manual D1 SQL only.
 
 ## Blockers
 —
 
 ## Recently done
-- 10-19: BONEZONE removed (post drafted + 301, three pages and CLAUDE.md cleaned). Orc skin vlog synced with transcript and tagged. `goobins-gits` tag + transcript fix. Footers on the 4 latest videos.
-- 10-06: **Phases 1-3 + TONKS! deployed; PSI mobile 100**. One review checklist. Gundam Assemble set `active`. Homepage tweaks, 3 Orctober vlogs, Swup filter fix.
-- 10-02: Phase 1 data. Facet fields on every game; `games[]` on 99 vlogs.
+- 10-20: CMON removed; no CMON games from now on (CLAUDE.md). TONKS Discord link added and TONKS ticked. Argatoria scale set to mass-battle.
+- 10-19: BONEZONE removed (post drafted + 301). Orc skin vlog synced and tagged. `goobins-gits` tag. Footers on the 4 latest videos.
+- 10-06: **Phases 1-3 + TONKS! deployed; PSI mobile 100**. One review checklist. Gundam Assemble set `active`.
 
 ## Open questions (Matt)
+- **10-20:** TONKS has no length. Is there a play time in the rules?
 - **10-19:** Is Goobinsgitz (people page, *Wanted! Reward* co-designer) the Goobins Gits sculptor? Keep `indie-miniatures` or rename to `indie-models`?
 - **Rounds 6-8:**
   - The "Matt Gilbert" in the KoW 4E and DreadBall credits: is that you?
-  - Firefight and X-Wing format. No `10mm` tag.
+  - Firefight and X-Wing format. No `10mm` tag. Argatoria is 10mm too.
   - Small heroes: Deadzone, Walking Dead, KoW, SAGA, X-Wing, Bushido.
   - Missing logos: Song of Blades, Sellswords, Cyberpunk CZ, Blood Eagle, DreadBall, Fantastic Battles.
   - Designers *(verify)*: Cyberpunk CZ, Bushido, X-Wing 2E, Argatoria.
