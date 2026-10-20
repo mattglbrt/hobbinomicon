@@ -188,6 +188,13 @@ the full rules were already a free PDF and a Bandai retail date was fixed. It
 carried `status: "announced"` until Matt set it `active` on 10-06, ahead of
 retail. Don't generalise this to other preorder games without asking.
 
+## No CMON games (Matt, 10-20)
+
+Matt doesn't want to support CMON, so none of its games go in the directory.
+On 10-20, A Song of Ice and Fire was drafted, along with the CMON studio page
+and its three designers (Eric M. Lang, Fábio Cury, Michael Shinall). Their URLs
+301 to the hubs. Don't add or suggest CMON games.
+
 ## RPGs live on Alone in the Dungeon
 
 TTRPGs are not in the directory (Matt, 09-30), and that includes Shadowdark,
