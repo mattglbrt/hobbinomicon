@@ -4,6 +4,122 @@ Append-only. **Newest entry first.** Pre-existing planning history lives in `roa
 
 ---
 
+## 2026-11-01 — First session on the Mac: setup and smoke test
+
+**Deploy:** none. `dev` is still 3 commits ahead of `main`. No code changes
+this session. **Handoff** (orchestrator, 10-31, Windows → Mac migration): all
+four items addressed, then deleted.
+
+### Setup (handoff items 1–3)
+- `npm install` is done at the root and in `comments-api/`. npm 11 now holds
+  back install scripts (esbuild, sharp, fsevents, workerd…). Not approved,
+  because esbuild and sharp load fine without them.
+- npm 11 also rewrote `comments-api/package-lock.json` (it dropped `peer`
+  flags). Reverted, since that's noise rather than a change.
+- `.env` loads, and the API key resolves to "The Hobbinomicon" channel.
+- **YouTube OAuth is dead:** the refresh returns `invalid_grant`, as
+  expected, because it was authorized 10-19 and the 7-day limit has passed.
+  The check refreshed in memory only and wrote nothing. Re-auth needs Matt
+  in a browser.
+- No Windows leftovers. A grep for `C:\`, `powershell`, `.ps1`, `.bat` and
+  `cmd /c` came up empty outside HANDOFF.md.
+
+### Smoke test (handoff item 4)
+- `refresh-vlogs`: 277 of 277 videos already have posts, so nothing new
+  since 10-19. The hero cache (gitignored) was re-downloaded, 276 images.
+- Transcript fetch from the home connection works: `getTranscriptResult` →
+  `ok`, 12k chars.
+- `npm run build` passes (560 pages, pagefind, ~1m40s).
+  `youtube-stats.json` was reverted afterwards.
+- `astro dev`: `/`, `/games/`, `/vlog/` and `/games/tonks/` all return 200. It
+  logs a Netlify Edge Functions "could not establish a connection" error.
+  That's harmless, because the project has no edge functions (Deno is
+  installed).
+- `comments-api` passes `tsc --noEmit`.
+- Gotcha: port 4399 belongs to another session's aloneinthedungeon dev
+  server, so my first dev-server check hit the wrong site and showed 404s.
+  Pick a free port, and stop servers by PID, not by a `pkill` pattern.
+
+### Not found on this Mac
+- `mdggrowth/PROJECTS.md` doesn't exist, so the board row went unupdated.
+  It's probably not restored yet. Flag it to the orchestrator.
+
+---
+
+## 2026-10-20 — Game review started: TONKS done, CMON removed, Argatoria in progress
+
+**Deploy:** none. `dev` is 3 commits ahead of `main` (`0b63811`, `bc6eef3`,
+`8db3b33`), not pushed. No HANDOFF.md.
+
+### GAME-REVIEW.md walkthrough (1 of 119 ticked)
+- **TONKS!:** `discordUrl` added (Matt's link,
+  `discord.com/invite/28-951450773823316028`), which turns on the header's
+  "Official Discord" link. The body's "28 Discord" card had the same invite as
+  `discord.gg/…` and now matches. Matt: "tonks is good". Ticked. Length is still
+  blank.
+- **Argatoria, in progress, not ticked:** Matt confirmed own line and "10mm mass
+  battle". `scale: rank-and-flank` → `mass-battle`. I ticked it too early and
+  Matt said "dont mark it done yet", so only tick on his explicit sign-off.
+  Still open: players, length, the £→$ prices ($32 / $70 from £25 / £55), whether
+  the description should say "mass battle" rather than "rank-and-flank", and
+  whether the `competitive` tag fits.
+
+### CMON removed (Matt: they're out of business and he won't support them)
+- A Song of Ice and Fire was the only CMON game. Drafted it, plus
+  `studios/cmon` and its three designers (Eric M. Lang, Fábio Cury, Michael
+  Shinall), whose pages existed only for ASOIAF.
+- Drafted, not deleted (the BONEZONE pattern). The 301s (permanent, since they
+  aren't coming back) go to `/games/`, `/studios/` and `/people/`, with slash and
+  `.md` variants. No other page referenced them, and the build was clean with no
+  leftover links in `dist/`.
+- CLAUDE.md: new "No CMON games" section.
+
+---
+
+## 2026-10-19 — BONEZONE dropped, orc skin vlog, goobins-gits tag, footers
+
+**Deploy:** `main` @ `40f349f` (one merge from `dev`).
+
+**Handoff (orchestrator, 10-13) addressed:** Matt isn't entering BONEZONE
+("im not going to be able to participate"). "Paint the Royal Herald" dropped
+from Next. HANDOFF.md deleted.
+
+### BONEZONE removed from the site
+- `news/bonezone-2026-open.mdx` → `draft: true`, URL 301s to
+  `/guides/a-new-way-to-paint-skeletons/` (the post's subject; permanent, so
+  301 not the parked-page 302).
+- Skeleton guide update line now only mentions the 2027 Tomb Kings army.
+- `online-painting-competitions-2026`: dropped "I'm entering this one" + link.
+  The neutral BONEZONE listing stays.
+- `oldhammer-year-2027`: the Tomb Kings link re-pointed to the skeleton guide.
+- CLAUDE.md "BONEZONE 2026 is a hub" section deleted.
+- Left: the newsletter page example "BONEZONE 2026 is open; entries close on
+  Halloween." (true, says nothing about entering).
+
+### New vlog + tags
+- `npm run refresh-vlogs` (Matt): "How to paint old school orc skin" (10-15)
+  synced with transcript; untagged (no TTY).
+- Tags (Matt): painting, tutorial, skin-tones, glazing, orcs-and-goblins,
+  **goobins-gits** (new, category `brand`), and indie-miniatures. Matt asked
+  for `indie-models`; the existing `indie-miniatures` is the same thing (9 vlogs)
+  so it was used instead of a duplicate. Matt can ask for a rename.
+- `goobins-gits` also added to the other three Orctober vlogs (same model, Matt
+  said yes). Keyword `goobins gits` added to `tag-keywords.json`.
+- `transcript-normalize.json`: "Goobins Gits" ← "Guben's gits", "Gooen Gits"
+  (both seen in this transcript; spelling from Matt). The maker's people page is
+  `goobinsgitz` (assumed same person, unconfirmed).
+
+### YouTube footers
+- `youtube-auth` (Matt, Hobbinomicon channel) → backup
+  `scripts/backups/descriptions-backup-2026-10-19T13-23-48.json` → dry run →
+  `--run --only` on the 4 latest. All 4 verified on YouTube. Three had empty
+  descriptions, so they are footer-only now.
+- Correction: STATUS's "paste the new ork-armor description in Studio" was a
+  past session's suggestion (copy the site meta description to YouTube), not
+  something Matt wrote. Dropped.
+
+---
+
 ## 2026-10-02 → 10-06 — Directory + homepage redesign (Phases 1-3), TONKS, Orctober vlogs
 
 **Deploys:** `main` @ `56ff3f6` (10-06: Phases 1-3 + TONKS, Matt chose
