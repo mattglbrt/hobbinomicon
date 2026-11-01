@@ -4,6 +4,48 @@ Append-only. **Newest entry first.** Pre-existing planning history lives in `roa
 
 ---
 
+## 2026-11-01 — First session on the Mac: setup and smoke test
+
+**Deploy:** none. `dev` is still 3 commits ahead of `main`. No code changes
+this session. **Handoff** (orchestrator, 10-31, Windows → Mac migration): all
+four items addressed, then deleted.
+
+### Setup (handoff items 1–3)
+- `npm install` is done at the root and in `comments-api/`. npm 11 now holds
+  back install scripts (esbuild, sharp, fsevents, workerd…). Not approved,
+  because esbuild and sharp load fine without them.
+- npm 11 also rewrote `comments-api/package-lock.json` (it dropped `peer`
+  flags). Reverted, since that's noise rather than a change.
+- `.env` loads, and the API key resolves to "The Hobbinomicon" channel.
+- **YouTube OAuth is dead:** the refresh returns `invalid_grant`, as
+  expected, because it was authorized 10-19 and the 7-day limit has passed.
+  The check refreshed in memory only and wrote nothing. Re-auth needs Matt
+  in a browser.
+- No Windows leftovers. A grep for `C:\`, `powershell`, `.ps1`, `.bat` and
+  `cmd /c` came up empty outside HANDOFF.md.
+
+### Smoke test (handoff item 4)
+- `refresh-vlogs`: 277 of 277 videos already have posts, so nothing new
+  since 10-19. The hero cache (gitignored) was re-downloaded, 276 images.
+- Transcript fetch from the home connection works: `getTranscriptResult` →
+  `ok`, 12k chars.
+- `npm run build` passes (560 pages, pagefind, ~1m40s).
+  `youtube-stats.json` was reverted afterwards.
+- `astro dev`: `/`, `/games/`, `/vlog/` and `/games/tonks/` all return 200. It
+  logs a Netlify Edge Functions "could not establish a connection" error.
+  That's harmless, because the project has no edge functions (Deno is
+  installed).
+- `comments-api` passes `tsc --noEmit`.
+- Gotcha: port 4399 belongs to another session's aloneinthedungeon dev
+  server, so my first dev-server check hit the wrong site and showed 404s.
+  Pick a free port, and stop servers by PID, not by a `pkill` pattern.
+
+### Not found on this Mac
+- `mdggrowth/PROJECTS.md` doesn't exist, so the board row went unupdated.
+  It's probably not restored yet. Flag it to the orchestrator.
+
+---
+
 ## 2026-10-20 — Game review started: TONKS done, CMON removed, Argatoria in progress
 
 **Deploy:** none. `dev` is 3 commits ahead of `main` (`0b63811`, `bc6eef3`,
