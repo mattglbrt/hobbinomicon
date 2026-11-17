@@ -4,6 +4,46 @@ Append-only. **Newest entry first.** Pre-existing planning history lives in `roa
 
 ---
 
+## 2026-11-17 — Strategy handoff folded in, footer byline deployed
+
+**Deploy:** `77fea54` (merge of `dev` into `main`, pushed). `dev` was then
+fast-forwarded to it, so `dev`, `main` and both remotes are level. The live
+site was not checked after the push. **Handoff** (orchestrator 11-09
+/plan-week, plus the 11-17 strategy session): folded into STATUS, then deleted.
+
+### What Matt settled (2026-11-17)
+- **Warmachine:** "i just meant im not making a dedicated warmachine channel."
+  All current Warmachine content on the site stays untouched.
+- **Tips and vlogs:** existing ones stay on the site. The move to Alone in the
+  Dungeon is "only for future videos". Hobby tips keep a place here, but "the
+  bulk of videos will be long form". The vlog sync pipeline is unchanged.
+- **Newsletter:** the Wed 11-18 issue #1 is off. Start is Tue 5 Jan 2027 on
+  the `mattglbrt` Substack (transfer the publication, never delete it).
+- **This week's videos** ("Toolbox kit", "Painting Old Miniatures"): going on
+  Alone in the Dungeon, "i think". Not final.
+- **Channel description byline:** "we dont need the channel desciprtion byline
+  change right now". Parked.
+- **Traffic baseline:** "last 28 days google analyics traffic 1711". That is
+  sessions: "sessions thats what i mean in all cases", so the 5,000-a-month
+  goal is measured in GA sessions too. Not written into `../strategy/`, since
+  those drafts belong to the strategy session.
+
+### Done
+- **Footer byline:** "By Matt Gilbert" linking to mattglbrt.com, under the
+  tagline in the brand column of `src/components/Footer.astro`. Build passed
+  (560 pages) and the link is in the built HTML of `/` and `/games/pillage/`.
+  Not looked at in a browser.
+- **Pillage has a directory page:** `src/content/games/pillage.mdx`, `active`,
+  not a draft. The first flagship video has a page to link to.
+- `youtube-stats.json` was rewritten by the build and reverted.
+
+### Not done
+- The 11-10 directory review day left no trace: still 1 of 119 ticked.
+- The planner still shows the two tip videos under Hobbinomicon. That is the
+  orchestrator's to change.
+
+---
+
 ## 2026-11-01 — First session on the Mac: setup and smoke test
 
 **Deploy:** none. `dev` is still 3 commits ahead of `main`. No code changes
